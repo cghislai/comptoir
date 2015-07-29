@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Comptoir</title>
+  <base href="/">
+  <!-- ignore: Aplha 32 router fix -->
+  <script>baseElement = document.querySelector('base');baseElement.attr = baseElement.getAttribute;</script>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      border: 0;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 3vh;
+    }
+  </style>
+  <!-- inject:css -->
+  <link rel="stylesheet" href="/app.css?v=0.0.0">
+  <link rel="stylesheet" href="/components/commandView/commandView.css?v=0.0.0">
+  <link rel="stylesheet" href="/components/itemList/iemList.css?v=0.0.0">
+  <link rel="stylesheet" href="/components/navMenu/navMenu.css?v=0.0.0">
+  <link rel="stylesheet" href="/components/sellView/sellView.css?v=0.0.0">
+  <!-- endinject -->
+</head>
+<body>
+
+  <app>Loading...</app>
+
+  <!-- inject:js -->
+  <script src="/lib/traceur-runtime.js?v=0.0.0"></script>
+  <script src="/lib/es6-module-loader-sans-promises.js?v=0.0.0"></script>
+  <script src="/lib/Reflect.js?v=0.0.0"></script>
+  <script src="/lib/system.src.js?v=0.0.0"></script>
+  <script src="/lib/zone.js?v=0.0.0"></script>
+  <script src="/lib/angular2.js?v=0.0.0"></script>
+  <script src="/lib/router.js?v=0.0.0"></script>
+  <!-- endinject -->
+
+  <script src="/init.js?v=0.0.0"></script>
+
+</body>
+</html>

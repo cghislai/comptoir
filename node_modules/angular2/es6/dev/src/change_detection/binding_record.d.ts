@@ -1,0 +1,37 @@
+import { SetterFn } from 'angular2/src/reflection/types';
+import { AST } from './parser/ast';
+import { DirectiveIndex, DirectiveRecord } from './directive_record';
+export declare class BindingRecord {
+    mode: string;
+    implicitReceiver: any;
+    ast: AST;
+    elementIndex: number;
+    propertyName: string;
+    propertyUnit: string;
+    setter: SetterFn;
+    lifecycleEvent: string;
+    directiveRecord: DirectiveRecord;
+    constructor(mode: string, implicitReceiver: any, ast: AST, elementIndex: number, propertyName: string, propertyUnit: string, setter: SetterFn, lifecycleEvent: string, directiveRecord: DirectiveRecord);
+    callOnChange(): boolean;
+    isOnPushChangeDetection(): boolean;
+    isDirective(): boolean;
+    isDirectiveLifecycle(): boolean;
+    isElementProperty(): boolean;
+    isElementAttribute(): boolean;
+    isElementClass(): boolean;
+    isElementStyle(): boolean;
+    isTextNode(): boolean;
+    static createForDirective(ast: AST, propertyName: string, setter: SetterFn, directiveRecord: DirectiveRecord): BindingRecord;
+    static createDirectiveOnCheck(directiveRecord: DirectiveRecord): BindingRecord;
+    static createDirectiveOnInit(directiveRecord: DirectiveRecord): BindingRecord;
+    static createDirectiveOnChange(directiveRecord: DirectiveRecord): BindingRecord;
+    static createForElementProperty(ast: AST, elementIndex: number, propertyName: string): BindingRecord;
+    static createForElementAttribute(ast: AST, elementIndex: number, attributeName: string): BindingRecord;
+    static createForElementClass(ast: AST, elementIndex: number, className: string): BindingRecord;
+    static createForElementStyle(ast: AST, elementIndex: number, styleName: string, unit: string): BindingRecord;
+    static createForHostProperty(directiveIndex: DirectiveIndex, ast: AST, propertyName: string): BindingRecord;
+    static createForHostAttribute(directiveIndex: DirectiveIndex, ast: AST, attributeName: string): BindingRecord;
+    static createForHostClass(directiveIndex: DirectiveIndex, ast: AST, className: string): BindingRecord;
+    static createForHostStyle(directiveIndex: DirectiveIndex, ast: AST, styleName: string, unit: string): BindingRecord;
+    static createForTextNode(ast: AST, elementIndex: number): BindingRecord;
+}

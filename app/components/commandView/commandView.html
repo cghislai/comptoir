@@ -1,0 +1,29 @@
+<div class="commandView">
+    <table>
+        <thead>
+
+        </thead>
+        <tr *ng-for="#commandItem of commandService.items"
+            class="commandItem">
+            <td class="ref">
+                {{ commandItem.item.ref }}
+            </td>
+            <td class="amount">
+                <div [hidden]="commandItem.amount <= 1">
+                    <span class="count">
+                        {{ commandItem.amount }} x
+                    </span>
+                    <span class="price">
+                        {{ commanItem.item.currentPrice }} €
+                    </span>
+                </div>
+            </td>
+            <td class="price">
+                {{ commandItem.price }}
+            </td>
+        </tr>
+        <tfoot class="total">
+            Total: {{ commandService.totalPrice }} €
+        </tfoot>
+    </table>
+</div>

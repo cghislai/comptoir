@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Comptoir</title>
+  <base href="<%= APP_BASE %>">
+  <!-- ignore: Aplha 32 router fix -->
+  <script>baseElement = document.querySelector('base');baseElement.attr = baseElement.getAttribute;</script>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      border: 0;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 3vh;
+    }
+  </style>
+  <!-- inject:css -->
+  <!-- endinject -->
+</head>
+<body>
+
+  <app>Loading...</app>
+
+  <!-- inject:js -->
+  <!-- endinject -->
+
+  <script src="<%= APP_BASE %>init.js?v=<%= VERSION %>"></script>
+
+</body>
+</html>

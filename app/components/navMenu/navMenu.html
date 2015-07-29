@@ -1,0 +1,7 @@
+<div class="navMenu">
+    <a class="button" (click)="switchMenuVisibility()"
+       [class.active]="menuVisible">▼</a>
+    <div class="menu" [hidden]="!menuVisible">
+        <a [router-link]="['/sell']">Vente</a>
+    </div>
+</div>

@@ -1,0 +1,30 @@
+.navMenu {
+    display: inline-block;
+    font-size: 1.5em;
+}
+.button:hover{
+    color: yellow;
+    cursor: pointer;
+}
+.button.active {
+    color: white;
+    background-color: lightsteelblue;
+}
+
+.menu {
+    position: absolute;
+    background-color: lightsteelblue;
+    color: white;
+    font-weight: bold;
+    border: 1px solid white;
+}
+
+.menu a {
+    display: block;
+    padding: .2em;
+    color: white;
+    text-decoration: none;
+}
+.menu a:hover {
+    color: yellow;
+}

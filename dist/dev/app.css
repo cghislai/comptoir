@@ -1,0 +1,27 @@
+.app {
+
+}
+
+header {
+  background: lightsteelblue;
+  color: white;
+}
+
+header > *{
+  display: inline-block;
+  vertical-align: middle;
+}
+header h1 {
+  margin: .1em;
+}
+
+section {
+  min-height: 90vh;
+  overflow-y: auto;
+}
+
+footer {
+  color:white;
+  background-color: gray;
+  font-size: 1.5vh;
+}

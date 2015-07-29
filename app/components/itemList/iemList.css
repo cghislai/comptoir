@@ -1,0 +1,58 @@
+.itemList {
+
+}
+
+.filter {
+    font-size: 1em;
+    padding: .2em;
+}
+
+.filter input {
+    width: 50%;
+    font-size: 1em;
+}
+
+.filter button {
+    font-size: 1em;
+}
+
+.scrollPane {
+}
+
+table {
+    padding: 0;
+    margin: 0;
+    border-collapse: collapse;
+    width: 100%;
+
+}
+
+.item {
+    border: 2px solid lightsteelblue;
+}
+
+tr.item > td {
+    vertical-align: middle;
+    padding: .5em;
+}
+
+.item .ref {
+    color: gray;
+    font-family: monospace;
+}
+
+
+.item .name {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.item .model {
+    font-size: .8em;
+    font-weight: lighter;
+}
+
+.item .price {
+    text-align: right;
+    font-size: 1.1em;
+}
