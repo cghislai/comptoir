@@ -5,20 +5,15 @@ import {RouteConfig, RouterOutlet, RouterLink, routerInjectables} from 'angular2
 // import ViewEncapsulation
 
 
-import {NamesList} from './services/NameList';
 import {ApplicationService} from './services/applicationService';
-import {Home} from './components/home/home';
-import {About} from './components/about/about';
 import {NavMenu} from './components/navMenu/navMenu';
 import {SellView} from './components/sellView/sellView';
 
 @Component({
     selector: 'app',
-    viewInjector: [NamesList, ApplicationService]
+    viewInjector: [ApplicationService]
 })
 @RouteConfig([
-    {path: '/home', component: Home, as: 'home'},
-    {path: '/about', component: About, as: 'about'},
     { path: '/', component: SellView, as: 'sell' },
     { path: '/sell', component: SellView, as: 'sell' }
 ])

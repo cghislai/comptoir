@@ -1,0 +1,51 @@
+<div class="toPayHeader">
+    <div *ng-if="toPayAmount > 0">
+        <h1>À payer</h1>
+        <span class="total" [class.negative]="toPayAmount < 0" [class.exact]="toPayAmount == 0">
+            {{ toPayAmount | number: '.2-2' }} €
+        </span>
+    </div>
+    <div *ng-if="toPayAmount <= 0">
+        <h1>À rendre</h1>
+        <span class="total negative">
+            {{ -toPayAmount | number: '.2-2' }} €
+        </span>
+        <div class="actions">
+        <span class="validateLink" (click)="onValidateClicked()">
+            Valider
+        </span>
+
+        </div>
+    </div>
+</div>
+<div class="usedMethod" *ng-if="payList.length > 0">
+    <div *ng-for="#pay of payList"
+            class="pay">
+        <span class="method">{{ getPayMethodName(pay.method) }}</span>
+        <span class="amount">{{ pay.amount | number: '.2-2'}} €</span>
+        <div class="actions">
+            <a class="remove" (click)="removePay(pay)">
+                Supprimer
+            </a>
+        </div>
+    </div>
+    <div class="total">
+        <span class="total">Total :</span>
+        <span class="total amount">{{ paidAmount  | number: '.2-2' }} €</span>
+    </div>
+</div>
+<div class="editMethod" *ng-if="editingPay != null">
+    <span class="method">{{ getPayMethodName(editingPay.method) }}</span>
+    <span class="amount">
+        Montant: <input #amount [value]="editingPay.amount"
+                        (keyUp)="onPayAmountKeyUp(amount.value, $event)" autoFocus> €
+    </span>
+
+</div>
+<div class="addMethod">
+    <div *ng-for="#method of availablePayMethods"
+            class="method"
+            (^click)="startEditPay(method)">
+        <h2>{{ getPayMethodName(method) }}</h2>
+    </div>
+</div>

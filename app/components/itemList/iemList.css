@@ -31,6 +31,10 @@ table {
     border: 2px solid lightsteelblue;
 }
 
+.item:hover {
+    background-color: lightblue;
+}
+
 tr.item > td {
     vertical-align: middle;
     padding: .5em;

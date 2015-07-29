@@ -1,12 +1,13 @@
 <div class="itemList">
     <header class="filter">
         <input #filter (keyup)="onFilterValueChanged($event)"
-               placeholder="Filtrer les produits"/>
+               placeholder="Filtrer les produits" autoFocus/>
         <button (click)="applyFilter(filter.value)">Rechercher</button>
     </header>
     <div class="scrollPane">
         <table>
-            <tr *ng-for="#item of items" class="item">
+            <tr *ng-for="#item of items" class="item"
+                (^click)="onItemClick(item)">
                 <td class="ref">
                     {{ item.reference }}
                 </td>

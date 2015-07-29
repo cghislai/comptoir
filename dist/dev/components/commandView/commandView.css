@@ -1,0 +1,152 @@
+.commandHeader {
+    background-color: lightsteelblue;
+    color: white;
+    display: table;
+    width: 100%;
+}
+.commandHeader > * {
+    display: table-cell;
+    vertical-align: middle;
+    padding: .5em;
+}
+.commandHeader h1 {
+    margin: 0;
+    padding-right: .5em;
+}
+
+.commandHeader .actions {
+    text-align: right;
+    float: right;
+}
+.commandHeader .actions > div {
+    font-weight: bolder;
+    cursor: pointer;
+    display: inline-block;
+    padding: .5em;
+    border: 1px solid transparent;
+}
+.commandHeader .actions > div:hover {
+    border: 1px solid yellow;
+    color: yellow;
+}
+.commandHeader .actions > .reduction > span {
+    display: block;
+    height: 100%;
+}
+.commandHeader .actions > .reduction input {
+    font-size: 1em;
+}
+.commandHeader .actions > .reduction.has-reduction {
+    color: red;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1em;
+}
+
+tbody>tr:not(:last-child) {
+    border-bottom: 1px solid lightgray;
+}
+
+td {
+    padding: .5em;
+    vertical-align: middle;
+}
+th {
+    text-align: left;
+    padding: .5em;
+}
+
+th.total {
+    text-align: right;
+}
+
+td.ref {
+    font-size: .8em;
+    font-family: monospace;
+    text-align: left;
+    max-width: 10%;
+}
+
+td.name {
+    text-align: left;
+    position: relative;
+}
+
+
+td.amount, th.amount {
+    text-align: right;
+    padding-right: 1em;
+}
+
+td.price, th.price {
+    text-align: right;
+    min-width: 20%;
+}
+td.price .reduction {
+    font-size: .8em;
+    color: red;
+    padding-right: .2em;
+}
+
+.itemActions{
+    position: absolute;
+    right: 0;
+    background-color: rgba(255,255,255,0.9);
+}
+.itemActions  > span.actions {
+    display: none;
+    padding-left: .5em;
+}
+tr:hover > .itemActions  > span.actions {
+    display: table-cell;
+}
+.itemActions span.reduction > * {
+    font-size: .9em;
+}
+.itemActions  a {
+    color: steelblue;
+}
+.itemActions  a:hover {
+    text-decoration: underline;
+    color: black;
+    cursor: pointer;
+}
+
+tfoot {
+    border-top: 1px solid black;
+}
+tfoot th {
+    text-align: right;
+}
+tfoot .total {
+    font-size: 1.3em;
+}
+
+.newItem {
+    font-size: 1em;
+    padding: .5em;
+    border: 1px solid lightsteelblue;
+}
+.newItem h2 {
+    font-size: 1em;
+    font-weight: bolder;
+    margin: 0;
+}
+.newItem input, .newItem button {
+    font-size: .9em;
+}
+.newItem .ref {
+    width: 10%;
+}
+.newItem .name {
+    width: 50%;
+}
+.newItem .price {
+    width: 15%;
+}
+.newItem .amount {
+    width: 10%;
+}

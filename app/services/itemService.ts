@@ -23,6 +23,9 @@ export class Item {
         }
     }
     equals(other: Item) {
+        if (this.id == undefined || other.id == undefined) {
+            return false;
+        }
         return this.id == other.id;
     }
 }

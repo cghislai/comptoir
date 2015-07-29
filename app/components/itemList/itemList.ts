@@ -2,8 +2,10 @@
  * Created by cghislai on 29/07/15.
  */
 /// <reference path="../../typings/_custom.d.ts" />
-import {Component, View, NgFor} from 'angular2/angular2';
+import {Component, View, NgFor, EventEmitter} from 'angular2/angular2';
 import {Item, ItemService} from 'services/itemService';
+import {CommandService} from 'services/commandService';
+import {AutoFocusDirective} from 'directives/autoFocus';
 
 @Component({
     selector: 'itemList',
@@ -13,16 +15,18 @@ import {Item, ItemService} from 'services/itemService';
 @View({
     templateUrl: './components/itemList/itemList.html',
     styleUrls: ['./components/itemList/itemList.css'],
-    directives: [NgFor]
+    directives: [NgFor, AutoFocusDirective]
 })
 
 export class ItemList {
     itemService: ItemService;
     items: Item[];
+    commandService: CommandService;
 
-    constructor(itemService: ItemService) {
+    constructor(itemService: ItemService, commandService: CommandService) {
         this.itemService = itemService;
         this.itemService.searchItems();
+        this.commandService = commandService;
         this.searchItems();
     }
     searchItems() {
@@ -32,7 +36,10 @@ export class ItemList {
         this.applyFilter($event.target.value);
     }
     applyFilter(filterValue: string) {
-        console.log(filterValue);
         this.items = this.itemService.findItems(filterValue);
+    }
+    onItemClick(item: Item) {
+        console.log(item);
+        this.commandService.addItem(item)
     }
 }
