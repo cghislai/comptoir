@@ -2,7 +2,7 @@
   "name": "Comptoir",
   "version": "0.0.0",
   "description": "Comptoir front-end",
-  "repository": "",
+  "repository": "https://github.com/cghislai/comptoir.git",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

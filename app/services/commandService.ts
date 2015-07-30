@@ -107,6 +107,7 @@ export class CommandService {
             var reduction = this.globalReduction * 0.01  * this.totalPrice;
             this.totalPrice -= reduction;
         }
+        this.totalPrice = Number((this.totalPrice).toFixed(2));
     }
     calcItemPrice(commandItem: CommandItem) {
         var item = commandItem.item;
