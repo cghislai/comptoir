@@ -1,13 +1,13 @@
 <div class="sellView">
     <table>
         <tr>
-            <td class="itemList" *ng-if="commandValidated == false">
+            <td class="itemList"  [hidden]="commandValidated">
                 <itemList (item-clicked)="onItemClicked($event)"></itemList>
             </td>
             <td class="commandView">
-                <commandView #commandView (validate)="onCommandValidated($event)" [validated]="commandValidated"></commandView>
+                <commandView #commandView (validate)="onCommandValidated($event)"></commandView>
             </td>
-            <td class="payView" *ng-if="commandValidated == true">
+            <td class="payView" [hidden]="commandValidated == false">
                 <payView (paid)="onCommandPaid($event, commandView)"></payView>
             </td>
         </tr>

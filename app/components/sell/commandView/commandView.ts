@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 29/07/15.
  */
-/// <reference path="../../typings/_custom.d.ts" />
+/// <reference path="../../../typings/_custom.d.ts" />
 import {Component, View, NgFor, NgIf, EventEmitter} from 'angular2/angular2';
 import {CommandService, CommandItem} from 'services/commandService';
 import {Item} from 'services/itemService';
@@ -19,13 +19,12 @@ class ToAddItem {
 // The component
 @Component({
     selector: 'commandView',
-    events: ['validate'],
-    properties: ['validated']
+    events: ['validate']
 })
 
 @View({
-    templateUrl: './components/commandView/commandView.html',
-    styleUrls: ['./components/commandView/commandView.css'],
+    templateUrl: './components/sell/commandView/commandView.html',
+    styleUrls: ['./components/sell/commandView/commandView.css'],
     directives: [NgFor, NgIf, AutoFocusDirective]
 })
 

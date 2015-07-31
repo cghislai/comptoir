@@ -7,7 +7,7 @@ import {RouteConfig, RouterOutlet, RouterLink, routerInjectables} from 'angular2
 
 import {ApplicationService} from './services/applicationService';
 import {NavMenu} from './components/navMenu/navMenu';
-import {SellView} from './components/sellView/sellView';
+import {SellView} from 'components/sell/sellView';
 
 @Component({
     selector: 'app',

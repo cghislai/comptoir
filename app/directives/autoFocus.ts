@@ -15,7 +15,6 @@ export class AutoFocusDirective {
             nativeElement.focus();
             setTimeout(function() {
                     nativeElement.setSelectionRange(0,nativeElement.value.length);
-                    console.log('select');
                 }, 0);
         }
     }

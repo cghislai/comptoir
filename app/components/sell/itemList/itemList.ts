@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 29/07/15.
  */
-/// <reference path="../../typings/_custom.d.ts" />
+/// <reference path="../../../typings/_custom.d.ts" />
 import {Component, View, NgFor, EventEmitter} from 'angular2/angular2';
 import {Item, ItemService, ItemSearch} from 'services/itemService';
 import {AutoFocusDirective} from 'directives/autoFocus';
@@ -13,8 +13,8 @@ import {AutoFocusDirective} from 'directives/autoFocus';
 })
 
 @View({
-    templateUrl: './components/itemList/itemList.html',
-    styleUrls: ['./components/itemList/itemList.css'],
+    templateUrl: './components/sell/itemList/itemList.html',
+    styleUrls: ['./components/sell/itemList/itemList.css'],
     directives: [NgFor, AutoFocusDirective]
 })
 
