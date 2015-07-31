@@ -41,6 +41,7 @@
 }
 
 table {
+    position: relative;
     width: 100%;
     border-collapse: collapse;
     font-size: 1em;
@@ -80,6 +81,9 @@ td.amount, th.amount {
     text-align: right;
     padding-right: 1em;
 }
+td.amount .editAmount * {
+    font-size: .8em;
+}
 
 td.price, th.price {
     text-align: right;
@@ -90,25 +94,39 @@ td.price .reduction {
     color: red;
     padding-right: .2em;
 }
+td.price .setReduction {
+    font-size: .8em;
+}
+td.price .setReduction * {
+    font-size: .8em;
+}
 
-.itemActions{
+td.itemActions {
     position: absolute;
-    right: 0;
+    left: 0%;
+    height: 2em;
+    z-index: 5;
+    padding: 0;
+}
+td.itemActions > span {
     background-color: rgba(255,255,255,0.9);
 }
+
 .itemActions  > span.actions {
     display: none;
     padding-left: .5em;
+    font-size: .8em;
+    vertical-align: middle;
 }
 tr:hover > .itemActions  > span.actions {
-    display: table-cell;
+    display: inline-block;
 }
-.itemActions span.reduction > * {
-    font-size: .9em;
-}
+
 .itemActions  a {
     color: steelblue;
+    padding-right: .5em;
 }
+
 .itemActions  a:hover {
     text-decoration: underline;
     color: black;

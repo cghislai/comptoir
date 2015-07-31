@@ -2,7 +2,7 @@
  * Created by cghislai on 29/07/15.
  */
 /// <reference path="../../typings/_custom.d.ts" />
-import {Component, View, NgIf} from 'angular2/angular2';
+import {Component, View, NgIf, ViewQuery, Query, QueryList} from 'angular2/angular2';
 
 import {ApplicationService} from 'services/applicationService';
 import {CommandService} from 'services/commandService';
@@ -24,11 +24,19 @@ import {PayView} from 'components/payView/payView'
 export class SellView {
     commandService: CommandService;
     commandValidated: boolean;
+    commandView: CommandView;
+    query: QueryList<CommandView>;
 
-    constructor(appService: ApplicationService, commandService: CommandService) {
+    constructor(@Query(CommandView, {descendants: true}) query: QueryList<CommandView>,
+                appService: ApplicationService, commandService: CommandService) {
         appService.pageName = "Vente";
         this.commandService = commandService;
         this.commandValidated = false;
+        this.query = query;
+    }
+    onItemClicked(item: Item) {
+        var commandView = this.query.first;
+        commandView.doAddItem(item);
     }
 
     onCommandValidated(validated: boolean) {

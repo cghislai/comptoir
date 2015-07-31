@@ -2,7 +2,7 @@
     <table>
         <tr>
             <td class="itemList" *ng-if="commandValidated == false">
-                <itemList></itemList>
+                <itemList (item-clicked)="onItemClicked($event)"></itemList>
             </td>
             <td class="commandView">
                 <commandView #commandView (validate)="onCommandValidated($event)" [validated]="commandValidated"></commandView>

@@ -16,7 +16,8 @@
                 <span *ng-if="editingGlobalReduction">
                     <input #reduction [value]="commandService.globalReduction"
                            (keyup)="applyGlobalReduction($event)"
-                           size="4" autoFocus/>
+                           (blur)="cancelGlobalReduction()"
+                           size="2" autoFocus/>
                     %
                 </span>
             </div>
@@ -34,7 +35,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ng-for="#commandItem of commandService.getItems()"
+        <tr *ng-for="#commandItem of commandService.items"
             class="commandItem">
 
             <td class="ref">
@@ -46,32 +47,42 @@
                 {{ commandItem.item.name }}
             </td>
             <td class="amount">
-                <div [hidden]="commandItem.amount <= 1">
+                <div [hidden]="commandItem.amount <= 1 || editingAmountItem == commandItem">
                         <span class="count">
                             {{ commandItem.amount }} x
                         </span>
                         <span class="price">
-                            {{ commandItem.item.currentPrice  }} €
+                            {{ commandItem.item.currentPrice | currency:'EUR':true:'.2-2'  }}
                         </span>
                 </div>
+                <span class="editAmount" *ng-if="editingAmountItem == commandItem">
+                    <input #amount [value]="commandItem.amount"
+                           (keyup)="applyItemAmount($event)"
+                           (blur)="cancelItemAmount()"
+                           size="4" autoFocus/>
+                </span>
             </td>
             <td class="price">
-                <span class="reduction" *ng-if="commandItem.reduction > 0">
+                <span class="reduction" *ng-if="commandItem.reduction > 0 && editingReductionItem != commandItem">
                     -{{commandItem.reduction}}%
                 </span>
-                {{ commandItem.price | number: '.2-2' }} €
-            </td>
-            <td class="itemActions" *ng-if="validated == false">
-                <span class="actions" *ng-if="toAddReductionItem != commandItem">
-                    <a class="remove" (click)="doClearItem(commandItem)">Supprimer</a>
-                    <a class="reduction" (click)="doStartItemReduction(commandItem);">Réduction</a>
-                </span>
-                <span class="reduction" *ng-if="toAddReductionItem == commandItem">
+                <span class="setReduction" *ng-if="editingReductionItem == commandItem">
                     <input #reduction [value]="commandItem.reduction"
                            (keyup)="applyItemReduction($event)"
-                            size="4" autoFocus/>
+                           size="2" autoFocus/>
                     %
                 </span>
+                {{ commandItem.price | currency:'EUR':true:'.2-2' }}
+            </td>
+            <td class="itemActions" *ng-if="validated == false" >
+                <span style="display: inline-block; height: 100%; vertical-align: middle;">
+                </span>
+                <span class="actions">
+                    <a class="remove" (click)="doClearItem(commandItem)">Supprimer</a>
+                    <a class="amount" (click)="doEditItemReduction(commandItem);">Réduction</a>
+                    <a class="reduction" (click)="doEditItemAmount(commandItem);">Quantité</a>
+                </span>
+
             </td>
         </tr>
 
@@ -84,7 +95,7 @@
         </tr>
         <tr class="total">
             <th colspan="3">Total:</th>
-            <th class="price">{{ commandService.totalPrice  | number: '.2-2'}} €</th>
+            <th class="price">{{ commandService.totalPrice  | currency:'EUR':true:'.2-2'}} </th>
         </tr>
         </tfoot>
     </table>

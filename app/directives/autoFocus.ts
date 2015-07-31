@@ -2,17 +2,21 @@
  * Created by cghislai on 29/07/15.
  */
 /// <reference path="../typings/_custom.d.ts" />
-import {Directive, ViewContainerRef} from 'angular2/angular2';
+import {Directive, ElementRef} from 'angular2/angular2';
 
-// A autofocus directive to focus reduction fieds
+// Autofocus the input field
 @Directive({
     selector: 'input[autoFocus]'
 })
 export class AutoFocusDirective {
-    viewContainer: ViewContainerRef;
-    constructor(viewContainer: ViewContainerRef) {
-        this.viewContainer = viewContainer;
-        viewContainer.element.nativeElement.focus();
-        console.log(this);
+    constructor(element: ElementRef) {
+        var nativeElement = element.nativeElement;
+        if (nativeElement != null) {
+            nativeElement.focus();
+            setTimeout(function() {
+                    nativeElement.setSelectionRange(0,nativeElement.value.length);
+                    console.log('select');
+                }, 0);
+        }
     }
 }

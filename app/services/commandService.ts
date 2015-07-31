@@ -44,6 +44,7 @@ export class CommandService {
         commandItem.amount++;
         this.calcItemPrice(commandItem);
         this.calcTotalPrice();
+        return commandItem;
     }
     removeItem(item: Item) {
         var oldItems = this.items;

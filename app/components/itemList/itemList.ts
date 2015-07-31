@@ -4,12 +4,12 @@
 /// <reference path="../../typings/_custom.d.ts" />
 import {Component, View, NgFor, EventEmitter} from 'angular2/angular2';
 import {Item, ItemService} from 'services/itemService';
-import {CommandService} from 'services/commandService';
 import {AutoFocusDirective} from 'directives/autoFocus';
 
 @Component({
     selector: 'itemList',
-    viewInjector: [ItemService]
+    viewInjector: [ItemService],
+    events: ['itemClicked']
 })
 
 @View({
@@ -21,12 +21,11 @@ import {AutoFocusDirective} from 'directives/autoFocus';
 export class ItemList {
     itemService: ItemService;
     items: Item[];
-    commandService: CommandService;
+    itemClicked = new EventEmitter();
 
-    constructor(itemService: ItemService, commandService: CommandService) {
+    constructor(itemService: ItemService) {
         this.itemService = itemService;
         this.itemService.searchItems();
-        this.commandService = commandService;
         this.searchItems();
     }
     searchItems() {
@@ -39,7 +38,6 @@ export class ItemList {
         this.items = this.itemService.findItems(filterValue);
     }
     onItemClick(item: Item) {
-        console.log(item);
-        this.commandService.addItem(item)
+        this.itemClicked.next(item);
     }
 }
