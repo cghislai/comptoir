@@ -1,6 +1,7 @@
 <div class="itemList">
     <header class="filter">
         <input #filter (keyup)="onFilterValueChanged($event)"
+               [value]="itemSearch.multiSearch"
                placeholder="Filtrer les produits" autoFocus/>
         <button (click)="applyFilter(filter.value)">Rechercher</button>
     </header>

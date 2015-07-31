@@ -3,7 +3,7 @@
  */
 /// <reference path="../../typings/_custom.d.ts" />
 import {Component, View, NgFor, EventEmitter} from 'angular2/angular2';
-import {Item, ItemService} from 'services/itemService';
+import {Item, ItemService, ItemSearch} from 'services/itemService';
 import {AutoFocusDirective} from 'directives/autoFocus';
 
 @Component({
@@ -22,10 +22,13 @@ export class ItemList {
     itemService: ItemService;
     items: Item[];
     itemClicked = new EventEmitter();
+    itemSearch: ItemSearch;
 
     constructor(itemService: ItemService) {
         this.itemService = itemService;
         this.itemService.searchItems();
+        this.itemSearch = new ItemSearch();
+        this.itemSearch.multiSearch = null;
         this.searchItems();
     }
     searchItems() {
@@ -35,7 +38,8 @@ export class ItemList {
         this.applyFilter($event.target.value);
     }
     applyFilter(filterValue: string) {
-        this.items = this.itemService.findItems(filterValue);
+        this.itemSearch.multiSearch = filterValue;
+        this.items = this.itemService.findItems(this.itemSearch);
     }
     onItemClick(item: Item) {
         this.itemClicked.next(item);

@@ -30,6 +30,10 @@ export class Item {
     }
 }
 
+export class ItemSearch {
+    multiSearch: string;
+}
+
 export class ItemService {
     items: Item[];
 
@@ -63,14 +67,15 @@ export class ItemService {
         }
         return null;
     }
-    findItems(filterValue: string) {
+    findItems(itemSearch: ItemSearch) {
         var foundItems = [];
+        var multiStringValue = itemSearch.multiSearch;
         this.items.forEach(function(item: Item) {
-            if (item.reference.indexOf(filterValue)== 0) {
+            if (item.reference.indexOf(multiStringValue)== 0) {
                 foundItems.push(item);
                 return;
             }
-            if (item.name.indexOf(filterValue) >= 0) {
+            if (item.name.indexOf(multiStringValue) >= 0) {
                 foundItems.push(item);
                 return;
             }
