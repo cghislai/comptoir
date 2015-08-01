@@ -19,7 +19,7 @@ import {EditItemsView} from 'components/edit/editItemsView/editItemsView';
 
 
 @RouteConfig([
-    {path: '/', redirectTo: '/edit/items'},
+    {path: '', redirectTo: '/edit/items'},
     {path: '/items', component: EditItemsView, as: 'items'}
 ])
 

@@ -28,10 +28,3 @@ div.view {
     vertical-align: top;
     width: 100%;
 }
-
-div.view h1 {
-    width: 100%;
-    text-align: center;
-    margin-top: .5em;
-    margin-bottom: .5em;
-}

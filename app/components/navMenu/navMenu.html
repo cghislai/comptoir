@@ -1,9 +1,6 @@
-<div class="navMenu">
-    <a class="button" (click)="switchMenuVisibility()"
-       [class.active]="menuVisible">▼</a>
-    <div class="menu" [hidden]="!menuVisible"
-            (^click)="switchMenuVisibility()">
-        <a [router-link]="['/sell']">Vente</a>
-        <a [router-link]="['/edit/items']">Édition</a>
-    </div>
+<div class="menu" *ng-if="menuVisible">
+    <a [router-link]="['/sell']" *ng-if="!isActive('/sell')"
+       (click)="close()">Vente</a>
+    <a [router-link]="['/edit/items']" *ng-if="!isActive('/edit')"
+       (click)="close()">Édition</a>
 </div>

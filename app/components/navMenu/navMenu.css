@@ -1,28 +1,18 @@
-.navMenu {
-    display: inline-block;
-    font-size: 1.5em;
-}
-.button:hover{
-    color: yellow;
-    cursor: pointer;
-}
-.button.active {
-    color: white;
-    background-color: lightsteelblue;
-}
 
 .menu {
     position: absolute;
     background-color: lightsteelblue;
     color: white;
     font-weight: bold;
-    border: 1px solid white;
+    border: .1em solid white;
     z-index: 100;
+    padding: .5em;
+    min-width: 8em;
 }
 
 .menu a {
     display: block;
-    padding: .2em;
+    padding: .3em;
     color: white;
     text-decoration: none;
 }

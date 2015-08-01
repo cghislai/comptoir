@@ -10,27 +10,28 @@ $onWhiteLinkColor: steelblue;
   width: 100%;
 
   > * {
-    display: table-cell;
+    display: inline-block;
     vertical-align: middle;
     padding: .5em;
   }
 
-  > h1 {
+  h1 {
+    display: inline-block;
     margin: 0;
     padding-right: .5em;
   }
-  > .actions {
+  .actions {
     float: right;
     text-align: right;
   }
-  > .actions  .action {
+  .actions  .action {
     font-weight: bolder;
     cursor: pointer;
     display: inline-block;
     padding: .5em;
     border: 1px solid transparent;
   }
-  > .actions .action:hover {
+  .actions .action:hover {
     border: 1px solid yellow;
     color: yellow;
   }
@@ -45,6 +46,7 @@ $onWhiteLinkColor: steelblue;
 
 .boxedHoverableLink:hover {
   background-color: $onWhiteHoverColor;
+  cursor: pointer;
 }
 
 .lighBlueLink {
@@ -90,7 +92,7 @@ table.dataTable {
 
   td.rowActions {
     position: absolute;
-    left: 0%;
+    left: 0;
     height: 1.5em;
     z-index: 1;
     padding: 0;

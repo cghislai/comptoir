@@ -1,27 +1,32 @@
-<div class="editItemsView">
+<div class="editPage">
     <h1>Édition des produits</h1>
 
-    <div class="actions">
-        <a class="newItem">Nouveau</a>
+    <div class="topActions">
+        <div class="action" (^click)="doEditNewItem()">
+            Nouveau
+        </div>
     </div>
     <table class="items">
         <thead>
         <tr>
             <th>Ref</th>
             <th>Nom</th>
-            <th>Prix</th>
-            <th>Actions</th>
+            <th>Modèle</th>
+            <th class="number">Prix</th>
         </tr>
         </thead>
         <tbody>
         <tr *ng-for="#item of itemService.items" class="item">
             <td class="ref">{{ item.reference }}</td>
             <td class="name">{{ item.name }}</td>
-            <td class="price">{{ item.currentPrice | currency:'EUR':true:'.2-2'}}</td>
-            <td class="actions">
+            <td class="model">{{ item.model}}</td>
+            <td class="number price">{{ item.currentPrice | currency:'EUR':true:'.2-2'}}</td>
+            <td class="rowActions">
+                <span class="actions">
                 <a class="remove">Supprimer</a>
                 <a class="edit"
                    (click)="doEditItem(item)">Éditer</a>
+                    </span>
             </td>
         </tr>
         </tbody>
@@ -34,28 +39,57 @@
         <form [ng-form-model]="editForm" #f="form" (ng-submit)="doSaveEdit()">
             <table>
                 <tr>
+                    <td><label>Langue:</label></td>
                     <td>
-                        Langue:
-                    </td><td>
+                        <div class="fixme"></div>
                         <span *ng-for="#language of languages">
                             <input type="radio" name="langue"
                                    ng-control="lang"
                                    value="language.lang"
+                                   (click)="onLanguageSelected(language)"
                                    [attr.id]="language.lang">
                             <label [attr.for]="language.lang">{{language.text}}</label>
                         </span>
                     </td>
-                    </tr><tr>
+                </tr>
+                <tr>
+                    <td><label for="ref">Référence:</label></td>
                     <td>
-                        <label for="name">Nom:</label>
-                    </td><td>
+                        <input type="text" id="ref"
+                               ng-control="ref">
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="name">Nom:</label></td>
+                    <td>
                         <input type="text" id="name"
                                ng-control="name">
                     </td>
                 </tr>
+                <tr>
+                    <td><label for="desc">Description:</label></td>
+                    <td>
+                        <textarea type="text" id="desc" rows="3"
+                               ng-control="desc"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="model">Modèle:</label></td>
+                    <td>
+                        <input type="text" id="model"
+                               ng-control="model">
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="price">Prix:</label></td>
+                    <td>
+                        <input type="text" id="price"
+                               ng-control="price">
+                    </td>
+                </tr>
             </table>
             <div class="actions">
-                <button type="submit" [disabled]="!f.form.valid">Envoyer</button>
+                <button type="submit" [disabled]="!f.form.valid">Enregistrer</button>
                 <a (click)="doCancelEdit()">Annuler</a>
             </div>
         </form>

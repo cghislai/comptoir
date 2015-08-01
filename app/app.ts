@@ -1,5 +1,6 @@
 /// <reference path="typings/_custom.d.ts" />
-import {Component, View,  bootstrap, ViewEncapsulation} from 'angular2/angular2';
+import {Component, View,  bootstrap, ViewEncapsulation,
+    ViewQuery, QueryList} from 'angular2/angular2';
 import {RouteConfig, RouterOutlet, RouterLink, routerInjectables} from 'angular2/router';
 // TODO: once the d.ts is fixed, use shadow dom
 // import ViewEncapsulation
@@ -28,12 +29,19 @@ import {EditView} from 'components/edit/editView';
 })
 class App {
     appService:ApplicationService;
+    navMenuQuery: QueryList<NavMenu>;
 
-    constructor(appService:ApplicationService) {
+    constructor(appService:ApplicationService,
+        @ViewQuery(NavMenu, {descendants: true}) navMenuQuery: QueryList<NavMenu>) {
         this.appService = appService;
         appService.appName = "Comptoir";
         appService.appVersion = "0.1";
         appService.pageName = "Comptoir";
+        this.navMenuQuery = navMenuQuery;
+    }
+
+    getNavMenu(): NavMenu {
+        return this.navMenuQuery.first;
     }
 }
 

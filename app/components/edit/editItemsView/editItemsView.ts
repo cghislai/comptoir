@@ -2,7 +2,8 @@
  * Created by cghislai on 31/07/15.
  */
 import {Component, View, NgFor, NgIf,
-    FormBuilder, Form, formDirectives, Validators, ControlGroup,NgFormModel} from 'angular2/angular2';
+    FormBuilder, Form, formDirectives, Validators, ControlGroup,NgFormModel,
+    ViewEncapsulation} from 'angular2/angular2';
 import {RouteConfig, RouterOutlet, RouterLink, routerInjectables} from 'angular2/router';
 
 
@@ -79,7 +80,8 @@ class ShowError {
 @View({
     templateUrl: './components/edit/editItemsView/editItemsView.html',
     styleUrls: ['./components/edit/editItemsView/editItemsView.css'],
-    directives: [NgFor,  NgIf, formDirectives]
+    directives: [NgFor, NgIf, formDirectives],
+    encapsulation: ViewEncapsulation.EMULATED
 })
 
 export class EditItemsView {
@@ -89,26 +91,47 @@ export class EditItemsView {
         {lang: Language.ENGLISH, text: "Anglais"},
         {lang: Language.FRENCH, text: "Français"}];
     editForm:ControlGroup;
+    formBuilder: FormBuilder;
+    lastUsedLanguage: Language;
 
     constructor(itemService:ItemService, formBuilder:FormBuilder) {
         this.itemService = itemService;
         itemService.searchItems();
         this.editingItem = null;
-        this.editForm = formBuilder.group({
-            lang: [""],
-            name: ['']
+        this.formBuilder = formBuilder;
+
+    }
+
+    doEditNewItem() {
+        var item = new Item(undefined);
+        this.doEditItem(item);
+    }
+    doEditItem(item:Item) {
+        this.editingItem = item;
+        this.editForm = this.formBuilder.group({
+            lang: [this.lastUsedLanguage],
+            ref: [item.reference],
+            name: [item.name],
+            desc: [item.description],
+            model: [item.model],
+            price: [item.currentPrice]
         });
     }
 
-    doEditItem(item:Item) {
-        this.editingItem = item;
+    onLanguageSelected(language) {
+        this.editForm.value.lang = language.lang
     }
-
     doCancelEdit() {
+        var lang = this.editForm.value.lang;
+        this.lastUsedLanguage = lang;
         this.editingItem = null;
     }
 
     doSaveEdit() {
-        console.log(this.editForm.value);
+        var lang = this.editForm.value.lang;
+        this.lastUsedLanguage = lang;
+
+        // TODO
+        this.editingItem = null;
     }
 }

@@ -4,22 +4,23 @@
   display: table;
   width: 100%; }
   .coloredHeader > * {
-    display: table-cell;
+    display: inline-block;
     vertical-align: middle;
     padding: .5em; }
-  .coloredHeader > h1 {
+  .coloredHeader h1 {
+    display: inline-block;
     margin: 0;
     padding-right: .5em; }
-  .coloredHeader > .actions {
+  .coloredHeader .actions {
     float: right;
     text-align: right; }
-  .coloredHeader > .actions .action {
+  .coloredHeader .actions .action {
     font-weight: bolder;
     cursor: pointer;
     display: inline-block;
     padding: .5em;
     border: 1px solid transparent; }
-  .coloredHeader > .actions .action:hover {
+  .coloredHeader .actions .action:hover {
     border: 1px solid yellow;
     color: yellow; }
 
@@ -30,7 +31,8 @@
   margin: .3em; }
 
 .boxedHoverableLink:hover {
-  background-color: lightblue; }
+  background-color: lightblue;
+  cursor: pointer; }
 
 .lighBlueLink, table.dataTable td.rowActions a {
   color: steelblue; }

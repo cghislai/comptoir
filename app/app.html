@@ -1,7 +1,11 @@
 <div class="app">
     <header class="coloredHeader">
-        <navMenu></navMenu>
-        <h1>{{ appService.pageName }}</h1>
+        <div class="headerNav"
+                (^click)="getNavMenu().switchMenuVisibility()">
+            <h1>{{ appService.pageName }} ▼</h1>
+            <navMenu></navMenu>
+        </div>
+
     </header>
     <section>
         <router-outlet></router-outlet>

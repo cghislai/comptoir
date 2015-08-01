@@ -1,5 +1,10 @@
 @import "styles/_main";
 
+.headerNav:hover {
+    color: $onBlueHoverColor;
+    cursor: pointer;
+}
+
 section {
     min-height: 90vh;
     overflow-y: auto;
