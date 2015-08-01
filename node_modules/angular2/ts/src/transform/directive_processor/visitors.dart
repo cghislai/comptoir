@@ -3,9 +3,13 @@ library angular2.transform.directive_processor.visitors;
 import 'dart:async';
 import 'package:analyzer/analyzer.dart';
 import 'package:analyzer/src/generated/java_core.dart';
+import 'package:angular2/annotations.dart' show LifecycleEvent;
 import 'package:angular2/src/render/xhr.dart' show XHR;
+import 'package:angular2/src/transform/common/annotation_matcher.dart';
 import 'package:angular2/src/transform/common/async_string_writer.dart';
+import 'package:angular2/src/transform/common/interface_matcher.dart';
 import 'package:angular2/src/transform/common/logging.dart';
+import 'package:barback/barback.dart';
 
 /// `ToSourceVisitor` designed to accept {@link ConstructorDeclaration} nodes.
 class _CtorTransformVisitor extends ToSourceVisitor {
@@ -203,25 +207,86 @@ class FactoryTransformVisitor extends _CtorTransformVisitor {
   }
 }
 
-// TODO(kegluenq): Use pull #1772 to detect when available.
-bool _isViewAnnotation(Annotation node) => '${node.name}' == 'View';
-
 /// ToSourceVisitor designed to print a `ClassDeclaration` node as a
 /// 'annotations' value for Angular2's `registerType` calls.
 class AnnotationsTransformVisitor extends ToSourceVisitor {
   final AsyncStringWriter writer;
   final XHR _xhr;
+  final AnnotationMatcher _annotationMatcher;
+  final InterfaceMatcher _interfaceMatcher;
+  final AssetId _assetId;
   final bool _inlineViews;
   final ConstantEvaluator _evaluator = new ConstantEvaluator();
-  bool _processingView = false;
+  final Set<String> _ifaceLifecycleEntries = new Set<String>();
+  bool _isLifecycleWritten = false;
+  bool _isProcessingView = false;
+  bool _isProcessingDirective = false;
+  String _ifaceLifecyclePrefix = '';
 
-  AnnotationsTransformVisitor(
-      AsyncStringWriter writer, this._xhr, this._inlineViews)
+  AnnotationsTransformVisitor(AsyncStringWriter writer, this._xhr,
+      this._annotationMatcher, this._interfaceMatcher, this._assetId,
+      {bool inlineViews})
       : this.writer = writer,
+        _inlineViews = inlineViews,
         super(writer);
+
+  /// Determines if the `node` has interface-based lifecycle methods and
+  /// populates `_lifecycleValue` with the appropriate values if so. If none are
+  /// present, `_lifecycleValue` is not modified.
+  void _populateLifecycleValue(ClassDeclaration node) {
+    var populateImport = (Identifier name) {
+      if (_ifaceLifecyclePrefix.isNotEmpty) return;
+      var import = _interfaceMatcher.getMatchingImport(name, _assetId);
+      _ifaceLifecyclePrefix =
+          import != null && import.prefix != null ? '${import.prefix}.' : '';
+    };
+
+    var namesToTest = [];
+
+    if (node.implementsClause != null &&
+        node.implementsClause.interfaces != null &&
+        node.implementsClause.interfaces.isNotEmpty) {
+      namesToTest.addAll(node.implementsClause.interfaces.map((i) => i.name));
+    }
+
+    if (node.extendsClause != null) {
+      namesToTest.add(node.extendsClause.superclass.name);
+    }
+
+    namesToTest.forEach((name) {
+      if (_interfaceMatcher.isOnChange(name, _assetId)) {
+        _ifaceLifecycleEntries.add('${LifecycleEvent.onChange}');
+        populateImport(name);
+      }
+      if (_interfaceMatcher.isOnDestroy(name, _assetId)) {
+        _ifaceLifecycleEntries.add('${LifecycleEvent.onDestroy}');
+        populateImport(name);
+      }
+      if (_interfaceMatcher.isOnCheck(name, _assetId)) {
+        _ifaceLifecycleEntries.add('${LifecycleEvent.onCheck}');
+        populateImport(name);
+      }
+      if (_interfaceMatcher.isOnInit(name, _assetId)) {
+        _ifaceLifecycleEntries.add('${LifecycleEvent.onInit}');
+        populateImport(name);
+      }
+      if (_interfaceMatcher.isOnAllChangesDone(name, _assetId)) {
+        _ifaceLifecycleEntries.add('${LifecycleEvent.onAllChangesDone}');
+        populateImport(name);
+      }
+    });
+  }
+
+  void _resetState() {
+    _isLifecycleWritten = _isProcessingView = _isProcessingDirective = false;
+    _ifaceLifecycleEntries.clear();
+    _ifaceLifecyclePrefix = '';
+  }
 
   @override
   Object visitClassDeclaration(ClassDeclaration node) {
+    _populateLifecycleValue(node);
+
     writer.print('const [');
     var size = node.metadata.length;
     for (var i = 0; i < size; ++i) {
@@ -231,6 +296,8 @@ class AnnotationsTransformVisitor extends ToSourceVisitor {
       node.metadata[i].accept(this);
     }
     writer.print(']');
+
+    _resetState();
     return null;
   }
 
@@ -238,64 +305,130 @@ class AnnotationsTransformVisitor extends ToSourceVisitor {
   Object visitAnnotation(Annotation node) {
     writer.print('const ');
     if (node.name != null) {
-      _processingView = _isViewAnnotation(node);
+      _isProcessingDirective = _annotationMatcher.isDirective(node, _assetId);
+      _isProcessingView = _annotationMatcher.isView(node, _assetId);
       node.name.accept(this);
+    } else {
+      _isProcessingDirective = false;
+      _isProcessingView = false;
     }
     if (node.constructorName != null) {
       writer.print('.');
       node.constructorName.accept(this);
     }
-    if (node.arguments != null) {
-      node.arguments.accept(this);
+    if (node.arguments != null && node.arguments.arguments != null) {
+      var args = node.arguments.arguments;
+      writer.print('(');
+      for (var i = 0, iLen = args.length; i < iLen; ++i) {
+        if (i != 0) {
+          writer.print(', ');
+        }
+        args[i].accept(this);
+      }
+      if (!_isLifecycleWritten && _isProcessingDirective) {
+        var lifecycleValue = _getLifecycleValue();
+        if (lifecycleValue.isNotEmpty) {
+          writer.print(', lifecycle: $lifecycleValue');
+          _isLifecycleWritten = true;
+        }
+      }
+      writer.print(')');
     }
     return null;
+  }
+
+  String _getLifecycleValue() {
+    if (_ifaceLifecycleEntries.isNotEmpty) {
+      var entries = _ifaceLifecycleEntries.toList();
+      entries.sort();
+      return 'const [${_ifaceLifecyclePrefix}'
+          '${entries.join(", ${_ifaceLifecyclePrefix}")}]';
+    }
+    return '';
   }
 
   /// These correspond to the annotation parameters.
   @override
   Object visitNamedExpression(NamedExpression node) {
+    if (!_isProcessingView && !_isProcessingDirective) {
+      return super.visitNamedExpression(node);
+    }
     // TODO(kegluneq): Remove this limitation.
-    if (!_processingView ||
-        node.name is! Label ||
-        node.name.label is! SimpleIdentifier) {
+    if (node.name is! Label || node.name.label is! SimpleIdentifier) {
       return super.visitNamedExpression(node);
     }
     var keyString = '${node.name.label}';
-    if (_inlineViews) {
-      if (keyString == 'templateUrl') {
-        // Inline the templateUrl
-        var url = node.expression.accept(_evaluator);
-        if (url is String) {
-          writer.print("template: r'''");
-          writer.asyncPrint(_readOrEmptyString(url));
-          writer.print("'''");
-
-          // We keep the templateUrl in case the body of the template includes
-          // relative urls that might be inlined later on (e.g. @import
-          // directives or url() css values in style tags).
-          writer.print(", templateUrl: r'$url'");
-          return null;
-        } else {
-          logger.warning('template url is not a String $url');
-        }
-      } else if (keyString == 'styleUrls') {
-        // Inline the styleUrls
-        var urls = node.expression.accept(_evaluator);
-        writer.print('styles: const [');
-        for (var url in urls) {
-          if (url is String) {
-            writer.print("r'''");
-            writer.asyncPrint(_readOrEmptyString(url));
-            writer.print("''', ");
-          } else {
-            logger.warning('style url is not a String ${url}');
-          }
-        }
-        writer.print(']');
+    if (_isProcessingView && _inlineViews) {
+      var isSuccess = this._inlineView(keyString, node.expression);
+      if (isSuccess) return null;
+    }
+    if (_isProcessingDirective && keyString == 'lifecycle') {
+      var isSuccess = _populateLifecycleFromNamedExpression(node.expression);
+      if (isSuccess) {
+        _isLifecycleWritten = true;
+        writer.print('lifecycle: ${_getLifecycleValue()}');
         return null;
+      } else {
+        logger.warning('Failed to parse `lifecycle` value. '
+            'The following `LifecycleEvent`s may not be called: '
+            '(${_ifaceLifecycleEntries.join(', ')})');
+        _isLifecycleWritten = true;
+        // Do not return -- we will use the default processing here, maintaining
+        // the original value for `lifecycle`.
       }
     }
     return super.visitNamedExpression(node);
+  }
+
+  /// Populates the lifecycle values from explicitly declared values.
+  /// Returns whether `node` was successfully processed.
+  bool _populateLifecycleFromNamedExpression(AstNode node) {
+    var nodeVal = node.toSource();
+    for (var evt in LifecycleEvent.values) {
+      var evtStr = '$evt';
+      if (nodeVal.contains(evtStr)) {
+        _ifaceLifecycleEntries.add(evtStr);
+      }
+    }
+    return true;
+  }
+
+  /// Inlines the template and/or style refered to by `keyString`.
+  /// Returns whether the `keyString` value was successfully processed.
+  bool _inlineView(String keyString, AstNode node) {
+    if (keyString == 'templateUrl') {
+      // Inline the templateUrl
+      var url = node.accept(_evaluator);
+      if (url is String) {
+        writer.print("template: r'''");
+        writer.asyncPrint(_readOrEmptyString(url));
+        writer.print("'''");
+
+        // We keep the templateUrl in case the body of the template includes
+        // relative urls that might be inlined later on (e.g. @import
+        // directives or url() css values in style tags).
+        writer.print(", templateUrl: r'$url'");
+        return true;
+      } else {
+        logger.warning('template url is not a String $url');
+      }
+    } else if (keyString == 'styleUrls') {
+      // Inline the styleUrls
+      var urls = node.accept(_evaluator);
+      writer.print('styles: const [');
+      for (var url in urls) {
+        if (url is String) {
+          writer.print("r'''");
+          writer.asyncPrint(_readOrEmptyString(url));
+          writer.print("''', ");
+        } else {
+          logger.warning('style url is not a String ${url}');
+        }
+      }
+      writer.print(']');
+      return true;
+    }
+    return false;
   }
 
   /// Attempts to read the content from {@link url}, if it returns null then

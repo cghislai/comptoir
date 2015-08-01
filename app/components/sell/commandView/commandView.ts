@@ -80,6 +80,7 @@ export class CommandView {
     doEditItemReduction(commandItem: CommandItem) {
         this.editingReductionItem = commandItem;
     }
+
     applyItemReduction(event) {
         if (event.which == 13) { // Enter
             var reduction: number = event.target.value;
@@ -90,9 +91,12 @@ export class CommandView {
             return;
         }
         if (event.which == 27) { // Escape
-            this.editingReductionItem = null;
+            this.doCancelItemReduction();
             return;
         }
+    }
+    doCancelItemReduction() {
+        this.editingReductionItem = null;
     }
     doEditItemAmount(commandItem: CommandItem) {
         this.editingAmountItem = commandItem;

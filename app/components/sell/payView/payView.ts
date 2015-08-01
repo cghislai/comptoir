@@ -48,6 +48,8 @@ export class PayView {
         this.availablePayMethods.push(PayMethod.PAYPAL);
         this.payList = [];
         this.editingPay = null;
+        this.calcRemaining();
+        console.log('INIT toPay: '+this.toPayAmount);
     }
 
     startEditPay(method: PayMethod) {
@@ -88,6 +90,7 @@ export class PayView {
         })
         this.toPayAmount = total - paidAmount;
         this.paidAmount = paidAmount;
+        console.log('toPay: '+this.toPayAmount);
     }
     setMethodAvailable(method: PayMethod, available: boolean) {
         var newMethods = [];

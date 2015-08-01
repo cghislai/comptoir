@@ -1,0 +1,117 @@
+$blueColor: lightsteelblue;
+$onBlueHoverColor: yellow;
+$onWhiteHoverColor: lightblue;
+$onWhiteLinkColor: steelblue;
+
+.coloredHeader {
+  background: $blueColor;
+  color: white;
+  display: table;
+  width: 100%;
+
+  > * {
+    display: table-cell;
+    vertical-align: middle;
+    padding: .5em;
+  }
+
+  > h1 {
+    margin: 0;
+    padding-right: .5em;
+  }
+  > .actions {
+    float: right;
+    text-align: right;
+  }
+  > .actions  .action {
+    font-weight: bolder;
+    cursor: pointer;
+    display: inline-block;
+    padding: .5em;
+    border: 1px solid transparent;
+  }
+  > .actions .action:hover {
+    border: 1px solid yellow;
+    color: yellow;
+  }
+}
+
+.boxedHoverableLink {
+  border: .09em solid $blueColor;
+  font-weight: bolder;
+  padding: .3em;
+  margin: .3em;
+}
+
+.boxedHoverableLink:hover {
+  background-color: $onWhiteHoverColor;
+}
+
+.lighBlueLink {
+  color: $onWhiteLinkColor;
+}
+.lighBlueLink:hover {
+  text-decoration: underline;
+  color: black;
+  cursor: pointer;;
+}
+
+table.dataTable {
+  width: 100%;
+  font-size: 1em;
+  border-collapse: collapse;
+  position: relative;
+
+  tr {
+    height: 1.5em;
+  }
+  tbody > tr:not(:last-child) {
+    border-bottom: 1px solid lightgray;
+  }
+
+  td, th {
+    padding: .2em;
+    vertical-align: middle;
+  }
+
+  td.number, td.total, th.number, th.total {
+    text-align: right;
+  }
+  td.ref {
+    font-size: .8em;
+    font-family: monospace;
+    text-align: left;
+    max-width: 10%;
+  }
+
+  td.rowActions {
+    position: absolute;
+    left: 0%;
+    height: 1.5em;
+    z-index: 1;
+    padding: 0;
+
+    > .actions {
+      background-color: rgba(255, 255, 255, 0.9);
+      display: none;
+      padding-left: .5em;
+      font-size: .8em;
+      vertical-align: middle;
+    }
+    a {
+      @extend .lighBlueLink;
+      padding-right: .5em;
+    }
+  }
+
+  tr:hover > td.rowActions > .actions {
+    display: inline-block;
+  }
+}
+
+
+span.valignAnchor {
+  display: inline-block;
+  vertical-align: middle;
+  height: 100%;
+}

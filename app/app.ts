@@ -1,5 +1,5 @@
 /// <reference path="typings/_custom.d.ts" />
-import {Component, View,  bootstrap} from 'angular2/angular2';
+import {Component, View,  bootstrap, ViewEncapsulation} from 'angular2/angular2';
 import {RouteConfig, RouterOutlet, RouterLink, routerInjectables} from 'angular2/router';
 // TODO: once the d.ts is fixed, use shadow dom
 // import ViewEncapsulation
@@ -8,19 +8,23 @@ import {RouteConfig, RouterOutlet, RouterLink, routerInjectables} from 'angular2
 import {ApplicationService} from './services/applicationService';
 import {NavMenu} from './components/navMenu/navMenu';
 import {SellView} from 'components/sell/sellView';
+import {EditView} from 'components/edit/editView';
 
 @Component({
     selector: 'app',
     viewInjector: [ApplicationService]
 })
 @RouteConfig([
-    { path: '/', component: SellView, as: 'sell' },
-    { path: '/sell', component: SellView, as: 'sell' }
+    { path: '/', redirectTo: '/sell'},
+    { path: '/sell', component: SellView, as: 'sell' },
+    { path: '/edit/...', component: EditView, as: 'edit' }
+
 ])
 @View({
     templateUrl: './app.html?v=<%= VERSION %>',
     styleUrls: ['./app.css'],
-    directives: [RouterOutlet, RouterLink, NavMenu]
+    directives: [RouterOutlet, RouterLink, NavMenu],
+    encapsulation: ViewEncapsulation.EMULATED
 })
 class App {
     appService:ApplicationService;

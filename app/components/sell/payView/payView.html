@@ -1,28 +1,33 @@
-<div class="toPayHeader">
-    <div *ng-if="toPayAmount > 0">
-        <h1>À payer</h1>
+<div>
+<div class="toPayHeader coloredHeader"
+     *ng-if="toPayAmount > 0">
+    <h1>À payer</h1>
         <span class="total" [class.negative]="toPayAmount < 0" [class.exact]="toPayAmount == 0">
             {{ toPayAmount | currency:'EUR':true:'.2-2' }}
         </span>
-    </div>
-    <div *ng-if="toPayAmount <= 0">
-        <h1>À rendre</h1>
-        <span class="total negative">
-            {{ -toPayAmount | currency:'EUR':true:'.2-2'}}
-        </span>
-        <div class="actions">
-        <span class="validateLink" (click)="onValidateClicked()">
+
+</div>
+<div class="toPayHeader coloredHeader"
+     *ng-if="toPayAmount <= 0">
+    <h1>À rendre</h1>
+    <span class="total negative">
+        {{ -toPayAmount | currency:'EUR':true:'.2-2'}}
+    </span>
+    {{ toPayAmount}}
+    <div class="actions">
+        <span class="action validateLink" (click)="onValidateClicked()">
             Valider
         </span>
-
-        </div>
     </div>
 </div>
+</div>
+
 <div class="usedMethod" *ng-if="payList.length > 0">
     <div *ng-for="#pay of payList"
-            class="pay">
+         class="pay">
         <span class="method">{{ getPayMethodName(pay.method) }}</span>
         <span class="amount">{{ pay.amount | currency:'EUR':true:'.2-2' }}</span>
+
         <div class="actions">
             <a class="remove" (click)="removePay(pay)">
                 Supprimer
@@ -34,6 +39,7 @@
         <span class="total amount">{{ paidAmount  | currency:'EUR':true:'.2-2' }}</span>
     </div>
 </div>
+
 <div class="editMethod" *ng-if="editingPay != null">
     <span class="method">{{ getPayMethodName(editingPay.method) }}</span>
     <span class="amount">
@@ -44,8 +50,8 @@
 </div>
 <div class="addMethod">
     <div *ng-for="#method of availablePayMethods"
-            class="method"
-            (^click)="startEditPay(method)">
-        <h2>{{ getPayMethodName(method) }}</h2>
+         class="boxedHoverableLink"
+         (^click)="startEditPay(method)">
+        {{ getPayMethodName(method) }}
     </div>
 </div>

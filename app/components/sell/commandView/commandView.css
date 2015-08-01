@@ -1,170 +1,152 @@
-.commandHeader {
-    background-color: lightsteelblue;
-    color: white;
-    display: table;
-    width: 100%;
-}
-.commandHeader > * {
+.coloredHeader {
+  background: lightsteelblue;
+  color: white;
+  display: table;
+  width: 100%; }
+  .coloredHeader > * {
     display: table-cell;
     vertical-align: middle;
-    padding: .5em;
-}
-.commandHeader h1 {
+    padding: .5em; }
+  .coloredHeader > h1 {
     margin: 0;
-    padding-right: .5em;
-}
-
-.commandHeader .actions {
-    text-align: right;
+    padding-right: .5em; }
+  .coloredHeader > .actions {
     float: right;
-}
-.commandHeader .actions > div {
+    text-align: right; }
+  .coloredHeader > .actions .action {
     font-weight: bolder;
     cursor: pointer;
     display: inline-block;
     padding: .5em;
-    border: 1px solid transparent;
-}
-.commandHeader .actions > div:hover {
+    border: 1px solid transparent; }
+  .coloredHeader > .actions .action:hover {
     border: 1px solid yellow;
-    color: yellow;
-}
-.commandHeader .actions > .reduction > span {
-    display: block;
-    height: 100%;
-}
-.commandHeader .actions > .reduction input {
-    font-size: 1em;
-}
-.commandHeader .actions > .reduction.has-reduction {
-    color: red;
-}
+    color: yellow; }
 
-table {
-    position: relative;
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 1em;
-}
+.boxedHoverableLink {
+  border: 0.09em solid lightsteelblue;
+  font-weight: bolder;
+  padding: .3em;
+  margin: .3em; }
 
-tbody>tr:not(:last-child) {
-    border-bottom: 1px solid lightgray;
-}
+.boxedHoverableLink:hover {
+  background-color: lightblue; }
 
-td {
-    padding: .5em;
-    vertical-align: middle;
-}
-th {
-    text-align: left;
-    padding: .5em;
-}
+.lighBlueLink, table.dataTable td.rowActions a {
+  color: steelblue; }
 
-th.total {
-    text-align: right;
-}
+.lighBlueLink:hover, table.dataTable td.rowActions a:hover {
+  text-decoration: underline;
+  color: black;
+  cursor: pointer; }
 
-td.ref {
+table.dataTable {
+  width: 100%;
+  font-size: 1em;
+  border-collapse: collapse;
+  position: relative; }
+  table.dataTable tr {
+    height: 1.5em; }
+  table.dataTable tbody > tr:not(:last-child) {
+    border-bottom: 1px solid lightgray; }
+  table.dataTable td, table.dataTable th {
+    padding: .2em;
+    vertical-align: middle; }
+  table.dataTable td.number, table.dataTable td.total, table.dataTable th.number, table.dataTable th.total {
+    text-align: right; }
+  table.dataTable td.ref {
     font-size: .8em;
     font-family: monospace;
     text-align: left;
-    max-width: 10%;
-}
-
-td.name {
-    text-align: left;
-    position: relative;
-}
-
-
-td.amount, th.amount {
-    text-align: right;
-    padding-right: 1em;
-}
-td.amount .editAmount * {
-    font-size: .8em;
-}
-
-td.price, th.price {
-    text-align: right;
-    min-width: 20%;
-}
-td.price .reduction {
-    font-size: .8em;
-    color: red;
-    padding-right: .2em;
-}
-td.price .setReduction {
-    font-size: .8em;
-}
-td.price .setReduction * {
-    font-size: .8em;
-}
-
-td.itemActions {
+    max-width: 10%; }
+  table.dataTable td.rowActions {
     position: absolute;
     left: 0%;
-    height: 2em;
-    z-index: 5;
-    padding: 0;
-}
-td.itemActions > span {
-    background-color: rgba(255,255,255,0.9);
-}
+    height: 1.5em;
+    z-index: 1;
+    padding: 0; }
+    table.dataTable td.rowActions > .actions {
+      background-color: rgba(255, 255, 255, 0.9);
+      display: none;
+      padding-left: .5em;
+      font-size: .8em;
+      vertical-align: middle; }
+    table.dataTable td.rowActions a {
+      padding-right: .5em; }
+  table.dataTable tr:hover > td.rowActions > .actions {
+    display: inline-block; }
 
-.itemActions  > span.actions {
-    display: none;
-    padding-left: .5em;
-    font-size: .8em;
-    vertical-align: middle;
-}
-tr:hover > .itemActions  > span.actions {
-    display: inline-block;
-}
+span.valignAnchor {
+  display: inline-block;
+  vertical-align: middle;
+  height: 100%; }
 
-.itemActions  a {
-    color: steelblue;
-    padding-right: .5em;
-}
+.commandHeader .actions > .reduction > span {
+  display: block;
+  height: 100%; }
 
-.itemActions  a:hover {
-    text-decoration: underline;
-    color: black;
-    cursor: pointer;
-}
+.commandHeader .actions > .reduction input {
+  font-size: 1em; }
+
+.commandHeader .actions > .reduction.has-reduction {
+  color: red; }
+
+table {
+  font-size: 1.1em !important; }
+
+table td, table th {
+  padding: .5em !important; }
+
+td.amount, th.amount {
+  padding-right: 1em; }
+
+td.amount .editAmount * {
+  font-size: .8em; }
+
+td.price .reduction {
+  font-size: .8em;
+  color: red;
+  padding-right: .2em; }
+
+td.price .setReduction {
+  font-size: .8em; }
+
+td.price .setReduction * {
+  font-size: .8em; }
 
 tfoot {
-    border-top: 1px solid black;
-}
+  border-top: 1px solid black; }
+
 tfoot th {
-    text-align: right;
-}
+  text-align: right;
+  font-size: 1em; }
+
 tfoot .total {
-    font-size: 1.3em;
-}
+  font-size: 1.1em; }
 
 .newItem {
-    font-size: 1em;
-    padding: .5em;
-    border: 1px solid lightsteelblue;
-}
+  font-size: 1em;
+  padding: .5em;
+  border: 1px solid lightsteelblue; }
+
 .newItem h2 {
-    font-size: 1em;
-    font-weight: bolder;
-    margin: 0;
-}
+  font-size: 1em;
+  font-weight: bolder;
+  margin: 0; }
+
 .newItem input, .newItem button {
-    font-size: .9em;
-}
+  font-size: .9em; }
+
 .newItem .ref {
-    width: 10%;
-}
+  width: 10%; }
+
 .newItem .name {
-    width: 50%;
-}
+  width: 50%; }
+
 .newItem .price {
-    width: 15%;
-}
+  width: 15%; }
+
 .newItem .amount {
-    width: 10%;
-}
+  width: 10%; }
+
+/*# sourceMappingURL=commandView.css.map */

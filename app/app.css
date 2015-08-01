@@ -1,27 +1,96 @@
-.app {
-
-}
-
-header {
+.coloredHeader {
   background: lightsteelblue;
   color: white;
-}
+  display: table;
+  width: 100%; }
+  .coloredHeader > * {
+    display: table-cell;
+    vertical-align: middle;
+    padding: .5em; }
+  .coloredHeader > h1 {
+    margin: 0;
+    padding-right: .5em; }
+  .coloredHeader > .actions {
+    float: right;
+    text-align: right; }
+  .coloredHeader > .actions .action {
+    font-weight: bolder;
+    cursor: pointer;
+    display: inline-block;
+    padding: .5em;
+    border: 1px solid transparent; }
+  .coloredHeader > .actions .action:hover {
+    border: 1px solid yellow;
+    color: yellow; }
 
-header > *{
+.boxedHoverableLink {
+  border: 0.09em solid lightsteelblue;
+  font-weight: bolder;
+  padding: .3em;
+  margin: .3em; }
+
+.boxedHoverableLink:hover {
+  background-color: lightblue; }
+
+.lighBlueLink, table.dataTable td.rowActions a {
+  color: steelblue; }
+
+.lighBlueLink:hover, table.dataTable td.rowActions a:hover {
+  text-decoration: underline;
+  color: black;
+  cursor: pointer; }
+
+table.dataTable {
+  width: 100%;
+  font-size: 1em;
+  border-collapse: collapse;
+  position: relative; }
+  table.dataTable tr {
+    height: 1.5em; }
+  table.dataTable tbody > tr:not(:last-child) {
+    border-bottom: 1px solid lightgray; }
+  table.dataTable td, table.dataTable th {
+    padding: .2em;
+    vertical-align: middle; }
+  table.dataTable td.number, table.dataTable td.total, table.dataTable th.number, table.dataTable th.total {
+    text-align: right; }
+  table.dataTable td.ref {
+    font-size: .8em;
+    font-family: monospace;
+    text-align: left;
+    max-width: 10%; }
+  table.dataTable td.rowActions {
+    position: absolute;
+    left: 0%;
+    height: 1.5em;
+    z-index: 1;
+    padding: 0; }
+    table.dataTable td.rowActions > .actions {
+      background-color: rgba(255, 255, 255, 0.9);
+      display: none;
+      padding-left: .5em;
+      font-size: .8em;
+      vertical-align: middle; }
+    table.dataTable td.rowActions a {
+      padding-right: .5em; }
+  table.dataTable tr:hover > td.rowActions > .actions {
+    display: inline-block; }
+
+span.valignAnchor {
   display: inline-block;
   vertical-align: middle;
-}
-header h1 {
-  margin: .1em;
-}
+  height: 100%; }
 
 section {
   min-height: 90vh;
-  overflow-y: auto;
-}
+  overflow-y: auto; }
+
+section > * {
+  height: 100%; }
 
 footer {
-  color:white;
+  color: white;
   background-color: gray;
-  font-size: 1.5vh;
-}
+  font-size: 1.5vh; }
+
+/*# sourceMappingURL=app.css.map */

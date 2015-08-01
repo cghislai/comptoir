@@ -2,7 +2,7 @@
  * Created by cghislai on 29/07/15.
  */
 /// <reference path="../../typings/_custom.d.ts" />
-import {Component, View, NgIf, ViewQuery, Query, QueryList} from 'angular2/angular2';
+import {Component, View, NgIf,  ViewQuery, QueryList, ViewContainerRef} from 'angular2/angular2';
 
 import {ApplicationService} from 'services/applicationService';
 import {CommandService} from 'services/commandService';
@@ -28,8 +28,8 @@ export class SellView {
     commandViewQuery:QueryList<CommandView>;
     payViewQuery:QueryList<PayView>;
 
-    constructor(@Query(CommandView, {descendants: true}) commandViewQuery:QueryList<CommandView>,
-                @Query(PayView, {descendants: true}) payViewQuery:QueryList<PayView>,
+    constructor( @ViewQuery(CommandView, {descendants: true}) commandViewQuery:QueryList<CommandView>,
+                @ViewQuery(PayView, {descendants: true}) payViewQuery:QueryList<PayView>,
                 appService:ApplicationService, commandService:CommandService) {
         appService.pageName = "Vente";
         this.commandService = commandService;
@@ -44,11 +44,11 @@ export class SellView {
     }
 
     onCommandValidated(validated:boolean) {
-        this.commandValidated = validated;
         if (validated) {
             var payView = this.payViewQuery.first;
             payView.calcRemaining();
         }
+        this.commandValidated = validated;
     }
 
     onCommandPaid(event, view) {

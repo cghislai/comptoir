@@ -1,0 +1,88 @@
+@import '../../../styles/_main'; 
+
+.commandHeader .actions > .reduction > span {
+  display: block;
+  height: 100%;
+}
+
+.commandHeader .actions > .reduction input {
+  font-size: 1em;
+}
+
+.commandHeader .actions > .reduction.has-reduction {
+  color: red;
+}
+
+table {
+  font-size: 1.1em !important;
+}
+table td, table th {
+  padding: .5em !important;
+}
+
+td.amount, th.amount {
+  padding-right: 1em;
+}
+
+td.amount .editAmount * {
+  font-size: .8em;
+}
+
+td.price .reduction {
+  font-size: .8em;
+  color: red;
+  padding-right: .2em;
+}
+
+td.price .setReduction {
+  font-size: .8em;
+}
+
+td.price .setReduction * {
+  font-size: .8em;
+}
+
+tfoot {
+  border-top: 1px solid black;
+}
+
+tfoot th {
+  text-align: right;
+  font-size: 1em;
+}
+
+tfoot .total {
+  font-size: 1.1em;
+}
+
+.newItem {
+  font-size: 1em;
+  padding: .5em;
+  border: 1px solid lightsteelblue;
+}
+
+.newItem h2 {
+  font-size: 1em;
+  font-weight: bolder;
+  margin: 0;
+}
+
+.newItem input, .newItem button {
+  font-size: .9em;
+}
+
+.newItem .ref {
+  width: 10%;
+}
+
+.newItem .name {
+  width: 50%;
+}
+
+.newItem .price {
+  width: 15%;
+}
+
+.newItem .amount {
+  width: 10%;
+}

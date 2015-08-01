@@ -1,0 +1,64 @@
+<div class="editItemsView">
+    <h1>Édition des produits</h1>
+
+    <div class="actions">
+        <a class="newItem">Nouveau</a>
+    </div>
+    <table class="items">
+        <thead>
+        <tr>
+            <th>Ref</th>
+            <th>Nom</th>
+            <th>Prix</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ng-for="#item of itemService.items" class="item">
+            <td class="ref">{{ item.reference }}</td>
+            <td class="name">{{ item.name }}</td>
+            <td class="price">{{ item.currentPrice | currency:'EUR':true:'.2-2'}}</td>
+            <td class="actions">
+                <a class="remove">Supprimer</a>
+                <a class="edit"
+                   (click)="doEditItem(item)">Éditer</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div class="editOverlay" *ng-if="editingItem != null">
+    <div class="editWindow">
+        <h2>Édition du produit</h2>
+
+        <form [ng-form-model]="editForm" #f="form" (ng-submit)="doSaveEdit()">
+            <table>
+                <tr>
+                    <td>
+                        Langue:
+                    </td><td>
+                        <span *ng-for="#language of languages">
+                            <input type="radio" name="langue"
+                                   ng-control="lang"
+                                   value="language.lang"
+                                   [attr.id]="language.lang">
+                            <label [attr.for]="language.lang">{{language.text}}</label>
+                        </span>
+                    </td>
+                    </tr><tr>
+                    <td>
+                        <label for="name">Nom:</label>
+                    </td><td>
+                        <input type="text" id="name"
+                               ng-control="name">
+                    </td>
+                </tr>
+            </table>
+            <div class="actions">
+                <button type="submit" [disabled]="!f.form.valid">Envoyer</button>
+                <a (click)="doCancelEdit()">Annuler</a>
+            </div>
+        </form>
+
+    </div>
+</div>

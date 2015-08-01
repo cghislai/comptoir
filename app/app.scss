@@ -1,0 +1,16 @@
+@import "styles/_main";
+
+section {
+    min-height: 90vh;
+    overflow-y: auto;
+}
+
+section > * {
+    height: 100%;
+}
+
+footer {
+    color: white;
+    background-color: gray;
+    font-size: 1.5vh;
+}

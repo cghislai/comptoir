@@ -1,0 +1,45 @@
+.editItemsView {
+    padding: .2em;
+}
+
+th {
+    font-weight: bold;
+}
+
+table {
+    font-size: 1em;
+}
+.item .name {
+    font-weight: normal;
+}
+
+.actions {
+    text-align: right;
+}
+
+
+.editOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(128,128,128,0.8);
+    text-align: center;
+}
+.editWindow {
+    position: relative;
+    display: inline-block;
+    top: 10vh;
+    max-height: 80vh;
+    overflow-y: auto;
+
+    border: 2px solid lightsteelblue;
+    background-color: white;
+    padding: .5em;
+}
+.editWindow h2 {
+    text-align: center;
+    margin: .2em;
+
+}
