@@ -51,7 +51,10 @@ table.dataTable {
     border-bottom: 1px solid lightgray; }
   table.dataTable td, table.dataTable th {
     padding: .2em;
-    vertical-align: middle; }
+    vertical-align: middle;
+    text-align: left; }
+  table.dataTable td.center, table.dataTable th.center {
+    text-align: center; }
   table.dataTable td.number, table.dataTable td.total, table.dataTable th.number, table.dataTable th.total {
     text-align: right; }
   table.dataTable td.ref {

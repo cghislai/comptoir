@@ -1,44 +1,57 @@
 <div>
-<div class="toPayHeader coloredHeader"
-     *ng-if="toPayAmount > 0">
-    <h1>À payer</h1>
+    <div class="toPayHeader coloredHeader"
+         *ng-if="toPayAmount > 0">
+        <h1>À payer</h1>
         <span class="total" [class.negative]="toPayAmount < 0" [class.exact]="toPayAmount == 0">
             {{ toPayAmount | currency:'EUR':true:'.2-2' }}
         </span>
 
-</div>
-<div class="toPayHeader coloredHeader"
-     *ng-if="toPayAmount <= 0">
-    <h1>À rendre</h1>
-    <span class="total negative">
-        {{ -toPayAmount | currency:'EUR':true:'.2-2'}}
-    </span>
-    {{ toPayAmount}}
-    <div class="actions">
+    </div>
+    <div class="toPayHeader coloredHeader"
+         *ng-if="toPayAmount <= 0">
+        <h1>À rendre</h1>
+    <span class="actions">
+        <span class="total negative">
+            {{ -toPayAmount | currency:'EUR':true:'.2-2'}}
+        </span>
         <span class="action validateLink" (click)="onValidateClicked()">
             Valider
         </span>
+    </span>
     </div>
-</div>
 </div>
 
-<div class="usedMethod" *ng-if="payList.length > 0">
-    <div *ng-for="#pay of payList"
-         class="pay">
-        <span class="method">{{ getPayMethodName(pay.method) }}</span>
-        <span class="amount">{{ pay.amount | currency:'EUR':true:'.2-2' }}</span>
+<table class="usedMethod dataTable">
+    <thead>
+    <tr>
+        <th>Méthode</th>
+        <th class="number">Montant</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ng-for="#pay of payList">
+        <td>{{ getPayMethodName(pay.method) }}</td>
+        <td class="number">
+            {{ pay.amount | currency:'EUR':true:'.2-2' }}
+        </td>
+        <td class="rowActions">
+                <span class="actions">
+                    <a class="action remove" (click)="removePay(pay)">Supprimer</a>
+                    <a class="ation edit" (click)="startEditPay(pay.method)">Éditer</a>
+                </span>
+        </td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+        <th class="total">Total:</th>
+        <th class="total">
+            {{ paidAmount | currency:'EUR':true:'.2-2' }}
+        </th>
+    </tr>
 
-        <div class="actions">
-            <a class="remove" (click)="removePay(pay)">
-                Supprimer
-            </a>
-        </div>
-    </div>
-    <div class="total">
-        <span class="total">Total :</span>
-        <span class="total amount">{{ paidAmount  | currency:'EUR':true:'.2-2' }}</span>
-    </div>
-</div>
+    </tfoot>
+</table>
 
 <div class="editMethod" *ng-if="editingPay != null">
     <span class="method">{{ getPayMethodName(editingPay.method) }}</span>
@@ -46,8 +59,8 @@
         Montant: <input #amount [value]="editingPay.amount"
                         (keyUp)="onPayAmountKeyUp(amount.value, $event)" autoFocus> €
     </span>
-
 </div>
+
 <div class="addMethod">
     <div *ng-for="#method of availablePayMethods"
          class="boxedHoverableLink"

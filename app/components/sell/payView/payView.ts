@@ -49,16 +49,27 @@ export class PayView {
         this.payList = [];
         this.editingPay = null;
         this.calcRemaining();
-        console.log('INIT toPay: '+this.toPayAmount);
     }
 
+    reset() {
+        this.availablePayMethods = [];
+        this.availablePayMethods.push(PayMethod.CASH);
+        this.availablePayMethods.push(PayMethod.CARD);
+        this.availablePayMethods.push(PayMethod.PAYPAL);
+        this.payList = [];
+        this.editingPay = null;
+        this.calcRemaining();
+    }
     startEditPay(method: PayMethod) {
         if (this.editingPay != null) {
             this.cancelEditPay();
         }
-        this.editingPay = new Pay();
-        this.editingPay.method = method;
-        this.editingPay.amount = null;
+        this.editingPay = this.removePayMethod(method);
+        if (this.editingPay == null) {
+            this.editingPay = new Pay();
+            this.editingPay.method = method;
+            this.editingPay.amount = null;
+        }
         this.setMethodAvailable(method, false);
     }
     cancelEditPay() {
@@ -90,7 +101,6 @@ export class PayView {
         })
         this.toPayAmount = total - paidAmount;
         this.paidAmount = paidAmount;
-        console.log('toPay: '+this.toPayAmount);
     }
     setMethodAvailable(method: PayMethod, available: boolean) {
         var newMethods = [];
@@ -132,8 +142,23 @@ export class PayView {
                 }
         }
     }
+    removePayMethod(method: PayMethod) : Pay {
+        var newPays: Pay[] = [];
+        var removedPay:Pay = null
+        this.payList.forEach(function(pay: Pay) {
+            if (pay.method == method) {
+                removedPay = pay;
+                return;
+            }
+            newPays.push(pay);
+        })
+        this.payList = newPays;
+        this.calcRemaining();
+        return removedPay;
+    }
     onValidateClicked() {
         // TODO: validate the paiment
+       this.reset();
         this.paid.next(true);
     }
 }

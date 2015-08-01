@@ -13,13 +13,13 @@
   .coloredHeader > .actions {
     float: right;
     text-align: right; }
-  .coloredHeader > .actions > .action {
+  .coloredHeader > .actions .action {
     font-weight: bolder;
     cursor: pointer;
     display: inline-block;
     padding: .5em;
     border: 1px solid transparent; }
-  .coloredHeader > .actions > .action:hover {
+  .coloredHeader > .actions .action:hover {
     border: 1px solid yellow;
     color: yellow; }
 
@@ -32,10 +32,69 @@
 .boxedHoverableLink:hover {
   background-color: lightblue; }
 
+.lighBlueLink, table.dataTable td.rowActions a {
+  color: steelblue; }
+
+.lighBlueLink:hover, table.dataTable td.rowActions a:hover {
+  text-decoration: underline;
+  color: black;
+  cursor: pointer; }
+
+table.dataTable {
+  width: 100%;
+  font-size: 1em;
+  border-collapse: collapse;
+  position: relative; }
+  table.dataTable tr {
+    height: 1.5em; }
+  table.dataTable tbody > tr:not(:last-child) {
+    border-bottom: 1px solid lightgray; }
+  table.dataTable td, table.dataTable th {
+    padding: .2em;
+    vertical-align: middle;
+    text-align: left; }
+  table.dataTable td.center, table.dataTable th.center {
+    text-align: center; }
+  table.dataTable td.number, table.dataTable td.total, table.dataTable th.number, table.dataTable th.total {
+    text-align: right; }
+  table.dataTable td.ref {
+    font-size: .8em;
+    font-family: monospace;
+    text-align: left;
+    max-width: 10%; }
+  table.dataTable td.rowActions {
+    position: absolute;
+    left: 0%;
+    height: 1.5em;
+    z-index: 1;
+    padding: 0; }
+    table.dataTable td.rowActions > .actions {
+      background-color: rgba(255, 255, 255, 0.9);
+      display: none;
+      padding-left: .5em;
+      font-size: .8em;
+      vertical-align: middle; }
+    table.dataTable td.rowActions a {
+      padding-right: .5em;
+      display: inline-block;
+      vertical-align: middle; }
+  table.dataTable tr:hover > td.rowActions > .actions {
+    display: inline-block; }
+
+span.valignAnchor {
+  display: inline-block;
+  vertical-align: middle;
+  height: 100%; }
+
 .toPayHeader .total {
   text-align: right;
   font-size: 1.3em;
   font-weight: bold; }
+
+.toPayHeader .actions > .total {
+  display: inline-block;
+  vertical-align: middle;
+  padding-right: .5em; }
 
 .toPayHeader .total.negative {
   color: red; }
@@ -43,21 +102,10 @@
 .toPayHeader .total.exact {
   color: green; }
 
-.usedMethod {
-  width: 100%; }
-
-.usedMethod > .pay {
-  width: 100%;
-  display: table; }
-
-.usedMethod > .pay > .actions {
-  display: none;
-  position: absolute;
-  right: 0;
-  background-color: rgba(255, 255, 255, 0.9); }
-
-.usedMethod > .pay:hover > .actions {
-  display: table-cell; }
+table.usedMethod {
+  font-size: 1.1em !important; }
+  table.usedMethod td, table.usedMethod th {
+    padding: .5em !important; }
 
 .method {
   font-size: 1.1em;
@@ -71,37 +119,15 @@
   padding: 1em;
   margin: 1em; }
 
-.actions a {
-  color: steelblue; }
-
-.actions a:hover {
-  text-decoration: underline;
-  color: black;
-  cursor: pointer; }
-
-.usedMethod > .total {
-  padding: .5em;
-  text-align: right;
-  font-weight: bolder; }
-
-.usedMethod > .pay > * {
-  display: table-cell;
-  vertical-align: middle;
-  padding: .5em; }
-
-.usedMethod .amount {
-  text-align: right; }
-
 .editMethod {
   border: 1px solid lightsteelblue;
-  padding: .5em;
   width: 100%;
   display: table; }
 
 .editMethod > * {
   display: table-cell;
   vertical-align: middle;
-  padding: .2em; }
+  padding: .5em; }
 
 .editMethod .amount {
   text-align: right; }

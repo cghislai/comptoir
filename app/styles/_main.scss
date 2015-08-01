@@ -72,6 +72,10 @@ table.dataTable {
   td, th {
     padding: .2em;
     vertical-align: middle;
+    text-align: left;
+  }
+  td.center, th.center {
+    text-align: center;
   }
 
   td.number, td.total, th.number, th.total {
@@ -101,6 +105,8 @@ table.dataTable {
     a {
       @extend .lighBlueLink;
       padding-right: .5em;
+      display: inline-block;
+      vertical-align: middle;
     }
   }
 

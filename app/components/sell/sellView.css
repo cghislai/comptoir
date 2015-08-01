@@ -1,6 +1,9 @@
 table {
     width: 100%;
 }
+table td {
+    padding: .5em;
+}
 td.itemList {
     vertical-align: top;
     width: 50%;

@@ -4,6 +4,12 @@
     text-align: right;
     font-size: 1.3em;
     font-weight: bold;
+
+}
+.toPayHeader .actions > .total {
+    display: inline-block;
+    vertical-align: middle;
+    padding-right: .5em;
 }
 .toPayHeader .total.negative {
     color: red;
@@ -12,22 +18,12 @@
     color: green;
 }
 
-.usedMethod {
-    width: 100%;
-}
+table.usedMethod {
+    font-size: 1.1em !important;
 
-.usedMethod > .pay {
-    width: 100%;
-    display: table;
-}
-.usedMethod > .pay > .actions{
-    display: none;
-    position: absolute;
-    right: 0;
-    background-color: rgba(255,255,255,0.9);
-}
-.usedMethod > .pay:hover > .actions{
-    display: table-cell;
+    td, th {
+        padding: .5em !important;
+    }
 }
 
 .method {
@@ -43,40 +39,15 @@
     margin: 1em;
  }
 
-.actions  a {
-    color: steelblue;
-}
-.actions  a:hover {
-    text-decoration: underline;
-    color: black;
-    cursor: pointer;
-}
-
-.usedMethod > .total {
-    padding: .5em;
-    text-align: right;
-    font-weight: bolder;
-}
-
-.usedMethod > .pay > * {
-    display: table-cell;
-    vertical-align: middle;
-    padding: .5em;
-}
-.usedMethod .amount {
-    text-align: right;
-}
-
 .editMethod {
     border: 1px solid lightsteelblue;
-    padding: .5em;
     width: 100%;
     display: table;
 }
 .editMethod > * {
     display: table-cell;
     vertical-align: middle;
-    padding: .2em;
+    padding: .5em;
 }
 .editMethod .amount {
     text-align: right;
