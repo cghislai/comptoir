@@ -1,0 +1,23 @@
+<div class="paginator">
+    <span class="first" [hidden]="!showFirstLastLink"
+            (click)="goToFirst()">
+        ◂◂
+    </span>
+    <span class="prev" [hidden]="!showPrevNextLink"
+          (click)="goToPrev()">
+        ◂
+    </span>
+    <span class="page" *ng-for="#page of pages"
+          [class.active]="page == activePage"
+          (click)="goToPage(page)">
+        {{ page }}
+    </span>
+    <span class="next" [hidden]="!showPrevNextLink"
+          (click)="goToNext()">
+        ▸
+    </span>
+    <span class="last" [hidden]="!showFirstLastLink"
+          (click)="goToLast()">
+        ▸▸
+    </span>
+</div>

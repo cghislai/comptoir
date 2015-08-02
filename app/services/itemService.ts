@@ -2,49 +2,82 @@
  * Created by cghislai on 29/07/15.
  */
 
-export class Item {
-    id: number;
-    companyId: number;
-    reference: string;
-    model: string;
-    name: string;
-    description: string;
-    currentPrice: number;
+import {Injectable} from 'angular2/angular2';
+import {LocalizedString} from 'services/applicationService';
 
-    constructor(params) {
-        if (params != undefined) {
-            this.id = params.id;
-            this.companyId = params.companyId;
-            this.reference = params.reference;
-            this.model = params.model;
-            this.name = params.name;
-            this.description = params.description;
-            this.currentPrice = params.currentPrice;
-        }
+export class Item {
+    id:number;
+    companyId:number;
+    reference:string;
+    model:LocalizedString;
+    name:LocalizedString;
+    description:LocalizedString;
+    currentPrice:number;
+
+    constructor() {
+        this.model = new LocalizedString(null, null);
+        this.name= new LocalizedString(null, null);
+        this.description= new LocalizedString(null, null);
     }
-    equals(other: Item) {
+    fromParams(params):Item {
+        if (params != undefined) {
+            var language = params.language;
+            if (params.id != null) {
+                this.id = params.id;
+            }
+            if (params.companyId != null) {
+                this.companyId = params.companyId;
+            }
+            if (params.reference != null) {
+                this.reference = params.reference;
+            }
+            this.model = new LocalizedString(language, params.model);
+            this.name = new LocalizedString(language, params.name);
+            this.description = new LocalizedString(language, params.description);
+            if (params.currentPrice != null) {
+                if (typeof (params.currentPrice) == "string") {
+                    params.currentPrice = parseFloat(params.currentPrice);
+                }
+                this.currentPrice = params.currentPrice;
+            }
+        }
+
+        return this;
+    }
+
+    equals(other:Item) {
         if (this.id == undefined || other.id == undefined) {
-            return false;
+            if (this.reference == undefined || other.reference == undefined) {
+                return false;
+            }
+            return this.reference == other.reference;
         }
         return this.id == other.id;
     }
 }
 
 export class ItemSearch {
-    multiSearch: string;
+    multiSearch:string;
 }
 
 export class ItemService {
-    items: Item[];
+    items:Item[];
+    bootstrapped: boolean = false;
 
+    constructor(){
+    }
     searchItems() {
-        this.items = [];
         this.fillDefaultItems();
     }
-    addItem(item: Item) {
+
+    saveItem(item:Item) {
+    if (this.conatains(item )) {
+        return;
+    }
         this.items.push(item);
     }
-    removeItem(item: Item) {
+
+    removeItem(item:Item) {
         var oldItems = this.items;
         this.items = [];
         for (var index = 0; index < oldItems.length; index++) {
@@ -55,10 +88,12 @@ export class ItemService {
             this.items.push(oldItem);
         }
     }
+
     getItems() {
         return this.items;
     }
-    getItem(id: number) {
+
+    getItem(id:number) {
         for (var index = 0; index < this.items.length; index++) {
             var item = this.items[index];
             if (item.id == id) {
@@ -67,22 +102,37 @@ export class ItemService {
         }
         return null;
     }
-    findItems(itemSearch: ItemSearch) {
+    conatains(item: Item ) {
+        var contains = false;
+        this.items.forEach(function(existingItem:Item) {
+            if (item == existingItem) {
+                contains = true;
+                return ;
+            }
+        })
+        return contains;
+    }
+    findItems(itemSearch:ItemSearch) {
         var foundItems = [];
         var multiStringValue = itemSearch.multiSearch;
-        this.items.forEach(function(item: Item) {
-            if (item.reference.indexOf(multiStringValue)== 0) {
+        this.items.forEach(function (item:Item) {
+            if (item.reference.indexOf(multiStringValue) == 0) {
                 foundItems.push(item);
                 return;
             }
-            if (item.name.indexOf(multiStringValue) >= 0) {
+            if (item.name.text.indexOf(multiStringValue) >= 0) {
                 foundItems.push(item);
                 return;
             }
         })
         return foundItems;
     }
+
     fillDefaultItems() {
+        if (this.bootstrapped) {
+            return;
+        }
+        this.bootstrapped = true
         var allItems = [
             {
                 id: 0,
@@ -107,7 +157,7 @@ export class ItemService {
                 companyId: 0,
                 reference: "PU001",
                 model: "8 ans vert",
-                name: "Pull el laine Defrost",
+                name: "Pull en laine Defrost",
                 description: null,
                 currentPrice: 21.5
             },
@@ -177,8 +227,8 @@ export class ItemService {
         ];
         this.items = new Array<Item>();
         var thisService = this;
-        allItems.forEach(function(itemParams) {
-            var item = new Item(itemParams);
+        allItems.forEach(function (itemParams) {
+            var item = new Item().fromParams(itemParams);
             thisService.items.push(item);
         });
     }

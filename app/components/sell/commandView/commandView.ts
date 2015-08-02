@@ -6,12 +6,13 @@ import {Component, View, NgFor, NgIf, EventEmitter} from 'angular2/angular2';
 import {CommandService, CommandItem} from 'services/commandService';
 import {Item} from 'services/itemService';
 import {AutoFocusDirective} from 'directives/autoFocus';
+import {ApplicationService, LocalizedString} from 'services/applicationService';
 
 // TODO: use angular2 form model & validators
 class ToAddItem {
     name: string = null;
-    amount: number = 1;
-    price: number = null;
+    amount: string = '1';
+    price: string = null;
 }
 
 
@@ -31,6 +32,7 @@ class ToAddItem {
 export class CommandView {
 
     commandService: CommandService;
+    applicationService: ApplicationService;
     toAddItem: ToAddItem;
     editingReductionItem: CommandItem = null;
     editingAmountItem: CommandItem = null;
@@ -38,8 +40,9 @@ export class CommandView {
     validate = new EventEmitter();
     validated: boolean = false;
 
-    constructor(commandService: CommandService) {
+    constructor(commandService: CommandService, applicationService: ApplicationService) {
         this.commandService = commandService;
+        this.applicationService = applicationService;
         this.renewToAddCustomItem();
     }
 
@@ -68,12 +71,13 @@ export class CommandView {
     }
 
     doAddCustomItem() {
-        var item = new Item(undefined);
-        item.currentPrice = this.toAddItem.price;
-        item.name  = this.toAddItem.name;
+        var item = new Item();
+        var lang = this.applicationService.language;
+        item.currentPrice = parseFloat(this.toAddItem.price);
+        item.name  = new LocalizedString(lang, this.toAddItem.name);
         item.reference = null;
         var commandItem = new CommandItem(item);
-        commandItem.amount = this.toAddItem.amount;
+        commandItem.amount = parseInt(this.toAddItem.amount);
         this.commandService.addCommandItem(commandItem);
         this.renewToAddCustomItem();
     }

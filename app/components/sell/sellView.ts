@@ -36,6 +36,7 @@ export class SellView {
         this.commandValidated = false;
         this.commandViewQuery = commandViewQuery;
         this.payViewQuery = payViewQuery;
+
     }
 
     onItemClicked(item:Item) {

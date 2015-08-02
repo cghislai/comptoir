@@ -8,7 +8,6 @@ import {AutoFocusDirective} from 'directives/autoFocus';
 
 @Component({
     selector: 'itemList',
-    viewInjector: [ItemService],
     events: ['itemClicked']
 })
 

@@ -3,7 +3,7 @@
  */
 /// <reference path="../../typings/_custom.d.ts" />
 import {Component, View, ViewQuery, Query, QueryList} from 'angular2/angular2';
-import {RouteConfig, RouterOutlet, RouterLink, routerInjectables} from 'angular2/router';
+import {RouteConfig, RouterOutlet, RouterLink, routerInjectables, Location} from 'angular2/router';
 
 import {ApplicationService} from 'services/applicationService';
 import {EditItemsView} from 'components/edit/editItemsView/editItemsView';
@@ -24,7 +24,12 @@ import {EditItemsView} from 'components/edit/editItemsView/editItemsView';
 ])
 
 export class EditView {
-    constructor(appService:ApplicationService) {
+    location: Location;
+    constructor(appService:ApplicationService, location: Location) {
         appService.pageName = "Édition";
+        this.location = location;
+    }
+    isActive(path: string):boolean {
+        return this.location.path().indexOf("/edit"+path) == 0;
     }
 }

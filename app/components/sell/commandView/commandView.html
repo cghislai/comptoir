@@ -44,7 +44,7 @@
                 </span>
             </td>
             <td class="name">
-                {{ commandItem.item.name }}
+                {{ commandItem.item.name.text }}
             </td>
             <td class="amount number">
                 <div [hidden]="commandItem.amount <= 1 || editingAmountItem == commandItem">

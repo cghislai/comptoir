@@ -6,14 +6,15 @@ import {RouteConfig, RouterOutlet, RouterLink, routerInjectables} from 'angular2
 // import ViewEncapsulation
 
 
-import {ApplicationService} from './services/applicationService';
+import {ApplicationService} from 'services/applicationService';
+import {ItemService} from 'services/itemService';
 import {NavMenu} from './components/navMenu/navMenu';
 import {SellView} from 'components/sell/sellView';
 import {EditView} from 'components/edit/editView';
 
 @Component({
     selector: 'app',
-    viewInjector: [ApplicationService]
+    viewInjector: [ItemService, ApplicationService]
 })
 @RouteConfig([
     { path: '/', redirectTo: '/sell'},
@@ -27,11 +28,10 @@ import {EditView} from 'components/edit/editView';
     directives: [RouterOutlet, RouterLink, NavMenu],
     encapsulation: ViewEncapsulation.EMULATED
 })
-class App {
-    appService:ApplicationService;
+export class App {
     navMenuQuery: QueryList<NavMenu>;
 
-    constructor(appService:ApplicationService,
+    constructor(public appService:ApplicationService, public itemService: ItemService,
         @ViewQuery(NavMenu, {descendants: true}) navMenuQuery: QueryList<NavMenu>) {
         this.appService = appService;
         appService.appName = "Comptoir";

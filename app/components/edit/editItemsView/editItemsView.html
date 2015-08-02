@@ -6,6 +6,8 @@
             Nouveau
         </div>
     </div>
+    <paginator total-count="1234" page-size="10" show-prev-next="true" show-first-last="true"
+            (pagechange)="onPageChanged($event)"></paginator>
     <table class="items">
         <thead>
         <tr>
@@ -18,12 +20,13 @@
         <tbody>
         <tr *ng-for="#item of itemService.items" class="item">
             <td class="ref">{{ item.reference }}</td>
-            <td class="name">{{ item.name }}</td>
-            <td class="model">{{ item.model}}</td>
+            <td class="name">{{ item.name.text }}</td>
+            <td class="model">{{ item.model.text }}</td>
             <td class="number price">{{ item.currentPrice | currency:'EUR':true:'.2-2'}}</td>
             <td class="rowActions">
                 <span class="actions">
-                <a class="remove">Supprimer</a>
+                <a class="remove"
+                        (click)="doRemoveItem(item)">Supprimer</a>
                 <a class="edit"
                    (click)="doEditItem(item)">Éditer</a>
                     </span>
@@ -46,6 +49,7 @@
                             <input type="radio" name="langue"
                                    ng-control="lang"
                                    value="language.lang"
+                                   [checked]="isLanguageSelected(language)"
                                    (click)="onLanguageSelected(language)"
                                    [attr.id]="language.lang">
                             <label [attr.for]="language.lang">{{language.text}}</label>
@@ -53,10 +57,10 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><label for="ref">Référence:</label></td>
+                    <td><label for="reference">Référence:</label></td>
                     <td>
-                        <input type="text" id="ref"
-                               ng-control="ref">
+                        <input type="text" id="reference"
+                               ng-control="reference">
                     </td>
                 </tr>
                 <tr>
@@ -67,10 +71,10 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><label for="desc">Description:</label></td>
+                    <td><label for="description">Description:</label></td>
                     <td>
-                        <textarea type="text" id="desc" rows="3"
-                               ng-control="desc"></textarea>
+                        <textarea type="text" id="description" rows="3"
+                               ng-control="description"></textarea>
                     </td>
                 </tr>
                 <tr>
@@ -81,10 +85,10 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><label for="price">Prix:</label></td>
+                    <td><label for="currentPrice">Prix:</label></td>
                     <td>
-                        <input type="text" id="price"
-                               ng-control="price">
+                        <input type="text" id="currentPrice"
+                               ng-control="currentPrice">
                     </td>
                 </tr>
             </table>

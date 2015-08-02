@@ -1,6 +1,6 @@
 <div class="editView">
     <div class="editViewMenu">
-        <a [router-link]="['./items']">Produits</a>
+        <a [router-link]="['./items']" [class.active]="isActive('/items')">Produits</a>
     </div>
     <div class="view">
         <router-outlet></router-outlet>

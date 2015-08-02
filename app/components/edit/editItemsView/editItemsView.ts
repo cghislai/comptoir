@@ -8,7 +8,8 @@ import {RouteConfig, RouterOutlet, RouterLink, routerInjectables} from 'angular2
 
 
 import {ItemService, Item} from 'services/itemService';
-import {Language} from 'services/applicationService';
+import {Language, LocalizedString, ApplicationService} from 'services/applicationService';
+import {Pagination, Paginator} from 'components/utils/paginator/paginator';
 
 
 class ItemModel {
@@ -74,18 +75,19 @@ class ShowError {
 // Main component
 @Component({
     selector: "editItemsView",
-    viewInjector: [ItemService, FormBuilder]
+    viewInjector: [FormBuilder]
 })
 
 @View({
     templateUrl: './components/edit/editItemsView/editItemsView.html',
     styleUrls: ['./components/edit/editItemsView/editItemsView.css'],
-    directives: [NgFor, NgIf, formDirectives],
+    directives: [NgFor, NgIf, formDirectives, Paginator],
     encapsulation: ViewEncapsulation.EMULATED
 })
 
 export class EditItemsView {
     itemService:ItemService;
+    applicationService: ApplicationService;
     editingItem:Item;
     languages = [{lang: Language.DUTCH, text: "Néerlandais"},
         {lang: Language.ENGLISH, text: "Anglais"},
@@ -94,32 +96,37 @@ export class EditItemsView {
     formBuilder: FormBuilder;
     lastUsedLanguage: Language;
 
-    constructor(itemService:ItemService, formBuilder:FormBuilder) {
+
+    constructor(itemService:ItemService, formBuilder:FormBuilder, applicationService:ApplicationService) {
         this.itemService = itemService;
         itemService.searchItems();
         this.editingItem = null;
         this.formBuilder = formBuilder;
-
+        this.applicationService = applicationService;
+        this.lastUsedLanguage = applicationService.language;
     }
 
     doEditNewItem() {
-        var item = new Item(undefined);
+        var item = new Item();
         this.doEditItem(item);
     }
     doEditItem(item:Item) {
         this.editingItem = item;
         this.editForm = this.formBuilder.group({
             lang: [this.lastUsedLanguage],
-            ref: [item.reference],
-            name: [item.name],
-            desc: [item.description],
-            model: [item.model],
-            price: [item.currentPrice]
+            reference: [item.reference],
+            name: [item.name.text],
+            description: [item.description.text],
+            model: [item.model.text],
+            currentPrice: [item.currentPrice]
         });
     }
 
     onLanguageSelected(language) {
         this.editForm.value.lang = language.lang
+    }
+    isLanguageSelected(language): boolean {
+        return this.editForm.value.lang == language.lang;
     }
     doCancelEdit() {
         var lang = this.editForm.value.lang;
@@ -128,10 +135,20 @@ export class EditItemsView {
     }
 
     doSaveEdit() {
-        var lang = this.editForm.value.lang;
+        var formValue = this.editForm.value;
+        var lang = formValue.lang;
         this.lastUsedLanguage = lang;
 
+        this.editingItem.fromParams(formValue);
+        this.itemService.saveItem
+        (this.editingItem);
         // TODO
         this.editingItem = null;
+    }
+    doRemoveItem(item : Item) {
+        this.itemService.removeItem(item);
+    }
+    onPageChanged(pagination: Pagination) {
+        console.log(pagination);
     }
 }
