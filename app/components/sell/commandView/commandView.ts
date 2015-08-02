@@ -3,7 +3,7 @@
  */
 /// <reference path="../../../typings/_custom.d.ts" />
 import {Component, View, NgFor, NgIf, EventEmitter} from 'angular2/angular2';
-import {CommandService, CommandItem} from 'services/commandService';
+import {CommandService, CommandItem, Command} from 'services/commandService';
 import {Item} from 'services/itemService';
 import {AutoFocusDirective} from 'directives/autoFocus';
 import {ApplicationService, LocalizedString} from 'services/applicationService';
@@ -32,6 +32,8 @@ class ToAddItem {
 export class CommandView {
 
     commandService: CommandService;
+    command: Command;
+
     applicationService: ApplicationService;
     toAddItem: ToAddItem;
     editingReductionItem: CommandItem = null;
@@ -39,29 +41,52 @@ export class CommandView {
     editingGlobalReduction: boolean = false;
     validate = new EventEmitter();
     validated: boolean = false;
+    commandNavVisible: boolean = false;
 
     constructor(commandService: CommandService, applicationService: ApplicationService) {
         this.commandService = commandService;
         this.applicationService = applicationService;
         this.renewToAddCustomItem();
+        this.switchToNextCommand();
     }
 
     renewToAddCustomItem() {
         this.toAddItem = new ToAddItem();
     }
+    switchToNextCommand() {
+        if (this.command == null) {
+            if (this.commandService.activeCommands.length == 0) {
+                this.command = this.commandService.newCommand();
+                return;
+            }
+            this.command = this.commandService.activeCommands[0];
+            return;
+        }
+        this.command = this.commandService.nextActive(this.command);
+    }
+    switchToCommand(command: Command) {
+        this.command = command;
+        this.command.calcTotalPrice();
+    }
+    switchToNewCommand() {
+        this.command = this.commandService.newCommand();
+    }
+    cancelCommand() {
+        this.commandService.removeActiveCommand(this.command);
+        this.command = null;
+        this.switchToNextCommand();
+    }
 
 
     doClearCommand() {
-        this.commandService.items = [];
-        this.commandService.globalReduction = null;
-        this.commandService.calcTotalPrice();
+        this.command.reset();
     }
     doClearItem(commandItem: CommandItem) {
-        this.commandService.removeCommandItem(commandItem);
+        this.command.removeCommandItem(commandItem);
     }
 
     doAddItem(item: Item) {
-        var commandIitem = this.commandService.addItem(item);
+        var commandIitem = this.command.addItem(item);
         // If added a new item, allow to edit quantity directly
         if (commandIitem.amount > 1) {
             this.editingAmountItem = null;
@@ -78,7 +103,7 @@ export class CommandView {
         item.reference = null;
         var commandItem = new CommandItem(item);
         commandItem.amount = this.toAddItem.amount;
-        this.commandService.addCommandItem(commandItem);
+        this.command.addCommandItem(commandItem);
         this.renewToAddCustomItem();
     }
     doEditItemReduction(commandItem: CommandItem) {
@@ -89,8 +114,8 @@ export class CommandView {
         if (event.which == 13) { // Enter
             var reduction: number = event.target.value;
             this.editingReductionItem.reduction = reduction;
-            this.commandService.calcItemPrice(this.editingReductionItem);
-            this.commandService.calcTotalPrice();
+            this.command.calcItemPrice(this.editingReductionItem);
+            this.command.calcTotalPrice();
             this.editingReductionItem = null;
             return;
         }
@@ -109,8 +134,8 @@ export class CommandView {
         if (event.which == 13) { // Enter
             var amount: number = event.target.value;
             this.editingAmountItem.amount = amount;
-            this.commandService.calcItemPrice(this.editingAmountItem);
-            this.commandService.calcTotalPrice();
+            this.command.calcItemPrice(this.editingAmountItem);
+            this.command.calcTotalPrice();
             this.editingAmountItem = null;
             return false;
         }
@@ -126,8 +151,8 @@ export class CommandView {
     applyGlobalReduction(event) {
         if (event.which == 13) { // Enter
             var reduction: number = event.target.value;
-            this.commandService.globalReduction = reduction;
-            this.commandService.calcTotalPrice();
+            this.command.globalReduction = reduction;
+            this.command.calcTotalPrice();
             this.editingGlobalReduction = false;
             return;
         }
@@ -142,10 +167,17 @@ export class CommandView {
     doValidate() {
         this.validated = true;
         this.validate.next(this.validated);
+        this.closeCommandNav();
     }
     doUnvalidate() {
         this.validated = false;
         this.validate.next(this.validated);
+    }
+    onCommandPaid() {
+        this.commandService.saveCommand(this.command);
+        this.command = null;
+        this.validated = false;
+        this.switchToNextCommand();
     }
     setToAddItemAmount(amount: string) {
         this.toAddItem.amount = parseInt(amount);
@@ -169,4 +201,16 @@ export class CommandView {
         return true;
     }
 
+    switchCommandNavVisibility() {
+        if (this.validated) {
+            return;
+        }
+        this.commandNavVisible = !this.commandNavVisible;
+    }
+    openCommandNav() {
+        this.commandNavVisible = true;
+    }
+    closeCommandNav() {
+        this.commandNavVisible = false;
+    }
 }

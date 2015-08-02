@@ -50,11 +50,11 @@ $onWhiteLinkColor: steelblue;
   cursor: pointer;
 }
 
-.lighBlueLink {
+.ligthBlueLink {
   color: $onWhiteLinkColor;
 }
 
-.lighBlueLink:hover {
+.ligthBlueLink:hover {
   text-decoration: underline;
   color: black;
   cursor: pointer;;
@@ -107,7 +107,7 @@ table.dataTable {
       vertical-align: middle;
     }
     a {
-      @extend .lighBlueLink;
+      @extend .ligthBlueLink;
       padding-right: .5em;
       display: inline-block;
       vertical-align: middle;

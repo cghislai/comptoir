@@ -5,7 +5,7 @@
 import {Component, View, NgIf,  ViewQuery, QueryList, ViewContainerRef} from 'angular2/angular2';
 
 import {ApplicationService} from 'services/applicationService';
-import {CommandService} from 'services/commandService';
+import {CommandService, Command} from 'services/commandService';
 import {Item} from 'services/itemService';
 import {ItemList} from 'components/sell/itemList/itemList';
 import {CommandView} from 'components/sell/commandView/commandView';
@@ -24,7 +24,6 @@ import {PayView} from 'components/sell/payView/payView'
 export class SellView {
     commandService:CommandService;
     commandValidated:boolean;
-    commandView:CommandView;
     commandViewQuery:QueryList<CommandView>;
     payViewQuery:QueryList<PayView>;
 
@@ -39,23 +38,30 @@ export class SellView {
 
     }
 
+    getCommandView():CommandView {
+        return this.commandViewQuery.first;
+    }
+    getCommand():Command {
+        var commandView = this.getCommandView();
+        return commandView.command;
+    }
     onItemClicked(item:Item) {
-        var commandView = this.commandViewQuery.first;
+        var commandView = this.getCommandView();
         commandView.doAddItem(item);
     }
 
     onCommandValidated(validated:boolean) {
         if (validated) {
             var payView = this.payViewQuery.first;
-            payView.calcRemaining();
+            var command = this.getCommand();
+            payView.payCommand(command);
         }
         this.commandValidated = validated;
     }
 
     onCommandPaid(event, view) {
-        this.commandService.reset();
-        var commandView = this.commandViewQuery.first;
-        commandView.doUnvalidate();
+        var commandView = this.getCommandView();
+        commandView.onCommandPaid()
         this.commandValidated = false;
     }
 

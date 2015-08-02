@@ -11,23 +11,24 @@ export class CommandItem {
 
     constructor(item: Item) {
         this.item = item;
-        this.amount =0;
+        this.amount = 0;
         this.reduction = null;
         this.price = 0;
     }
 }
 
-export class CommandService {
+export class Command {
     items: CommandItem[];
     globalReduction: number;
     totalPrice: number;
+    id: number;
 
     constructor() {
         this.items = [];
-        this.totalPrice = 0;
         this.globalReduction = null;
+        this.totalPrice = 0;
+        this.id = 0;
     }
-
     reset() {
         this.items = [];
         this.totalPrice = 0;
@@ -125,5 +126,52 @@ export class CommandService {
             totalPrice -= reductionAmount;
         }
         commandItem.price = totalPrice;
+    }
+}
+
+export class CommandService {
+    activeCommands: Command[];
+    lastCommandId: number;
+
+    constructor() {
+        this.activeCommands = [];
+        this.lastCommandId = 0;
+    }
+
+    newCommand(): Command {
+        var command = new Command();
+        this.lastCommandId++;
+        command.id = this.lastCommandId;
+        this.activeCommands.push(command);
+        return command;
+    }
+
+    nextActive(command: Command): Command {
+        var activeIndex = null;
+        for (var index = 0; index < this.activeCommands.length; index++) {
+            var curCommand = this.activeCommands[index];
+            if (curCommand == command) {
+                activeIndex = index;
+            }
+        }
+        activeIndex++;
+        if (activeIndex >= this.activeCommands.length) {
+            activeIndex = 0;
+        }
+        return this.activeCommands[activeIndex];
+    }
+    removeActiveCommand(command: Command) {
+        var newCommands = [];
+        this.activeCommands.forEach(function(activeCommand: Command) {
+            if (command == activeCommand) {
+                return;
+            }
+            newCommands.push(activeCommand);
+        })
+        this.activeCommands = newCommands;
+    }
+
+    saveCommand(command: Command) {
+        this.removeActiveCommand(command);
     }
 }

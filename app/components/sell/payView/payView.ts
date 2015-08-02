@@ -4,7 +4,7 @@
 /// <reference path="../../../typings/_custom.d.ts" />
 
 import {Component, View, EventEmitter, NgFor, NgIf} from 'angular2/angular2';
-import {CommandService} from 'services/commandService'
+import {CommandService, Command} from 'services/commandService'
 import {AutoFocusDirective} from 'directives/autoFocus'
 
 enum PayMethod  {
@@ -29,6 +29,7 @@ class Pay {
 
 export class PayView {
     commandService: CommandService;
+    command: Command;
     toPayAmount: number;
     paidAmount: number;
     paid= new EventEmitter();
@@ -38,19 +39,14 @@ export class PayView {
     availablePayMethods: PayMethod[];
     editingPay: Pay;
 
-    constructor(commandService: CommandService) {
-        this.commandService = commandService;
-        this.toPayAmount = commandService.totalPrice;
-
-        this.availablePayMethods = [];
-        this.availablePayMethods.push(PayMethod.CASH);
-        this.availablePayMethods.push(PayMethod.CARD);
-        this.availablePayMethods.push(PayMethod.PAYPAL);
-        this.payList = [];
-        this.editingPay = null;
-        this.calcRemaining();
+    constructor() {
     }
 
+    payCommand(command: Command) {
+        this.reset();
+        this.command = command;
+        this.calcRemaining();
+    }
     reset() {
         this.availablePayMethods = [];
         this.availablePayMethods.push(PayMethod.CASH);
@@ -94,7 +90,12 @@ export class PayView {
         this.setMethodAvailable(pay.method, true);
     }
     calcRemaining() {
-        var total = this.commandService.totalPrice;
+        if (this.command == null) {
+            this.toPayAmount = 0;
+            this.paidAmount = 0;
+            return;
+        }
+        var total = this.command.totalPrice;
         var paidAmount : number =  0;
         this.payList.forEach(function(pay: Pay) {
             paidAmount = paidAmount +  pay.amount;

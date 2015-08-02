@@ -1,17 +1,74 @@
-@import '../../../styles/_main'; 
+@import '../../../styles/_main';
 
-.commandHeader .actions > .reduction > span {
-  display: block;
-  height: 100%;
+header {
+  h1 {
+    font-size: 1.3em;
+  }
+  .commandNav {
+    height: 100%;
+  }
+  .commandNav > *:not(.commandsMenu) {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .commandNav:not(.disabled):hover {
+    color: $onBlueHoverColor;
+    cursor: pointer;
+  }
+
+  .actions > .reduction > span {
+    display: block;
+    height: 100%;
+  }
+  .actions > .reduction input {
+    font-size: 1em;
+  }
+  .actions > .reduction.has-reduction {
+    color: red;
+  }
+  .commandsMenu {
+    position: absolute;
+    border: .2em solid $blueColor;
+    background: white;
+    padding: .5em;
+    font-size: .9em;
+    color: black;
+    z-index: 2;
+
+    .command:not([hidden]) {
+      display: table;
+      width: 100%;
+      padding: .2em;
+    ;
+      > span:not([hidden
+      ]) {
+        display: table-cell;
+        vertical-align: middle;
+      }
+      span.name {
+        @extend .ligthBlueLink;
+      }
+      span.total {
+        text-align: right;
+      }
+      span.reduction {
+        text-align: right;
+        color: red;
+        font-size: .7em;
+      }
+    }
+
+    .links {
+      margin-top: .5em;
+      a:not([hidden ]) {
+        @extend .ligthBlueLink;
+        display: block;
+        padding: .2em;
+      }
+    }
+  }
 }
 
-.commandHeader .actions > .reduction input {
-  font-size: 1em;
-}
-
-.commandHeader .actions > .reduction.has-reduction {
-  color: red;
-}
 
 table {
   font-size: 1.1em !important;
@@ -53,6 +110,10 @@ tfoot th {
 
 tfoot .total {
   font-size: 1.1em;
+}
+
+tfoot th.reduction {
+  text-align: right;
 }
 
 .newItem {

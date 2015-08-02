@@ -14,15 +14,15 @@
   .coloredHeader .actions {
     float: right;
     text-align: right; }
-  .coloredHeader .actions .action {
-    font-weight: bolder;
-    cursor: pointer;
-    display: inline-block;
-    padding: .5em;
-    border: 1px solid transparent; }
-  .coloredHeader .actions .action:hover {
-    border: 1px solid yellow;
-    color: yellow; }
+    .coloredHeader .actions .action {
+      font-weight: bolder;
+      cursor: pointer;
+      display: inline-block;
+      padding: .5em;
+      border: 1px solid transparent; }
+    .coloredHeader .actions .action:hover {
+      border: 1px solid yellow;
+      color: yellow; }
 
 .boxedHoverableLink {
   border: 0.09em solid lightsteelblue;
@@ -34,10 +34,10 @@
   background-color: lightblue;
   cursor: pointer; }
 
-.lighBlueLink, table.dataTable td.rowActions a {
+.ligthBlueLink, table.dataTable td.rowActions a, header .commandsMenu .command:not([hidden]) span.name, header .commandsMenu .links a:not([hidden]) {
   color: steelblue; }
 
-.lighBlueLink:hover, table.dataTable td.rowActions a:hover {
+.ligthBlueLink:hover, table.dataTable td.rowActions a:hover, header .commandsMenu .command:not([hidden]) span.name:hover, header .commandsMenu .links a:hover:not([hidden]) {
   text-decoration: underline;
   color: black;
   cursor: pointer; }
@@ -88,15 +88,66 @@ span.valignAnchor {
   vertical-align: middle;
   height: 100%; }
 
-.commandHeader .actions > .reduction > span {
+img.itemPicture.medium {
+  max-width: 15vw;
+  max-height: 15vh; }
+
+img.itemPicture.large {
+  max-width: 25vw;
+  max-height: 25vh; }
+
+img.itemPicture.list {
+  max-width: 5em;
+  max-height: 2em; }
+
+a.disabled, a.disabled:hover {
+  color: lightgray !important;
+  text-decoration: none !important;
+  cursor: default !important; }
+
+header h1 {
+  font-size: 1.3em; }
+header .commandNav {
+  height: 100%; }
+header .commandNav > *:not(.commandsMenu) {
+  display: inline-block;
+  vertical-align: middle; }
+header .commandNav:not(.disabled):hover {
+  color: yellow;
+  cursor: pointer; }
+header .actions > .reduction > span {
   display: block;
   height: 100%; }
-
-.commandHeader .actions > .reduction input {
+header .actions > .reduction input {
   font-size: 1em; }
-
-.commandHeader .actions > .reduction.has-reduction {
+header .actions > .reduction.has-reduction {
   color: red; }
+header .commandsMenu {
+  position: absolute;
+  border: 0.2em solid lightsteelblue;
+  background: white;
+  padding: .5em;
+  font-size: .9em;
+  color: black;
+  z-index: 2; }
+  header .commandsMenu .command:not([hidden]) {
+    display: table;
+    width: 100%;
+    padding: .2em; }
+    header .commandsMenu .command:not([hidden]) > span:not([hidden]) {
+      display: table-cell;
+      vertical-align: middle; }
+    header .commandsMenu .command:not([hidden]) span.total {
+      text-align: right; }
+    header .commandsMenu .command:not([hidden]) span.reduction {
+      text-align: right;
+      color: red;
+      font-size: .7em; }
+  header .commandsMenu .links {
+    margin-top: .5em; }
+    header .commandsMenu .links a:not([hidden]) {
+      display: block;
+      padding: .2em; }
 
 table {
   font-size: 1.1em !important; }
@@ -130,6 +181,9 @@ tfoot th {
 
 tfoot .total {
   font-size: 1.1em; }
+
+tfoot th.reduction {
+  text-align: right; }
 
 .newItem {
   font-size: 1em;
