@@ -14,15 +14,15 @@
   .coloredHeader .actions {
     float: right;
     text-align: right; }
-  .coloredHeader .actions .action {
-    font-weight: bolder;
-    cursor: pointer;
-    display: inline-block;
-    padding: .5em;
-    border: 1px solid transparent; }
-  .coloredHeader .actions .action:hover {
-    border: 1px solid yellow;
-    color: yellow; }
+    .coloredHeader .actions .action {
+      font-weight: bolder;
+      cursor: pointer;
+      display: inline-block;
+      padding: .5em;
+      border: 1px solid transparent; }
+    .coloredHeader .actions .action:hover {
+      border: 1px solid yellow;
+      color: yellow; }
 
 .boxedHoverableLink {
   border: 0.09em solid lightsteelblue;
@@ -34,10 +34,10 @@
   background-color: lightblue;
   cursor: pointer; }
 
-.lighBlueLink, table.dataTable td.rowActions a {
+.ligthBlueLink, table.dataTable td.rowActions a {
   color: steelblue; }
 
-.lighBlueLink:hover, table.dataTable td.rowActions a:hover {
+.ligthBlueLink:hover, table.dataTable td.rowActions a:hover {
   text-decoration: underline;
   color: black;
   cursor: pointer; }
@@ -88,31 +88,46 @@ span.valignAnchor {
   vertical-align: middle;
   height: 100%; }
 
-div.editView {
+img.itemPicture.medium {
+  max-width: 15vw;
+  max-height: 15vh; }
+
+img.itemPicture.large {
+  max-width: 25vw;
+  max-height: 25vh; }
+
+img.itemPicture.list {
+  max-width: 5em;
+  max-height: 2em; }
+
+a.disabled, a.disabled:hover {
+  color: lightgray !important;
+  text-decoration: none !important;
+  cursor: default !important; }
+
+.menuPaneView {
   width: 100%;
   overflow-y: auto;
   display: table;
   min-height: 90vh; }
-
-div.editViewMenu {
-  display: table-cell;
-  height: 100%;
-  vertical-align: top;
-  padding: 1em;
-  background-color: lightsteelblue; }
-  div.editViewMenu a {
-    color: white;
-    font-size: 1.2em;
-    font-weight: bolder;
-    text-decoration: none; }
-  div.editViewMenu a.active {
-    color: yellow; }
-  div.editViewMenu a:hover {
-    color: yellow; }
-
-div.view {
-  display: table-cell;
-  vertical-align: top;
-  width: 100%; }
+  .menuPaneView .menu {
+    display: table-cell;
+    height: 100%;
+    vertical-align: top;
+    padding: 1em;
+    background-color: lightsteelblue; }
+    .menuPaneView .menu a {
+      color: white;
+      font-size: 1.2em;
+      font-weight: bolder;
+      text-decoration: none; }
+    .menuPaneView .menu a.active {
+      color: yellow; }
+    .menuPaneView .menu a:hover {
+      color: yellow; }
+  .menuPaneView .view {
+    display: table-cell;
+    vertical-align: top;
+    width: 100%; }
 
 /*# sourceMappingURL=editView.css.map */

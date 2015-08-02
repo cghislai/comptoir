@@ -1,0 +1,26 @@
+@import '_main';
+
+.historyPage {
+    padding: .5em;
+
+    h1 {
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: .3em;
+    }
+
+    .topActions {
+      text-align: center;
+
+      .action {
+        @extend .boxedHoverableLink;
+        display: inline-block;
+      }
+    }
+
+    table {
+      @extend .dataTable;
+    }
+
+
+}

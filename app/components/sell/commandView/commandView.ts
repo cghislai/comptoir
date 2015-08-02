@@ -191,10 +191,12 @@ export class CommandView {
             return false;
         }
         if (this.toAddItem.amount == null
+                || isNaN(this.toAddItem.amount)
         || this.toAddItem.amount <= 0) {
             return false;
         }
         if (this.toAddItem.price == null
+            || isNaN(this.toAddItem.price)
         || this.toAddItem.price < 0.01) {
             return false
         }

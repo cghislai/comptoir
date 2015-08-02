@@ -142,3 +142,38 @@ a.disabled, a.disabled:hover {
     text-decoration: none !important;
     cursor: default !important;
 }
+
+
+.menuPaneView {
+  width: 100%;
+  overflow-y: auto;
+  display: table;
+  min-height: 90vh;
+
+  .menu {
+    display: table-cell;
+    height: 100%;
+    vertical-align: top;
+    padding: 1em;
+    background-color: $blueColor;
+
+    a {
+      color: white;
+      font-size: 1.2em;
+      font-weight: bolder;
+      text-decoration: none;
+    }
+    a.active{
+      color: $onBlueHoverColor;
+    }
+    a:hover {
+      color: $onBlueHoverColor;
+    }
+  }
+
+  .view {
+    display: table-cell;
+    vertical-align: top;
+    width: 100%;
+  }
+}

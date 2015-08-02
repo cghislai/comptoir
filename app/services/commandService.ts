@@ -119,6 +119,8 @@ export class Command {
         if (this.globalReduction != null) {
             this.reductionAmount = this.globalReduction * 0.01  * this.vatExclusiveAmount;
             this.vatExclusiveAmount -= this.reductionAmount;
+        } else {
+            this.reductionAmount = 0;
         }
         this.vatExclusiveAmount = Number((this.vatExclusiveAmount).toFixed(2));
         this.vatAmount = Number(( this.vatExclusiveAmount * Command.VAT).toFixed(2));
@@ -146,10 +148,23 @@ export class CommandService {
     activeCommands: Command[];
     lastCommandId: number;
     commands: Command[];
+    commandsCount: number;
 
     constructor() {
         this.activeCommands = [];
         this.lastCommandId = 0;
+        this.commands = [];
+        this.commandsCount = 0;
+    }
+
+    findCommands(comandSearch: CommandSearch) {
+        this.commands = [];
+        // TODO
+        var c = new Command();
+        c.dateTime = new Date();
+        c.totalPrice = 123.59;
+        this.commands.push(c);
+        this.commandsCount = 1;
     }
 
     newCommand(): Command {

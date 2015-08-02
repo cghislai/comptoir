@@ -1,0 +1,27 @@
+<div class="historyPage">
+    <h1>Historique des commandes</h1>
+    <div class="search">
+
+    </div>
+    <paginator [total-count]="commandService.commandsCount"
+               [page-size]="itemsPerPage"
+               show-prev-next="true" show-first-last="true"
+               (pagechange)="onPageChanged($event)"
+            [hidden]="commandService.commandsCount==0"></paginator>
+    <table class="dataTable" [hidden]="commandService.commandsCount==0">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Nom</th>
+                <th class="number">Montant</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ng-for="#command of commandService.commands" class="command">
+                <td class="date">{{ command.dateTime | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="name"> Commande {{command.id}}</td>
+                <td class="number">{{ command.totalPrice | currency:'EUR':true:'.2-2' }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

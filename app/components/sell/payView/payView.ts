@@ -40,6 +40,7 @@ export class PayView {
     editingPay: Pay;
 
     constructor() {
+        this.reset();
     }
 
     payCommand(command: Command) {

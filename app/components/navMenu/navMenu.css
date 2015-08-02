@@ -10,7 +10,7 @@
     min-width: 8em;
 }
 
-.menu a {
+.menu a:not([hidden]) {
     display: block;
     padding: .3em;
     color: white;

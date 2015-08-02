@@ -1,0 +1,12 @@
+@import '../../../styles/_history';
+
+.historyPage {
+  margin-right: 1em;
+}
+table .rowActions {
+  left: auto !important;
+  right: 0 !important;
+}
+.itemPicture:not([hidden]) {
+  display: block;
+}

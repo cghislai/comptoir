@@ -12,6 +12,7 @@ import {PictureService} from 'services/pictureService';
 import {NavMenu} from './components/navMenu/navMenu';
 import {SellView} from 'components/sell/sellView';
 import {EditView} from 'components/edit/editView';
+import {HistoryView} from 'components/history/historyView';
 
 @Component({
     selector: 'app',
@@ -20,7 +21,8 @@ import {EditView} from 'components/edit/editView';
 @RouteConfig([
     { path: '/', redirectTo: '/sell'},
     { path: '/sell', component: SellView, as: 'sell' },
-    { path: '/edit/...', component: EditView, as: 'edit' }
+    { path: '/edit/...', component: EditView, as: 'edit' },
+    { path: '/history/...', component: HistoryView, as: 'history' }
 
 ])
 @View({
