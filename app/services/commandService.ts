@@ -2,6 +2,7 @@
  * Created by cghislai on 28/07/15.
  */
 import {Item} from 'services/itemService';
+import {Pagination} from 'services/utils';
 
 export class CommandItem {
     item: Item;
@@ -17,21 +18,31 @@ export class CommandItem {
     }
 }
 
+export class CommandSearch {
+    pagination: Pagination;
+}
+
 export class Command {
+    static VAT:number = 0.21;
     items: CommandItem[];
     globalReduction: number;
+    vatExclusiveAmount: number;
+    vatAmount: number;
+    reductionAmount: number;
     totalPrice: number;
     id: number;
+    companyId: number;
+    dateTime: Date;
 
     constructor() {
         this.items = [];
         this.globalReduction = null;
-        this.totalPrice = 0;
+        this.vatExclusiveAmount = 0;
         this.id = 0;
     }
     reset() {
         this.items = [];
-        this.totalPrice = 0;
+        this.vatExclusiveAmount = 0;
         this.globalReduction = null;
     }
 
@@ -99,17 +110,19 @@ export class Command {
         this.calcTotalPrice();
     }
     calcTotalPrice() {
-        this.totalPrice = 0;
+        this.vatExclusiveAmount = 0;
         var thisService = this;
         this.items.forEach(function(item: CommandItem) {
             var price = item.price;
-            thisService.totalPrice += price;
+            thisService.vatExclusiveAmount += price;
         });
         if (this.globalReduction != null) {
-            var reduction = this.globalReduction * 0.01  * this.totalPrice;
-            this.totalPrice -= reduction;
+            this.reductionAmount = this.globalReduction * 0.01  * this.vatExclusiveAmount;
+            this.vatExclusiveAmount -= this.reductionAmount;
         }
-        this.totalPrice = Number((this.totalPrice).toFixed(2));
+        this.vatExclusiveAmount = Number((this.vatExclusiveAmount).toFixed(2));
+        this.vatAmount = Number(( this.vatExclusiveAmount * Command.VAT).toFixed(2));
+        this.totalPrice =  Number((this.vatExclusiveAmount + this.vatAmount).toFixed(2));
     }
     calcItemPrice(commandItem: CommandItem) {
         var item = commandItem.item;
@@ -132,6 +145,7 @@ export class Command {
 export class CommandService {
     activeCommands: Command[];
     lastCommandId: number;
+    commands: Command[];
 
     constructor() {
         this.activeCommands = [];

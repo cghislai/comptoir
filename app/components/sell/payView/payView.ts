@@ -64,7 +64,7 @@ export class PayView {
         if (this.editingPay == null) {
             this.editingPay = new Pay();
             this.editingPay.method = method;
-            this.editingPay.amount = null;
+            this.editingPay.amount = this.toPayAmount;
         }
         this.setMethodAvailable(method, false);
     }
@@ -73,7 +73,11 @@ export class PayView {
         this.editingPay = null;
     }
     savePay() {
-        this.payList.push(this.editingPay);
+        if (this.editingPay.amount > 0) {
+            this.payList.push(this.editingPay);
+        } else {
+            this.setMethodAvailable(this.editingPay.method, true);
+        }
         this.editingPay = null;
         this.calcRemaining();
     }
@@ -100,8 +104,8 @@ export class PayView {
         this.payList.forEach(function(pay: Pay) {
             paidAmount = paidAmount +  pay.amount;
         })
-        this.toPayAmount = total - paidAmount;
-        this.paidAmount = paidAmount;
+        this.toPayAmount = Number((total - paidAmount).toFixed(2));
+        this.paidAmount = Number((paidAmount).toFixed(2));
     }
     setMethodAvailable(method: PayMethod, available: boolean) {
         var newMethods = [];
