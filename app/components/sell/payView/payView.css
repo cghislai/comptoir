@@ -14,15 +14,15 @@
   .coloredHeader .actions {
     float: right;
     text-align: right; }
-  .coloredHeader .actions .action {
-    font-weight: bolder;
-    cursor: pointer;
-    display: inline-block;
-    padding: .5em;
-    border: 1px solid transparent; }
-  .coloredHeader .actions .action:hover {
-    border: 1px solid yellow;
-    color: yellow; }
+    .coloredHeader .actions .action {
+      font-weight: bolder;
+      cursor: pointer;
+      display: inline-block;
+      padding: .5em;
+      border: 1px solid transparent; }
+    .coloredHeader .actions .action:hover {
+      border: 1px solid yellow;
+      color: yellow; }
 
 .boxedHoverableLink {
   border: 0.09em solid lightsteelblue;
@@ -66,7 +66,7 @@ table.dataTable {
     max-width: 10%; }
   table.dataTable td.rowActions {
     position: absolute;
-    left: 0%;
+    left: 0;
     height: 1.5em;
     z-index: 1;
     padding: 0; }
@@ -92,15 +92,14 @@ span.valignAnchor {
   text-align: right;
   font-size: 1.3em;
   font-weight: bold; }
-
 .toPayHeader .actions > .total {
   display: inline-block;
   vertical-align: middle;
   padding-right: .5em; }
-
+.toPayHeader .total.single {
+  margin-top: .3em; }
 .toPayHeader .total.negative {
   color: red; }
-
 .toPayHeader .total.exact {
   color: green; }
 

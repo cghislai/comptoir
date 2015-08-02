@@ -26,20 +26,19 @@ export class ItemList {
 
     constructor(itemService: ItemService) {
         this.itemService = itemService;
-        this.itemService.searchItems();
         this.itemSearch = new ItemSearch();
         this.itemSearch.multiSearch = null;
         this.searchItems();
     }
     searchItems() {
-        this.items = this.itemService.getItems();
+        this.items = this.itemService.findItems(this.itemSearch);
     }
     onFilterValueChanged($event) {
         this.applyFilter($event.target.value);
     }
     applyFilter(filterValue: string) {
         this.itemSearch.multiSearch = filterValue;
-        this.items = this.itemService.findItems(this.itemSearch);
+        this.searchItems();
     }
     onItemClick(item: Item) {
         this.itemClicked.next(item);

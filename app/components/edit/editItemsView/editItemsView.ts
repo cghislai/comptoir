@@ -7,9 +7,11 @@ import {Component, View, NgFor, NgIf,
 import {RouteConfig, RouterOutlet, RouterLink, routerInjectables} from 'angular2/router';
 
 
-import {ItemService, Item} from 'services/itemService';
+import {ItemService, Item, ItemSearch} from 'services/itemService';
+import {Picture, PictureService} from 'services/pictureService';
+import {Pagination} from 'services/utils';
 import {Language, LocalizedString, ApplicationService} from 'services/applicationService';
-import {Pagination, Paginator} from 'components/utils/paginator/paginator';
+import {Paginator} from 'components/utils/paginator/paginator';
 
 
 class ItemModel {
@@ -72,38 +74,55 @@ class ShowError {
     }
 }
 
+
+
 // Main component
 @Component({
     selector: "editItemsView",
-    viewInjector: [FormBuilder]
+    viewInjector: [FormBuilder, PictureService]
 })
 
 @View({
     templateUrl: './components/edit/editItemsView/editItemsView.html',
     styleUrls: ['./components/edit/editItemsView/editItemsView.css'],
-    directives: [NgFor, NgIf, formDirectives, Paginator],
+    directives: [NgFor, NgIf, formDirectives, Paginator, ShowError],
     encapsulation: ViewEncapsulation.EMULATED
 })
 
 export class EditItemsView {
-    itemService:ItemService;
-    applicationService: ApplicationService;
-    editingItem:Item;
     languages = [{lang: Language.DUTCH, text: "Néerlandais"},
         {lang: Language.ENGLISH, text: "Anglais"},
         {lang: Language.FRENCH, text: "Français"}];
-    editForm:ControlGroup;
-    formBuilder: FormBuilder;
+    itemService:ItemService;
+    pictureService: PictureService;
+    applicationService: ApplicationService;
+
+    itemSearch: ItemSearch;
+    editingItem:Item;
+    editingItemPicture: Picture;
+    editingLanguage: Language;
     lastUsedLanguage: Language;
+    itemsPerPage: number = 3;
 
-
-    constructor(itemService:ItemService, formBuilder:FormBuilder, applicationService:ApplicationService) {
+    constructor(itemService:ItemService, pictureService: PictureService,
+                formBuilder:FormBuilder, applicationService:ApplicationService) {
         this.itemService = itemService;
-        itemService.searchItems();
+        this.pictureService = pictureService;
         this.editingItem = null;
-        this.formBuilder = formBuilder;
         this.applicationService = applicationService;
         this.lastUsedLanguage = applicationService.language;
+        this.itemSearch = new ItemSearch();
+        this.itemSearch.pagination = new Pagination(0, this.itemsPerPage);
+        this.searchItems();
+        console.log(itemService.itemsCount);
+    }
+
+    searchItems() {
+        this.itemService.findItems(this.itemSearch);
+    }
+    onPageChanged(pagination: Pagination) {
+        this.itemSearch.pagination = pagination;
+        this.searchItems();
     }
 
     doEditNewItem() {
@@ -112,43 +131,57 @@ export class EditItemsView {
     }
     doEditItem(item:Item) {
         this.editingItem = item;
-        this.editForm = this.formBuilder.group({
-            lang: [this.lastUsedLanguage],
-            reference: [item.reference],
-            name: [item.name.text],
-            description: [item.description.text],
-            model: [item.model.text],
-            currentPrice: [item.currentPrice]
-        });
+        this.editingItemPicture = new Picture();
+        if (item.pictureId != null) {
+            this.editingItemPicture = this.pictureService.getPicture(item.pictureId);
+        }
+
     }
 
     onLanguageSelected(language) {
-        this.editForm.value.lang = language.lang
+        this.editingLanguage = language;
     }
     isLanguageSelected(language): boolean {
-        return this.editForm.value.lang == language.lang;
+        return this.editingLanguage = language;
+    }
+    onFileSelected(form, event) {
+        var files = event.target.files;
+        if (files.length != 1) {
+            return;
+        }
+        var file = files[0];
+        var reader = new FileReader();
+        var thisView = this;
+        reader.onload = function () {
+            var data = reader.result;
+            thisView.editingItemPicture.dataUrl = data;
+            // Triggering an event for refresh
+            event.target.dispatchEvent(new Event('fileread'));
+        };
+        reader.readAsDataURL(file);
+    }
+
+    onCurrentPriceChanged(event) {
+        var price = event.target.value;
+        this.editingItem.currentPrice = parseFloat(price);
     }
     doCancelEdit() {
-        var lang = this.editForm.value.lang;
-        this.lastUsedLanguage = lang;
+        this.lastUsedLanguage = this.editingLanguage;
         this.editingItem = null;
+        this.editingItemPicture = null;
     }
 
     doSaveEdit() {
-        var formValue = this.editForm.value;
-        var lang = formValue.lang;
-        this.lastUsedLanguage = lang;
-
-        this.editingItem.fromParams(formValue);
+        this.lastUsedLanguage = this.editingLanguage;
+        console.log(this.editingItem);
         this.itemService.saveItem
         (this.editingItem);
         // TODO
         this.editingItem = null;
+        this.editingItemPicture = null;
     }
     doRemoveItem(item : Item) {
         this.itemService.removeItem(item);
     }
-    onPageChanged(pagination: Pagination) {
-        console.log(pagination);
-    }
+
 }

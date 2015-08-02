@@ -6,8 +6,11 @@
             Nouveau
         </div>
     </div>
-    <paginator total-count="1234" page-size="10" show-prev-next="true" show-first-last="true"
-            (pagechange)="onPageChanged($event)"></paginator>
+    {{ itemService.itemCount }}
+    <paginator [total-count]="itemService.itemsCount"
+               [page-size]="itemsPerPage"
+               show-prev-next="true" show-first-last="true"
+               (pagechange)="onPageChanged($event)"></paginator>
     <table class="items">
         <thead>
         <tr>
@@ -39,12 +42,25 @@
     <div class="editWindow">
         <h2>Édition du produit</h2>
 
-        <form [ng-form-model]="editForm" #f="form" (ng-submit)="doSaveEdit()">
+        <form #f="form" (ng-submit)="doSaveEdit()"
+              enctype="multipart/form-data">
             <table>
+                <tr>
+                <td><label for="picture">Image:</label></td>
+                <td>
+                    <img [src]="editingItemPicture.imageurl" class="itemPicture medium"
+                            [hidden]="editingItemPicture.imageurl== null">
+                    <img [src]="editingItemPicture.dataUrl" class="itemPicture medium"
+                         [hidden]="editingItemPicture.dataUrl == null">
+                    <input type="file" id="picture" accept="image/*"
+                           ng-control="picture"
+                           (change)="onFileSelected(f, $event)"
+                           (fileread)>
+                </td>
+                </tr>
                 <tr>
                     <td><label>Langue:</label></td>
                     <td>
-                        <div class="fixme"></div>
                         <span *ng-for="#language of languages">
                             <input type="radio" name="langue"
                                    ng-control="lang"
@@ -60,35 +76,37 @@
                     <td><label for="reference">Référence:</label></td>
                     <td>
                         <input type="text" id="reference"
-                               ng-control="reference">
+                               ng-control="reference" [(ng-model)]="editingItem.reference">
                     </td>
                 </tr>
                 <tr>
                     <td><label for="name">Nom:</label></td>
                     <td>
                         <input type="text" id="name"
-                               ng-control="name">
+                               ng-control="name" [(ng-model)]="editingItem.name.text">
                     </td>
                 </tr>
                 <tr>
                     <td><label for="description">Description:</label></td>
                     <td>
                         <textarea type="text" id="description" rows="3"
-                               ng-control="description"></textarea>
+                               ng-control="description" [(ng-model)]="editingItem.description.text"></textarea>
                     </td>
                 </tr>
                 <tr>
                     <td><label for="model">Modèle:</label></td>
                     <td>
                         <input type="text" id="model"
-                               ng-control="model">
+                               ng-control="model" [(ng-model)]="editingItem.model.text">
                     </td>
                 </tr>
                 <tr>
                     <td><label for="currentPrice">Prix:</label></td>
                     <td>
-                        <input type="text" id="currentPrice"
-                               ng-control="currentPrice">
+                        <input type="number" min="0" step="0.01" id="currentPrice"
+                               ng-control="currentPrice"
+                                [ng-model]="editingItem.currentPrice"
+                                (change)="onCurrentPriceChanged($event)">
                     </td>
                 </tr>
             </table>

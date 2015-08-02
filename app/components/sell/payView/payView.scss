@@ -1,57 +1,69 @@
 @import "../../../styles/_main";
 
-.toPayHeader .total {
+.toPayHeader {
+  .total {
     text-align: right;
     font-size: 1.3em;
     font-weight: bold;
+  }
 
-}
-.toPayHeader .actions > .total {
+  .actions > .total {
     display: inline-block;
     vertical-align: middle;
     padding-right: .5em;
-}
-.toPayHeader .total.negative {
+  }
+
+  .total.single {
+    margin-top: .3em;
+  }
+  .total.negative {
     color: red;
-}
-.toPayHeader .total.exact {
+  }
+  .total.exact {
     color: green;
+  }
 }
 
 table.usedMethod {
-    font-size: 1.1em !important;
+  font-size: 1.1em !important;
 
-    td, th {
-        padding: .5em !important;
-    }
+  td, th {
+    padding: .5em !important;
+  }
 }
 
 .method {
-    font-size: 1.1em;
-    font-weight: bolder;
-    padding: .2em;
+  font-size: 1.1em;
+  font-weight: bolder;
+  padding: .2em;
 }
+
 .addMethod {
-    font-size: 1.3em;
+  font-size: 1.3em;
 }
-.addMethod > *{
-    padding: 1em;
-    margin: 1em;
- }
+
+.addMethod > * {
+  padding: 1em;
+  margin: 1em;
+}
 
 .editMethod {
-    border: 1px solid lightsteelblue;
-    width: 100%;
-    display: table;
+  border: 1px solid lightsteelblue;
+  width: 100%;
+  display: table;
 }
+
 .editMethod > * {
-    display: table-cell;
-    vertical-align: middle;
-    padding: .5em;
+  display: table-cell;
+  vertical-align: middle;
+  padding: .5em;
 }
+
 .editMethod .amount {
-    text-align: right;
+  text-align: right;
 }
+
 .editMethod input {
-    font-size: 1em;
+  font-size: 1em;
 }
+

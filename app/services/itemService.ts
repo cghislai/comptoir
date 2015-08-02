@@ -2,17 +2,21 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Injectable} from 'angular2/angular2';
+import {Inject, forwardRef} from 'angular2/angular2';
 import {LocalizedString} from 'services/applicationService';
+import {Picture, PictureService} from 'services/pictureService';
+import {Pagination} from 'services/utils'
 
 export class Item {
-    id:number;
-    companyId:number;
-    reference:string;
-    model:LocalizedString;
-    name:LocalizedString;
-    description:LocalizedString;
-    currentPrice:number;
+    id:number = null;
+    companyId:number = null;
+    reference:string = null;
+    model:LocalizedString = null;
+    name:LocalizedString = null;
+    description:LocalizedString = null;
+    currentPrice:number = null;
+    pictureId: number = null;
+    picture: Picture = null;
 
     constructor() {
         this.model = new LocalizedString(null, null);
@@ -30,6 +34,9 @@ export class Item {
             }
             if (params.reference != null) {
                 this.reference = params.reference;
+            }
+            if (params.pictureId != null) {
+                this.pictureId = params.pictureId;
             }
             this.model = new LocalizedString(language, params.model);
             this.name = new LocalizedString(language, params.name);
@@ -58,53 +65,87 @@ export class Item {
 
 export class ItemSearch {
     multiSearch:string;
+    pagination: Pagination;
 }
 
 export class ItemService {
+    private allItems: Item[];
+
     items:Item[];
-    bootstrapped: boolean = false;
+    itemsCount: number;
+    pictureService: PictureService;
 
-    constructor(){
-    }
-    searchItems() {
+    constructor(@Inject pictureService: PictureService){
+        this.pictureService = pictureService;
         this.fillDefaultItems();
+        this.findItemPictures(this.allItems);
     }
 
-    saveItem(item:Item) {
-    if (this.conatains(item )) {
+    public findItems(itemSearch:ItemSearch): Item[] {
+        this.items = this.allItems;
+        this.itemsCount = this.items.length;
+        if (itemSearch == null) {
+            return this.items;
+        }
+        var multiStringValue = itemSearch.multiSearch;
+        if (multiStringValue != null) {
+            this.items = [];
+            this.allItems.forEach(function (item:Item) {
+                if (item.reference.indexOf(multiStringValue) == 0) {
+                    this.items.push(item);
+                    return;
+                }
+                if (item.name.text.indexOf(multiStringValue) >= 0) {
+                    this.items.push(item);
+                    return;
+                }
+            })
+        }
+        var pagination = itemSearch.pagination;
+        if (pagination != null) {
+            var first = pagination.firstIndex;
+            var size = pagination.pageSize;
+            var pageItems = [];
+            for (var pageIndex = 0; pageIndex < size; pageIndex++) {
+                var item = this.items[first + pageIndex];
+                pageItems.push(item);
+            }
+            this.items = pageItems;
+        }
+        return this.items;
+    }
+
+    public saveItem(item:Item) {
+    if (this.contains(item )) {
         return;
     }
-        this.items.push(item);
+        this.allItems.push(item);
     }
 
-    removeItem(item:Item) {
-        var oldItems = this.items;
-        this.items = [];
+    public removeItem(item:Item) {
+        var oldItems = this.allItems;
+        this.allItems = [];
         for (var index = 0; index < oldItems.length; index++) {
             var oldItem = oldItems[index];
             if (oldItem.equals(item)) {
                 continue;
             }
-            this.items.push(oldItem);
+            this.allItems.push(oldItem);
         }
     }
 
-    getItems() {
-        return this.items;
-    }
-
-    getItem(id:number) {
-        for (var index = 0; index < this.items.length; index++) {
-            var item = this.items[index];
+    public getItem(id:number) {
+        for (var index = 0; index < this.allItems.length; index++) {
+            var item = this.allItems[index];
             if (item.id == id) {
                 return item;
             }
         }
         return null;
     }
-    conatains(item: Item ) {
+    private contains(item: Item ) {
         var contains = false;
-        this.items.forEach(function(existingItem:Item) {
+        this.allItems.forEach(function(existingItem:Item) {
             if (item == existingItem) {
                 contains = true;
                 return ;
@@ -112,28 +153,20 @@ export class ItemService {
         })
         return contains;
     }
-    findItems(itemSearch:ItemSearch) {
-        var foundItems = [];
-        var multiStringValue = itemSearch.multiSearch;
-        this.items.forEach(function (item:Item) {
-            if (item.reference.indexOf(multiStringValue) == 0) {
-                foundItems.push(item);
+
+    private findItemPictures(items: Item[]) {
+        var thisService = this;
+        items.forEach(function(item: Item) {
+            if (item.pictureId == null) {
                 return;
             }
-            if (item.name.text.indexOf(multiStringValue) >= 0) {
-                foundItems.push(item);
-                return;
-            }
+            var picture = thisService.pictureService.getPicture(item.pictureId);
+            item.picture = picture;
         })
-        return foundItems;
     }
 
-    fillDefaultItems() {
-        if (this.bootstrapped) {
-            return;
-        }
-        this.bootstrapped = true
-        var allItems = [
+    private fillDefaultItems() {
+         var allItems = [
             {
                 id: 0,
                 companyId: 0,
@@ -225,11 +258,11 @@ export class ItemService {
                 currentPrice: 6
             }
         ];
-        this.items = new Array<Item>();
+        this.allItems = new Array<Item>();
         var thisService = this;
         allItems.forEach(function (itemParams) {
             var item = new Item().fromParams(itemParams);
-            thisService.items.push(item);
+            thisService.allItems.push(item);
         });
     }
 }

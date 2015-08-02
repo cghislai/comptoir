@@ -23,17 +23,18 @@ $onWhiteLinkColor: steelblue;
   .actions {
     float: right;
     text-align: right;
-  }
-  .actions  .action {
-    font-weight: bolder;
-    cursor: pointer;
-    display: inline-block;
-    padding: .5em;
-    border: 1px solid transparent;
-  }
-  .actions .action:hover {
-    border: 1px solid yellow;
-    color: yellow;
+
+    .action {
+      font-weight: bolder;
+      cursor: pointer;
+      display: inline-block;
+      padding: .5em;
+      border: 1px solid transparent;
+    }
+    .action:hover {
+      border: 1px solid yellow;
+      color: yellow;
+    }
   }
 }
 
@@ -52,6 +53,7 @@ $onWhiteLinkColor: steelblue;
 .lighBlueLink {
   color: $onWhiteLinkColor;
 }
+
 .lighBlueLink:hover {
   text-decoration: underline;
   color: black;
@@ -117,9 +119,21 @@ table.dataTable {
   }
 }
 
-
 span.valignAnchor {
   display: inline-block;
   vertical-align: middle;
   height: 100%;
+}
+
+img.itemPicture.medium {
+  max-width: 15vw;
+  max-height: 15vh;
+}
+img.itemPicture.large {
+  max-width: 25vw;
+  max-height: 25vh;
+}
+img.itemPicture.list {
+  max-width: 5em;
+  max-height: 2em;
 }

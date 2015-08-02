@@ -8,13 +8,14 @@ import {RouteConfig, RouterOutlet, RouterLink, routerInjectables} from 'angular2
 
 import {ApplicationService} from 'services/applicationService';
 import {ItemService} from 'services/itemService';
+import {PictureService} from 'services/pictureService';
 import {NavMenu} from './components/navMenu/navMenu';
 import {SellView} from 'components/sell/sellView';
 import {EditView} from 'components/edit/editView';
 
 @Component({
     selector: 'app',
-    viewInjector: [ItemService, ApplicationService]
+    viewInjector: [ItemService, ApplicationService, PictureService]
 })
 @RouteConfig([
     { path: '/', redirectTo: '/sell'},

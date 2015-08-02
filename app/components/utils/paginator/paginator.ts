@@ -4,16 +4,16 @@
 
 
 import {Component, View, Attribute, EventEmitter, NgFor} from 'angular2/angular2';
+import {Pagination} from 'services/utils'
 
-export class Pagination {
-    pageIndex: number;
-    recordFirstIndex: number;
-    pageSize: number;
-}
 
 @Component({
     selector: 'paginator',
-    events: ['pagechange']
+    events: ['pagechange'],
+    properties: ['totalCountParam: total-count', 'pageSizeParam: page-size'],
+    host: {
+        '(show)': 'buildPagesLinksArray()'
+    }
 })
 @View({
     templateUrl: './components/utils/paginator/paginator.html',
@@ -24,7 +24,7 @@ export class Pagination {
 export class Paginator {
     pageCount: number;
     pageSize: number;
-    totalCount: number;
+    total: number;
     showPrevNextLink: boolean;
     showFirstLastLink: boolean;
     pages: number[];
@@ -32,22 +32,26 @@ export class Paginator {
     pagechange: EventEmitter;
     maxPageLinks: number = 10;
 
-    constructor(@Attribute('total-count') totalCount,
-                @Attribute('page-size') pageSize,
-                @Attribute('show-prev-next') showPrevNext,
+    constructor(@Attribute('show-prev-next') showPrevNext,
                 @Attribute('show-first-last') showFirstLast) {
-        this.totalCount = parseInt(totalCount);
-        this.pageSize = parseInt(pageSize);
-        this.pageCount = Math.ceil(this.totalCount / this.pageSize);
         this.showFirstLastLink = showFirstLast;
         this.showPrevNextLink = showPrevNext;
         this.activePage = 0;
         this.pagechange = new EventEmitter();
-        this.buildPagesLinksArray();
     }
 
+    set totalCountParam(total: number) {
+        this.total = total;
+        this.buildPagesLinksArray();
+    }
+    set pageSizeParam(pageSize: number) {
+        this.pageSize = pageSize;
+        this.buildPagesLinksArray();
+    }
     buildPagesLinksArray() {
         this.pages = [];
+        this.pageCount = Math.ceil(this.total / this.pageSize);
+
         var pageLinkShown = 0;
         var firstIndex = this.activePage - this.maxPageLinks / 2;
         firstIndex = Math.max(firstIndex, 0);
@@ -82,8 +86,8 @@ export class Paginator {
         var pagination = new Pagination();
         pagination.pageIndex = pageIndex;
         var firstIndex = pageIndex * this.pageSize;
-        var pageSize = Math.min(this.pageSize, this.totalCount - firstIndex);
-        pagination.recordFirstIndex = firstIndex;
+        var pageSize = Math.min(this.pageSize, this.total - firstIndex);
+        pagination.firstIndex = firstIndex;
         pagination.pageSize = pageSize;
         this.buildPagesLinksArray();
 

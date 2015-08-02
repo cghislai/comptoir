@@ -2,22 +2,23 @@
     <div class="toPayHeader coloredHeader"
          *ng-if="toPayAmount > 0">
         <h1>À payer</h1>
-        <span class="total" [class.negative]="toPayAmount < 0" [class.exact]="toPayAmount == 0">
+         <span class="actions">
+        <span class="total single" [class.negative]="toPayAmount < 0" [class.exact]="toPayAmount == 0">
             {{ toPayAmount | currency:'EUR':true:'.2-2' }}
         </span>
-
+        </span>
     </div>
     <div class="toPayHeader coloredHeader"
          *ng-if="toPayAmount <= 0">
         <h1>À rendre</h1>
-    <span class="actions">
-        <span class="total negative">
-            {{ -toPayAmount | currency:'EUR':true:'.2-2'}}
+        <span class="actions">
+            <span class="total negative">
+                {{ -toPayAmount | currency:'EUR':true:'.2-2'}}
+            </span>
+            <span class="action validateLink" (click)="onValidateClicked()">
+                Valider
+            </span>
         </span>
-        <span class="action validateLink" (click)="onValidateClicked()">
-            Valider
-        </span>
-    </span>
     </div>
 </div>
 

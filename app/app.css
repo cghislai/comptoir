@@ -14,15 +14,15 @@
   .coloredHeader .actions {
     float: right;
     text-align: right; }
-  .coloredHeader .actions .action {
-    font-weight: bolder;
-    cursor: pointer;
-    display: inline-block;
-    padding: .5em;
-    border: 1px solid transparent; }
-  .coloredHeader .actions .action:hover {
-    border: 1px solid yellow;
-    color: yellow; }
+    .coloredHeader .actions .action {
+      font-weight: bolder;
+      cursor: pointer;
+      display: inline-block;
+      padding: .5em;
+      border: 1px solid transparent; }
+    .coloredHeader .actions .action:hover {
+      border: 1px solid yellow;
+      color: yellow; }
 
 .boxedHoverableLink {
   border: 0.09em solid lightsteelblue;
@@ -87,6 +87,18 @@ span.valignAnchor {
   display: inline-block;
   vertical-align: middle;
   height: 100%; }
+
+img.itemPicture.medium {
+  max-width: 15vw;
+  max-height: 15vh; }
+
+img.itemPicture.large {
+  max-width: 25vw;
+  max-height: 25vh; }
+
+img.itemPicture.list {
+  max-width: 5em;
+  max-height: 2em; }
 
 .headerNav:hover {
   color: yellow;
