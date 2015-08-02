@@ -7,6 +7,7 @@ import {RouteConfig, RouterOutlet, RouterLink, routerInjectables, Location} from
 
 import {ApplicationService} from 'services/applicationService';
 import {EditItemsView} from 'components/edit/editItemsView/editItemsView';
+import {EditCashView} from 'components/edit/editCash/editCashView';
 
 @Component({
     selector: "editView"
@@ -20,7 +21,8 @@ import {EditItemsView} from 'components/edit/editItemsView/editItemsView';
 
 @RouteConfig([
     {path: '', redirectTo: '/edit/items'},
-    {path: '/items', component: EditItemsView, as: 'items'}
+    {path: '/items', component: EditItemsView, as: 'items'},
+    {path: '/cash', component: EditCashView, as: 'cash'}
 ])
 
 export class EditView {

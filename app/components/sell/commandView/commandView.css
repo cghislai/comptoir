@@ -34,10 +34,10 @@
   background-color: lightblue;
   cursor: pointer; }
 
-.ligthBlueLink, table.dataTable td.rowActions a, header .commandsMenu .command:not([hidden]) span.name, header .commandsMenu .links a:not([hidden]) {
+.lightBlueLink, table.dataTable td.rowActions a, header .commandsMenu .command:not([hidden]) span.name, header .commandsMenu .links a:not([hidden]) {
   color: steelblue; }
 
-.ligthBlueLink:hover, table.dataTable td.rowActions a:hover, header .commandsMenu .command:not([hidden]) span.name:hover, header .commandsMenu .links a:hover:not([hidden]) {
+.lightBlueLink:hover, table.dataTable td.rowActions a:hover, header .commandsMenu .command:not([hidden]) span.name:hover, header .commandsMenu .links a:hover:not([hidden]) {
   text-decoration: underline;
   color: black;
   cursor: pointer; }

@@ -46,7 +46,7 @@ header {
         vertical-align: middle;
       }
       span.name {
-        @extend .ligthBlueLink;
+        @extend .lightBlueLink;
       }
       span.total {
         text-align: right;
@@ -61,7 +61,7 @@ header {
     .links {
       margin-top: .5em;
       a:not([hidden ]) {
-        @extend .ligthBlueLink;
+        @extend .lightBlueLink;
         display: block;
         padding: .2em;
       }

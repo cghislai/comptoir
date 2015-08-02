@@ -1,0 +1,64 @@
+<div class="editPage">
+    <h1>Comptage de la caisse</h1>
+
+    <div class="mainPane leftPane">
+        <div class="info">
+            <div class="title">
+                Dernière validation
+            </div>
+            <div class="value">
+                <span class="title light">
+                    {{ cashService.state.date | date:'dd/MM/yyyy HH:mm' }}
+                </span>
+                <span>
+                {{ cashService.state.amount | currency:'EUR':true:'.2-2' }}
+                    </span>
+            </div>
+            <div class="title">
+                Attendu dans la caisse
+            </div>
+            <div class="value">
+                {{ expectedState.amount | currency:'EUR':true:'.2-2' }}
+            </div>
+            <div class="title">
+                Caisse
+            </div>
+            <div class="value" [class.match]="expectedState.amount == stateModel.total ">
+                {{ stateModel.total | currency:'EUR':true:'.2-2' }}
+            </div>
+            <div class="value" >
+                <span class="title light" [hidden]=" expectedState.amount <= stateModel.total ">
+                    Manquant:
+                </span>
+                <span class="title light" [hidden]=" expectedState.amount > stateModel.total ">
+                    Excédent:
+                </span>
+                <span class="toMatch" [class.match]="expectedState.amount <= stateModel.total ">
+                    {{ getDiffAbsValue() | currency:'EUR':true:'.2-2' }}
+                </span>
+            </div>
+        </div>
+        <div class="actions">
+            <a (click)="saveState()">Valider la caisse</a>
+        </div>
+    </div>
+
+    <div class="mainPane rightPane">
+        <div class="cashTypes">
+            <div *ng-for="#cashType of stateModel.statePerType; #index=index"
+                 class="cashType">
+                <span class="name">{{ cashType.name }}</span>
+                <span class="amount">
+                    <input #cash-input type="number"
+                           [value]="cashType.amount"
+                           (keyup)="onCashInputChange(cashType, cashInput.value)"
+                           (change)="onCashInputChange(cashType, cashInput.value)"
+                            size="5" >
+                </span>
+                <span class="total">
+                    {{ cashType.amount * cashType.value | currency:'EUR':true:'.2-2'}}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

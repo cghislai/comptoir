@@ -34,10 +34,10 @@
   background-color: lightblue;
   cursor: pointer; }
 
-.lighBlueLink, table.dataTable td.rowActions a {
+.lightBlueLink, table.dataTable td.rowActions a {
   color: steelblue; }
 
-.lighBlueLink:hover, table.dataTable td.rowActions a:hover {
+.lightBlueLink:hover, table.dataTable td.rowActions a:hover {
   text-decoration: underline;
   color: black;
   cursor: pointer; }

@@ -34,10 +34,10 @@
   background-color: lightblue;
   cursor: pointer; }
 
-.lighBlueLink, table.dataTable td.rowActions a, .editPage table td.rowActions a, .editOverlay .editWindow a {
+.lightBlueLink, table.dataTable td.rowActions a, .editPage table td.rowActions a, .editOverlay .editWindow a {
   color: steelblue; }
 
-.lighBlueLink:hover, table.dataTable td.rowActions a:hover, .editPage table td.rowActions a:hover, .editOverlay .editWindow a:hover {
+.lightBlueLink:hover, table.dataTable td.rowActions a:hover, .editPage table td.rowActions a:hover, .editOverlay .editWindow a:hover {
   text-decoration: underline;
   color: black;
   cursor: pointer; }
@@ -104,6 +104,31 @@ a.disabled, a.disabled:hover {
   color: lightgray !important;
   text-decoration: none !important;
   cursor: default !important; }
+
+.menuPaneView {
+  width: 100%;
+  overflow-y: auto;
+  display: table;
+  min-height: 90vh; }
+  .menuPaneView .menu {
+    display: table-cell;
+    height: 100%;
+    vertical-align: top;
+    padding: 1em;
+    background-color: lightsteelblue; }
+    .menuPaneView .menu a {
+      color: white;
+      font-size: 1.2em;
+      font-weight: bolder;
+      text-decoration: none; }
+    .menuPaneView .menu a.active {
+      color: yellow; }
+    .menuPaneView .menu a:hover {
+      color: yellow; }
+  .menuPaneView .view {
+    display: table-cell;
+    vertical-align: top;
+    width: 100%; }
 
 .editPage {
   padding: .5em; }

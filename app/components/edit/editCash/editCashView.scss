@@ -1,0 +1,103 @@
+@import '../../../styles/_edit';
+
+div
+.mainPane {
+  display: inline-block;
+  vertical-align: top;
+
+}
+
+.leftPane {
+  padding: 0;
+  width: 33%;
+  .info {
+    margin: 1em;
+    padding: 1em;
+    border: .1em solid black;
+
+    > div {
+      padding: .3em;
+    }
+    div.title {
+      text-align: left;
+      font-weight: bolder;
+      margin-top: .3em;
+    }
+    div.title:not(:nth-of-type(1)) {
+      border-top: 1px solid lightgray;
+    }
+    div.value {
+      text-align: right;
+
+      .title {
+        margin-right: 1em;
+        font-weight: bold;
+      }
+      .title.light {
+        font-size: .8em;
+        color: grey;;
+        font-weight: lighter;
+      }
+    }
+
+    .toMatch {
+      font-weight: bolder;
+      font-size: 1.1em;
+    }
+    .toMatch:not(.match) {
+      color: red;
+    }
+    .toMatch.match {
+      color: darkgreen;
+    }
+  }
+  .actions {
+    padding: 1em;
+    text-align: center;
+
+    a {
+      @extend .boxedHoverableLink;
+    }
+  }
+}
+
+.rightPane {
+  padding: 0;
+  width: 66%;
+
+  .cashTypes {
+    margin: 1em;
+  }
+  .cashType {
+    display: inline-block;
+    margin: .2em;
+    width: 14em;
+    border: .05em solid $blueColor;
+    padding: .5em;
+
+    > span {
+      margin: .1em;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .name {
+      font-size: .9em;
+      font-weight: bolder;
+      width: 5em;
+    }
+    .amount {
+      width: 3em;
+      text-align: right;
+
+      input {
+        font-size: 1em;
+        max-width: 100%;
+      }
+    }
+    .total {
+      width: 6.5em;
+      text-align: right;
+      font-size: .8em;
+    }
+  }
+}
