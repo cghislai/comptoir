@@ -100,6 +100,11 @@ img.itemPicture.list {
   max-width: 5em;
   max-height: 2em; }
 
+a.disabled, a.disabled:hover {
+  color: lightgray !important;
+  text-decoration: none !important;
+  cursor: default !important; }
+
 .editPage {
   padding: .5em; }
   .editPage h1 {
@@ -158,5 +163,8 @@ img.itemPicture.list {
 table .rowActions {
   left: auto !important;
   right: 0 !important; }
+
+.itemPicture:not([hidden]) {
+  display: block; }
 
 /*# sourceMappingURL=editItemsView.css.map */

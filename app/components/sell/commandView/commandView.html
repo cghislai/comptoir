@@ -105,9 +105,11 @@
         <input #name placeholder="Nom" class="name"
                 [value]="toAddItem.name" (keyup)="toAddItem.name = name.value">
         <input #amount placeholder="Quantité" class="amount"
-               [value]="toAddItem.amount" (keyup)="toAddItem.amount= amount.value">
+               type="number" min="1" step="1"
+               [value]="toAddItem.amount" (keyup)="setToAddItemAmount(amount.value)">
         <input #price placeholder="Prix unitaire" class="price"
-               [value]="toAddItem.price" (keyup)="toAddItem.price= price.value">
-        <button (click)="doAddCustomItem()">Ajouter</button>
+               type="number" min="0.01" step="0.01"
+               [value]="toAddItem.price" (keyup)="setToAddItemPrice(price.value)">
+        <button (click)="doAddCustomItem()" [disabled]="!isItemToAddValid()">Ajouter</button>
     </div>
 </div>

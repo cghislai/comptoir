@@ -21,6 +21,28 @@ class ItemModel {
     description:string;
     model:string;
     price:number;
+    picture: Picture;
+    item: Item;
+
+    constructor();
+    constructor(item: Item);
+    constructor(item?: Item) {
+        if (item == undefined) {
+            this.item = new Item();
+            this.picture = new Picture();
+            return;
+        }
+        this.item = item;
+        this.reference = item.reference;
+        this.name = item.name.text;
+        this.description = item.description.text;
+        this.model = item.model.text;
+        this.price = item.currentPrice;
+        this.picture = item.picture;
+        if (this.picture == null) {
+            this.picture = new Picture();
+        }
+    }
 }
 
 // Took from angular2-examples
@@ -98,8 +120,7 @@ export class EditItemsView {
     applicationService: ApplicationService;
 
     itemSearch: ItemSearch;
-    editingItem:Item;
-    editingItemPicture: Picture;
+    editingItem:ItemModel;
     editingLanguage: Language;
     lastUsedLanguage: Language;
     itemsPerPage: number = 3;
@@ -130,12 +151,7 @@ export class EditItemsView {
         this.doEditItem(item);
     }
     doEditItem(item:Item) {
-        this.editingItem = item;
-        this.editingItemPicture = new Picture();
-        if (item.pictureId != null) {
-            this.editingItemPicture = this.pictureService.getPicture(item.pictureId);
-        }
-
+        this.editingItem = new ItemModel(item);
     }
 
     onLanguageSelected(language) {
@@ -154,7 +170,7 @@ export class EditItemsView {
         var thisView = this;
         reader.onload = function () {
             var data = reader.result;
-            thisView.editingItemPicture.dataUrl = data;
+            thisView.editingItem.picture.dataUrl = data;
             // Triggering an event for refresh
             event.target.dispatchEvent(new Event('fileread'));
         };
@@ -163,22 +179,26 @@ export class EditItemsView {
 
     onCurrentPriceChanged(event) {
         var price = event.target.value;
-        this.editingItem.currentPrice = parseFloat(price);
+        this.editingItem.price = parseFloat(price);
     }
     doCancelEdit() {
         this.lastUsedLanguage = this.editingLanguage;
         this.editingItem = null;
-        this.editingItemPicture = null;
     }
 
     doSaveEdit() {
         this.lastUsedLanguage = this.editingLanguage;
-        console.log(this.editingItem);
         this.itemService.saveItem
-        (this.editingItem);
+
+        var item = this.editingItem.item;
+        item.currentPrice = this.editingItem.price;
+        item.description = new LocalizedString(this.editingLanguage, this.editingItem.description);
+        item.name = new LocalizedString(this.editingLanguage, this.editingItem.name);
+        item.model= new LocalizedString(this.editingLanguage, this.editingItem.model);
+        item.reference = this.editingItem.reference;
+        item.picture = this.editingItem.picture;
         // TODO
         this.editingItem = null;
-        this.editingItemPicture = null;
     }
     doRemoveItem(item : Item) {
         this.itemService.removeItem(item);

@@ -88,18 +88,19 @@ export class ItemService {
             return this.items;
         }
         var multiStringValue = itemSearch.multiSearch;
-        if (multiStringValue != null) {
-            this.items = [];
+        if (multiStringValue != null && multiStringValue.length > 0) {
+            var foundItems = [];
             this.allItems.forEach(function (item:Item) {
                 if (item.reference.indexOf(multiStringValue) == 0) {
-                    this.items.push(item);
+                    foundItems.push(item);
                     return;
                 }
                 if (item.name.text.indexOf(multiStringValue) >= 0) {
-                    this.items.push(item);
+                    foundItems.push(item);
                     return;
                 }
             })
+            this.items = foundItems;
         }
         var pagination = itemSearch.pagination;
         if (pagination != null) {

@@ -137,3 +137,8 @@ img.itemPicture.list {
   max-width: 5em;
   max-height: 2em;
 }
+a.disabled, a.disabled:hover {
+    color: lightgray !important;
+    text-decoration: none !important;
+    cursor: default !important;
+}

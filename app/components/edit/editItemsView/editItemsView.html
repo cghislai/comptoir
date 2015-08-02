@@ -48,10 +48,10 @@
                 <tr>
                 <td><label for="picture">Image:</label></td>
                 <td>
-                    <img [src]="editingItemPicture.imageurl" class="itemPicture medium"
-                            [hidden]="editingItemPicture.imageurl== null">
-                    <img [src]="editingItemPicture.dataUrl" class="itemPicture medium"
-                         [hidden]="editingItemPicture.dataUrl == null">
+                    <img [src]="editingItem.picture.imageurl" class="itemPicture medium"
+                            [hidden]="editingItem.picture.imageurl== null">
+                    <img [src]="editingItem.picture.dataUrl" class="itemPicture medium"
+                         [hidden]="editingItem.picture.dataUrl == null">
                     <input type="file" id="picture" accept="image/*"
                            ng-control="picture"
                            (change)="onFileSelected(f, $event)"
@@ -83,21 +83,21 @@
                     <td><label for="name">Nom:</label></td>
                     <td>
                         <input type="text" id="name"
-                               ng-control="name" [(ng-model)]="editingItem.name.text">
+                               ng-control="name" [(ng-model)]="editingItem.name">
                     </td>
                 </tr>
                 <tr>
                     <td><label for="description">Description:</label></td>
                     <td>
                         <textarea type="text" id="description" rows="3"
-                               ng-control="description" [(ng-model)]="editingItem.description.text"></textarea>
+                               ng-control="description" [(ng-model)]="editingItem.description"></textarea>
                     </td>
                 </tr>
                 <tr>
                     <td><label for="model">Modèle:</label></td>
                     <td>
                         <input type="text" id="model"
-                               ng-control="model" [(ng-model)]="editingItem.model.text">
+                               ng-control="model" [(ng-model)]="editingItem.model">
                     </td>
                 </tr>
                 <tr>
@@ -105,7 +105,7 @@
                     <td>
                         <input type="number" min="0" step="0.01" id="currentPrice"
                                ng-control="currentPrice"
-                                [ng-model]="editingItem.currentPrice"
+                                [ng-model]="editingItem.price"
                                 (change)="onCurrentPriceChanged($event)">
                     </td>
                 </tr>

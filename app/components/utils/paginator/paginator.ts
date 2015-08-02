@@ -80,6 +80,12 @@ export class Paginator {
         }
         this.goToPage(this.activePage + 1);
     }
+    hasPrev() {
+        return this.activePage > 0;
+    }
+    hasNext() {
+        return this.activePage < this.pageCount - 1;
+    }
 
     goToPage(pageIndex: number) {
         this.activePage = pageIndex;

@@ -11,8 +11,8 @@ import {ApplicationService, LocalizedString} from 'services/applicationService';
 // TODO: use angular2 form model & validators
 class ToAddItem {
     name: string = null;
-    amount: string = '1';
-    price: string = null;
+    amount: number = 1;
+    price: number = null;
 }
 
 
@@ -73,11 +73,11 @@ export class CommandView {
     doAddCustomItem() {
         var item = new Item();
         var lang = this.applicationService.language;
-        item.currentPrice = parseFloat(this.toAddItem.price);
+        item.currentPrice = this.toAddItem.price;
         item.name  = new LocalizedString(lang, this.toAddItem.name);
         item.reference = null;
         var commandItem = new CommandItem(item);
-        commandItem.amount = parseInt(this.toAddItem.amount);
+        commandItem.amount = this.toAddItem.amount;
         this.commandService.addCommandItem(commandItem);
         this.renewToAddCustomItem();
     }
@@ -146,6 +146,27 @@ export class CommandView {
     doUnvalidate() {
         this.validated = false;
         this.validate.next(this.validated);
+    }
+    setToAddItemAmount(amount: string) {
+        this.toAddItem.amount = parseInt(amount);
+    }
+    setToAddItemPrice(price: string) {
+        this.toAddItem.price = parseFloat(price);
+    }
+    isItemToAddValid() {
+        if (this.toAddItem.name == null
+        || this.toAddItem.name.length <= 0) {
+            return false;
+        }
+        if (this.toAddItem.amount == null
+        || this.toAddItem.amount <= 0) {
+            return false;
+        }
+        if (this.toAddItem.price == null
+        || this.toAddItem.price < 0.01) {
+            return false
+        }
+        return true;
     }
 
 }
