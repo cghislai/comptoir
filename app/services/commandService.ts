@@ -168,7 +168,17 @@ export class CommandService {
     }
 
     newCommand(): Command {
-        var command = new Command();
+        var command = null;
+        this.activeCommands.forEach(function(cmd: Command) {
+            if (cmd.items.length == 0) {
+                command = cmd;
+            }
+            return;
+        })
+        if (command != null) {
+            return command;
+        }
+        command = new Command();
         this.lastCommandId++;
         command.id = this.lastCommandId;
         this.activeCommands.push(command);

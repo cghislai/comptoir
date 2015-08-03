@@ -38,6 +38,8 @@ div
         color: grey;;
         font-weight: lighter;
       }
+
+
     }
 
     .toMatch {
@@ -52,11 +54,21 @@ div
     }
   }
   .actions {
-    padding: 1em;
+
     text-align: center;
 
-    a {
+    div.editAmount {
+      height: 2em;
+    }
+    > * {
+      padding: .5em;
+    }
+    input {
+      width: 6em;
+    }
+    a:not([hidden]) {
       @extend .boxedHoverableLink;
+      display: inline-block;
     }
   }
 }

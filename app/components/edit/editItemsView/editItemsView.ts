@@ -198,10 +198,13 @@ export class EditItemsView {
         item.reference = this.editingItem.reference;
         item.picture = this.editingItem.picture;
         // TODO
+        this.itemService.saveItem(item);
         this.editingItem = null;
+        this.searchItems();
     }
     doRemoveItem(item : Item) {
         this.itemService.removeItem(item);
+        this.searchItems();
     }
 
 }

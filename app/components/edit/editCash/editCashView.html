@@ -24,9 +24,11 @@
                 Caisse
             </div>
             <div class="value" [class.match]="expectedState.amount == stateModel.total ">
-                {{ stateModel.total | currency:'EUR':true:'.2-2' }}
+                <span>
+                    {{ stateModel.total | currency:'EUR':true:'.2-2' }}
+                </span>
             </div>
-            <div class="value" >
+            <div class="value">
                 <span class="title light" [hidden]=" expectedState.amount <= stateModel.total ">
                     Manquant:
                 </span>
@@ -39,6 +41,21 @@
             </div>
         </div>
         <div class="actions">
+            <div class="editAmount">
+                <div >
+                    <input type="number" min="0.01" step="0.01"
+                           #totalInput *ng-if="editingAmount"
+                           [value]="stateModel.total"
+                           (change)="setAmount(totalInput.value)"
+                           (keyup)="onAmountKeyUp($event)"
+                           (blur)="editingAmount = false"
+                           autofocus>
+                </div>
+                <a  (click)="editAmount()" [hidden]="editingAmount">
+                    Éditer le montant
+                </a>
+            </div>
+
             <a (click)="saveState()">Valider la caisse</a>
         </div>
     </div>
@@ -53,7 +70,7 @@
                            [value]="cashType.amount"
                            (keyup)="onCashInputChange(cashType, cashInput.value)"
                            (change)="onCashInputChange(cashType, cashInput.value)"
-                            size="5" >
+                           size="5">
                 </span>
                 <span class="total">
                     {{ cashType.amount * cashType.value | currency:'EUR':true:'.2-2'}}

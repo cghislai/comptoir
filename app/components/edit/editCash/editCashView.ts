@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 02/08/15.
  */
-import {Component, View, FormBuilder, formDirectives, NgFor} from 'angular2/angular2';
+import {Component, View, FormBuilder, formDirectives, NgFor, NgIf} from 'angular2/angular2';
 import {RouteConfig, RouterOutlet, RouterLink, routerInjectables} from 'angular2/router';
 
 
@@ -86,13 +86,14 @@ class CashStateModel {
 @View({
     templateUrl: './components/edit/editCash/editCashView.html',
     styleUrls: ['./components/edit/editCash/editCashView.css'],
-    directives: [NgFor, AutoFocusDirective]
+    directives: [NgFor,NgIf, AutoFocusDirective]
 })
 
 export class EditCashView {
     cashService: CashService;
     stateModel: CashStateModel;
     expectedState: CashState;
+    editingAmount: boolean;
 
     constructor(cashService: CashService) {
         this.cashService = cashService;
@@ -122,6 +123,31 @@ export class EditCashView {
        this.expectedState.amount = this.stateModel.total;
         this.expectedState.date = new Date();
         this.cashService.saveCashState(this.expectedState);
-
     }
+    editAmount() {
+        this.editingAmount = true;
+    }
+    setAmount(amountStr: string) {
+        var amount: number = parseFloat(amountStr);
+        if (amount == this.stateModel.total
+        || isNaN(amount)) {
+            this.editingAmount = false;
+            return;
+        }
+        amount = Number((amount).toFixed(2));
+        this.stateModel.total = amount;
+        this.editingAmount = false;
+    }
+    onAmountKeyUp(event) {
+        if (event.which == 13) { // Enter
+            var amount: string = event.target.value;
+            this.setAmount(amount);
+            return;
+        }
+        if (event.which == 27) { // Escape
+            this.editingAmount = false;
+            return;
+        }
+    }
+
 }
