@@ -73,9 +73,8 @@
                         <span *ng-for="#language of languages">
                             <input type="radio" name="langue"
                                    ng-control="lang"
-                                   value="language.lang"
-                                   [checked]="isLanguageSelected(language)"
-                                   (click)="onLanguageSelected(language)"
+                                   [checked]="isLanguageSelected(language.lang)"
+                                   (click)="onLanguageSelected(language.lang)"
                                    [attr.id]="language.lang">
                             <label [attr.for]="language.lang">{{language.text}}</label>
                         </span>

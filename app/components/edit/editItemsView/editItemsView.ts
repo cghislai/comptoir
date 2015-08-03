@@ -19,7 +19,9 @@ class FormModel {
     lang:Language;
     reference:string;
     name:string;
+    nameLocaleText: LocaleText;
     description:string;
+    descriptionLocaleText: LocaleText;
     model:string;
     price:number;
     vat: number;
@@ -27,21 +29,39 @@ class FormModel {
     item: Item;
 
     constructor();
-    constructor(item: Item);
-    constructor(item?: Item) {
+    constructor(item: Item, language: Language);
+    constructor(item?: Item, language?: Language) {
         if (item == undefined) {
             this.item = new Item();
             this.picture = new Picture();
             return;
         }
+        this.lang = language;
         this.item = item;
         this.reference = item.reference;
-        this.name = item.name.get();
-        this.description = item.description.get();
+        this.name = item.name.get(language);
+        this.nameLocaleText = item.name;
+        this.description = item.description.get(language);
+        this.descriptionLocaleText =item.description;
         this.model = item.model;
         this.price = item.currentPrice.vatExclusive;
         this.vat = item.currentPrice.vatRate * 100;
         this.picture = item.picture;
+    }
+
+    setLanguage(language: Language) {
+        if (this.lang == language) {
+            return;
+        }
+        this.saveLocaleTexts();
+        this.lang = language;
+        this.description = this.descriptionLocaleText.get(language);
+        this.name = this.nameLocaleText.get(language);
+    }
+
+    saveLocaleTexts() {
+        this.nameLocaleText.set(this.lang, this.name);
+        this.descriptionLocaleText.set(this.lang, this.description);
     }
 }
 
@@ -76,7 +96,6 @@ export class EditItemsView {
     loading: boolean;
 
     editingModel:FormModel;
-    editingLanguage: Language;
     lastUsedLanguage: Language;
 
     constructor(itemService:ItemService, pictureService: PictureService,
@@ -88,6 +107,7 @@ export class EditItemsView {
         this.lastUsedLanguage = applicationService.language;
         this.itemSearch = new ItemSearch();
         this.itemSearch.pagination = new Pagination(0, this.itemsPerPage);
+        this.lastUsedLanguage = LocaleText.DEFAULT_LANGUAGE;
         this.searchItems();
     }
 
@@ -118,18 +138,19 @@ export class EditItemsView {
         this.doEditItem(item);
     }
     doEditItem(item:Item) {
-        this.editingModel = new FormModel(item);
+        this.editingModel = new FormModel(item, this.lastUsedLanguage);
         this.picturePromise = this.itemService.findItemPicture(item);
         this.picturePromise.then(function(picture: Picture) {
             item.picture = picture;
         });
     }
 
-    onLanguageSelected(language) {
-        this.editingLanguage = language;
+    onLanguageSelected(language: Language) {
+        this.lastUsedLanguage = language;
+        this.editingModel.setLanguage(language);
     }
-    isLanguageSelected(language): boolean {
-        return this.editingLanguage = language;
+    isLanguageSelected(language: Language): boolean {
+        return this.editingModel.lang == language;
     }
     onFileSelected(form, event) {
         var files = event.target.files;
@@ -157,18 +178,20 @@ export class EditItemsView {
         this.editingModel.vat = parseInt(vat);
     }
     doCancelEdit() {
-        this.lastUsedLanguage = this.editingLanguage;
+        this.lastUsedLanguage = this.editingModel.lang;
         this.editingModel = null;
     }
 
     doSaveEdit() {
-        this.lastUsedLanguage = this.editingLanguage;
+        this.lastUsedLanguage = this.editingModel.lang;
 
         var item = this.editingModel.item;
         item.currentPrice.vatExclusive = this.editingModel.price;
         item.currentPrice.vatRate = Number((this.editingModel.vat * 0.01).toFixed(2));
-        item.description.set(this.editingLanguage, this.editingModel.description);
-        item.name.set(this.editingLanguage, this.editingModel.name);
+
+        this.editingModel.saveLocaleTexts();
+        item.description = this.editingModel.descriptionLocaleText;
+        item.name = this.editingModel.nameLocaleText;
         item.model = this.editingModel.model;
         item.reference = this.editingModel.reference;
         item.picture = this.editingModel.picture;
