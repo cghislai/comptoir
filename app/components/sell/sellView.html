@@ -2,13 +2,13 @@
     <table>
         <tr>
             <td class="itemList"  [hidden]="commandValidated">
-                <itemList (item-clicked)="onItemClicked($event)"></itemList>
+                <itemList #itemlist (item-clicked)="onItemClicked($event, commandview)"></itemList>
             </td>
             <td class="commandView">
-                <commandView #commandView (validate)="onCommandValidated($event)"></commandView>
+                <commandView #commandview (validate)="onCommandValidated($event, payview, commandview)"></commandView>
             </td>
             <td class="payView" [hidden]="commandValidated == false">
-                <payView (paid)="onCommandPaid($event, commandView)"></payView>
+                <payView #payview (paid)="onCommandPaid(commandview)"></payView>
             </td>
         </tr>
     </table>

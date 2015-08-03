@@ -2,7 +2,7 @@
  * Created by cghislai on 29/07/15.
  */
 /// <reference path="../../typings/_custom.d.ts" />
-import {Component, View, NgIf,  Query, QueryList, ViewContainerRef} from 'angular2/angular2';
+import {Component, View} from 'angular2/angular2';
 
 import {ApplicationService} from 'services/applicationService';
 import {CommandService, Command} from 'services/commandService';
@@ -12,54 +12,37 @@ import {CommandView} from 'components/sell/commandView/commandView';
 import {PayView} from 'components/sell/payView/payView'
 
 @Component({
-    selector: "sellView"
+    selector: "sellView",
 })
 @View({
     templateUrl: "./components/sell/sellView.html",
     styleUrls: ["./components/sell/sellView.css"],
-    directives: [ItemList, CommandView, PayView, NgIf]
+    directives: [ItemList, CommandView, PayView]
 })
 
 export class SellView {
     commandService:CommandService;
     commandValidated:boolean;
-    commandView: CommandView;
-    commandViewQuery:QueryList<CommandView>;
-    payViewQuery:QueryList<PayView>;
 
-    constructor(@Query(CommandView, {descendants: true}) commandViewQuery:QueryList<CommandView>,
-                @Query(PayView, {descendants: true}) payViewQuery:QueryList<PayView>,
-                appService:ApplicationService, commandService:CommandService) {
+    constructor(appService:ApplicationService, commandService:CommandService) {
         appService.pageName = "Vente";
         this.commandService = commandService;
         this.commandValidated = false;
-        this.commandViewQuery = commandViewQuery;
-        this.payViewQuery = payViewQuery;
     }
 
-    getCommandView():CommandView {
-        return this.commandViewQuery.first;
-    }
-    getCommand():Command {
-        var commandView = this.getCommandView();
-        return commandView.command;
-    }
-    onItemClicked(item:Item) {
-        var commandView = this.getCommandView();
+    onItemClicked(item:Item, commandView: CommandView) {
         commandView.doAddItem(item);
     }
 
-    onCommandValidated(validated:boolean) {
+    onCommandValidated(validated:boolean, payView: PayView, commandView: CommandView) {
         if (validated) {
-            var payView = this.payViewQuery.first;
-            var command = this.getCommand();
+            var command = commandView.command;
             payView.payCommand(command);
         }
         this.commandValidated = validated;
     }
 
-    onCommandPaid(event, view) {
-        var commandView = this.getCommandView();
+    onCommandPaid(commandView: CommandView) {
         commandView.onCommandPaid()
         this.commandValidated = false;
     }
