@@ -6,7 +6,8 @@ import {Component, View, NgFor, NgIf, EventEmitter} from 'angular2/angular2';
 import {CommandService, CommandItem, Command} from 'services/commandService';
 import {Item} from 'services/itemService';
 import {AutoFocusDirective} from 'directives/autoFocus';
-import {ApplicationService, LocalizedString} from 'services/applicationService';
+import {ApplicationService} from 'services/applicationService';
+import {LocaleText} from 'services/utils';
 
 // TODO: use angular2 form model & validators
 class ToAddItem {
@@ -98,8 +99,8 @@ export class CommandView {
     doAddCustomItem() {
         var item = new Item();
         var lang = this.applicationService.language;
-        item.currentPrice = this.toAddItem.price;
-        item.name  = new LocalizedString(lang, this.toAddItem.name);
+        item.currentPrice.vatExclusive = this.toAddItem.price;
+        item.name.set(lang, this.toAddItem.name);
         item.reference = null;
         var commandItem = new CommandItem(item);
         commandItem.amount = this.toAddItem.amount;

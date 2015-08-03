@@ -126,6 +126,9 @@ export class EditCashView {
     }
     editAmount() {
         this.editingAmount = true;
+        if (this.stateModel.total == 0) {
+            this.stateModel.total = null;
+        }
     }
     setAmount(amountStr: string) {
         var amount: number = parseFloat(amountStr);

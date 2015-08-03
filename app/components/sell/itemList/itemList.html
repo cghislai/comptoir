@@ -1,9 +1,12 @@
 <div class="itemList" (show)="searchItems()">
     <header class="filter coloredHeader">
-        <input #filter (keyup)="onFilterValueChanged($event)"
+        <input #filter
+               (keyup)="onFilterKeyUp($event)"
+               (change)="onFilterChange($event)"
                [value]="itemSearch.multiSearch"
                placeholder="Filtrer les produits" autoFocus/>
         <button (click)="applyFilter(filter.value)">Rechercher</button>
+        <img class="busy" src="res/img/ajax-loader.white.gif" [hidden]="!loading">
     </header>
     <div class="scrollPane">
         <table class="dataTable">
@@ -13,11 +16,11 @@
                     {{ item.reference }}
                 </td>
                 <td class="name">
-                    {{ item.name.text }}
-                    <div class="model" [hidden]="item.model == null">{{item.model.text}}</div>
+                    {{ item.name.get() }}
+                    <div class="model" [hidden]="item.model == null">{{item.model}}</div>
                 </td>
                 <td class="price">
-                    {{ item.currentPrice | currency:'EUR':true:'.2-2'}}
+                    {{ item.currentPrice.vatExclusive | currency:'EUR':true:'.2-2'}}
                 </td>
             </tr>
         </table>

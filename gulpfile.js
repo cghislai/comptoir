@@ -152,6 +152,12 @@ gulp.task('build.assets.dev', ['build.js.dev'], function () {
     .pipe(gulp.dest(PATH.dest.dev.all));
 });
 
+
+gulp.task('build.res.dev', ['build.js.prod'], function () {
+  return gulp.src(['./app/res/**'], {base: './app'})
+      .pipe(gulp.dest(PATH.dest.dev.all));
+});
+
 gulp.task('build.index.dev', function() {
   var target = gulp.src(injectableDevAssetsRef(), { read: false });
   return gulp.src('./app/index.html')
@@ -167,7 +173,7 @@ gulp.task('sass.dev', function () {
 });
 
 gulp.task('build.app.dev', function (done) {
-  runSequence('clean.app.dev', 'build.assets.dev', 'build.index.dev', 'sass.dev', done);
+  runSequence('clean.app.dev', 'build.res.dev', 'build.assets.dev', 'build.index.dev', 'sass.dev', done);
 });
 
 gulp.task('build.dev', function (done) {
@@ -233,6 +239,11 @@ gulp.task('build.assets.prod', ['build.js.prod'], function () {
     .pipe(gulp.dest(PATH.dest.prod.all));
 });
 
+gulp.task('build.res.prod', ['build.js.prod'], function () {
+  return gulp.src(['./app/res/**'], {base: './app'})
+      .pipe(gulp.dest(PATH.dest.prod.all));
+});
+
 gulp.task('build.index.prod', function() {
   var target = gulp.src([join(PATH.dest.prod.lib, 'lib.js'),
                          join(PATH.dest.prod.all, '**/*.css')], { read: false });
@@ -251,7 +262,7 @@ gulp.task('build.css.prod', function () {
 
 gulp.task('build.app.prod', function (done) {
   // build.init.prod does not work as sub tasks dependencies so placed it here.
-  runSequence('clean.app.prod', 'build.init.prod', 'build.css.prod', 'build.assets.prod',
+  runSequence('clean.app.prod', 'build.init.prod', 'build.css.prod', 'build.assets.prod', 'build.res.prod',
               'build.index.prod', 'clean.tmp', done);
 });
 

@@ -59,12 +59,14 @@ div
 
     div.editAmount {
       height: 2em;
+
     }
     > * {
       padding: .5em;
     }
     input {
       width: 6em;
+      margin: .5em;
     }
     a:not([hidden]) {
       @extend .boxedHoverableLink;

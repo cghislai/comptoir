@@ -9,10 +9,25 @@
     margin-bottom: .3em;
   }
 
+  .busy:not([hidden]) {
+    display: inline-block;
+    position: absolute;
+    right: 1em;
+    top: 1em;
+    height: 1.5em;
+  }
   .topActions {
     text-align: center;
+    margin: 1em;
+    >* {
+      margin-right: 1em;
+    }
+    .filter {
+      display: inline-block;
+    }
 
-    .action {
+    .action , button.action {
+      font-size: 1em;
       @extend .boxedHoverableLink;
       display: inline-block;
     }
@@ -38,15 +53,18 @@
     display: inline-block;
     top: 10vh;
     max-height: 80vh;
+    max-width: 90vw;
     overflow-y: auto;
 
     border: 2px solid lightsteelblue;
     background-color: white;
     padding: .5em;
+    box-sizing: border-box;
 
     h2 {
       text-align: center;
       margin: .2em;
+      color: $onWhiteLinkColor;
     }
 
     form table {
@@ -60,6 +78,7 @@
       td  input, td textarea, td  label {
         font-size: .8em;
       }
+
       td textarea {
         font-family:  Helvetica, Arial, sans-serif;
       }

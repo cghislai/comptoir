@@ -1,13 +1,22 @@
 <div class="editPage">
     <h1>Édition des produits</h1>
+    <img class="busy" src="res/img/ajax-loader.black.gif" [hidden]="!loading">
 
     <div class="topActions">
-        <div class="action" (^click)="doEditNewItem()">
-            Nouveau
-        </div>
+        <form class="filter">
+            <span class="input">
+                <input [(ng-model)]="itemSearch.multiSearch" autoFocus>
+            </span>
+            <button class="action" (^click)="searchItems()">
+                Rechercher
+            </button>
+        </form>
+        <span class="action" (^click)="doEditNewItem()">
+            Nouveau produit
+        </span>
     </div>
     {{ itemService.itemCount }}
-    <paginator [total-count]="itemService.itemsCount"
+    <paginator [total-count]="itemCount"
                [page-size]="itemsPerPage"
                show-prev-next="true" show-first-last="true"
                (pagechange)="onPageChanged($event)"></paginator>
@@ -21,15 +30,15 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ng-for="#item of itemService.items" class="item">
+        <tr *ng-for="#item of items" class="item">
             <td class="ref">{{ item.reference }}</td>
-            <td class="name">{{ item.name.text }}</td>
-            <td class="model">{{ item.model.text }}</td>
-            <td class="number price">{{ item.currentPrice | currency:'EUR':true:'.2-2'}}</td>
+            <td class="name">{{ item.name.get() }}</td>
+            <td class="model">{{ item.model }}</td>
+            <td class="number price">{{ item.currentPrice.vatExclusive | currency:'EUR':true:'.2-2'}}</td>
             <td class="rowActions">
                 <span class="actions">
                 <a class="remove"
-                        (click)="doRemoveItem(item)">Supprimer</a>
+                   (click)="doRemoveItem(item)">Supprimer</a>
                 <a class="edit"
                    (click)="doEditItem(item)">Éditer</a>
                     </span>
@@ -38,7 +47,7 @@
         </tbody>
     </table>
 </div>
-<div class="editOverlay" *ng-if="editingItem != null">
+<div class="editOverlay" *ng-if="editingModel != null">
     <div class="editWindow">
         <h2>Édition du produit</h2>
 
@@ -46,17 +55,17 @@
               enctype="multipart/form-data">
             <table>
                 <tr>
-                <td><label for="picture">Image:</label></td>
-                <td>
-                    <img [src]="editingItem.picture.imageurl" class="itemPicture medium"
-                            [hidden]="editingItem.picture.imageurl== null">
-                    <img [src]="editingItem.picture.dataUrl" class="itemPicture medium"
-                         [hidden]="editingItem.picture.dataUrl == null">
-                    <input type="file" id="picture" accept="image/*"
-                           ng-control="picture"
-                           (change)="onFileSelected(f, $event)"
-                           (fileread)>
-                </td>
+                    <td><label for="picture">Image:</label></td>
+                    <td>
+                        <img [src]="editingModel.picture.imageurl" class="itemPicture medium"
+                             [hidden]="editingModel.picture.imageurl== null">
+                        <img [src]="editingModel.picture.dataUrl" class="itemPicture medium"
+                             [hidden]="editingModel.picture.dataUrl == null">
+                        <input type="file" id="picture" accept="image/*"
+                               ng-control="picture"
+                               (change)="onFileSelected(f, $event)"
+                               (fileread)>
+                    </td>
                 </tr>
                 <tr>
                     <td><label>Langue:</label></td>
@@ -76,37 +85,52 @@
                     <td><label for="reference">Référence:</label></td>
                     <td>
                         <input type="text" id="reference"
-                               ng-control="reference" [(ng-model)]="editingItem.reference">
+                               ng-control="reference" [(ng-model)]="editingModel.reference">
                     </td>
                 </tr>
                 <tr>
                     <td><label for="name">Nom:</label></td>
                     <td>
                         <input type="text" id="name"
-                               ng-control="name" [(ng-model)]="editingItem.name">
+                               ng-control="name" [(ng-model)]="editingModel.name">
                     </td>
                 </tr>
                 <tr>
                     <td><label for="description">Description:</label></td>
                     <td>
                         <textarea type="text" id="description" rows="3"
-                               ng-control="description" [(ng-model)]="editingItem.description"></textarea>
+                                  ng-control="description" [(ng-model)]="editingModel.description"></textarea>
                     </td>
                 </tr>
                 <tr>
                     <td><label for="model">Modèle:</label></td>
                     <td>
                         <input type="text" id="model"
-                               ng-control="model" [(ng-model)]="editingItem.model">
+                               ng-control="model" [(ng-model)]="editingModel.model">
                     </td>
                 </tr>
                 <tr>
-                    <td><label for="currentPrice">Prix:</label></td>
+                    <td><label for="price">Prix:</label></td>
                     <td>
-                        <input type="number" min="0" step="0.01" id="currentPrice"
-                               ng-control="currentPrice"
-                                [ng-model]="editingItem.price"
-                                (change)="onCurrentPriceChanged($event)">
+                        <span>
+                        <input type="number" min="0" step="0.01" id="price"
+                               ng-control="price"
+                               [ng-model]="editingModel.price"
+                               (change)="onCurrentPriceChanged($event)">
+                            </span>
+                        <span>€</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="vat">TVA:</label></td>
+                    <td>
+                        <span>
+                        <input type="number" min="0" max="100" step="1" id="vat"
+                               ng-control="vat"
+                               [ng-model]="editingModel.vat"
+                               (change)="onVatChanged($event)">
+                            </span>
+                        <span>%</span>
                     </td>
                 </tr>
             </table>

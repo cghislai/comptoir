@@ -23,7 +23,6 @@ export class CommandSearch {
 }
 
 export class Command {
-    static VAT:number = 0.21;
     items: CommandItem[];
     globalReduction: number;
     vatExclusiveAmount: number;
@@ -111,19 +110,25 @@ export class Command {
     }
     calcTotalPrice() {
         this.vatExclusiveAmount = 0;
+        this.vatAmount = 0;
         var thisService = this;
         this.items.forEach(function(item: CommandItem) {
             var price = item.price;
             thisService.vatExclusiveAmount += price;
+
+            var vat = item.item.currentPrice.vatRate * price;
+            thisService.vatAmount += vat;
         });
         if (this.globalReduction != null) {
             this.reductionAmount = this.globalReduction * 0.01  * this.vatExclusiveAmount;
             this.vatExclusiveAmount -= this.reductionAmount;
+            var vatReduction = this.vatAmount * this.globalReduction * 0.01;
+            this.vatAmount -= vatReduction;
         } else {
             this.reductionAmount = 0;
         }
         this.vatExclusiveAmount = Number((this.vatExclusiveAmount).toFixed(2));
-        this.vatAmount = Number(( this.vatExclusiveAmount * Command.VAT).toFixed(2));
+        this.vatAmount = Number(( this.vatAmount).toFixed(2));
         this.totalPrice =  Number((this.vatExclusiveAmount + this.vatAmount).toFixed(2));
     }
     calcItemPrice(commandItem: CommandItem) {
@@ -131,7 +136,7 @@ export class Command {
         if (item == null) {
             return;
         }
-        var itemPrice = item.currentPrice;
+        var itemPrice = item.currentPrice.vatExclusive;
         var amount = commandItem.amount;
         var totalPrice = amount * itemPrice ;
 

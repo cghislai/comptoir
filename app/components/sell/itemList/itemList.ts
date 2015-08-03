@@ -19,28 +19,76 @@ import {AutoFocusDirective} from 'directives/autoFocus';
 })
 
 export class ItemList {
-    itemService: ItemService;
-    items: Item[];
+    itemService:ItemService;
+    items:Item[];
+    itemCount:number;
     itemClicked = new EventEmitter();
-    itemSearch: ItemSearch;
+    itemSearch:ItemSearch;
+    loading:boolean = false;
+    // Only 1 query at a time
+    countPromise:Promise<any> = null;
+    searchPromise:Promise<any> = null;
+    picturePromise:Promise<any> = null;
+    // Delay keyevent for 500ms
+    keyboardTimeoutSet: boolean;
 
-    constructor(itemService: ItemService) {
+    constructor(itemService:ItemService) {
         this.itemService = itemService;
         this.itemSearch = new ItemSearch();
         this.itemSearch.multiSearch = null;
         this.searchItems();
     }
+
     searchItems() {
-        this.items = this.itemService.findItems(this.itemSearch);
+        this.loading = true;
+        var thisList = this;
+        // ES7: cancel running promises
+        this.countPromise = this.itemService.countItems(this.itemSearch);
+        this.countPromise.then(function (amount:number) {
+            thisList.itemCount = amount;
+        });
+        this.searchPromise = this.itemService.findItems(this.itemSearch);
+        this.searchPromise.then(function (items:Item[]) {
+            thisList.items = items;
+        })
+
+        var finalPromise:Promise<void> = Promise.all([
+            this.countPromise,
+            this.searchPromise
+        ]).then(function () {
+            thisList.picturePromise = thisList.itemService.findItemPictures(thisList.items);
+            thisList.picturePromise.then(function () {
+
+            });
+            thisList.loading = false;
+        });
     }
-    onFilterValueChanged($event) {
+
+    onFilterKeyUp($event) {
+        if (this.keyboardTimeoutSet) {
+            return;
+        }
+        this.keyboardTimeoutSet = true;
+        var thisList = this;
+        setTimeout(function() {
+            thisList.applyFilter($event.target.value);
+            thisList.keyboardTimeoutSet = false;
+        }, 500);
+    }
+
+    onFilterChange($event) {
         this.applyFilter($event.target.value);
     }
-    applyFilter(filterValue: string) {
+
+    applyFilter(filterValue:string) {
+        if (this.itemSearch.multiSearch == filterValue) {
+            return;
+        }
         this.itemSearch.multiSearch = filterValue;
         this.searchItems();
     }
-    onItemClick(item: Item) {
+
+    onItemClick(item:Item) {
         this.itemClicked.next(item);
     }
 }

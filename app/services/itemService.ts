@@ -3,53 +3,88 @@
  */
 
 import {Inject, forwardRef} from 'angular2/angular2';
-import {LocalizedString} from 'services/applicationService';
 import {Picture, PictureService} from 'services/pictureService';
-import {Pagination} from 'services/utils'
+import {Pagination, Language, LocaleText} from 'services/utils'
+
+export class Price {
+    static DEFAULT_VAT_RATE:number = 0.21;
+    id:number = null;
+    startDateTime:Date = null;
+    endDateTime:Date = null;
+    vatExclusive:number = null;
+    vatRate:number = null;
+
+    constructor() {
+        this.vatRate = Price.DEFAULT_VAT_RATE;
+    }
+}
 
 export class Item {
     id:number = null;
     companyId:number = null;
     reference:string = null;
-    model:LocalizedString = null;
-    name:LocalizedString = null;
-    description:LocalizedString = null;
-    currentPrice:number = null;
-    pictureId: number = null;
-    picture: Picture = null;
+    model:string = null;
+    name:LocaleText = null;
+    description:LocaleText = null;
+    currentPrice:Price = null;
+    pictureId:number = null;
+    picture:Picture = null;
 
     constructor() {
-        this.model = new LocalizedString(null, null);
-        this.name= new LocalizedString(null, null);
-        this.description= new LocalizedString(null, null);
+        this.name = new LocaleText();
+        this.description = new LocaleText();
+        this.currentPrice = new Price();
+        this.picture = new Picture();
     }
-    fromParams(params):Item {
+
+    getTotalPrice():number {
+        var vatExclusive = this.currentPrice.vatExclusive;
+        var vatRate = this.currentPrice.vatRate;
+        if (vatRate == null) {
+            vatRate = Price.DEFAULT_VAT_RATE;
+        }
+        var total = vatExclusive * (1 + vatRate);
+        return total;
+    }
+
+    static fromParams(params):Item {
+        var item = new Item();
         if (params != undefined) {
-            var language = params.language;
+            var language:Language = params.language;
+            if (language == null) {
+                language = LocaleText.DEFAULT_LANGUAGE;
+            }
             if (params.id != null) {
-                this.id = params.id;
+                item.id = params.id;
             }
             if (params.companyId != null) {
-                this.companyId = params.companyId;
+                item.companyId = params.companyId;
             }
             if (params.reference != null) {
-                this.reference = params.reference;
+                item.reference = params.reference;
             }
             if (params.pictureId != null) {
-                this.pictureId = params.pictureId;
+                item.pictureId = params.pictureId;
             }
-            this.model = new LocalizedString(language, params.model);
-            this.name = new LocalizedString(language, params.name);
-            this.description = new LocalizedString(language, params.description);
+            if (params.model != null) {
+                item.model = params.model;
+            }
+            item.name = new LocaleText(language, params.name);
+            item.description = new LocaleText(language, params.description);
             if (params.currentPrice != null) {
                 if (typeof (params.currentPrice) == "string") {
                     params.currentPrice = parseFloat(params.currentPrice);
                 }
-                this.currentPrice = params.currentPrice;
+                item.currentPrice = new Price();
+                item.currentPrice.vatExclusive = params.currentPrice;
             }
         }
+        return item;
+    }
 
-        return this;
+    static fromJson(jsonObject):Item {
+        var item = new Item();
+        return item;
     }
 
     equals(other:Item) {
@@ -64,111 +99,148 @@ export class Item {
 }
 
 export class ItemSearch {
-    multiSearch:string;
-    pagination: Pagination;
+    pagination:Pagination = null;
+    companyId:number = null;
+    multiSearch:string = null;
+    nameContains:string = null;
+    descriptionContains:string = null;
+    reference:string = null;
+    referenceContains:string = null;
+    model:string = null;
 }
 
 export class ItemService {
-    private allItems: Item[];
+    private allItems:Item[];
 
-    items:Item[];
-    itemsCount: number;
-    pictureService: PictureService;
+    pictureService:PictureService;
 
-    constructor(@Inject pictureService: PictureService){
+    constructor(@Inject pictureService:PictureService) {
         this.pictureService = pictureService;
         this.fillDefaultItems();
         this.findItemPictures(this.allItems);
     }
 
-    public findItems(itemSearch:ItemSearch): Item[] {
-        this.items = this.allItems;
-        this.itemsCount = this.items.length;
-        if (itemSearch == null) {
-            return this.items;
-        }
-        var multiStringValue = itemSearch.multiSearch;
-        if (multiStringValue != null && multiStringValue.length > 0) {
-            var foundItems = [];
-            this.allItems.forEach(function (item:Item) {
-                if (item.reference.indexOf(multiStringValue) == 0) {
-                    foundItems.push(item);
-                    return;
+    public countItems(itemSearch:ItemSearch):Promise<number> {
+        // TODO
+        return new Promise((resolve, reject) => {
+            var count = this.allItems.length;
+            resolve(count);
+        });
+    }
+
+    public findItems(itemSearch:ItemSearch):Promise<Item[]> {
+        // TODO
+        var allItems = this.allItems;
+        return new Promise((resolve, reject) => {
+            var items = allItems;
+            if (itemSearch == null) {
+                resolve(items);
+            }
+            var multiStringValue = itemSearch.multiSearch;
+            if (multiStringValue != null && multiStringValue.length > 0) {
+                var foundItems = [];
+                this.allItems.forEach(function (item:Item) {
+                    if (item.reference.indexOf(multiStringValue) == 0) {
+                        foundItems.push(item);
+                        return;
+                    }
+                    if (item.name.get().indexOf(multiStringValue) >= 0) {
+                        foundItems.push(item);
+                        return;
+                    }
+                })
+                items = foundItems;
+            }
+            var pagination = itemSearch.pagination;
+            if (pagination != null) {
+                var first = pagination.firstIndex;
+                var size = pagination.pageSize;
+                size = Math.min(size, items.length);
+                var pageItems = [];
+                for (var pageIndex = 0; pageIndex < size; pageIndex++) {
+                    var item = items[first + pageIndex];
+                    pageItems.push(item);
                 }
-                if (item.name.text.indexOf(multiStringValue) >= 0) {
-                    foundItems.push(item);
-                    return;
+                items = pageItems;
+            }
+            window.setTimeout(
+                function () {
+                    resolve(items);
+                }, 500);
+        });
+    }
+
+    public saveItem(item:Item):Promise<Item> {
+        // TODO
+        var thisService = this;
+        return new Promise((resolve, reject) => {
+            if (thisService.contains(item)) {
+                return;
+            }
+            thisService.allItems.push(item);
+            resolve(item);
+        });
+
+    }
+
+    public removeItem(item:Item):Promise<boolean> {
+        // TODO
+        var thisService = this;
+        return new Promise((resolve, reject) => {
+            var oldItems = thisService.allItems;
+            thisService.allItems = [];
+            for (var index = 0; index < oldItems.length; index++) {
+                var oldItem = oldItems[index];
+                if (oldItem.equals(item)) {
+                    continue;
                 }
-            })
-            this.items = foundItems;
-        }
-        var pagination = itemSearch.pagination;
-        if (pagination != null) {
-            var first = pagination.firstIndex;
-            var size = pagination.pageSize;
-            size = Math.min(size, this.items.length);
-            var pageItems = [];
-            for (var pageIndex = 0; pageIndex < size; pageIndex++) {
-                var item = this.items[first + pageIndex];
-                pageItems.push(item);
+                thisService.allItems.push(oldItem);
             }
-            this.items = pageItems;
-        }
-        return this.items;
+            resolve(true);
+        });
+
     }
 
-    public saveItem(item:Item) {
-    if (this.contains(item )) {
-        return;
-    }
-        this.allItems.push(item);
+    public findItemPicture(item:Item):Promise<Picture> {
+        var thisService = this;
+        return new Promise((resolve, reject) => {
+            if (item.pictureId == null) {
+                return;
+            }
+            var picture = thisService.pictureService.getPicture(item.pictureId);
+            resolve(picture);
+        });
     }
 
-    public removeItem(item:Item) {
-        var oldItems = this.allItems;
-        this.allItems = [];
-        for (var index = 0; index < oldItems.length; index++) {
-            var oldItem = oldItems[index];
-            if (oldItem.equals(item)) {
-                continue;
-            }
-            this.allItems.push(oldItem);
-        }
+    public findItemPictures(items:Item[]):Promise<any> {
+        var thisService = this;
+        var promises = [];
+        items.forEach(function (item:Item) {
+            var promise = thisService.findItemPicture(item);
+            promise.then(function (picture:Picture) {
+                item.picture = picture;
+            });
+            promises.push(promise);
+        })
+        return Promise.all(promises);
     }
 
-    public getItem(id:number) {
-        for (var index = 0; index < this.allItems.length; index++) {
-            var item = this.allItems[index];
-            if (item.id == id) {
-                return item;
-            }
-        }
-        return null;
-    }
-    private contains(item: Item ) {
+
+    private contains(item:Item) {
+        // TODO REMOVE
         var contains = false;
-        this.allItems.forEach(function(existingItem:Item) {
+        this.allItems.forEach(function (existingItem:Item) {
             if (item == existingItem) {
                 contains = true;
-                return ;
+                return;
             }
         })
         return contains;
     }
 
-    private findItemPictures(items: Item[]) {
-        var thisService = this;
-        items.forEach(function(item: Item) {
-            if (item.pictureId == null) {
-                return;
-            }
-            var picture = thisService.pictureService.getPicture(item.pictureId);
-            item.picture = picture;
-        })
-    }
-
     private fillDefaultItems() {
-         var allItems = [
+        // TODO REMOVE
+        var allItems = [
             {
                 id: 0,
                 companyId: 0,
@@ -263,7 +335,7 @@ export class ItemService {
         this.allItems = new Array<Item>();
         var thisService = this;
         allItems.forEach(function (itemParams) {
-            var item = new Item().fromParams(itemParams);
+            var item = Item.fromParams(itemParams);
             thisService.allItems.push(item);
         });
     }

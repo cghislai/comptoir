@@ -65,15 +65,15 @@
                 </span>
             </td>
             <td class="name">
-                {{ commandItem.item.name.text }}
+                {{ commandItem.item.name.get() }}
             </td>
             <td class="amount number">
                 <div [hidden]="commandItem.amount <= 1 || editingAmountItem == commandItem">
                         <span class="count">
-                            {{ commandItem.amount }} x
+                            {{ commandItem.amount}} x
                         </span>
                         <span class="price">
-                            {{ commandItem.item.currentPrice | currency:'EUR':true:'.2-2'  }}
+                            {{ commandItem.item.currentPrice.vatExclusive | currency:'EUR':true:'.2-2'  }}
                         </span>
                 </div>
                 <span class="editAmount" *ng-if="editingAmountItem == commandItem">
@@ -120,7 +120,7 @@
             <th class="number">{{ command.vatExclusiveAmount | currency:'EUR':true:'.2-2'}} </th>
         </tr>
         <tr class="details">
-            <th colspan="3" >TVA 21%</th>
+            <th colspan="3" >TVA</th>
             <th class="number">{{ command.vatAmount | currency:'EUR':true:'.2-2'}} </th>
         </tr>
 
