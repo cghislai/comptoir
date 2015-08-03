@@ -83,12 +83,12 @@ class CashStateModel {
     selector: 'editCashView'
 })
 @View({
-    templateUrl: './components/edit/editCash/editCashView.html',
-    styleUrls: ['./components/edit/editCash/editCashView.css'],
+    templateUrl: './components/cash/count/countView.html',
+    styleUrls: ['./components/cash/count/countView.css'],
     directives: [NgFor,NgIf, AutoFocusDirective]
 })
 
-export class EditCashView {
+export class CountCashView {
     cashService: CashService;
     stateModel: CashStateModel;
     expectedState: CashState;

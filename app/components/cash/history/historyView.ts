@@ -11,11 +11,11 @@ import {Paginator} from 'components/utils/paginator/paginator';
     selector: 'historyCashView'
 })
 @View({
-    templateUrl: './components/history/cash/historyCashView.html',
-    styleUrls: ['./components/history/cash/historyCashView.css'],
+    templateUrl: './components/cash/history/historyView.html',
+    styleUrls: ['./components/cash/history/historyView.css'],
     directives: [Paginator, NgFor]
 })
-export class HistoryCashView {
+export class CashHistoryView {
 
     cashService:CashService;
     cashSearch:CashStateSearch;

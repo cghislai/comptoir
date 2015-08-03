@@ -1,8 +1,50 @@
-<div class="navMenu"  [hidden]="!menuVisible">
-    <a [router-link]="['/sale']" [class.active]="isActive('/sale')"
-       (click)="close()">Vente</a>
-    <a [router-link]="['/edit/items']"  [class.active]="isActive('/edit')"
-       (click)="close()">Édition</a>
-    <a [router-link]="['/history']"  [class.active]="isActive('/history')"
-       (click)="close()">Historique</a>
+<div class="container">
+    <div class="headerNav"
+         (click)="switchMenuVisibility()">
+        <h1 (click)="switchMenuVisibility()">{{ getPageName() }} ▼</h1>
+
+        <div class="navMenu" [hidden]="!menuVisible">
+            <a [router-link]="['/saleCurrent']" [class.active]="isActive('/sale')"
+               (click)="close()">Ventes</a>
+            <a [router-link]="['/productsList']" [class.active]="isActive('/products')"
+               (click)="close()">Produits</a>
+            <a [router-link]="['/cashCount']" [class.active]="isActive('/cash')"
+               (click)="close()">Caisse</a>
+        </div>
+    </div>
+
+    <div class="navTabs">
+        <div [hidden]="!isActive('/sale')">
+            <div class="tab">
+                <a [router-link]="['/saleCurrent']" [class.active]="isActive('/sale/current')">
+                    Vente
+                </a>
+            </div>
+            <div class="tab">
+                <a [router-link]="['/saleHistory']" [class.active]="isActive('/sale/history')">
+                    Historique
+                </a>
+            </div>
+        </div>
+        <div [hidden]="!isActive('/products')">
+            <div class="tab">
+                <a [router-link]="['/productsList']" [class.active]="isActive('/products/list')">
+                    Liste
+                </a>
+            </div>
+        </div>
+        <div [hidden]="!isActive('/cash')">
+            <div class="tab">
+                <a [router-link]="['/cashCount']" [class.active]="isActive('/cash/count')">
+                    Comptage
+                </a>
+            </div>
+            <div class="tab">
+                <a [router-link]="['/cashHistory']" [class.active]="isActive('/cash/history')">
+                    Historique
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
+

@@ -3,7 +3,7 @@
  */
 
 import {Component, View, EventEmitter} from 'angular2/angular2';
-import {RouterLink, Location} from 'angular2/router';
+import {RouterLink, RouteConfig, Location} from 'angular2/router';
 
 
 @Component({
@@ -14,6 +14,7 @@ import {RouterLink, Location} from 'angular2/router';
     styleUrls: ["./components/navMenu/navMenu.css"],
     directives: [RouterLink]
 })
+
 
 export class NavMenu {
     menuVisible:boolean;
@@ -35,7 +36,18 @@ export class NavMenu {
         return this.location.path().indexOf(path) == 0;
     }
 
-    open() {
+    getPageName() {
+        if (this.isActive('/sale')) {
+            return "Ventes";
+        }
+        if (this.isActive('/products')) {
+            return "Produits";
+        }
+        if (this.isActive('/cash')) {
+            return "Caisse";
+        }
+    }
+open() {
         this.menuVisible = true;
     }
 

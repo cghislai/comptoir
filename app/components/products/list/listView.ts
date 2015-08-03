@@ -71,12 +71,12 @@ class FormModel {
 })
 
 @View({
-    templateUrl: './components/edit/editItemsView/editItemsView.html',
-    styleUrls: ['./components/edit/editItemsView/editItemsView.css'],
+    templateUrl: './components/products/list/listView.html',
+    styleUrls: ['./components/products/list/listView.css'],
     directives: [NgFor, NgIf, formDirectives, Paginator, AutoFocusDirective]
 })
 
-export class EditItemsView {
+export class ProductsListView {
     languages = [{lang: Language.DUTCH, text: "Néerlandais"},
         {lang: Language.ENGLISH, text: "Anglais"},
         {lang: Language.FRENCH, text: "Français"}];

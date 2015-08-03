@@ -1,20 +1,6 @@
 <div class="app">
     <header class="coloredHeader">
-        <div class="headerNav"
-             (click)="nav.switchMenuVisibility()">
-            <h1 (click)="nav.switchMenuVisibility()">{{ getPageName() }} ▼</h1>
-            <navMenu #nav></navMenu>
-        </div>
-        <div class="navTabs">
-            <div [hidden]="!isActive('/sale')">
-                <a [router-link]="['/saleCurrent']" [class.active]="isActive('/sale/current')">
-                    Vente
-                </a>
-                <a [router-link]="['/saleHistory']" [class.active]="isActive('/sale/history')">
-                    Historique
-                </a>
-            </div>
-        </div>
+        <navMenu></navMenu>
     </header>
     <section>
         <router-outlet></router-outlet>

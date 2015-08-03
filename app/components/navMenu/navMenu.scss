@@ -1,5 +1,12 @@
 @import '../../styles/_main';
 
+.container{
+    height: 100%;
+    >*:not([hidden]) {
+        display: inline-block;
+        vertical-align: middle;
+    }
+}
 .navMenu {
     position: absolute;
     font-weight: bold;
@@ -15,4 +22,67 @@
         @extend .boxedHoverableLink;
         display: block;
     }
+    a.active {
+        border-color:  white;
+    }
+    a.active:hover {
+        cursor: default;
+        background-color: transparent;;
+    }
+}
+.navTabs {
+    display: inline-block;
+    height: 100%;
+    margin-left: 3em;
+
+    > div:not([hidden]) {
+        text-align: center;
+        height: 100%;
+        display: table;
+        padding: .5em;
+        padding-bottom: 0;
+        font-weight: bold;
+
+        .tab {
+            display: table-cell;
+            vertical-align: bottom;
+            padding-left: .5em;
+            padding-right: .5em;
+        }
+        a {
+            padding: .5em;
+            font-size: 1.2em;
+            color: white;
+            background-color: transparent;
+            display: table-cell;
+            vertical-align: middle;
+            height: 100%;
+            text-decoration: none;
+        }
+        a:not(.active):hover {
+            color: yellow;
+            cursor: pointer;
+        }
+        a.active:hover {
+            cursor: default;
+        }
+        a.active {
+            border: .1em solid;
+            background-color: white;
+            color: black;
+            border: none;
+        }
+    }
+
+}
+.headerNav {
+    padding: 1em;
+    h1 {
+
+        margin: 0;
+    }
+}
+.headerNav:hover {
+    color: $onBlueHoverColor;
+    cursor: pointer;
 }
