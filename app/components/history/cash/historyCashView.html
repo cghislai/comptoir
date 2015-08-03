@@ -1,0 +1,25 @@
+<div class="historyPage">
+    <h1>Historique de la caisse</h1>
+    <div class="search">
+
+    </div>
+    <paginator [total-count]="cashService.cashStateCount"
+               [page-size]="itemsPerPage"
+               show-prev-next="true" show-first-last="true"
+               (pagechange)="onPageChanged($event)"
+            [hidden]="cashService.cashStateCount==0"></paginator>
+    <table class="dataTable" [hidden]="cashService.cashStateCount==0">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th class="number">Montant</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ng-for="#state of cashService.cashStates" class="command">
+                <td class="date">{{ state.sate | date:'ddMMyyyy HHmm' }}</td>
+                <td class="number">{{ state.amount | currency:'EUR':true:'.2-2' }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

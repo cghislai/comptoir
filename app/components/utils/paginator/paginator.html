@@ -1,4 +1,4 @@
-<div class="paginator">
+<div class="paginator" [hidden]="total <= pageSize">
     <a class="first" [hidden]="!showFirstLastLink"
           [class.disabled]="!hasPrev()"
             (click)="goToFirst()">

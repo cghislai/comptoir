@@ -73,16 +73,23 @@ header {
 table {
   font-size: 1.1em !important;
 
-  td, th {
+  td:not(.rowActions), th {
     padding: .5em !important;
+  }
+  td.rowActions {
+    padding: .3em !important;
   }
 
   td.amount, th.amount {
     padding-right: 1em;
   }
 
-  td.amount .editAmount * {
+  td.amount  {
     font-size: .8em;
+
+    input {
+      font-size: .8em;
+    }
   }
 
   td.price  {.reduction {

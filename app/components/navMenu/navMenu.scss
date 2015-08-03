@@ -1,0 +1,17 @@
+@import '../../styles/_main';
+.menu {
+    position: absolute;
+    font-weight: bold;
+    border: .2em solid $blueColor;
+    z-index: 100;
+    padding: .5em;
+    min-width: 8em;
+    color: black;
+    margin-top: -1em;
+    background-color: white;
+}
+
+.menu a:not([hidden]) {
+    @extend .boxedHoverableLink;
+    display: block;
+}

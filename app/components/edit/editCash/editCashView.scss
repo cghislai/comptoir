@@ -2,14 +2,14 @@
 
 div
 .mainPane {
-  display: inline-block;
+  display: table-cell;
   vertical-align: top;
 
 }
 
 .leftPane {
   padding: 0;
-  width: 33%;
+  width: 20em;
   .info {
     margin: 1em;
     padding: 1em;
@@ -24,7 +24,7 @@ div
       margin-top: .3em;
     }
     div.title:not(:nth-of-type(1)) {
-      border-top: 1px solid lightgray;
+      border-top: .1em solid lightgray;
     }
     div.value {
       text-align: right;
@@ -63,7 +63,6 @@ div
 
 .rightPane {
   padding: 0;
-  width: 66%;
 
   .cashTypes {
     margin: 1em;
@@ -72,7 +71,7 @@ div
     display: inline-block;
     margin: .2em;
     width: 14em;
-    border: .05em solid $blueColor;
+    border: .1em solid $blueColor;
     padding: .5em;
 
     > span {

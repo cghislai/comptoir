@@ -1,7 +1,8 @@
-$blueColor: lightsteelblue;
+$blueColor: #8BAAF2;
 $onBlueHoverColor: yellow;
-$onWhiteHoverColor: lightblue;
-$onWhiteLinkColor: steelblue;
+$onWhiteHoverColor: rgba(139, 170, 242, .5);
+$onWhiteLinkColor: #6981B8;
+$tableRowHoverColor: rgba(128, 128, 128, 0.1);
 
 .coloredHeader {
   background: $blueColor;
@@ -12,37 +13,40 @@ $onWhiteLinkColor: steelblue;
   > * {
     display: inline-block;
     vertical-align: middle;
-    padding: .5em;
   }
 
   h1 {
     display: inline-block;
     margin: 0;
-    padding-right: .5em;
+    padding: .5em;
   }
   .actions {
     float: right;
     text-align: right;
+    padding: .5em;
 
     .action {
       font-weight: bolder;
       cursor: pointer;
       display: inline-block;
       padding: .5em;
-      border: 1px solid transparent;
+      border: .1em solid transparent;
     }
     .action:hover {
-      border: 1px solid yellow;
+      border: .1em solid yellow;
       color: yellow;
     }
   }
 }
 
 .boxedHoverableLink {
-  border: .09em solid $blueColor;
+  border: .1em solid $blueColor;
   font-weight: bolder;
   padding: .3em;
   margin: .3em;
+  color: black;
+  text-decoration: none;
+  background-color: white;
 }
 
 .boxedHoverableLink:hover {
@@ -69,8 +73,22 @@ table.dataTable {
   tr {
     height: 1.5em;
   }
-  tbody > tr:not(:last-child) {
-    border-bottom: 1px solid lightgray;
+  tbody {
+
+    tr:not(:last-child) {
+      border-bottom: .08em solid lightgray;
+    }
+    tr:hover {
+      background-color: $tableRowHoverColor;
+    }
+  }
+
+  thead {
+    tr {
+      border-bottom: .1em solid lightgray;
+      margin-bottom: 1em;
+
+    }
   }
 
   td, th {
@@ -78,6 +96,7 @@ table.dataTable {
     vertical-align: middle;
     text-align: left;
   }
+
   td.center, th.center {
     text-align: center;
   }
@@ -96,14 +115,17 @@ table.dataTable {
     position: absolute;
     left: 0;
     height: 1.5em;
+    width: 100%;
     z-index: 1;
     padding: 0;
+    text-align: center;
 
     > .actions {
       background-color: rgba(255, 255, 255, 0.9);
       display: none;
       padding-left: .5em;
       font-size: .8em;
+      padding: .3em;
       vertical-align: middle;
     }
     a {
@@ -180,4 +202,10 @@ a.disabled, a.disabled:hover {
     vertical-align: top;
     width: 100%;
   }
+}
+
+input {
+  font-size: 1em;
+  padding: .1em;
+  border: .1em inset;
 }

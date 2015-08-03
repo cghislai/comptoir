@@ -13,6 +13,7 @@ var template = require('gulp-template');
 var tsc = require('gulp-typescript');
 var uglify = require('gulp-uglify');
 var watch = require('gulp-watch');
+var sass = require('gulp-sass');
 
 var Builder = require('systemjs-builder');
 var del = require('del');
@@ -158,9 +159,18 @@ gulp.task('build.index.dev', function() {
     .pipe(template(templateLocals()))
     .pipe(gulp.dest(PATH.dest.dev.all));
 });
+gulp.task('sass', function () {
+  gulp.src('./app/**/*.scss')
+      .pipe(sass().on('error', sass.logError))
+      .pipe(gulp.dest(PATH.dest.dev.all, {ext: '.css'}));
+});
+
+gulp.task('sass:watch', function () {
+  gulp.watch('./app/**/*.scss', ['sass']);
+});
 
 gulp.task('build.app.dev', function (done) {
-  runSequence('clean.app.dev', 'build.assets.dev', 'build.index.dev', done);
+  runSequence('clean.app.dev', 'build.assets.dev', 'build.index.dev', 'sass', done);
 });
 
 gulp.task('build.dev', function (done) {

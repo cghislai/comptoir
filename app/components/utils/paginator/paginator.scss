@@ -1,6 +1,6 @@
 @import '../../../styles/_main';
 
-.paginator {
+.paginator:not([hidden]) {
   display: block;
   text-align: center;
   padding: .2em;

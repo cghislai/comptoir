@@ -21,7 +21,8 @@ gulp serve.prod
 ```
 
 # To generate CSS files
-gem install sass
+npm install sass
+npm install gulp-sass --save-dev
 
 Configure your app base if you serve the app from another directory than root in `gulpfile.js`.
 Defaults to `var APP_BASE = '/'`

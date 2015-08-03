@@ -18,7 +18,7 @@
         </thead>
         <tbody>
             <tr *ng-for="#command of commandService.commands" class="command">
-                <td class="date">{{ command.dateTime | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="date">{{ command.dateTime | date:'ddMMyyyy HHmm' }}</td>
                 <td class="name"> Commande {{command.id}}</td>
                 <td class="number">{{ command.totalPrice | currency:'EUR':true:'.2-2' }}</td>
             </tr>

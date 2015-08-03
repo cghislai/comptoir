@@ -20,7 +20,7 @@ export class HistoryCommandsView {
 
     commandService:CommandService;
     commandSearch:CommandSearch;
-    itemsPerPage:number = 10;
+    itemsPerPage:number = 25;
 
     constructor(commandsService:CommandService) {
         this.commandService = commandsService;

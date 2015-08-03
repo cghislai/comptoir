@@ -123,7 +123,7 @@ export class EditItemsView {
     editingItem:ItemModel;
     editingLanguage: Language;
     lastUsedLanguage: Language;
-    itemsPerPage: number = 3;
+    itemsPerPage: number = 25;
 
     constructor(itemService:ItemService, pictureService: PictureService,
                 formBuilder:FormBuilder, applicationService:ApplicationService) {

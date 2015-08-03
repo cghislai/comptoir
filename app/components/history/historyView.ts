@@ -7,6 +7,7 @@ import {RouteConfig, RouterOutlet, RouterLink, routerInjectables, Location} from
 
 import {ApplicationService} from 'services/applicationService';
 import {HistoryCommandsView} from 'components/history/commands/historyCommandsView';
+import {HistoryCashView} from 'components/history/cash/historyCashView';
 
 @Component({
     selector: "historyView"
@@ -20,7 +21,8 @@ import {HistoryCommandsView} from 'components/history/commands/historyCommandsVi
 
 @RouteConfig([
     {path: '', redirectTo: '/history/commands'},
-    {path: '/commands', component: HistoryCommandsView, as: 'commands'}
+    {path: '/commands', component: HistoryCommandsView, as: 'commands'},
+    {path: '/cash', component: HistoryCashView, as: 'cash'}
 ])
 
 export class HistoryView {

@@ -106,6 +106,7 @@ export class ItemService {
         if (pagination != null) {
             var first = pagination.firstIndex;
             var size = pagination.pageSize;
+            size = Math.min(size, this.items.length);
             var pageItems = [];
             for (var pageIndex = 0; pageIndex < size; pageIndex++) {
                 var item = this.items[first + pageIndex];

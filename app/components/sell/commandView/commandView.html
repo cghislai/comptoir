@@ -14,7 +14,7 @@
                         (^click)="switchToCommand(activeCommand)">
                     <span class="name">Commande {{ activeCommand.id }}</span>
                     <span class="reduction" [hidden]="activeCommand.globalReduction == null">-{{ activeCommand.globalReduction }}%</span>
-                    <span class="total">{{ activeCommand.totalPrice | currency:'EUR':true:'.2-2' }}</span>
+                    <span class="total" [hidden]="activeCommand.totalPrice <= 0">{{ activeCommand.totalPrice | currency:'EUR':true:'.2-2' }}</span>
                 </div>
                 <div class="links">
                     <a (click)="switchToNewCommand()" [hidden]="command.items.length == 0">Nouvelle commande</a>

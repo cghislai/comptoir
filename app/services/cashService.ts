@@ -20,6 +20,9 @@ export class TransactionSearch {
     pagination: Pagination;
     fromDateExclusive: Date;
 }
+export class CashStateSearch {
+    pagination: Pagination;
+}
 
 export class CashService {
     static instance: CashService = null;
@@ -30,6 +33,8 @@ export class CashService {
         return CashService.instance;
     }
     state: CashState;
+    cashStates: CashState[];
+    cashStateCount: number;
     transactions: CashTransaction[];
 
     constructor() {
@@ -62,6 +67,12 @@ export class CashService {
         newState.amount = fromState.amount + transactionsTotal;
         newState.date = new Date;
         return newState;
+    }
+
+    findCashStates(search: CashStateSearch) {
+        this.cashStates = [];
+        this.cashStates.push(this.state);
+        this.cashStateCount = 1;
     }
 
 }

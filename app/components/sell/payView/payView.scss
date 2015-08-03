@@ -25,10 +25,17 @@
 }
 
 table.usedMethod {
+
   font-size: 1.1em !important;
 
+  thead {
+    display: none;
+  }
   td, th {
     padding: .5em !important;
+  }
+  td.rowActions {
+    padding: .3em !important;
   }
 }
 
