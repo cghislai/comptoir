@@ -1,0 +1,16 @@
+import { RenderProtoViewRef } from "angular2/src/render/api";
+export declare class RenderProtoViewRefStore {
+    private _lookupByIndex;
+    private _lookupByProtoView;
+    private _nextIndex;
+    private _onWebworker;
+    constructor(onWebworker: any);
+    storeRenderProtoViewRef(ref: RenderProtoViewRef): number;
+    retreiveRenderProtoViewRef(index: number): RenderProtoViewRef;
+    deserialize(index: number): RenderProtoViewRef;
+    serialize(ref: RenderProtoViewRef): number;
+}
+export declare class WebworkerRenderProtoViewRef extends RenderProtoViewRef {
+    refNumber: number;
+    constructor(refNumber: number);
+}
