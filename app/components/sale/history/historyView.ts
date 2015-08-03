@@ -8,14 +8,14 @@ import {Pagination} from 'services/utils';
 import {Paginator} from 'components/utils/paginator/paginator';
 
 @Component({
-    selector: 'historyCommandsView'
+    selector: 'historyView'
 })
 @View({
-    templateUrl: './components/history/commands/historyCommandsView.html',
-    styleUrls: ['./components/history/commands/historyCommandsView.css'],
+    templateUrl: './components/sale/history/historyView.html',
+    styleUrls: ['./components/sale/history/historyView.css'],
     directives: [Paginator, NgFor]
 })
-export class HistoryCommandsView {
+export class HistoryView {
 
     commandService:CommandService;
     commandSearch:CommandSearch;

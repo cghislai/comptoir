@@ -1,24 +1,24 @@
 /**
  * Created by cghislai on 29/07/15.
  */
-/// <reference path="../../typings/_custom.d.ts" />
 import {Component, View} from 'angular2/angular2';
 
 import {ApplicationService} from 'services/applicationService';
 import {CommandService, Command} from 'services/commandService';
 import {Item} from 'services/itemService';
-import {ItemList} from 'components/sell/itemList/itemList';
-import {CommandView} from 'components/sell/commandView/commandView';
-import {PayView} from 'components/sell/payView/payView'
+import {ItemList} from 'components/sale/current/itemList/itemList';
+import {CommandView} from 'components/sale/current/commandView/commandView';
+import {PayView} from 'components/sale/current/payView/payView'
 
 @Component({
     selector: "sellView",
 })
 @View({
-    templateUrl: "./components/sell/sellView.html",
-    styleUrls: ["./components/sell/sellView.css"],
+    templateUrl: "./components/sale/current/sellView.html",
+    styleUrls: ["./components/sale/current/sellView.css"],
     directives: [ItemList, CommandView, PayView]
 })
+
 
 export class SellView {
     commandService:CommandService;

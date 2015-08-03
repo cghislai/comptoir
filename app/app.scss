@@ -1,5 +1,40 @@
 @import "styles/_main";
 
+.navTabs {
+    display: block;
+    height: 100%;
+    margin-left: 3em;
+
+    > div:not([hidden]) {
+        text-align: center;
+        height: 100%;
+        display: table;
+        padding: .5em;
+        font-weight: bold;
+
+        a {
+            padding: .5em;
+            font-size: 1.2em;
+            color: white;
+            background-color: transparent;
+            display: table-cell;
+            vertical-align: middle;
+            height: 100%;
+            text-decoration: none;
+        }
+        a:not(.active):hover {
+            color: yellow;
+            cursor: pointer;
+        }
+        a.active:hover {
+            cursor: default;
+        }
+        a.active {
+            border: .1em solid;
+        }
+    }
+
+}
 .headerNav:hover {
     color: $onBlueHoverColor;
     cursor: pointer;

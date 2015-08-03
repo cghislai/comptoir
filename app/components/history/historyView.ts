@@ -6,7 +6,6 @@ import {Component, View, ViewQuery, Query, QueryList} from 'angular2/angular2';
 import {RouteConfig, RouterOutlet, RouterLink, routerInjectables, Location} from 'angular2/router';
 
 import {ApplicationService} from 'services/applicationService';
-import {HistoryCommandsView} from 'components/history/commands/historyCommandsView';
 import {HistoryCashView} from 'components/history/cash/historyCashView';
 
 @Component({
@@ -20,8 +19,7 @@ import {HistoryCashView} from 'components/history/cash/historyCashView';
 
 
 @RouteConfig([
-    {path: '', redirectTo: '/history/commands'},
-    {path: '/commands', component: HistoryCommandsView, as: 'commands'},
+    {path: '', redirectTo: '/history/cash'},
     {path: '/cash', component: HistoryCashView, as: 'cash'}
 ])
 

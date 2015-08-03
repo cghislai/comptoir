@@ -1,8 +1,8 @@
 <div class="navMenu"  [hidden]="!menuVisible">
-    <a [router-link]="['/sell']" [hidden]="isActive('/sell')"
+    <a [router-link]="['/sale']" [class.active]="isActive('/sale')"
        (click)="close()">Vente</a>
-    <a [router-link]="['/edit/items']"  [hidden]="isActive('/edit')"
+    <a [router-link]="['/edit/items']"  [class.active]="isActive('/edit')"
        (click)="close()">Édition</a>
-    <a [router-link]="['/history/commands']"  [hidden]="isActive('/history')"
+    <a [router-link]="['/history']"  [class.active]="isActive('/history')"
        (click)="close()">Historique</a>
 </div>

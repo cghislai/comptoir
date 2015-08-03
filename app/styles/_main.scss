@@ -14,6 +14,7 @@ $tableRowHoverColor: rgba(128, 128, 128, 0.1);
   > *:not([hidden]) {
     display: inline-block;
     vertical-align: middle;
+    height: 100%;
   }
 
   h1 {
@@ -41,7 +42,7 @@ $tableRowHoverColor: rgba(128, 128, 128, 0.1);
 
   .busy {
     float: right;
-    height: 1.7em;
+    height: 100%;
   }
 }
 

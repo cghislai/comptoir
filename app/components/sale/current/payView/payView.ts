@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 29/07/15.
  */
-/// <reference path="../../../typings/_custom.d.ts" />
+
 
 import {Component, View, EventEmitter, NgFor, NgIf} from 'angular2/angular2';
 import {CommandService, Command} from 'services/commandService'
@@ -22,8 +22,8 @@ class Pay {
     events: ['paid']
 })
 @View({
-    templateUrl: './components/sell/payView/payView.html',
-    styleUrls: ['./components/sell/payView/payView.css'],
+    templateUrl: './components/sale/current/payView/payView.html',
+    styleUrls: ['./components/sale/current/payView/payView.css'],
     directives: [NgFor, NgIf, AutoFocusDirective]
 })
 
