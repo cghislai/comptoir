@@ -1,3 +1,0 @@
-import { Injector } from "angular2/di";
-import { NgZone } from 'angular2/src/core/zone/ng_zone';
-export declare function createInjector(zone: NgZone): Injector;
