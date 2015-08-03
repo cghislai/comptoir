@@ -2,7 +2,7 @@
  * Created by cghislai on 31/07/15.
  */
 import {Component, View, NgFor, NgIf,
-    FormBuilder, Form, formDirectives, Validators, ControlGroup,NgFormModel,
+    formDirectives, Validators, ControlGroup,NgFormModel,
     ViewEncapsulation} from 'angular2/angular2';
 import {RouteConfig, RouterOutlet, RouterLink, routerInjectables} from 'angular2/router';
 
@@ -67,8 +67,7 @@ class FormModel {
 
 // Main component
 @Component({
-    selector: "editItemsView",
-    viewInjector: [FormBuilder, PictureService]
+    selector: "editItemsView"
 })
 
 @View({
@@ -82,7 +81,6 @@ export class EditItemsView {
         {lang: Language.ENGLISH, text: "Anglais"},
         {lang: Language.FRENCH, text: "Français"}];
     itemService:ItemService;
-    pictureService: PictureService;
     applicationService: ApplicationService;
 
     itemSearch: ItemSearch;
@@ -98,13 +96,11 @@ export class EditItemsView {
     editingModel:FormModel;
     lastUsedLanguage: Language;
 
-    constructor(itemService:ItemService, pictureService: PictureService,
-                formBuilder:FormBuilder, applicationService:ApplicationService) {
+    constructor(itemService: ItemService, appService: ApplicationService) {
         this.itemService = itemService;
-        this.pictureService = pictureService;
+        this.applicationService = appService;
         this.editingModel = null;
-        this.applicationService = applicationService;
-        this.lastUsedLanguage = applicationService.language;
+        this.lastUsedLanguage = this.applicationService.language;
         this.itemSearch = new ItemSearch();
         this.itemSearch.pagination = new Pagination(0, this.itemsPerPage);
         this.lastUsedLanguage = LocaleText.DEFAULT_LANGUAGE;

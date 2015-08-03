@@ -8,8 +8,7 @@ import {Pagination} from 'services/utils';
 import {Paginator} from 'components/utils/paginator/paginator';
 
 @Component({
-    selector: 'historyCommandsView',
-    viewInjector: [CommandService]
+    selector: 'historyCommandsView'
 })
 @View({
     templateUrl: './components/history/commands/historyCommandsView.html',

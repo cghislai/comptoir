@@ -1,4 +1,4 @@
-<div class="navMenu" *ng-if="menuVisible">
+<div class="navMenu"  [hidden]="!menuVisible">
     <a [router-link]="['/sell']" [hidden]="isActive('/sell')"
        (click)="close()">Vente</a>
     <a [router-link]="['/edit/items']"  [hidden]="isActive('/edit')"

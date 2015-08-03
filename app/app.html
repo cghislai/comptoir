@@ -1,9 +1,9 @@
 <div class="app">
     <header class="coloredHeader">
         <div class="headerNav"
-                (^click)="getNavMenu().switchMenuVisibility()">
-            <h1>{{ appService.pageName }} ▼</h1>
-            <navMenu></navMenu>
+             (click)="nav.switchMenuVisibility()">
+            <h1 (click)="nav.switchMenuVisibility()">{{ appService.pageName }} ▼</h1>
+            <navMenu #nav></navMenu>
         </div>
 
     </header>

@@ -80,8 +80,7 @@ class CashStateModel {
 
 
 @Component({
-    selector: 'editCashView',
-    viewInjector: [CashService]
+    selector: 'editCashView'
 })
 @View({
     templateUrl: './components/edit/editCash/editCashView.html',

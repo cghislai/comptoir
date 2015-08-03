@@ -8,8 +8,7 @@ import {Pagination} from 'services/utils';
 import {Paginator} from 'components/utils/paginator/paginator';
 
 @Component({
-    selector: 'historyCashView',
-    viewInjector: [CashService]
+    selector: 'historyCashView'
 })
 @View({
     templateUrl: './components/history/cash/historyCashView.html',

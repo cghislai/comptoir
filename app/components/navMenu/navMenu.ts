@@ -2,7 +2,7 @@
  * Created by cghislai on 29/07/15.
  */
 /// <reference path="../../typings/_custom.d.ts" />
-import {Component, View, NgIf} from 'angular2/angular2';
+import {Component, View} from 'angular2/angular2';
 import {RouterLink, Location} from 'angular2/router';
 
 
@@ -12,7 +12,7 @@ import {RouterLink, Location} from 'angular2/router';
 @View({
     templateUrl: "./components/navMenu/navMenu.html",
     styleUrls: ["./components/navMenu/navMenu.css"],
-    directives: [RouterLink, NgIf]
+    directives: [RouterLink]
 })
 
 export class NavMenu {
@@ -20,7 +20,6 @@ export class NavMenu {
     location: Location;
 
     constructor(location: Location) {
-        this.menuVisible = false;
         this.location = location;
     }
     switchMenuVisibility() {
@@ -35,6 +34,5 @@ export class NavMenu {
     }
     close() {
         this.menuVisible = false;
-        console.log('closed');
     }
 }
