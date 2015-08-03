@@ -140,11 +140,11 @@
                [value]="toAddItem.amount"
                (keyup)="setToAddItemAmount(amount.value)"
             (change)="setToAddItemAmount(amount.value)">
-        <input #price placeholder="Prix unitaire" class="price"
+        <input #price placeholder="Prix unitaire" class="price number"
                type="number" min="0.01" step="0.01"
-               [value]="toAddItem.price"
-               (keyup)="setToAddItemPrice(price.value)"
-               (change)="setToAddItemPrice(price.value)">
+               [value]="toAddItem.price | number:'.2-2'"
+               (keyup)="handleToAdditemPriceKeyUp($event)"
+               (change)="setToAddItemPrice($event)">
         <button (click)="doAddCustomItem()" [disabled]="!isItemToAddValid()">Ajouter</button>
         </form>
     </div>

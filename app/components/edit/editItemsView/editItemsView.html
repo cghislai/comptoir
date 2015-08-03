@@ -112,9 +112,9 @@
                     <td><label for="price">Prix:</label></td>
                     <td>
                         <span>
-                        <input type="number" min="0" step="0.01" id="price"
+                        <input class="number" type="number" min="0" step="0.01" id="price"
                                ng-control="price"
-                               [ng-model]="editingModel.price"
+                               [ng-model]="editingModel.price | number:'.2-2'"
                                (change)="onCurrentPriceChanged($event)">
                             </span>
                         <span>€</span>
@@ -124,9 +124,9 @@
                     <td><label for="vat">TVA:</label></td>
                     <td>
                         <span>
-                        <input type="number" min="0" max="100" step="1" id="vat"
+                        <input class="number" type="number" min="0" max="100" step="1" id="vat"
                                ng-control="vat"
-                               [ng-model]="editingModel.vat"
+                               [ng-model]="editingModel.vat | number:'.2-2'"
                                (change)="onVatChanged($event)">
                             </span>
                         <span>%</span>

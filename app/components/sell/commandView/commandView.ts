@@ -183,8 +183,21 @@ export class CommandView {
     setToAddItemAmount(amount: string) {
         this.toAddItem.amount = parseInt(amount);
     }
-    setToAddItemPrice(price: string) {
-        this.toAddItem.price = parseFloat(price);
+    handleToAdditemPriceKeyUp(event) {
+        if (event.which == 13) { // Enter
+            this.setToAddItemPrice(event);
+            return;
+        }
+        if (event.which == 27) { // Escape
+            return;
+        }
+    }
+    setToAddItemPrice(event) {
+        var price = parseFloat(event.target.value);
+        if (this.toAddItem.price == price) {
+            return;
+        }
+        this.toAddItem.price = price;
     }
     isItemToAddValid() {
         if (this.toAddItem.name == null
