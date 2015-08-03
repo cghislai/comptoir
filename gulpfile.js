@@ -159,18 +159,15 @@ gulp.task('build.index.dev', function() {
     .pipe(template(templateLocals()))
     .pipe(gulp.dest(PATH.dest.dev.all));
 });
-gulp.task('sass', function () {
+
+gulp.task('sass.dev', function () {
   gulp.src('./app/**/*.scss')
       .pipe(sass().on('error', sass.logError))
       .pipe(gulp.dest(PATH.dest.dev.all, {ext: '.css'}));
 });
 
-gulp.task('sass:watch', function () {
-  gulp.watch('./app/**/*.scss', ['sass']);
-});
-
 gulp.task('build.app.dev', function (done) {
-  runSequence('clean.app.dev', 'build.assets.dev', 'build.index.dev', 'sass', done);
+  runSequence('clean.app.dev', 'build.assets.dev', 'build.index.dev', 'sass.dev', done);
 });
 
 gulp.task('build.dev', function (done) {
@@ -199,7 +196,7 @@ gulp.task('build.lib.prod', ['build.ng2.prod'], function () {
 });
 
 gulp.task('build.js.tmp', function () {
-  var result = gulp.src(['./app/**/*ts', '!./app/init.ts'])
+  var result = gulp.src(['./app/**/*.ts', '!./app/init.ts'])
     .pipe(plumber())
     .pipe(tsc(tsProject));
 
@@ -229,14 +226,10 @@ gulp.task('build.init.prod', function() {
 
 gulp.task('build.assets.prod', ['build.js.prod'], function () {
   var filterHTML = filter('**/*.html');
-  var filterCSS = filter('**/*.css');
   return gulp.src(['./app/**/*.html', './app/**/*.css'])
     .pipe(filterHTML)
     .pipe(minifyHTML(HTMLMinifierOpts))
     .pipe(filterHTML.restore())
-    .pipe(filterCSS)
-    .pipe(minifyCSS())
-    .pipe(filterCSS.restore())
     .pipe(gulp.dest(PATH.dest.prod.all));
 });
 
@@ -249,9 +242,16 @@ gulp.task('build.index.prod', function() {
     .pipe(gulp.dest(PATH.dest.prod.all));
 });
 
+gulp.task('build.css.prod', function () {
+  gulp.src(['./app/styles/*.scss', './app/components/**/*.scss','./app/*.scss'], {base: './app'})
+      .pipe(sass().on('error', sass.logError))
+      .pipe(minifyCSS())
+      .pipe(gulp.dest(PATH.dest.prod.all, {ext: '.css'}));
+  });
+
 gulp.task('build.app.prod', function (done) {
   // build.init.prod does not work as sub tasks dependencies so placed it here.
-  runSequence('clean.app.prod', 'build.init.prod', 'build.assets.prod',
+  runSequence('clean.app.prod', 'build.init.prod', 'build.css.prod', 'build.assets.prod',
               'build.index.prod', 'clean.tmp', done);
 });
 

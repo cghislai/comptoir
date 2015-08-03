@@ -172,6 +172,9 @@ a.disabled, a.disabled:hover {
   display: table;
   min-height: 90vh;
 
+  >* {
+    position: relative;
+  }
   .menu {
     display: table-cell;
     height: 100%;
@@ -188,6 +191,7 @@ a.disabled, a.disabled:hover {
       margin: .2em;
       margin-bottom: .7em;
       display: block;
+      background-color: transparent;
     }
     a.active{
       color: $onBlueHoverColor;
