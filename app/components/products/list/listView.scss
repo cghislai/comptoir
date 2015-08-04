@@ -4,8 +4,11 @@
     margin-right: 1em;
 }
 table {
+    tr.item:hover {
+        cursor: pointer;
+    }
     td.actions {
-        width: 2.5em;
+        width: 1.5em;
     }
     .itemPicture:not([hidden]) {
         display: block;

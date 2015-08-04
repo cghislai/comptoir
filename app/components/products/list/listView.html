@@ -29,7 +29,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ng-for="#item of items" class="item">
+        <tr *ng-for="#item of items" class="item" (^click)="doEditItem(item)">
             <td class="ref">{{ item.reference }}</td>
             <td class="name">{{ item.name.get() }}</td>
             <td class="model">{{ item.model }}</td>
@@ -37,9 +37,6 @@
             <td class="actions">
                 <a class="remove actionIcon" (^click)="doRemoveItem(item)">
                     <i class="fi-x red"></i>
-                </a>
-                <a class="edit actionIcon" (^click)="doEditItem(item)">
-                    <i class="fi-pencil"></i>
                 </a>
             </td>
         </tr>
