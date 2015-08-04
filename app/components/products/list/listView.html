@@ -3,15 +3,13 @@
     <img class="busy" src="../../../res/img/ajax-loader.black.gif" [hidden]="!loading">
 
     <div class="topActions">
-        <form class="filter">
-            <span class="input">
-                <input [(ng-model)]="itemSearch.multiSearch" autoFocus>
-            </span>
-            <button class="action" (^click)="searchItems()">
-                Rechercher
-            </button>
-        </form>
-        <span class="action" (^click)="doEditNewItem()">
+        <span class="input">
+            <input [(ng-model)]="itemSearch.multiSearch" autoFocus
+                   placeholder="Filtrer les produits"
+                   (keyup)="handleFilterKeyUp($event)"
+                   (change)="searchItems()">
+        </span>
+        <span class="action" (^click)="doEditNewItem()" focusable>
             Nouveau produit
         </span>
     </div>

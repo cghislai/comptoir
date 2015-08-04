@@ -5,6 +5,8 @@
 import {Component, View, NgFor, EventEmitter, ViewEncapsulation} from 'angular2/angular2';
 import {Item, ItemService, ItemSearch} from 'services/itemService';
 import {AutoFocusDirective} from 'directives/autoFocus';
+import {FocusableDirective} from 'directives/focusable';
+
 
 @Component({
     selector: 'itemList',
@@ -14,7 +16,7 @@ import {AutoFocusDirective} from 'directives/autoFocus';
 @View({
     templateUrl: './components/sale/current/itemList/itemList.html',
     styleUrls: ['./components/sale/current/itemList/itemList.css'],
-    directives: [NgFor, AutoFocusDirective],
+    directives: [NgFor, AutoFocusDirective, FocusableDirective],
     encapsulation: ViewEncapsulation.EMULATED
 })
 
@@ -31,6 +33,7 @@ export class ItemList {
     picturePromise:Promise<any> = null;
     // Delay keyevent for 500ms
     keyboardTimeoutSet: boolean;
+    keyboardTimeout: number = 200;
 
     constructor(itemService:ItemService) {
         this.itemService = itemService;
@@ -73,7 +76,7 @@ export class ItemList {
         setTimeout(function() {
             thisList.applyFilter($event.target.value);
             thisList.keyboardTimeoutSet = false;
-        }, 500);
+        }, this.keyboardTimeout);
     }
 
     onFilterChange($event) {
@@ -90,5 +93,10 @@ export class ItemList {
 
     onItemClick(item:Item) {
         this.itemClicked.next(item);
+    }
+    focus() {
+        var element:HTMLInputElement = <HTMLInputElement>document.getElementById('itemListFilterInput');
+        element.focus();
+        element.select();
     }
 }

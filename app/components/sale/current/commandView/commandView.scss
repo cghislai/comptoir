@@ -86,15 +86,26 @@ table {
     vertical-align: middle;
   }
 
+  td {
+    .unneeded {
+      display: none;
+    }
+    .nolink {
+      pointer-events: none;
+         }
+  }
+
   td.amount, th.amount {
     padding-right: 1em;
+
+
   }
 
   td.amount {
     font-size: .8em;
 
     input {
-      font-size: .8em;
+      font-size: .9em;
       width: 2.5em;
     }
   }

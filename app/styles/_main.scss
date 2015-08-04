@@ -3,6 +3,12 @@ $onBlueHoverColor: yellow;
 $onWhiteHoverColor: rgba(139, 170, 242, .5);
 $onWhiteLinkColor: #6981B8;
 $tableRowHoverColor: rgba(128, 128, 128, 0.1);
+$focusColor: $onWhiteHoverColor;
+
+:focus {
+  border: .1em solid $focusColor;
+  box-shadow: 0 0 .2em .1em $focusColor;
+  }
 
 .coloredHeader {
   background: $blueColor;
@@ -59,6 +65,11 @@ $tableRowHoverColor: rgba(128, 128, 128, 0.1);
 .boxedHoverableLink:hover {
   background-color: $onWhiteHoverColor;
   cursor: pointer;
+}
+
+
+.boxedHoverableLink:focus {
+  background-color: $onWhiteHoverColor;
 }
 
 .lightBlueLink {

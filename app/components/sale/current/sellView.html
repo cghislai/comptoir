@@ -2,7 +2,7 @@
     <table>
         <tr>
             <td class="itemList"  [hidden]="commandValidated">
-                <itemList #itemlist (item-clicked)="onItemClicked($event, commandview)"></itemList>
+                <itemList #itemlist (item-clicked)="onItemClicked($event, commandview, itemlist)"></itemList>
             </td>
             <td class="commandView">
                 <commandView #commandview (validate)="onCommandValidated($event, payview, commandview)"></commandView>

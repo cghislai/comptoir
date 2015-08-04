@@ -30,8 +30,9 @@ export class SellView {
         this.commandValidated = false;
     }
 
-    onItemClicked(item:Item, commandView: CommandView) {
+    onItemClicked(item:Item, commandView: CommandView, itemList: ItemList) {
         commandView.doAddItem(item);
+        itemList.focus();
     }
 
     onCommandValidated(validated:boolean, payView: PayView, commandView: CommandView) {

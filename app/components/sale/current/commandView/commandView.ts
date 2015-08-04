@@ -89,11 +89,12 @@ export class CommandView {
     doAddItem(item: Item) {
         var commandIitem = this.command.addItem(item);
         // If added a new item, allow to edit quantity directly
-        if (commandIitem.amount > 1) {
+     /*   if (commandIitem.amount > 1) {
             this.editingAmountItem = null;
         } else {
             this.editingAmountItem = commandIitem;
-        }
+        }*/
+
     }
 
     doAddCustomItem() {

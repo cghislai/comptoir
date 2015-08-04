@@ -163,10 +163,7 @@ export class ItemService {
                 }
                 items = pageItems;
             }
-            window.setTimeout(
-                function () {
-                    resolve(items);
-                }, 500);
+            resolve(items);
         });
     }
 

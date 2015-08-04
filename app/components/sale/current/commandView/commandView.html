@@ -77,7 +77,7 @@
                    [class.editing]="editingAmountItem == commandItem"
                    [class.unneeded]="commandItem.amount <= 1 || editingAmountItem == commandItem"
                    [class.nolink]="validated"
-                        [class.actionlink]="!validated">
+                        [class.actionLink]="!validated">
                         <span class="count">
                             {{ commandItem.amount}} x
                         </span>
@@ -97,7 +97,7 @@
                 <a class="reduction green"
                    [class.unneeded]="commandItem.reduction <= 0 || editingReductionItem == commandItem"
                    [class.nolink]="validated"
-                   [class.actionlink]="!validated"
+                   [class.actionLink]="!validated"
                    (^click)="doEditItemReduction(commandItem)">
                     -{{commandItem.reduction}}%
                 </a>

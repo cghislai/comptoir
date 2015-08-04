@@ -13,6 +13,7 @@ import {Pagination, Language, LocaleText} from 'services/utils';
 import {ApplicationService} from 'services/applicationService';
 import {Paginator} from 'components/utils/paginator/paginator';
 import {AutoFocusDirective} from 'directives/autoFocus'
+import {FocusableDirective} from 'directives/focusable'
 
 
 class FormModel {
@@ -73,7 +74,7 @@ class FormModel {
 @View({
     templateUrl: './components/products/list/listView.html',
     styleUrls: ['./components/products/list/listView.css'],
-    directives: [NgFor, NgIf, formDirectives, Paginator, AutoFocusDirective]
+    directives: [NgFor, NgIf, formDirectives, Paginator, AutoFocusDirective, FocusableDirective]
 })
 
 export class ProductsListView {
@@ -95,6 +96,9 @@ export class ProductsListView {
 
     editingModel:FormModel;
     lastUsedLanguage: Language;
+    // Delay keyevent for 500ms
+    keyboardTimeoutSet: boolean;
+    keyboardTimeout: number = 200;
 
     constructor(itemService: ItemService, appService: ApplicationService) {
         this.itemService = itemService;
@@ -199,6 +203,18 @@ export class ProductsListView {
     doRemoveItem(item : Item) {
         this.itemService.removeItem(item);
         this.searchItems();
+    }
+
+    handleFilterKeyUp() {
+        if (this.keyboardTimeoutSet) {
+            return;
+        }
+        this.keyboardTimeoutSet = true;
+        var thisList = this;
+        setTimeout(function() {
+            thisList.keyboardTimeoutSet = false;
+            thisList.searchItems();
+        }, this.keyboardTimeout);
     }
 
 }

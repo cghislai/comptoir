@@ -1,12 +1,11 @@
 <div class="itemList" (show)="searchItems()">
     <header class="coloredHeader">
         <div class="filter">
-        <input #filter
+        <input #filter id="itemListFilterInput"
                (keyup)="onFilterKeyUp($event)"
                (change)="onFilterChange($event)"
                [value]="itemSearch.multiSearch"
                placeholder="Filtrer les produits" autoFocus/>
-        <button (click)="applyFilter(filter.value)">Rechercher</button>
         </div>
         <div class="busy">
         <img  src="../../../../res/img/ajax-loader.white.gif" [hidden]="!loading">
@@ -15,7 +14,7 @@
     <div class="scrollPane">
         <table class="dataTable">
             <tr *ng-for="#item of items" class="item"
-                (^click)="onItemClick(item)">
+                (^click)="onItemClick(item)" focusable>
                 <td class="ref">
                     {{ item.reference }}
                 </td>
