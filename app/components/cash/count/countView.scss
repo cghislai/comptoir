@@ -1,7 +1,6 @@
 @import '../../../styles/edit';
 
-div
-.mainPane {
+div.mainPane {
   display: table-cell;
   vertical-align: top;
 
@@ -38,7 +37,6 @@ div
         color: grey;;
         font-weight: lighter;
       }
-
 
     }
 
@@ -80,37 +78,57 @@ div
 
   .cashTypes {
     margin: 1em;
+    display: table;
   }
   .cashType {
-    display: inline-block;
-    margin: .2em;
-    width: 14em;
-    border: .1em solid $blueColor;
-    padding: .5em;
+    display: table-row;
 
     > span {
-      margin: .1em;
-      display: inline-block;
+      padding: .2em;
+      padding-left: .3em;
+      padding-right: .3em;
+      display: table-cell;
       vertical-align: middle;
+      border-bottom: .1em solid lightgray;
     }
     .name {
       font-size: .9em;
       font-weight: bolder;
       width: 5em;
+      text-align: right;
     }
     .amount {
-      width: 3em;
-      text-align: right;
 
       input {
+        text-align: right;
+        width: 5em;
         font-size: 1em;
-        max-width: 100%;
       }
     }
     .total {
-      width: 6.5em;
+      min-width: 6.5em;
       text-align: right;
       font-size: .8em;
     }
+  }
+
+  .totalRow {
+    display: table-row;
+    font-weight: bold;
+    font-size: 1.1em;
+
+    > span {
+      padding: .3em;
+      display: table-cell;
+      text-align: right;
+      vertical-align: middle;
+    }
+    
+    input {
+      font-size: .9em;
+      margin: 0;
+      width: 4em;
+    }
+
   }
 }

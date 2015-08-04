@@ -41,21 +41,21 @@ class CashAmount {
 }
 class CashStateModel {
     static EMPTY_STATE: CashAmount[] = [
-        new CashAmount(CashType.ONE_CENT, "1 cent", 0.01, 0),
-        new CashAmount(CashType.TWO_CENT, "2 cent", 0.02, 0),
-        new CashAmount(CashType.FIVE_CENT, "5 cent", 0.05, 0),
-        new CashAmount(CashType.TEN_CENT, "10 cent", 0.1, 0),
-        new CashAmount(CashType.TWENTY_CENT, "20 cent", 0.2, 0),
-        new CashAmount(CashType.FIFTY_CENT, "50 cent", 0.5, 0),
-        new CashAmount(CashType.ONE_EURO, "1 euro", 1, 0),
-        new CashAmount(CashType.TWO_EURO, "2 euro", 2, 0),
-        new CashAmount(CashType.FIVE_EURO, "5 euro", 5, 0),
-        new CashAmount(CashType.TEN_EURO, "10 euro", 10, 0),
-        new CashAmount(CashType.TWENTY_EURO, "20 euro", 20, 0),
-        new CashAmount(CashType.FIFTY_EURO, "50 euro", 50, 0),
-        new CashAmount(CashType.ONE_HUNDRED_EURO, "100 euro", 100, 0),
-        new CashAmount(CashType.TWO_HUNDRED_EURO, "200 euro", 200, 0),
         new CashAmount(CashType.FIVE_HUNDRED_EURO, "500 euro", 500, 0),
+        new CashAmount(CashType.TWO_HUNDRED_EURO, "200 euro", 200, 0),
+        new CashAmount(CashType.ONE_HUNDRED_EURO, "100 euro", 100, 0),
+        new CashAmount(CashType.FIFTY_EURO, "50 euro", 50, 0),
+        new CashAmount(CashType.TWENTY_EURO, "20 euro", 20, 0),
+        new CashAmount(CashType.TEN_EURO, "10 euro", 10, 0),
+        new CashAmount(CashType.FIVE_EURO, "5 euro", 5, 0),
+        new CashAmount(CashType.TWO_EURO, "2 euro", 2, 0),
+        new CashAmount(CashType.ONE_EURO, "1 euro", 1, 0),
+        new CashAmount(CashType.FIFTY_CENT, "50 cent", 0.5, 0),
+        new CashAmount(CashType.TWENTY_CENT, "20 cent", 0.2, 0),
+        new CashAmount(CashType.TEN_CENT, "10 cent", 0.1, 0),
+        new CashAmount(CashType.FIVE_CENT, "5 cent", 0.05, 0),
+        new CashAmount(CashType.TWO_CENT, "2 cent", 0.02, 0),
+        new CashAmount(CashType.ONE_CENT, "1 cent", 0.01, 0),
     ];
 
     statePerType: CashAmount[];
@@ -65,14 +65,13 @@ class CashStateModel {
         var states = [];
         CashStateModel.EMPTY_STATE.forEach(function(state) {
             states.push(state);
-        })
+        });
         this.statePerType = states;
     }
     calcTotal() {
         var total = 0;
         this.statePerType.forEach(function(cashAmount:CashAmount) {
-            var cashtypeTotal = cashAmount.amount * cashAmount.value;
-            total += cashtypeTotal;
+            total += cashAmount.amount * cashAmount.value;
         });
         this.total = total;
     }

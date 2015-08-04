@@ -27,6 +27,7 @@
             <th>Nom</th>
             <th>Modèle</th>
             <th class="number">Prix</th>
+            <th class="actions"></th>
         </tr>
         </thead>
         <tbody>
@@ -35,13 +36,13 @@
             <td class="name">{{ item.name.get() }}</td>
             <td class="model">{{ item.model }}</td>
             <td class="number price">{{ item.currentPrice.vatExclusive | currency:'EUR':true:'.2-2'}}</td>
-            <td class="rowActions">
-                <span class="actions">
-                <a class="remove"
-                   (click)="doRemoveItem(item)">Supprimer</a>
-                <a class="edit"
-                   (click)="doEditItem(item)">Éditer</a>
-                    </span>
+            <td class="actions">
+                <a class="remove actionIcon" (^click)="doRemoveItem(item)">
+                    <i class="fi-x red"></i>
+                </a>
+                <a class="edit actionIcon" (^click)="doEditItem(item)">
+                    <i class="fi-pencil"></i>
+                </a>
             </td>
         </tr>
         </tbody>

@@ -20,14 +20,6 @@
             <div class="value">
                 {{ expectedState.amount | currency:'EUR':true:'.2-2' }}
             </div>
-            <div class="title">
-                Caisse
-            </div>
-            <div class="value" [class.match]="expectedState.amount == stateModel.total ">
-                <span>
-                    {{ stateModel.total | currency:'EUR':true:'.2-2' }}
-                </span>
-            </div>
             <div class="value">
                 <span class="title light" [hidden]=" expectedState.amount <= stateModel.total ">
                     Manquant:
@@ -40,23 +32,8 @@
                 </span>
             </div>
         </div>
-        <div class="actions">
-            <div class="editAmount">
-                <div >
-                    <input type="number" min="0.01" step="0.01"
-                           #totalInput *ng-if="editingAmount"
-                           [value]="stateModel.total | number:'.2-2'"
-                           (change)="setAmount(totalInput.value)"
-                           (keyup)="onAmountKeyUp($event)"
-                           (blur)="editingAmount = false"
-                           class="number"
-                           autofocus>
-                </div>
-                <a  (click)="editAmount()" [hidden]="editingAmount">
-                    Éditer le montant
-                </a>
-            </div>
 
+        <div class="actions">
             <a (click)="saveState()">Valider la caisse</a>
         </div>
     </div>
@@ -75,6 +52,30 @@
                 </span>
                 <span class="total">
                     {{ cashType.amount * cashType.value | currency:'EUR':true:'.2-2'}}
+                </span>
+            </div>
+            <div class="totalRow">
+                <span></span>
+                <span class="total">
+                    Total:
+                </span>
+                <span class="total value">
+                    <div class="value">
+                        <a (click)="editAmount()" [hidden]="editingAmount"
+                              class="amountLink actionlink">
+                            {{ stateModel.total | currency:'EUR':true:'.2-2' }}
+                        </a>
+                    </div>
+                    <div class="editAmount">
+                        <input type="number" min="0.01" step="0.01"
+                               #totalInput *ng-if="editingAmount"
+                               [value]="stateModel.total | number:'.2-2'"
+                               (change)="setAmount(totalInput.value)"
+                               (keyup)="onAmountKeyUp($event)"
+                               (blur)="editingAmount = false"
+                               class="number"
+                               autoFocus >
+                    </div>
                 </span>
             </div>
         </div>

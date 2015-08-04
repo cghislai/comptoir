@@ -27,19 +27,22 @@
     <tr>
         <th>Méthode</th>
         <th class="number">Montant</th>
+        <th class="actions"></th>
     </tr>
     </thead>
     <tbody>
     <tr *ng-for="#pay of payList">
         <td>{{ getPayMethodName(pay.method) }}</td>
         <td class="number">
-            {{ pay.amount | currency:'EUR':true:'.2-2' }}
+            <a class="edit actionlink" (^click)="startEditPay(pay.method)">
+                {{ pay.amount | currency:'EUR':true:'.2-2' }}
+            </a>
         </td>
-        <td class="rowActions">
-                <span class="actions">
-                    <a class="action remove" (click)="removePay(pay)">Supprimer</a>
-                    <a class="ation edit" (click)="startEditPay(pay.method)">Éditer</a>
-                </span>
+
+        <td class="actions">
+            <a class="actionIcon remove" (^click)="removePay(pay)">
+                <i class="fi-x red"></i>
+            </a>
         </td>
     </tr>
     </tbody>

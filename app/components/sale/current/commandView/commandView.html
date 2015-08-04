@@ -1,17 +1,19 @@
 <div class="commandView">
     <header class="coloredHeader">
         <div class="commandNav" (^click)="switchCommandNavVisibility()"
-                [class.disabled]="validated || (command.items.length == 0 && commandService.activeCommands.length == 1)">
+             [class.disabled]="validated || (command.items.length == 0 && commandService.activeCommands.length == 1)">
             <span class="valignAnchor"></span>
-            <h1>Commande  {{ command.id }}
+
+            <h1>Commande {{ command.id }}
             <span [hidden]="validated || (command.items.length == 0 && commandService.activeCommands.length == 1)">
                 ▼
             </span>
             </h1>
+
             <div class="commandsMenu" [hidden]="!commandNavVisible">
                 <div class="command" *ng-for="#activeCommand of commandService.activeCommands; #index=index"
-                        [hidden]="activeCommand == command"
-                        (^click)="switchToCommand(activeCommand)">
+                     [hidden]="activeCommand == command"
+                     (^click)="switchToCommand(activeCommand)">
                     <span class="name">Commande {{ activeCommand.id }}</span>
                     <span class="reduction" [hidden]="activeCommand.globalReduction == null">-{{ activeCommand.globalReduction }}%</span>
                     <span class="total" [hidden]="activeCommand.totalPrice <= 0">{{ activeCommand.totalPrice | currency:'EUR':true:'.2-2' }}</span>
@@ -27,8 +29,9 @@
 
             <div class="action reduction" *ng-if="validated == false"
                  (^click)="editingGlobalReduction = true"
-                    [class.has-reduction] = "command.globalReduction > 0">
-                <span *ng-if="editingGlobalReduction == false && !(command.globalReduction > 0)">
+                 [class.editing]="editingGlobalReduction"
+                 [class.has-reduction]="command.globalReduction > 0">
+                <span [hidden]="editingGlobalReduction || command.globalReduction > 0">
                     Réduction
                 </span>
                 <span *ng-if="editingGlobalReduction == false && command.globalReduction > 0">
@@ -38,6 +41,7 @@
                     <input #reduction [value]="command.globalReduction"
                            (keyup)="applyGlobalReduction($event)"
                            (blur)="cancelGlobalReduction()"
+                           type="number" min="0.01" step="0.01"
                            size="2" autoFocus/>
                     %
                 </span>
@@ -53,6 +57,7 @@
             <th>Nom</th>
             <th class="amount number">Quantité</th>
             <th class="price number">Prix</th>
+            <th class="actions" [hidden]="validated"></th>
         </tr>
         </thead>
         <tbody>
@@ -68,47 +73,57 @@
                 {{ commandItem.item.name.get() }}
             </td>
             <td class="amount number">
-                <div [hidden]="commandItem.amount <= 1 || editingAmountItem == commandItem">
+                <a class="quantityLink" (^click)="doEditItemAmount(commandItem)"
+                   [class.editing]="editingAmountItem == commandItem"
+                   [class.unneeded]="commandItem.amount <= 1 || editingAmountItem == commandItem"
+                   [class.nolink]="validated"
+                        [class.actionlink]="!validated">
                         <span class="count">
                             {{ commandItem.amount}} x
                         </span>
                         <span class="price">
                             {{ commandItem.item.currentPrice.vatExclusive | currency:'EUR':true:'.2-2'  }}
                         </span>
-                </div>
+                </a>
                 <span class="editAmount" *ng-if="editingAmountItem == commandItem">
                     <input #amount [value]="commandItem.amount"
                            (keyup)="applyItemAmount($event)"
                            (blur)="cancelItemAmount()"
+                           type="number" min="1"
                            size="4" autoFocus/>
                 </span>
             </td>
             <td class="price number">
-                <span class="reduction" *ng-if="commandItem.reduction > 0 && editingReductionItem != commandItem">
+                <a class="reduction green"
+                   [class.unneeded]="commandItem.reduction <= 0 || editingReductionItem == commandItem"
+                   [class.nolink]="validated"
+                   [class.actionlink]="!validated"
+                   (^click)="doEditItemReduction(commandItem)">
                     -{{commandItem.reduction}}%
-                </span>
+                </a>
                 <span class="setReduction" *ng-if="editingReductionItem == commandItem">
                     <input #reduction [value]="commandItem.reduction"
                            (keyup)="applyItemReduction($event)"
                            (blur)="doCancelItemReduction()"
+                           type="number" min="0.01" step="0.01"
                            size="2" autoFocus/>
                     %
                 </span>
-                {{ commandItem.price | currency:'EUR':true:'.2-2' }}
+                <span>{{ commandItem.price | currency:'EUR':true:'.2-2' }}</span>
             </td>
-            <td class="rowActions" >
-                <span class="valignAnchor"></span>
-                <span class="actions" *ng-if="validated == false" >
-                    <a class="remove" (click)="doClearItem(commandItem)">Supprimer</a>
-                    <a class="amount" (click)="doEditItemReduction(commandItem);">Réduction</a>
-                    <a class="reduction" (click)="doEditItemAmount(commandItem);">Quantité</a>
-                </span>
-
+            <td class="actions" [hidden]="validated">
+                <a class="actionIcon remove" (^click)="doClearItem(commandItem)">
+                    <i class="fi-x red"></i>
+                </a>
+                <a class="actionIcon setReductionLink" (^click)="doEditItemReduction(commandItem)"
+                   [hidden]="commandItem.reduction > 0 || editingReductionItem == commandItem">
+                    <span class="green" style="font-weight: bold;">%</span>
+                </a>
             </td>
         </tr>
 
         </tbody>
-        <tfoot  *ng-if="command.getItems().length > 0">
+        <tfoot *ng-if="command.getItems().length > 0">
         <tr *ng-if="command.globalReduction > 0" class="details">
             <th colspan="3" class="reduction">
                 Réduction {{command.globalReduction}}%
@@ -116,36 +131,37 @@
             <th class="reduction number">-{{ command.reductionAmount | currency:'EUR':true:'.2-2'}}</th>
         </tr>
         <tr class="details">
-            <th colspan="3" >Total HTVA</th>
-            <th class="number">{{ command.vatExclusiveAmount | currency:'EUR':true:'.2-2'}} </th>
+            <th colspan="3">Total HTVA</th>
+            <th class="number">{{ command.vatExclusiveAmount | currency:'EUR':true:'.2-2'}}</th>
         </tr>
         <tr class="details">
-            <th colspan="3" >TVA</th>
-            <th class="number">{{ command.vatAmount | currency:'EUR':true:'.2-2'}} </th>
+            <th colspan="3">TVA</th>
+            <th class="number">{{ command.vatAmount | currency:'EUR':true:'.2-2'}}</th>
         </tr>
 
         <tr>
             <th colspan="3" class="total">Total</th>
-            <th class="total price number">{{ command.totalPrice  | currency:'EUR':true:'.2-2'}} </th>
+            <th class="total price number">{{ command.totalPrice | currency:'EUR':true:'.2-2'}}</th>
         </tr>
         </tfoot>
     </table>
     <div class="newItem" *ng-if="validated == false">
         <h2>Ajouter un produit</h2>
+
         <form>
-        <input #name placeholder="Nom" class="name"
-                [value]="toAddItem.name" (keyup)="toAddItem.name = name.value">
-        <input #amount placeholder="Quantité" class="amount"
-               type="number" min="1" step="1"
-               [value]="toAddItem.amount"
-               (keyup)="setToAddItemAmount(amount.value)"
-            (change)="setToAddItemAmount(amount.value)">
-        <input #price placeholder="Prix unitaire" class="price number"
-               type="number" min="0.01" step="0.01"
-               [value]="toAddItem.price | number:'.2-2'"
-               (keyup)="handleToAdditemPriceKeyUp($event)"
-               (change)="setToAddItemPrice($event)">
-        <button (click)="doAddCustomItem()" [disabled]="!isItemToAddValid()">Ajouter</button>
+            <input #name placeholder="Nom" class="name"
+                   [value]="toAddItem.name" (keyup)="toAddItem.name = name.value">
+            <input #amount placeholder="Quantité" class="amount"
+                   type="number" min="1" step="1"
+                   [value]="toAddItem.amount"
+                   (keyup)="setToAddItemAmount(amount.value)"
+                   (change)="setToAddItemAmount(amount.value)">
+            <input #price placeholder="Prix unitaire" class="price number"
+                   type="number" min="0.01" step="0.01"
+                   [value]="toAddItem.price | number:'.2-2'"
+                   (keyup)="handleToAdditemPriceKeyUp($event)"
+                   (change)="setToAddItemPrice($event)">
+            <button (click)="doAddCustomItem()" [disabled]="!isItemToAddValid()">Ajouter</button>
         </form>
     </div>
 

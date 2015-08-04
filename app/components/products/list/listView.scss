@@ -3,11 +3,12 @@
 .editPage {
     margin-right: 1em;
 }
-table .rowActions {
-    left: auto !important;
-    right: 0 !important;
-}
-.itemPicture:not([hidden]) {
-    display: block;
+table {
+    td.actions {
+        width: 2.5em;
+    }
+    .itemPicture:not([hidden]) {
+        display: block;
+    }
 }
 

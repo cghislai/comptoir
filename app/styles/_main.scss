@@ -123,34 +123,73 @@ table.dataTable {
     max-width: 10%;
   }
 
-  td.rowActions {
-    position: absolute;
-    left: 0;
-    height: 1.5em;
-    width: 100%;
-    z-index: 1;
-    padding: 0;
-    text-align: center;
-
-    > .actions {
-      background-color: rgba(255, 255, 255, 0.9);
-      display: none;
-      padding-left: .5em;
-      font-size: .8em;
-      padding: .3em;
-      vertical-align: middle;
-    }
-    a {
-      @extend .lightBlueLink;
-      padding-right: .5em;
+  td {
+    a.actionIcon:not([hidden]) {
+      color: rgb(220, 220, 220);
+      font-size: 1em;
+      -webkit-filter: blur(.1em);
       display: inline-block;
       vertical-align: middle;
     }
+
+    .actionIcon {
+      padding-left: .3em;
+    }
   }
 
-  tr:hover > td.rowActions > .actions {
-    display: inline-block;
+  tr:hover > td {
+    a.actionIcon:not([hidden]) {
+      -webkit-filter: none;
+      color: black;
+      .red {
+        color: red;
+      }
+      .green {
+        color: darkgreen;
+      }
+    }
+    a.actionIcon:not([hidden]):hover {
+      cursor: pointer;
+      color: lighten(black, 50%);
+
+      .red {
+        color: lighten(red, 30%);
+      }
+      .green {
+        color: lighten(darkgreen, 30%);
+      }
+    }
   }
+}
+
+
+.actionlink:not([hidden]) {
+  color: black;
+}
+.actionlink.green:not([hidden]) {
+  color: darkgreen;
+}
+.actionlink.red:not([hidden]) {
+  color: red;
+}
+.actionlink:not([hidden]):hover {
+  text-decoration: underline;
+  cursor: pointer;
+  color: lighten(black, 50%);
+}
+.actionlink.green:not([hidden]):hover {
+  color: lighten(darkgreen, 30%);
+}
+.actionlink.red:not([hidden]):hover {
+  color: lighten(red, 30%);
+}
+
+.fi-2em {
+  font-size: 2em;
+}
+
+.fi-3em {
+  font-size: 3em;
 }
 
 span.valignAnchor {
@@ -163,20 +202,22 @@ img.itemPicture.medium {
   max-width: 15vw;
   max-height: 15vh;
 }
+
 img.itemPicture.large {
   max-width: 25vw;
   max-height: 25vh;
 }
+
 img.itemPicture.list {
   max-width: 5em;
   max-height: 2em;
 }
-a.disabled, a.disabled:hover {
-    color: lightgray !important;
-    text-decoration: none !important;
-    cursor: default !important;
-}
 
+a.disabled, a.disabled:hover {
+  color: lightgray !important;
+  text-decoration: none !important;
+  cursor: default !important;
+}
 
 .menuPaneView {
   width: 100%;
@@ -184,7 +225,7 @@ a.disabled, a.disabled:hover {
   display: table;
   min-height: 90vh;
 
-  >* {
+  > * {
     position: relative;
   }
   .menu {
@@ -205,7 +246,7 @@ a.disabled, a.disabled:hover {
       display: block;
       background-color: transparent;
     }
-    a.active{
+    a.active {
       color: $onBlueHoverColor;
     }
     a:hover {

@@ -1,6 +1,7 @@
 @import '../../../../styles/_main';
 
 header {
+
   h1 {
     font-size: 1.3em;
   }
@@ -16,16 +17,25 @@ header {
     cursor: pointer;
   }
 
-  .actions > .reduction > span {
+  .actions > .reduction > span:not([hidden]) {
     display: block;
     height: 100%;
   }
   .actions > .reduction input {
     font-size: 1em;
+    width: 3em;
+    display: inline-block;
+    vertical-align: middle;
   }
   .actions > .reduction.has-reduction {
-    color: red;
+    color: darkgreen;
   }
+  .actions > .reduction.editing {
+    padding: .1em;
+    border: none !important;
+    color: white !important;
+  }
+
   .commandsMenu {
     position: absolute;
     border: .2em solid $blueColor;
@@ -38,8 +48,7 @@ header {
     .command:not([hidden]) {
       display: table;
       width: 100%;
-      padding: .2em;
-    ;
+      padding: .2em;;
       > span:not([hidden
       ]) {
         display: table-cell;
@@ -69,41 +78,53 @@ header {
   }
 }
 
-
 table {
   font-size: 1.1em !important;
 
-  td:not(.rowActions), th {
-    padding: .5em !important;
-  }
-  td.rowActions {
-    padding: .3em !important;
+  td > *:not([hidden]) {
+    display: inline-block;
+    vertical-align: middle;
   }
 
   td.amount, th.amount {
     padding-right: 1em;
   }
 
-  td.amount  {
+  td.amount {
     font-size: .8em;
 
     input {
       font-size: .8em;
+      width: 2.5em;
     }
   }
 
-  td.price  {.reduction {
-    font-size: .8em;
-    color: red;
-    padding-right: .2em;
+  tr:hover .quantityLink.actionlink:not(.editing) {
+    display: inline-block;
   }
+
+
+  td.price {
+    min-width: 4em;
     .setReduction {
       font-size: .8em;
-    }
 
-    .setReduction * {
-      font-size: .8em;
+      input {
+        font-size: .8em;
+        width: 2.5em;
+      }
     }
+  }
+
+  td.actions {
+    width: 3em;
+
+  }
+  .reduction {
+    font-size: .8em;
+  }
+  .reduction.green:not(.actionlink) {
+    color: darkgreen;
   }
 
   tfoot {
