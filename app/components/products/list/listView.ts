@@ -7,17 +7,18 @@ import {Component, View, NgFor, NgIf,
 import {RouteConfig, RouterOutlet, RouterLink, routerInjectables} from 'angular2/router';
 
 
+import {LocaleText} from 'client/domain/lang';
 import {ItemService, Item, ItemSearch} from 'services/itemService';
 import {Picture, PictureService} from 'services/pictureService';
-import {Pagination, Language, LocaleText} from 'services/utils';
-import {ApplicationService} from 'services/applicationService';
+import {Pagination, Locale} from 'services/utils';
+import {ApplicationService} from 'services/application';
 import {Paginator} from 'components/utils/paginator/paginator';
 import {AutoFocusDirective} from 'directives/autoFocus'
 import {FocusableDirective} from 'directives/focusable'
 
 
 class FormModel {
-    lang:Language;
+    lang:Locale;
     reference:string;
     name:string;
     nameLocaleText: LocaleText;
@@ -30,19 +31,19 @@ class FormModel {
     item: Item;
 
     constructor();
-    constructor(item: Item, language: Language);
-    constructor(item?: Item, language?: Language) {
+    constructor(item: Item, locale: Locale);
+    constructor(item?: Item, locale?: Locale) {
         if (item == undefined) {
             this.item = new Item();
             this.picture = new Picture();
             return;
         }
-        this.lang = language;
+        this.lang = locale;
         this.item = item;
         this.reference = item.reference;
-        this.name = item.name.get(language);
+        this.name = item.name[locale.isoCode];
         this.nameLocaleText = item.name;
-        this.description = item.description.get(language);
+        this.description = item.description[locale.isoCode];
         this.descriptionLocaleText =item.description;
         this.model = item.model;
         this.price = item.currentPrice.vatExclusive;
@@ -50,19 +51,19 @@ class FormModel {
         this.picture = item.picture;
     }
 
-    setLanguage(language: Language) {
-        if (this.lang == language) {
+    setLanguage(locale: Locale) {
+        if (this.lang == locale) {
             return;
         }
         this.saveLocaleTexts();
-        this.lang = language;
-        this.description = this.descriptionLocaleText.get(language);
-        this.name = this.nameLocaleText.get(language);
+        this.lang = locale;
+        this.description = this.descriptionLocaleText[locale.isoCode];
+        this.name = this.nameLocaleText[locale.isoCode];
     }
 
     saveLocaleTexts() {
-        this.nameLocaleText.set(this.lang, this.name);
-        this.descriptionLocaleText.set(this.lang, this.description);
+        this.nameLocaleText[this.lang.isoCode] = this.name;
+        this.descriptionLocaleText[this.lang.isoCode] = this.description;
     }
 }
 
@@ -78,11 +79,10 @@ class FormModel {
 })
 
 export class ProductsListView {
-    languages = [{lang: Language.DUTCH, text: "Néerlandais"},
-        {lang: Language.ENGLISH, text: "Anglais"},
-        {lang: Language.FRENCH, text: "Français"}];
     itemService:ItemService;
     applicationService: ApplicationService;
+    appLocale: Locale;
+    allLocales: Locale[] = Locale.ALL_LOCALES;
 
     itemSearch: ItemSearch;
     items: Item[];
@@ -95,7 +95,7 @@ export class ProductsListView {
     loading: boolean;
 
     editingModel:FormModel;
-    lastUsedLanguage: Language;
+    lastUsedLanguage: Locale;
     // Delay keyevent for 500ms
     keyboardTimeoutSet: boolean;
     keyboardTimeout: number = 200;
@@ -103,11 +103,11 @@ export class ProductsListView {
     constructor(itemService: ItemService, appService: ApplicationService) {
         this.itemService = itemService;
         this.applicationService = appService;
+        this.appLocale = appService.locale;
         this.editingModel = null;
-        this.lastUsedLanguage = this.applicationService.language;
+        this.lastUsedLanguage = this.applicationService.locale  ;
         this.itemSearch = new ItemSearch();
         this.itemSearch.pagination = new Pagination(0, this.itemsPerPage);
-        this.lastUsedLanguage = LocaleText.DEFAULT_LANGUAGE;
         this.searchItems();
     }
 
@@ -145,11 +145,11 @@ export class ProductsListView {
         });
     }
 
-    onLanguageSelected(language: Language) {
+    onLanguageSelected(language: Locale) {
         this.lastUsedLanguage = language;
         this.editingModel.setLanguage(language);
     }
-    isLanguageSelected(language: Language): boolean {
+    isLanguageSelected(language: Locale): boolean {
         return this.editingModel.lang == language;
     }
     onFileSelected(form, event) {

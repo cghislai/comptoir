@@ -31,7 +31,7 @@
         <tbody>
         <tr *ng-for="#item of items" class="item" (^click)="doEditItem(item)">
             <td class="ref">{{ item.reference }}</td>
-            <td class="name">{{ item.name.get() }}</td>
+            <td class="name">{{ item.name[appLocale.isoCode]}}</td>
             <td class="model">{{ item.model }}</td>
             <td class="number price">{{ item.currentPrice.vatExclusive | currency:'EUR':true:'.2-2'}}</td>
             <td class="actions">
@@ -66,13 +66,15 @@
                 <tr>
                     <td><label>Langue:</label></td>
                     <td>
-                        <span *ng-for="#language of languages">
+                        <span *ng-for="#locale of allLocales">
                             <input type="radio" name="langue"
                                    ng-control="lang"
-                                   [checked]="isLanguageSelected(language.lang)"
-                                   (click)="onLanguageSelected(language.lang)"
-                                   [attr.id]="language.lang">
-                            <label [attr.for]="language.lang">{{language.text}}</label>
+                                   [checked]="isLanguageSelected(locale)"
+                                   (click)="onLanguageSelected(locale)"
+                                   [attr.id]="locale.isoCode">
+                            <label [attr.for]="locale.isoCode">
+                                {{ locale.label[appLocale.isoCode] }}
+                            </label>
                         </span>
                     </td>
                 </tr>

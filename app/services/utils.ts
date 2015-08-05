@@ -2,6 +2,9 @@
  * Created by cghislai on 02/08/15.
  */
 
+
+import {LocaleText, LocaleTextFactory} from 'client/domain/lang';
+
 export class Pagination {
     pageIndex: number;
     firstIndex: number;
@@ -19,57 +22,36 @@ export class Pagination {
     }
 }
 
+export class Locale {
+    static FRENCH = new Locale('fr', {'fr':'Français'});
+    static DUTCH = new Locale('nl', {'fr':'Néerlandais'});
+    static ENGLISH = new Locale('en', {'fr': 'Anglais'});
+
+    static ALL_LOCALES = [Locale.FRENCH, Locale.DUTCH, Locale.ENGLISH];
+    static DEFAULT_LOCALE = Locale.FRENCH;
+
+    public isoCode: string;
+    public label: {[locale: string] : string};
+
+    constructor(code: string, labelMap: any) {
+        this.isoCode = code;
+        this.label = labelMap;
+    }
+    toIsoCode():string {
+        return this.isoCode;
+    }
+    static formIsoCode(code: string): Locale {
+        Locale.ALL_LOCALES.forEach(function(locale: Locale) {
+            if (locale.isoCode == code) {
+                return locale;
+            }
+        });
+        return undefined;
+    }
+}
+
 export enum Language {
     FRENCH,
     DUTCH,
     ENGLISH
-}
-
-
-export class LocaleText {
-    static DEFAULT_LANGUAGE: Language =Language.FRENCH;
-
-    id: number;
-    localeTextMap={};
-    lang: string;
-    text: string;
-
-    constructor();
-    constructor(language: Language, text: string);
-    constructor(language?: Language, text?: string) {
-        if (language != undefined && text != undefined) {
-            var locale = LocaleText.getLocale(language);
-            this.localeTextMap[locale] = text;
-        }
-    }
-
-    get();
-    get(language: Language);
-    get(language?: Language) {
-        if (language == undefined) {
-            for (var lang in this.localeTextMap) {
-                language = lang;
-                break;
-            }
-        }
-        var locale = LocaleText.getLocale(language);
-        return this.localeTextMap[locale];
-    }
-    set(language: Language, text: string) {
-        var locale = LocaleText.getLocale(language);
-        this.localeTextMap[locale] = text;
-    }
-
-
-    static getLocale(language: Language) : string {
-        switch (language) {
-            case Language.DUTCH:
-                return 'nl';
-            case Language.ENGLISH:
-                return 'en';
-            case Language.FRENCH:
-                return 'fr';
-        }
-        return 'fr';
-    }
 }

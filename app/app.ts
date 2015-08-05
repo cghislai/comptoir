@@ -2,11 +2,12 @@
 import {Component, View,  bootstrap} from 'angular2/angular2';
 import {RouteConfig, RouterOutlet, RouterLink, routerInjectables, Location} from 'angular2/router';
 
-import {ApplicationService} from 'services/applicationService';
+import {ApplicationService} from 'services/application';
 import {ItemService} from 'services/itemService';
 import {PictureService} from 'services/pictureService';
 import {CashService} from 'services/cashService';
 import {CommandService} from 'services/commandService';
+import {CompanyService} from 'services/company';
 import {NavMenu} from './components/navMenu/navMenu';
 
 
@@ -40,12 +41,17 @@ export class App {
     appService:ApplicationService;
     location:Location;
 
-    constructor(appService:ApplicationService, location: Location) {
+    constructor(appService:ApplicationService,
+                location: Location,
+                companyService: CompanyService) {
         this.appService = appService;
         this.appService.appName = "Comptoir";
         this.appService.appVersion = "0.1";
         this.appService.pageName = "Comptoir";
         this.location = location;
+
+        companyService.createCompany(appService.locale, "test", "test desc");
+
     }
 
 
@@ -53,5 +59,6 @@ export class App {
 
 
 bootstrap(App, [routerInjectables,
-    ApplicationService, ItemService, CashService, PictureService, CommandService, NavMenu
+    ApplicationService, ItemService, CashService, PictureService, CommandService,
+    CompanyService, NavMenu
 ]);

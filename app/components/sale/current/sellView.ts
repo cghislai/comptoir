@@ -3,7 +3,7 @@
  */
 import {Component, View} from 'angular2/angular2';
 
-import {ApplicationService} from 'services/applicationService';
+import {ApplicationService} from 'services/application';
 import {CommandService, Command} from 'services/commandService';
 import {Item} from 'services/itemService';
 import {ItemList} from 'components/sale/current/itemList/itemList';

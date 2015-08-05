@@ -4,7 +4,8 @@
 
 import {Inject, forwardRef} from 'angular2/angular2';
 import {Picture, PictureService} from 'services/pictureService';
-import {Pagination, Language, LocaleText} from 'services/utils'
+import {Pagination, Locale} from 'services/utils'
+import {LocaleText} from 'client/domain/lang';
 
 export class Price {
     static DEFAULT_VAT_RATE:number = 0.21;
@@ -50,9 +51,9 @@ export class Item {
     static fromParams(params):Item {
         var item = new Item();
         if (params != undefined) {
-            var language:Language = params.language;
+            var language:Locale = params.language;
             if (language == null) {
-                language = LocaleText.DEFAULT_LANGUAGE;
+                language = Locale.DEFAULT_LOCALE;
             }
             if (params.id != null) {
                 item.id = params.id;
@@ -69,8 +70,10 @@ export class Item {
             if (params.model != null) {
                 item.model = params.model;
             }
-            item.name = new LocaleText(language, params.name);
-            item.description = new LocaleText(language, params.description);
+            item.name = new LocaleText();
+            item.name[language.isoCode] = params.name;
+            item.description = new LocaleText();
+            item.description[language.isoCode] = params.description;
             if (params.currentPrice != null) {
                 if (typeof (params.currentPrice) == "string") {
                     params.currentPrice = parseFloat(params.currentPrice);
@@ -144,9 +147,13 @@ export class ItemService {
                         foundItems.push(item);
                         return;
                     }
-                    if (item.name.get().indexOf(multiStringValue) >= 0) {
-                        foundItems.push(item);
-                        return;
+                    var localeName = item.name;
+                    for (var lang in localeName) {
+                        var name:string = localeName[lang];
+                        if (name.indexOf(multiStringValue) >= 0) {
+                            foundItems.push(item);
+                            return;
+                        }
                     }
                 })
                 items = foundItems;

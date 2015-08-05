@@ -70,7 +70,7 @@
                 </span>
             </td>
             <td class="name">
-                {{ commandItem.item.name.get() }}
+                {{ commandItem.item.name[locale.isoCode] }}
             </td>
             <td class="amount number">
                 <a class="quantityLink" (^click)="doEditItemAmount(commandItem)"
@@ -103,9 +103,9 @@
                 </a>
                 <span class="setReduction" *ng-if="editingReductionItem == commandItem">
                     <input #reduction [value]="commandItem.reduction"
-                           (keyup)="applyItemReduction($event)"
+                           (keyup)="onEditItemReductionKeyUp($event)"
                            (blur)="doCancelItemReduction()"
-                           type="number" min="0.01" step="0.01"
+                           type="number" min="0.1" step="0.1"
                            size="2" autoFocus/>
                     %
                 </span>

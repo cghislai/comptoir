@@ -19,7 +19,7 @@
                     {{ item.reference }}
                 </td>
                 <td class="name">
-                    {{ item.name.get() }}
+                    {{ item.name[lang.isoCode] }}
                     <div class="model" [hidden]="item.model == null">{{item.model}}</div>
                 </td>
                 <td class="price">

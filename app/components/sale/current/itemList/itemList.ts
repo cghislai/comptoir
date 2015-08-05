@@ -6,6 +6,8 @@ import {Component, View, NgFor, EventEmitter, ViewEncapsulation} from 'angular2/
 import {Item, ItemService, ItemSearch} from 'services/itemService';
 import {AutoFocusDirective} from 'directives/autoFocus';
 import {FocusableDirective} from 'directives/focusable';
+import {Locale} from 'services/utils';
+import {ApplicationService} from 'services/application';
 
 
 @Component({
@@ -27,6 +29,7 @@ export class ItemList {
     itemClicked = new EventEmitter();
     itemSearch:ItemSearch;
     loading:boolean = false;
+    lang: Locale;
     // Only 1 query at a time
     countPromise:Promise<any> = null;
     searchPromise:Promise<any> = null;
@@ -35,10 +38,11 @@ export class ItemList {
     keyboardTimeoutSet: boolean;
     keyboardTimeout: number = 200;
 
-    constructor(itemService:ItemService) {
+    constructor(itemService:ItemService, applicationService: ApplicationService) {
         this.itemService = itemService;
         this.itemSearch = new ItemSearch();
         this.itemSearch.multiSearch = null;
+        this.lang = applicationService.locale;
         this.searchItems();
     }
 
