@@ -70,7 +70,7 @@
                 </span>
             </td>
             <td class="name">
-                {{ commandItem.item.name[locale.isoCode] }}
+                {{ commandItem.item.name.localeTextMap[locale.isoCode] }}
             </td>
             <td class="amount number">
                 <a class="quantityLink" (^click)="doEditItemAmount(commandItem)"

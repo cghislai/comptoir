@@ -71,9 +71,9 @@ export class Item {
                 item.model = params.model;
             }
             item.name = new LocaleText();
-            item.name[language.isoCode] = params.name;
+            item.name.localeTextMap[language.isoCode] = params.name;
             item.description = new LocaleText();
-            item.description[language.isoCode] = params.description;
+            item.description.localeTextMap[language.isoCode] = params.description;
             if (params.currentPrice != null) {
                 if (typeof (params.currentPrice) == "string") {
                     params.currentPrice = parseFloat(params.currentPrice);
@@ -121,6 +121,20 @@ export class ItemService {
         this.pictureService = pictureService;
         this.fillDefaultItems();
         this.findItemPictures(this.allItems);
+    }
+
+    public getItem(id: number):Promise<Item> {
+        var allItems = this.allItems;
+        return new Promise((resolve, reject) => {
+            var foundItem = null;
+            allItems.forEach(function(item: Item) {
+                if (foundItem == null && item.id == id) {
+                    foundItem = item;
+                    return;
+                }
+            })
+            resolve(foundItem);
+        });
     }
 
     public countItems(itemSearch:ItemSearch):Promise<number> {
@@ -176,6 +190,8 @@ export class ItemService {
 
     public saveItem(item:Item):Promise<Item> {
         // TODO
+        var id = this.allItems.length;
+        item.id = id;
         var thisService = this;
         return new Promise((resolve, reject) => {
             if (thisService.contains(item)) {

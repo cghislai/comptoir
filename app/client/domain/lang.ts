@@ -4,7 +4,7 @@
 
 export class LocaleText {
     id: number;
-    localeTextMap: {[locale: string]: string};
+    localeTextMap: {[locale: string]: string} = {};
 }
 
 export class LocaleTextFactory {

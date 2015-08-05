@@ -1,0 +1,38 @@
+@import '_main';
+
+.listPage {
+  padding: .5em;
+
+  h1 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: .3em;
+  }
+
+  .busy:not([hidden]) {
+    display: inline-block;
+    position: absolute;
+    right: 1em;
+    height: 1.5em;
+  }
+  .topActions {
+    text-align: center;
+    margin: 1em;
+    >* {
+      margin-right: 1em;
+    }
+    .filter {
+      display: inline-block;
+    }
+
+    .action , button.action {
+      font-size: 1em;
+      @extend .boxedHoverableLink;
+      display: inline-block;
+    }
+  }
+
+  table {
+    @extend .dataTable;
+  }
+}

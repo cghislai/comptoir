@@ -1,10 +1,8 @@
 /**
  * Created by cghislai on 31/07/15.
  */
-import {Component, View, NgFor, NgIf,
-    formDirectives, Validators, ControlGroup,NgFormModel,
-    ViewEncapsulation} from 'angular2/angular2';
-import {RouteConfig, RouterOutlet, RouterLink, routerInjectables} from 'angular2/router';
+import {Component, View, NgFor, formDirectives} from 'angular2/angular2';
+import {Router} from 'angular2/router';
 
 
 import {LocaleText} from 'client/domain/lang';
@@ -16,73 +14,21 @@ import {Paginator} from 'components/utils/paginator/paginator';
 import {AutoFocusDirective} from 'directives/autoFocus'
 import {FocusableDirective} from 'directives/focusable'
 
-
-class FormModel {
-    lang:Locale;
-    reference:string;
-    name:string;
-    nameLocaleText: LocaleText;
-    description:string;
-    descriptionLocaleText: LocaleText;
-    model:string;
-    price:number;
-    vat: number;
-    picture: Picture;
-    item: Item;
-
-    constructor();
-    constructor(item: Item, locale: Locale);
-    constructor(item?: Item, locale?: Locale) {
-        if (item == undefined) {
-            this.item = new Item();
-            this.picture = new Picture();
-            return;
-        }
-        this.lang = locale;
-        this.item = item;
-        this.reference = item.reference;
-        this.name = item.name[locale.isoCode];
-        this.nameLocaleText = item.name;
-        this.description = item.description[locale.isoCode];
-        this.descriptionLocaleText =item.description;
-        this.model = item.model;
-        this.price = item.currentPrice.vatExclusive;
-        this.vat = item.currentPrice.vatRate * 100;
-        this.picture = item.picture;
-    }
-
-    setLanguage(locale: Locale) {
-        if (this.lang == locale) {
-            return;
-        }
-        this.saveLocaleTexts();
-        this.lang = locale;
-        this.description = this.descriptionLocaleText[locale.isoCode];
-        this.name = this.nameLocaleText[locale.isoCode];
-    }
-
-    saveLocaleTexts() {
-        this.nameLocaleText[this.lang.isoCode] = this.name;
-        this.descriptionLocaleText[this.lang.isoCode] = this.description;
-    }
-}
-
-// Main component
 @Component({
-    selector: "editItemsView"
+    selector: "productList"
 })
 
 @View({
     templateUrl: './components/products/list/listView.html',
     styleUrls: ['./components/products/list/listView.css'],
-    directives: [NgFor, NgIf, formDirectives, Paginator, AutoFocusDirective, FocusableDirective]
+    directives: [NgFor, Paginator, formDirectives]
 })
 
 export class ProductsListView {
     itemService:ItemService;
     applicationService: ApplicationService;
     appLocale: Locale;
-    allLocales: Locale[] = Locale.ALL_LOCALES;
+    router: Router;
 
     itemSearch: ItemSearch;
     items: Item[];
@@ -94,18 +40,15 @@ export class ProductsListView {
     picturePromise: Promise<any>;
     loading: boolean;
 
-    editingModel:FormModel;
-    lastUsedLanguage: Locale;
-    // Delay keyevent for 500ms
+    // Delay filter input keyevent for 200ms
     keyboardTimeoutSet: boolean;
     keyboardTimeout: number = 200;
 
-    constructor(itemService: ItemService, appService: ApplicationService) {
+    constructor(itemService: ItemService, appService: ApplicationService, router: Router) {
         this.itemService = itemService;
         this.applicationService = appService;
+        this.router = router;
         this.appLocale = appService.locale;
-        this.editingModel = null;
-        this.lastUsedLanguage = this.applicationService.locale  ;
         this.itemSearch = new ItemSearch();
         this.itemSearch.pagination = new Pagination(0, this.itemsPerPage);
         this.searchItems();
@@ -133,73 +76,12 @@ export class ProductsListView {
         this.searchItems();
     }
 
-    doEditNewItem() {
-        var item = new Item();
-        this.doEditItem(item);
-    }
     doEditItem(item:Item) {
-        this.editingModel = new FormModel(item, this.lastUsedLanguage);
-        this.picturePromise = this.itemService.findItemPicture(item);
-        this.picturePromise.then(function(picture: Picture) {
-            item.picture = picture;
-        });
+        var id = item.id;
+        var url = '/products/edit/'+id;
+        this.router.navigate(url);
     }
 
-    onLanguageSelected(language: Locale) {
-        this.lastUsedLanguage = language;
-        this.editingModel.setLanguage(language);
-    }
-    isLanguageSelected(language: Locale): boolean {
-        return this.editingModel.lang == language;
-    }
-    onFileSelected(form, event) {
-        var files = event.target.files;
-        if (files.length != 1) {
-            return;
-        }
-        var file = files[0];
-        var reader = new FileReader();
-        var thisView = this;
-        reader.onload = function () {
-            var data = reader.result;
-            thisView.editingModel.picture.dataUrl = data;
-            // Triggering an event for refresh
-            event.target.dispatchEvent(new Event('fileread'));
-        };
-        reader.readAsDataURL(file);
-    }
-
-    onCurrentPriceChanged(event) {
-        var price = event.target.value;
-        this.editingModel.price = parseFloat(price);
-    }
-    onVatChanged(event) {
-        var vat = event.target.value;
-        this.editingModel.vat = parseInt(vat);
-    }
-    doCancelEdit() {
-        this.lastUsedLanguage = this.editingModel.lang;
-        this.editingModel = null;
-    }
-
-    doSaveEdit() {
-        this.lastUsedLanguage = this.editingModel.lang;
-
-        var item = this.editingModel.item;
-        item.currentPrice.vatExclusive = this.editingModel.price;
-        item.currentPrice.vatRate = Number((this.editingModel.vat * 0.01).toFixed(2));
-
-        this.editingModel.saveLocaleTexts();
-        item.description = this.editingModel.descriptionLocaleText;
-        item.name = this.editingModel.nameLocaleText;
-        item.model = this.editingModel.model;
-        item.reference = this.editingModel.reference;
-        item.picture = this.editingModel.picture;
-        // TODO
-        this.itemService.saveItem(item);
-        this.editingModel = null;
-        this.searchItems();
-    }
     doRemoveItem(item : Item) {
         this.itemService.removeItem(item);
         this.searchItems();

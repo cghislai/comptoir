@@ -1,0 +1,95 @@
+<div class="formPage">
+    <h1>Édition du produit</h1>
+
+    <form #f="form" (ng-submit)="doSaveEdit()"
+          *ng-if="itemModel != undefined"
+          enctype="multipart/form-data">
+        <table>
+            <tr>
+                <td><label for="picture">Image:</label></td>
+                <td>
+                    <img [src]="itemModel.picture.imageUrl" class="itemPicture medium"
+                         [hidden]="itemModel.picture.imageUrl == null">
+                    <img [src]="itemModel.picture.dataUrl" class="itemPicture medium"
+                         [hidden]="itemModel.picture.dataUrl == null">
+                    <input type="file" id="picture" accept="image/*"
+                           ng-control="picture"
+                           (change)="onFileSelected(f, $event)"
+                           (fileread)>
+                </td>
+            </tr>
+            <tr>
+                <td><label>Langue:</label></td>
+                <td>
+                        <span *ng-for="#locale of allLocales">
+                            <input type="radio" name="langue"
+                                   ng-control="lang"
+                                   [checked]="locale == itemModel.locale"
+                                   (click)="onLanguageSelected(locale)"
+                                   [attr.id]="locale.isoCode">
+                            <label [attr.for]="locale.isoCode">
+                                {{ locale.label[appLocale.isoCode] }}
+                            </label>
+                        </span>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="reference">Référence:</label></td>
+                <td>
+                    <input type="text" id="reference"
+                           ng-control="reference" [(ng-model)]="itemModel.reference">
+                </td>
+            </tr>
+            <tr>
+                <td><label for="name">Nom:</label></td>
+                <td>
+                    <input type="text" id="name"
+                           ng-control="name" [(ng-model)]="itemModel.name.localeTextMap[itemModel.locale.isoCode]">
+                </td>
+            </tr>
+            <tr>
+                <td><label for="description">Description:</label></td>
+                <td>
+                        <textarea type="text" id="description" rows="3"
+                                  ng-control="description"
+                                  [(ng-model)]="itemModel.description.localeTextMap[itemModel.locale.isoCode]"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="model">Modèle:</label></td>
+                <td>
+                    <input type="text" id="model"
+                           ng-control="model" [(ng-model)]="itemModel.model">
+                </td>
+            </tr>
+            <tr>
+                <td><label for="price">Prix:</label></td>
+                <td>
+                        <span>
+                        <input class="number" type="number" min="0" step="0.01" id="price"
+                               ng-control="price"
+                               [ng-model]="itemModel.price | number:'.2-2'"
+                               (change)="onCurrentPriceChanged($event)">
+                            </span>
+                    <span>€</span>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="vat">TVA:</label></td>
+                <td>
+                        <span>
+                        <input class="number" type="number" min="0" max="100" step="1" id="vat"
+                               ng-control="vat"
+                               [ng-model]="itemModel.vat | number:'.2-2'"
+                               (change)="onVatChanged($event)">
+                            </span>
+                    <span>%</span>
+                </td>
+            </tr>
+        </table>
+        <div class="actions">
+            <button type="submit" [disabled]="!f.form.valid">Enregistrer</button>
+            <a [router-link]="['/productsList']">Annuler</a>
+        </div>
+    </form>
+</div>

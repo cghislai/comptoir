@@ -14,6 +14,7 @@ import {NavMenu} from './components/navMenu/navMenu';
 import {SellView} from 'components/sale/current/sellView';
 import {HistoryView as SellHistoryView} from 'components/sale/history/historyView';
 import {ProductsListView} from 'components/products/list/listView';
+import {EditProductView} from 'components/products/edit/editView';
 import {CountCashView} from 'components/cash/count/countView';
 import {CashHistoryView} from 'components/cash/history/historyView';
 import {ApplicationSettingsView} from 'components/settings/application/appSettings'
@@ -35,6 +36,8 @@ import {Parent} from 'components/test/test';
     {path: '/sale/history', component: SellHistoryView, as: 'saleHistory'},
 
     {path: '/products/list', component: ProductsListView, as: 'productsList'},
+    {path: '/products/edit', component: EditProductView, as: 'productsEditNew'},
+    {path: '/products/edit/:id', component: EditProductView, as: 'productsEdit'},
 
     {path: '/cash/count', component: CountCashView, as: 'cashCount'},
     {path: '/cash/history', component: CashHistoryView, as: 'cashHistory'},
