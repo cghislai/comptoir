@@ -17,8 +17,9 @@ export class LocaleTextFactory {
         localeText.localeTextMap = {};
 
         if (jsonObject.hasOwnProperty('localeTextMap')) {
-           for (var lang in jsonObject.localeTextMap) {
-               localeText.localeTextMap[lang] = jsonObject['lang'];
+            var jsonMap = jsonObject.localeTextMap;
+           for (var lang in jsonMap) {
+               localeText.localeTextMap[lang] = jsonMap[lang];
            }
         }
         return localeText;

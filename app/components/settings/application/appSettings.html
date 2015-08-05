@@ -1,0 +1,41 @@
+<div class="settingsPage">
+    <h1>Paramètres généraux</h1>
+
+    <form #form="form" (ng-submit)="doSave(form)">
+        <table>
+            <tr>
+                <td class="label">
+                    <label for="company">Compagnie:</label>
+                </td>
+                <td class="field">
+                    <select #companyField id="company" (change)="onCompanySelected($event)">
+                        <option [selected]="companyValue == undefined"
+                                [hidden]="companyValue != undefined">
+                        </option>
+                        <option *ng-for="#company of companyList"
+                                [selected]="company == companyValue"
+                                [value]="company.id">
+                            {{ company.name.localeTextMap[localeValue.isoCode] }}
+                        </option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">
+                    <label for="locale">Langue:</label>
+                </td>
+                <td class="field">
+                    <select #localeField id="locale" (change)="onLocaleSelected($event)">
+                        <option *ng-for="#locale of localeList"
+                                [selected]="locale == localeValue"
+                                [value]="locale.isoCode">
+                            {{ locale.label[localeValue.isoCode] }}
+                        </option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+
+        <button type="submit">Enregistrer</button>
+    </form>
+</div>

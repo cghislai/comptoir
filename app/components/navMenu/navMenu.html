@@ -10,6 +10,8 @@
                (click)="close()">Produits</a>
             <a [router-link]="['/cashCount']" [class.active]="isActive('/cash')"
                (click)="close()">Caisse</a>
+            <a [router-link]="['/settingsApp']" [class.active]="isActive('/settings')"
+               (click)="close()">Paramètres</a>
         </div>
     </div>
 
@@ -45,6 +47,13 @@
                 </a>
             </div>
         </div>
+        <div [hidden]="!isActive('/settings')">
+        <div class="tab">
+            <a [router-link]="['/settingsApp']" [class.active]="isActive('/settings/app')">
+                Application
+            </a>
+        </div>
+    </div>
     </div>
 </div>
 

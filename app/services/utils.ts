@@ -41,12 +41,13 @@ export class Locale {
         return this.isoCode;
     }
     static formIsoCode(code: string): Locale {
+        var foundLocale = undefined;
         Locale.ALL_LOCALES.forEach(function(locale: Locale) {
             if (locale.isoCode == code) {
-                return locale;
+                foundLocale = locale;
             }
         });
-        return undefined;
+        return foundLocale;
     }
 }
 

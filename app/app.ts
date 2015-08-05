@@ -16,6 +16,9 @@ import {HistoryView as SellHistoryView} from 'components/sale/history/historyVie
 import {ProductsListView} from 'components/products/list/listView';
 import {CountCashView} from 'components/cash/count/countView';
 import {CashHistoryView} from 'components/cash/history/historyView';
+import {ApplicationSettingsView} from 'components/settings/application/appSettings'
+
+import {Parent} from 'components/test/test';
 
 @Component({
     selector: 'app'
@@ -34,7 +37,9 @@ import {CashHistoryView} from 'components/cash/history/historyView';
     {path: '/products/list', component: ProductsListView, as: 'productsList'},
 
     {path: '/cash/count', component: CountCashView, as: 'cashCount'},
-    {path: '/cash/history', component: CashHistoryView, as: 'cashHistory'}
+    {path: '/cash/history', component: CashHistoryView, as: 'cashHistory'},
+
+    {path: '/settings/app', component: ApplicationSettingsView, as: 'settingsApp'}
 
 ])
 export class App {
@@ -47,11 +52,7 @@ export class App {
         this.appService = appService;
         this.appService.appName = "Comptoir";
         this.appService.appVersion = "0.1";
-        this.appService.pageName = "Comptoir";
         this.location = location;
-
-        companyService.createCompany(appService.locale, "test", "test desc");
-
     }
 
 

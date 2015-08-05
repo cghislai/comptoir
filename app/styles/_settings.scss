@@ -1,0 +1,41 @@
+@import '_main';
+
+.settingsPage {
+  text-align: center;
+
+  form {
+    display: inline-block;
+    font-size: 1em;
+
+    table {
+      margin: 1em;
+
+      td {
+        vertical-align: middle;
+        padding: .3em;
+      }
+
+      td.label {
+        text-align: right;
+        font-size: 1em;
+        font-weight: bold;
+      }
+
+      td.field {
+        font-size: 1em;
+        text-align: left;
+
+        input, select {
+          width: 100%;
+          font-size: 1em;
+          border-width: .1em;
+        }
+      }
+    }
+
+    button {
+      @extend .boxedHoverableLink;
+      font-size: 1em;
+    }
+  }
+}

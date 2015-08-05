@@ -25,7 +25,6 @@ export class SellView {
     commandValidated:boolean;
 
     constructor(appService:ApplicationService, commandService:CommandService) {
-        appService.pageName = "Vente";
         this.commandService = commandService;
         this.commandValidated = false;
     }

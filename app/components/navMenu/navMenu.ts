@@ -46,6 +46,9 @@ export class NavMenu {
         if (this.isActive('/cash')) {
             return "Caisse";
         }
+        if (this.isActive('/settings')) {
+            return "Paramètres";
+        }
     }
 open() {
         this.menuVisible = true;
