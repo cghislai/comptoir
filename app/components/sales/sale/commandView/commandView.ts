@@ -3,6 +3,7 @@
  */
 
 import {Component, View, NgFor, NgIf, EventEmitter} from 'angular2/angular2';
+import {Router} from 'angular2/router';
 
 import {LocaleText} from 'client/domain/lang';
 import {CommandService, CommandItem, Command} from 'services/commandService';
@@ -23,19 +24,21 @@ class ToAddItem {
 // The component
 @Component({
     selector: 'commandView',
-    events: ['validate']
+    events: ['validate'],
+    properties: ['command', 'validated']
 })
 
 @View({
-    templateUrl: './components/sale/current/commandView/commandView.html',
-    styleUrls: ['./components/sale/current/commandView/commandView.css'],
-    directives: [NgFor, NgIf, AutoFocusDirective]
+    templateUrl: './components/sales/sale/commandView/commandView.html',
+    styleUrls: ['./components/sales/sale/commandView/commandView.css'],
+    directives: [AutoFocusDirective, NgFor,NgIf]
 })
 
 export class CommandView {
     commandService:CommandService;
     command:Command;
     locale:Locale;
+    router: Router;
 
     applicationService:ApplicationService;
     toAddItem:ToAddItem;
@@ -44,51 +47,20 @@ export class CommandView {
     editingGlobalReduction:boolean = false;
     validate = new EventEmitter();
     validated:boolean = false;
-    commandNavVisible:boolean = false;
 
-    constructor(commandService:CommandService, applicationService:ApplicationService) {
+    constructor(commandService:CommandService, applicationService:ApplicationService,
+                router: Router) {
         this.commandService = commandService;
         this.applicationService = applicationService;
         this.locale = applicationService.locale;
+        this.router = router;
         this.renewToAddCustomItem();
-        this.switchToNextCommand();
     }
 
     renewToAddCustomItem() {
         this.toAddItem = new ToAddItem();
     }
 
-    switchToNextCommand() {
-        if (this.command == null) {
-            if (this.commandService.activeCommands.length == 0) {
-                this.command = this.commandService.newCommand();
-                return;
-            }
-            this.command = this.commandService.activeCommands[0];
-            return;
-        }
-        this.command = this.commandService.nextActive(this.command);
-    }
-
-    switchToCommand(command:Command) {
-        this.command = command;
-        this.command.calcTotalPrice();
-    }
-
-    switchToNewCommand() {
-        this.command = this.commandService.newCommand();
-    }
-
-    cancelCommand() {
-        this.commandService.removeActiveCommand(this.command);
-        this.command = null;
-        this.switchToNextCommand();
-    }
-
-
-    doClearCommand() {
-        this.command.reset();
-    }
 
     doClearItem(commandItem:CommandItem) {
         this.command.removeCommandItem(commandItem);
@@ -102,7 +74,6 @@ export class CommandView {
          } else {
          this.editingAmountItem = commandIitem;
          }*/
-
     }
 
     doAddCustomItem() {
@@ -150,8 +121,12 @@ export class CommandView {
 
     applyItemAmount(event) {
         if (event.which == 13) { // Enter
-            var amount:number = event.target.value;
-            this.editingAmountItem.amount = amount;
+            var amount:string = event.target.value;
+            var amountVal = parseInt(amount);
+            if (isNaN(amountVal)) {
+                return false;
+            }
+            this.editingAmountItem.amount = amountVal;
             this.command.calcItemPrice(this.editingAmountItem);
             this.command.calcTotalPrice();
             this.editingAmountItem = null;
@@ -170,16 +145,22 @@ export class CommandView {
 
     applyGlobalReduction(event) {
         if (event.which == 13) { // Enter
-            var reduction:number = event.target.value;
-            this.command.globalReduction = reduction;
+            var reduction:string= event.target.value;
+            var reductionVal = parseFloat(reduction);
+            if (isNaN(reductionVal)) {
+                this.command.globalReduction = null;
+            } else {
+                this.command.globalReduction = reductionVal;
+            }
             this.command.calcTotalPrice();
             this.editingGlobalReduction = false;
-            return;
+            return false;
         }
         if (event.which == 27) { // Escape
             this.cancelGlobalReduction();
-            return;
+            return false;
         }
+        return false;
     }
 
     cancelGlobalReduction() {
@@ -189,7 +170,6 @@ export class CommandView {
     doValidate() {
         this.validated = true;
         this.validate.next(this.validated);
-        this.closeCommandNav();
     }
 
     doUnvalidate() {
@@ -197,18 +177,11 @@ export class CommandView {
         this.validate.next(this.validated);
     }
 
-    onCommandPaid() {
-        this.commandService.saveCommand(this.command);
-        this.command = null;
-        this.validated = false;
-        this.switchToNextCommand();
-    }
-
     setToAddItemAmount(amount:string) {
         this.toAddItem.amount = parseInt(amount);
     }
 
-    handleToAdditemPriceKeyUp(event) {
+    handleToAddItemPriceKeyUp(event) {
         if (event.which == 13) { // Enter
             this.setToAddItemPrice(event);
             return;
@@ -244,18 +217,4 @@ export class CommandView {
         return true;
     }
 
-    switchCommandNavVisibility() {
-        if (this.validated) {
-            return;
-        }
-        this.commandNavVisible = !this.commandNavVisible;
-    }
-
-    openCommandNav() {
-        this.commandNavVisible = true;
-    }
-
-    closeCommandNav() {
-        this.commandNavVisible = false;
-    }
 }

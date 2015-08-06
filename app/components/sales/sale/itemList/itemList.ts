@@ -16,8 +16,8 @@ import {ApplicationService} from 'services/application';
 })
 
 @View({
-    templateUrl: './components/sale/current/itemList/itemList.html',
-    styleUrls: ['./components/sale/current/itemList/itemList.css'],
+    templateUrl: './components/sales/sale/itemList/itemList.html',
+    styleUrls: ['./components/sales/sale/itemList/itemList.css'],
     directives: [NgFor, AutoFocusDirective, FocusableDirective],
     encapsulation: ViewEncapsulation.EMULATED
 })

@@ -1,0 +1,17 @@
+<div class="sellView">
+    <table *ng-if="command != undefined">
+        <tr>
+            <td class="itemList"  [hidden]="commandValidated">
+                <itemList #itemlist (item-clicked)="onItemClicked($event, commandview, itemlist)"></itemList>
+            </td>
+            <td class="commandView">
+                <commandView #commandview (validate)="onCommandValidated($event, payview)"
+                        [command]="command" [validated]="commandValidated"></commandView>
+            </td>
+            <td class="payView" [hidden]="!commandValidated">
+                <payView #payview (paid)="onCommandPaid()"
+                        [command]="command"></payView>
+            </td>
+        </tr>
+    </table>
+</div>

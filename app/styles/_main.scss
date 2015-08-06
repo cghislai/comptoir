@@ -10,12 +10,12 @@ $focusColor: $onWhiteHoverColor;
   box-shadow: 0 0 .2em .1em $focusColor;
   }
 
-.coloredHeader {
+.coloredHeader:not([hidden]) {
   background: $blueColor;
   color: white;
   display: table;
   width: 100%;
-  height: 3em;
+  height: 3.5em;
 
   > *:not([hidden]) {
     display: inline-block;
@@ -33,7 +33,7 @@ $focusColor: $onWhiteHoverColor;
     text-align: right;
     padding: .5em;
 
-    .action {
+    .action:not([hidden]) {
       font-weight: bolder;
       cursor: pointer;
       display: inline-block;

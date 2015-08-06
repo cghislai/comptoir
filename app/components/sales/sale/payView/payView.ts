@@ -19,18 +19,18 @@ class Pay {
 
 @Component({
     selector: "payView",
-    events: ['paid']
+    events: ['paid'],
+    properties: ['command']
 })
 @View({
-    templateUrl: './components/sale/current/payView/payView.html',
-    styleUrls: ['./components/sale/current/payView/payView.css'],
+    templateUrl: './components/sales/sale/payView/payView.html',
+    styleUrls: ['./components/sales/sale/payView/payView.css'],
     directives: [NgFor, NgIf, AutoFocusDirective]
 })
 
 export class PayView {
-    commandService: CommandService;
     command: Command;
-    toPayAmount: number;
+    remainingAmount: number;
     paidAmount: number;
     paid= new EventEmitter();
     //cancelled= new EventEmitter();
@@ -43,11 +43,6 @@ export class PayView {
         this.reset();
     }
 
-    payCommand(command: Command) {
-        this.reset();
-        this.command = command;
-        this.calcRemaining();
-    }
     reset() {
         this.availablePayMethods = [];
         this.availablePayMethods.push(PayMethod.CASH);
@@ -55,7 +50,8 @@ export class PayView {
         this.availablePayMethods.push(PayMethod.PAYPAL);
         this.payList = [];
         this.editingPay = null;
-        this.calcRemaining();
+        this.remainingAmount = undefined;
+        this.paidAmount = 0;
     }
     startEditPay(method: PayMethod) {
         if (this.editingPay != null) {
@@ -65,7 +61,7 @@ export class PayView {
         if (this.editingPay == null) {
             this.editingPay = new Pay();
             this.editingPay.method = method;
-            this.editingPay.amount = this.toPayAmount;
+            this.editingPay.amount = this.remainingAmount;
         }
         this.setMethodAvailable(method, false);
     }
@@ -95,18 +91,22 @@ export class PayView {
         this.setMethodAvailable(pay.method, true);
     }
     calcRemaining() {
-        if (this.command == null) {
-            this.toPayAmount = 0;
-            this.paidAmount = 0;
+        var toPay = this.command.totalPrice;
+        if (isNaN(toPay)) {
+            this.remainingAmount = undefined;
             return;
         }
-        var total = this.command.totalPrice;
+        var paidAmount:number = this.calcPaid();
+        this.remainingAmount= Number((toPay- paidAmount).toFixed(2));
+        this.paidAmount = paidAmount;
+    }
+    calcPaid() : number {
         var paidAmount : number =  0;
         this.payList.forEach(function(pay: Pay) {
             paidAmount = paidAmount +  pay.amount;
         })
-        this.toPayAmount = Number((total - paidAmount).toFixed(2));
-        this.paidAmount = Number((paidAmount).toFixed(2));
+        paidAmount = Number((paidAmount).toFixed(2));
+        return paidAmount;
     }
     setMethodAvailable(method: PayMethod, available: boolean) {
         var newMethods = [];

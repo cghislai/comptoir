@@ -2,7 +2,7 @@
  * Created by cghislai on 28/07/15.
  */
 import {Item} from 'services/itemService';
-import {Pagination} from 'services/utils';
+import {Pagination, SearchResult} from 'services/utils';
 
 export class CommandItem {
     item: Item;
@@ -20,6 +20,7 @@ export class CommandItem {
 
 export class CommandSearch {
     pagination: Pagination;
+    active: boolean;
 }
 
 export class Command {
@@ -32,12 +33,13 @@ export class Command {
     id: number;
     companyId: number;
     dateTime: Date;
+    active: boolean;
+    paid: boolean;
 
     constructor() {
         this.items = [];
         this.globalReduction = null;
         this.vatExclusiveAmount = 0;
-        this.id = 0;
     }
     reset() {
         this.items = [];
@@ -131,6 +133,7 @@ export class Command {
         this.vatAmount = Number(( this.vatAmount).toFixed(2));
         this.totalPrice =  Number((this.vatExclusiveAmount + this.vatAmount).toFixed(2));
     }
+
     calcItemPrice(commandItem: CommandItem) {
         var item = commandItem.item;
         if (item == null) {
@@ -150,72 +153,85 @@ export class Command {
 }
 
 export class CommandService {
-    activeCommands: Command[];
-    lastCommandId: number;
-    commands: Command[];
-    commandsCount: number;
+    fakeData: Command[];
+    fakeIdCounter: number = 0;
+    activeCommand: Command;
 
     constructor() {
-        this.activeCommands = [];
-        this.lastCommandId = 0;
-        this.commands = [];
-        this.commandsCount = 0;
+        this.initFakeData();
     }
 
-    findCommands(comandSearch: CommandSearch) {
-        this.commands = [];
+    searchCommands(commandSearch: CommandSearch): Promise<SearchResult<Command>> {
         // TODO
-        var c = new Command();
-        c.dateTime = new Date();
-        c.totalPrice = 123.59;
-        this.commands.push(c);
-        this.commandsCount = 1;
+        var thisService = this;
+        return new Promise((resolve, reject)=> {
+            var foundData:Command[] = [];
+            var commandSize = thisService.fakeData.length;
+            var index = 0;
+            while (index < commandSize) {
+                var command = thisService.fakeData[index];
+                index++;
+                var active = commandSearch.active;
+                if (active != undefined) {
+                    if (command.active != active) {
+                        continue;
+                    }
+                }
+                foundData.push(command);
+            }
+            var paginatedData:Command[] = [];
+            var lastIndex = commandSearch.pagination.firstIndex + commandSearch.pagination.pageSize;
+            lastIndex = Math.min(lastIndex, foundData.length);
+            for (index = commandSearch.pagination.firstIndex; index < lastIndex; index++) {
+                var command = foundData[index];
+                paginatedData.push(command);
+            }
+            var result = new SearchResult<Command>();
+            result.totalCount = foundData.length;
+            result.results = paginatedData;
+            resolve(result);
+        });
+    }
+
+    removeCommand(command: Command): Promise<boolean>{
+        var thisService = this;
+        var data = this.fakeData;
+        return new Promise((resolve, reject)=>{
+            var newData = [];
+            for (var exitingCommand of data) {
+                if (exitingCommand != command) {
+                    newData.push(exitingCommand);
+                }
+            }
+            thisService.fakeData = newData;
+            resolve(true);
+        });
     }
 
     newCommand(): Command {
         var command = null;
-        this.activeCommands.forEach(function(cmd: Command) {
-            if (cmd.items.length == 0) {
-                command = cmd;
-            }
-            return;
-        })
-        if (command != null) {
-            return command;
-        }
         command = new Command();
-        this.lastCommandId++;
-        command.id = this.lastCommandId;
-        this.activeCommands.push(command);
+        command.active = true;
         return command;
     }
 
-    nextActive(command: Command): Command {
-        var activeIndex = null;
-        for (var index = 0; index < this.activeCommands.length; index++) {
-            var curCommand = this.activeCommands[index];
-            if (curCommand == command) {
-                activeIndex = index;
-            }
+    saveCommand(command: Command) {
+        if (command.id == undefined) {
+            this.fakeIdCounter++;
+            command.id = this.fakeIdCounter;
+            this.fakeData.push(command);
         }
-        activeIndex++;
-        if (activeIndex >= this.activeCommands.length) {
-            activeIndex = 0;
-        }
-        return this.activeCommands[activeIndex];
-    }
-    removeActiveCommand(command: Command) {
-        var newCommands = [];
-        this.activeCommands.forEach(function(activeCommand: Command) {
-            if (command == activeCommand) {
-                return;
-            }
-            newCommands.push(activeCommand);
-        })
-        this.activeCommands = newCommands;
     }
 
-    saveCommand(command: Command) {
-        this.removeActiveCommand(command);
+    getCommand(id: number) {
+        for (var command of this.fakeData) {
+            if (command.id == id) {
+                return command;
+            }
+        }
+    }
+
+    initFakeData() {
+        this.fakeData = [];
     }
 }

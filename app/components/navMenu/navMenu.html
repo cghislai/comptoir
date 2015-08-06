@@ -4,7 +4,7 @@
         <h1 (click)="switchMenuVisibility()">{{ getPageName() }} ▼</h1>
 
         <div class="navMenu" [hidden]="!menuVisible">
-            <a [router-link]="['/saleCurrent']" [class.active]="isActive('/sale')"
+            <a [router-link]="['/salesSale', {id: 'new'}]" [class.active]="isActive('/sales')"
                (click)="close()">Ventes</a>
             <a [router-link]="['/productsList']" [class.active]="isActive('/products')"
                (click)="close()">Produits</a>
@@ -19,14 +19,24 @@
     </div>
 
     <div class="navTabs">
-        <div [hidden]="!isActive('/sale')">
+        <div [hidden]="!isActive('/sales')">
             <div class="tab">
-                <a [router-link]="['/saleCurrent']" [class.active]="isActive('/sale/current')">
+                <a [router-link]="['/saleCurrent']" [class.active]="isActive('/sales/sale')">
                     Vente
                 </a>
             </div>
             <div class="tab">
-                <a [router-link]="['/saleHistory']" [class.active]="isActive('/sale/history')">
+                <a [router-link]="['/salesActives']" [class.active]="isActive('/sales/actives')">
+                    En cours
+                </a>
+            </div>
+            <div class="tab">
+                <a [router-link]="['/salesSale', {id: 'new'}]">
+                    Nouvelle
+                </a>
+            </div>
+            <div class="tab">
+                <a [router-link]="['/salesHistory']" [class.active]="isActive('/sales/history')">
                     Historique
                 </a>
             </div>

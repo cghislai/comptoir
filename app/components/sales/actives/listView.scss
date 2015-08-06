@@ -1,0 +1,23 @@
+@import '../../../styles/_list';
+
+.listPage {
+    margin-right: 1em;
+}
+table {
+    tr.command:hover {
+        cursor: pointer;
+    }
+    td.actions {
+        width: 1.5em;
+    }
+    .details {
+        font-size: .8em;
+        max-width: 40em;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        display: inline-block;
+        vertical-align: middle;
+    }
+}
+

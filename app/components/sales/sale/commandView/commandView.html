@@ -1,40 +1,16 @@
 <div class="commandView">
     <header class="coloredHeader">
-        <div class="commandNav" (^click)="switchCommandNavVisibility()"
-             [class.disabled]="validated || (command.items.length == 0 && commandService.activeCommands.length == 1)">
-            <span class="valignAnchor"></span>
+        <h1>Commande {{ command.id }}</h1>
 
-            <h1>Commande {{ command.id }}
-            <span [hidden]="validated || (command.items.length == 0 && commandService.activeCommands.length == 1)">
-                ▼
-            </span>
-            </h1>
-
-            <div class="commandsMenu" [hidden]="!commandNavVisible">
-                <div class="command" *ng-for="#activeCommand of commandService.activeCommands; #index=index"
-                     [hidden]="activeCommand == command"
-                     (^click)="switchToCommand(activeCommand)">
-                    <span class="name">Commande {{ activeCommand.id }}</span>
-                    <span class="reduction" [hidden]="activeCommand.globalReduction == null">-{{ activeCommand.globalReduction }}%</span>
-                    <span class="total" [hidden]="activeCommand.totalPrice <= 0">{{ activeCommand.totalPrice | currency:'EUR':true:'.2-2' }}</span>
-                </div>
-                <div class="links">
-                    <a (click)="switchToNewCommand()" [hidden]="command.items.length == 0">Nouvelle commande</a>
-                    <a (click)="cancelCommand()" [hidden]="command.items.length == 0  ">Annuler cette commande</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="actions" *ng-if="command.getItems().length > 0">
-
-            <div class="action reduction" *ng-if="validated == false"
+        <div class="actions" [hidden]="command.getItems().length == 0">
+            <div class="action reduction" [hidden]="validated"
                  (^click)="editingGlobalReduction = true"
                  [class.editing]="editingGlobalReduction"
                  [class.has-reduction]="command.globalReduction > 0">
                 <span [hidden]="editingGlobalReduction || command.globalReduction > 0">
                     Réduction
                 </span>
-                <span *ng-if="editingGlobalReduction == false && command.globalReduction > 0">
+                <span [hidden]="editingGlobalReduction || command.globalReduction == null">
                     -{{ command.globalReduction}} %
                 </span>
                 <span *ng-if="editingGlobalReduction">
@@ -42,16 +18,16 @@
                            (keyup)="applyGlobalReduction($event)"
                            (blur)="cancelGlobalReduction()"
                            type="number" min="0.01" step="0.01"
-                           size="2" autoFocus/>
+                           size="2" autofocusselect/>
                     %
                 </span>
             </div>
-            <div class="action cashIn" (click)="doValidate()" *ng-if="validated == false">Encaisser</div>
-            <div class="action cashIn" (click)="doUnvalidate()" *ng-if="validated == true">Retour</div>
+            <div class="action cashIn" (click)="doValidate()" [hidden]="validated">Encaisser</div>
+            <div class="action cashIn" (click)="doUnvalidate()" [hidden]="!validated">Retour</div>
         </div>
     </header>
-    <table class="dataTable">
-        <thead *ng-if="command.getItems().length > 0">
+    <table class="dataTable" [hidden]="command.getItems().length == 0">
+        <thead >
         <tr>
             <th>Ref</th>
             <th>Nom</th>
@@ -90,7 +66,7 @@
                            (keyup)="applyItemAmount($event)"
                            (blur)="cancelItemAmount()"
                            type="number" min="1"
-                           size="4" autoFocus/>
+                           size="4" autofocusselect/>
                 </span>
             </td>
             <td class="price number">
@@ -106,7 +82,7 @@
                            (keyup)="onEditItemReductionKeyUp($event)"
                            (blur)="doCancelItemReduction()"
                            type="number" min="0.1" step="0.1"
-                           size="2" autoFocus/>
+                           size="2" autofocusselect/>
                     %
                 </span>
                 <span>{{ commandItem.price | currency:'EUR':true:'.2-2' }}</span>
@@ -123,8 +99,8 @@
         </tr>
 
         </tbody>
-        <tfoot *ng-if="command.getItems().length > 0">
-        <tr *ng-if="command.globalReduction > 0" class="details">
+        <tfoot>
+        <tr [hidden]="command.globalReduction <= 0" class="details">
             <th colspan="3" class="reduction">
                 Réduction {{command.globalReduction}}%
             </th>
@@ -145,7 +121,7 @@
         </tr>
         </tfoot>
     </table>
-    <div class="newItem" *ng-if="validated == false">
+    <div class="newItem" [hidden]="validated">
         <h2>Ajouter un produit</h2>
 
         <form>
@@ -159,7 +135,7 @@
             <input #price placeholder="Prix unitaire" class="price number"
                    type="number" min="0.01" step="0.01"
                    [value]="toAddItem.price | number:'.2-2'"
-                   (keyup)="handleToAdditemPriceKeyUp($event)"
+                   (keyup)="handleToAddItemPriceKeyUp($event)"
                    (change)="setToAddItemPrice($event)">
             <button (click)="doAddCustomItem()" [disabled]="!isItemToAddValid()">Ajouter</button>
         </form>

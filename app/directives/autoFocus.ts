@@ -6,17 +6,29 @@ import {Directive, ElementRef} from 'angular2/angular2';
 
 // Autofocus the input field
 @Directive({
-    selector: 'input[autoFocus]'
+    selector: 'input[autofocusselect]'
 })
 export class AutoFocusDirective {
-    constructor(element: ElementRef) {
-        var nativeElement = element.nativeElement;
-        if (nativeElement != null) {
-            nativeElement.focus();
-            setTimeout(function() {
-                    nativeElement.select();
-                    nativeElement.setSelectionRange(0,nativeElement.value.length);
-                }, 0);
+    element: HTMLInputElement;
+
+    constructor(element:ElementRef) {
+        this.element = element.nativeElement;
+        if ( this.element == null) {
+            return;
         }
+        if (this.element != null) {
+            this.doFocus();
+        }
+    }
+
+    doFocus() {
+        this.element.focus();
+        var element = this.element;
+        setTimeout(function () {
+            element.select();
+            if (element.type == 'text') {
+                element.setSelectionRange(0, element.value.length);
+            }
+        }, 0);
     }
 }

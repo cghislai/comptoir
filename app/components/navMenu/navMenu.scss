@@ -61,7 +61,7 @@
             border: none;
             box-shadow: none;
         }
-        a:not(.active):hover {
+        a[href]:not(.active):hover {
             color: yellow;
             cursor: pointer;
         }
@@ -73,6 +73,9 @@
             background-color: white;
             color: black;
             border: none;
+        }
+        a:not([href]):not(.active) {
+            color: lightgray;
         }
     }
 

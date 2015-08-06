@@ -161,10 +161,10 @@ export class ItemService {
                         foundItems.push(item);
                         return;
                     }
-                    var localeName = item.name;
+                    var localeName = item.name.localeTextMap;
                     for (var lang in localeName) {
                         var name:string = localeName[lang];
-                        if (name.indexOf(multiStringValue) >= 0) {
+                        if (name != undefined && name.indexOf(multiStringValue) >= 0) {
                             foundItems.push(item);
                             return;
                         }

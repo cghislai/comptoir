@@ -12,8 +12,9 @@ import {AccountService} from 'services/account';
 import {NavMenu} from './components/navMenu/navMenu';
 
 
-import {SellView} from 'components/sale/current/sellView';
-import {HistoryView as SellHistoryView} from 'components/sale/history/historyView';
+import {SellView} from 'components/sales/sale/sellView';
+import {ActiveSalesListView} from 'components/sales/actives/listView';
+import {HistoryView as SellHistoryView} from 'components/sales/history/historyView';
 
 import {ProductsListView} from 'components/products/list/listView';
 import {EditProductView} from 'components/products/edit/editView';
@@ -39,8 +40,10 @@ import {Parent} from 'components/test/test';
 
 @RouteConfig([
     {path: '/', redirectTo:'/sale/current'},
-    {path: '/sale/current', component: SellView, as: 'saleCurrent'},
-    {path: '/sale/history', component: SellHistoryView, as: 'saleHistory'},
+    {path: '/sales/sale', component: SellView, as: 'saleCurrent'},
+    {path: '/sales/sale/:id', component: SellView, as: 'salesSale'},
+    {path: '/sales/actives', component: ActiveSalesListView, as: 'salesActives'},
+    {path: '/sales/history', component: SellHistoryView, as: 'salesHistory'},
 
     {path: '/products/list', component: ProductsListView, as: 'productsList'},
     {path: '/products/edit', component: EditProductView, as: 'productsEditNew'},

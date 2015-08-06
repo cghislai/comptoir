@@ -1,19 +1,19 @@
 <div>
     <div class="toPayHeader coloredHeader"
-         *ng-if="toPayAmount > 0">
+         [hidden]="remainingAmount <= 0">
         <h1>À payer</h1>
          <span class="actions">
-        <span class="total single" [class.negative]="toPayAmount < 0" [class.exact]="toPayAmount == 0">
-            {{ toPayAmount | currency:'EUR':true:'.2-2' }}
+        <span class="total single" [class.negative]="remainingAmount < 0" [class.exact]="remainingAmount == 0">
+            {{ remainingAmount | currency:'EUR':true:'.2-2' }}
         </span>
         </span>
     </div>
     <div class="toPayHeader coloredHeader"
-         *ng-if="toPayAmount <= 0">
+        [hidden]="remainingAmount > 0">
         <h1>À rendre</h1>
         <span class="actions">
             <span class="total negative">
-                {{ -toPayAmount | currency:'EUR':true:'.2-2'}}
+                {{ -remainingAmount | currency:'EUR':true:'.2-2'}}
             </span>
             <span class="action validateLink" (click)="onValidateClicked()">
                 Valider
@@ -62,7 +62,7 @@
     <span class="amount">
         Montant: <input #amount [value]="editingPay.amount"
                         type="number" min="0.01" step="0.01"
-                        (keyUp)="onPayAmountKeyUp(amount.value, $event)" autoFocus> €
+                        (keyUp)="onPayAmountKeyUp(amount.value, $event)" autofocusselect> €
     </span>
 </div>
 

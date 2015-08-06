@@ -3,12 +3,12 @@
     <div class="search">
 
     </div>
-    <paginator [total-count]="commandService.commandsCount"
-               [page-size]="itemsPerPage"
+    <paginator [total-count]="commandsCount"
+               [page-size]="commandsPerPage"
                show-prev-next="true" show-first-last="true"
                (pagechange)="onPageChanged($event)"
-            [hidden]="commandService.commandsCount==0"></paginator>
-    <table class="dataTable" [hidden]="commandService.commandsCount==0">
+            [hidden]="commandsCount==0"></paginator>
+    <table class="dataTable" [hidden]="commandsCount==0">
         <thead>
             <tr>
                 <th>Date</th>
@@ -17,7 +17,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ng-for="#command of commandService.commands" class="command">
+            <tr *ng-for="#command of commands" class="command">
                 <td class="date">{{ command.dateTime | date:'ddMMyyyy HHmm' }}</td>
                 <td class="name"> Commande {{command.id}}</td>
                 <td class="number">{{ command.totalPrice | currency:'EUR':true:'.2-2' }}</td>

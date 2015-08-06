@@ -11,25 +11,33 @@ import {Paginator} from 'components/utils/paginator/paginator';
     selector: 'historyView'
 })
 @View({
-    templateUrl: './components/sale/history/historyView.html',
-    styleUrls: ['./components/sale/history/historyView.css'],
+    templateUrl: './components/sales/history/historyView.html',
+    styleUrls: ['./components/sales/history/historyView.css'],
     directives: [Paginator, NgFor]
 })
 export class HistoryView {
 
     commandService:CommandService;
     commandSearch:CommandSearch;
-    itemsPerPage:number = 25;
+    commandsPerPage:number = 25;
+    commandsCount:number;
+    commands:Command[];
 
     constructor(commandsService:CommandService) {
         this.commandService = commandsService;
         this.commandSearch = new CommandSearch();
-        this.commandSearch.pagination = new Pagination(0, this.itemsPerPage);
+        this.commandSearch.active = false;
+        this.commandSearch.pagination = new Pagination(0, this.commandsPerPage);
         this.searchCommands();
     }
 
     searchCommands() {
-        this.commandService.findCommands(this.commandSearch);
+        var thisView = this;
+        this.commandService.searchCommands(this.commandSearch)
+            .then(function (result) {
+                thisView.commandsCount = result.totalCount;
+                thisView.commands = result.results;
+            });
     }
 
     onPageChanged(pagination:Pagination) {
