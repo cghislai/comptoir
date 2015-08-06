@@ -4,6 +4,7 @@
 
 import {CompanyRef, CompanyFactory} from 'client/domain/company';
 import {LocaleText, LocaleTextFactory} from 'client/domain/lang';
+import {Pagination} from 'services/utils';
 
 export enum AccountType {
     PAYMENT,
@@ -26,6 +27,12 @@ export class AccountRef {
     id: number;
     link: string;
 }
+
+export class AccountSearch {
+    companyRef: CompanyRef;
+    pagination: Pagination;
+}
+
 
 export class AccountFactory {
     static getAccountTypeFromString(type: string) : AccountType {
@@ -66,7 +73,24 @@ export class AccountFactory {
         account.bic = jsonObject.bic;
         account.name = jsonObject.name;
         account.description = LocaleTextFactory.getLocaleTextFromJSON(jsonObject.description);
-        account.accountType = AccountFactory.getAccountTypeFromString(jsonObject.accountType);
+        account.accountType = AccountFactory.getAccountTypeFromString(jsonObject.type);
         return account;
+    }
+
+    static getAccountsArrayFromJson(jsonArray: any) : Account[] {
+        if (jsonArray == undefined) {
+            return undefined;
+        }
+        if (!(jsonArray instanceof Array)) {
+            console.error('The data is not an array:');
+            console.error(jsonArray);
+            return undefined;
+        }
+        var accountsArray: Account[] = [];
+        jsonArray.forEach(function(jsonObject) {
+            var account = AccountFactory.getAccountFromJSON(jsonObject);
+            accountsArray.push(account);
+        })
+        return accountsArray;
     }
 }

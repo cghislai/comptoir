@@ -49,6 +49,9 @@ export class NavMenu {
         if (this.isActive('/settings')) {
             return "Paramètres";
         }
+        if (this.isActive('/accounts')) {
+            return "Comptes";
+        }
     }
 open() {
         this.menuVisible = true;

@@ -2,15 +2,17 @@
  * Created by cghislai on 29/07/15.
  */
 import {Locale} from 'services/utils'
-import {Company, CompanyRef} from 'client/domain/company'
+import {CompanyRef} from 'client/domain/company'
 
 export class ApplicationService {
     appName: string;
     appVersion: string;
     locale: Locale;
-    company: Company;
+    companyRef: CompanyRef;
 
     constructor(){
         this.locale = Locale.DEFAULT_LOCALE;
+        this.companyRef = new CompanyRef();
+        this.companyRef.id = 0;
     }
 }

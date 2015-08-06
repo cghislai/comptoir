@@ -10,8 +10,11 @@
                (click)="close()">Produits</a>
             <a [router-link]="['/cashCount']" [class.active]="isActive('/cash')"
                (click)="close()">Caisse</a>
+            <a [router-link]="['/accountsList']" [class.active]="isActive('/accounts')"
+               (click)="close()">Comptes</a>
             <a [router-link]="['/settingsApp']" [class.active]="isActive('/settings')"
                (click)="close()">Paramètres</a>
+
         </div>
     </div>
 
@@ -28,6 +31,7 @@
                 </a>
             </div>
         </div>
+
         <div [hidden]="!isActive('/products')">
             <div class="tab">
                 <a [router-link]="['/productsList']" [class.active]="isActive('/products/list')">
@@ -45,6 +49,7 @@
                 </a>
             </div>
         </div>
+
         <div [hidden]="!isActive('/cash')">
             <div class="tab">
                 <a [router-link]="['/cashCount']" [class.active]="isActive('/cash/count')">
@@ -57,6 +62,25 @@
                 </a>
             </div>
         </div>
+
+        <div [hidden]="!isActive('/accounts')">
+            <div class="tab">
+                <a [router-link]="['/accountsList']" [class.active]="isActive('/accounts/list')">
+                    Liste
+                </a>
+            </div>
+            <div class="tab">
+                <a [class.active]="isActive('/accounts/edit')" [hidden]="!isActive('/accounts/edit')">
+                    Édition
+                </a>
+            </div>
+            <div class="tab">
+                <a [router-link]="['/accountsEditNew']">
+                    Nouveau
+                </a>
+            </div>
+        </div>
+
         <div [hidden]="!isActive('/settings')">
             <div class="tab">
                 <a [router-link]="['/settingsApp']" [class.active]="isActive('/settings/app')">

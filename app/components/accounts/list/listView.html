@@ -1,0 +1,34 @@
+<div class="listPage">
+    <h1>Édition des comptes</h1>
+    <img class="busy" src="../../../res/img/ajax-loader.black.gif" [hidden]="!loading">
+
+    <div class="topActions">
+
+    </div>
+    <paginator [total-count]="accountsCount"
+               [page-size]="accountsPerPage"
+               show-prev-next="true" show-first-last="true"
+               (pagechange)="onPageChanged($event)"></paginator>
+    <table class="accounts">
+        <thead>
+        <tr>
+            <th>Type</th>
+            <th>Nom</th>
+            <th>Description</th>
+            <th class="actions"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ng-for="#account of accounts" class="account" (^click)="doEditAccount(account)">
+            <td class="type">{{ getAccountTypeLabel(account.accountType)[appLocale.isoCode] }}</td>
+            <td class="name">{{ account.name }}</td>
+            <td class="desc">{{ account.description.localeTextMap[appLocale.isoCode] }}</td>
+            <td class="actions">
+                <a class="remove actionIcon" (^click)="doRemoveAccount(account)">
+                    <i class="fi-x red"></i>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

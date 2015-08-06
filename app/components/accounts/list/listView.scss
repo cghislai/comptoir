@@ -1,0 +1,14 @@
+@import '../../../styles/_list';
+
+.listPage {
+  margin-right: 1em;
+}
+table {
+  tr.account:hover {
+    cursor: pointer;
+  }
+  td.actions {
+    width: 1.5em;
+  }
+}
+

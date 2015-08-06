@@ -1,0 +1,74 @@
+<div class="formPage">
+    <h1>Édition du compte</h1>
+
+    <form #f="form" (ng-submit)="doSaveEdit()"
+          *ng-if="accountModel != undefined">
+        <table>
+            <tr>
+                <td><label>Langue:</label></td>
+                <td>
+                        <span *ng-for="#locale of allLocales">
+                            <input type="radio" name="langue"
+                                   [checked]="locale == accountModel.locale"
+                                   (change)="onLanguageSelected(locale)"
+                                   [attr.id]="locale.isoCode">
+                            <label [attr.for]="locale.isoCode">
+                                {{ locale.label[appLocale.isoCode] }}
+                            </label>
+                        </span>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="type">Type:</label></td>
+                <td>
+                    <select id="type"
+                            [(ng-model)]="accountModel.accountType">
+                        <option *ng-for="#accountType of allAccountTypes"
+                                [value]="accountType.type">
+                            {{ accountType.label[appLocale.isoCode] }}
+                        </option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="name">Nom:</label></td>
+                <td>
+                    <input id="name" type="text"
+                           [(ng-model)]="accountModel.name">
+                </td>
+            </tr>
+            <tr>
+                <td><label for="description">Description:</label></td>
+                <td>
+                    <textarea type="text" id="description" rows="3"
+                              [(ng-model)]="accountModel.description.localeTextMap[accountModel.locale.isoCode]">s</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="number">Numéro de comptabilité:</label></td>
+                <td>
+                    <input type="text" id="number"
+                           [(ng-model)]="accountModel.accountingNumber">
+                </td>
+            </tr>
+            <tr>
+                <td><label for="iban">IBAN:</label></td>
+                <td>
+                    <input type="text" id="iban"
+                           [(ng-model)]="accountModel.iban">
+                </td>
+            </tr>
+            <tr>
+                <td><label for="bic">BIC:</label></td>
+                <td>
+                    <input type="text" id="bic"
+                           [(ng-model)]="accountModel.bic">
+                </td>
+            </tr>
+        </table>
+        <div class="actions">
+            <button type="submit" [disabled]="!f.form.valid">Enregistrer</button>
+            <a [router-link]="['/accountsList']">Annuler</a>
+        </div>
+    </form>
+</div>

@@ -8,15 +8,22 @@ import {PictureService} from 'services/pictureService';
 import {CashService} from 'services/cashService';
 import {CommandService} from 'services/commandService';
 import {CompanyService} from 'services/company';
+import {AccountService} from 'services/account';
 import {NavMenu} from './components/navMenu/navMenu';
 
 
 import {SellView} from 'components/sale/current/sellView';
 import {HistoryView as SellHistoryView} from 'components/sale/history/historyView';
+
 import {ProductsListView} from 'components/products/list/listView';
 import {EditProductView} from 'components/products/edit/editView';
+
 import {CountCashView} from 'components/cash/count/countView';
 import {CashHistoryView} from 'components/cash/history/historyView';
+
+import {AccountsListView} from 'components/accounts/list/listView';
+import {EditAccountView} from 'components/accounts/edit/editView';
+
 import {ApplicationSettingsView} from 'components/settings/application/appSettings'
 
 import {Parent} from 'components/test/test';
@@ -38,6 +45,10 @@ import {Parent} from 'components/test/test';
     {path: '/products/list', component: ProductsListView, as: 'productsList'},
     {path: '/products/edit', component: EditProductView, as: 'productsEditNew'},
     {path: '/products/edit/:id', component: EditProductView, as: 'productsEdit'},
+
+    {path: '/accounts/list', component: AccountsListView, as: 'accountsList'},
+    {path: '/accounts/edit', component: EditAccountView, as: 'accountsEditNew'},
+    {path: '/accounts/edit/:id', component: EditAccountView, as: 'accountsEdit'},
 
     {path: '/cash/count', component: CountCashView, as: 'cashCount'},
     {path: '/cash/history', component: CashHistoryView, as: 'cashHistory'},
@@ -64,5 +75,5 @@ export class App {
 
 bootstrap(App, [routerInjectables,
     ApplicationService, ItemService, CashService, PictureService, CommandService,
-    CompanyService, NavMenu
+    CompanyService, AccountService, NavMenu
 ]);

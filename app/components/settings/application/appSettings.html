@@ -8,16 +8,10 @@
                     <label for="company">Compagnie:</label>
                 </td>
                 <td class="field">
-                    <select #companyField id="company" (change)="onCompanySelected($event)">
-                        <option [selected]="companyValue == undefined"
-                                [hidden]="companyValue != undefined">
-                        </option>
-                        <option *ng-for="#company of companyList"
-                                [selected]="company == companyValue"
-                                [value]="company.id">
-                            {{ company.name.localeTextMap[localeValue.isoCode] }}
-                        </option>
-                    </select>
+                    <label id="company"
+                           *ng-if="companyValue != undefined">
+                        {{ companyValue.name.localeTextMap[localeValue.isoCode] }}
+                    </label>
                 </td>
             </tr>
             <tr>

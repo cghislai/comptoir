@@ -23,9 +23,8 @@
                 <td>
                         <span *ng-for="#locale of allLocales">
                             <input type="radio" name="langue"
-                                   ng-control="lang"
                                    [checked]="locale == itemModel.locale"
-                                   (click)="onLanguageSelected(locale)"
+                                   (change)="onLanguageSelected(locale)"
                                    [attr.id]="locale.isoCode">
                             <label [attr.for]="locale.isoCode">
                                 {{ locale.label[appLocale.isoCode] }}
@@ -51,7 +50,6 @@
                 <td><label for="description">Description:</label></td>
                 <td>
                         <textarea type="text" id="description" rows="3"
-                                  ng-control="description"
                                   [(ng-model)]="itemModel.description.localeTextMap[itemModel.locale.isoCode]"></textarea>
                 </td>
             </tr>
