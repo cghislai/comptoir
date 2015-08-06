@@ -203,6 +203,9 @@ export class CommandService {
                     newData.push(exitingCommand);
                 }
             }
+            if (thisService.activeCommand == command) {
+                thisService.activeCommand = null;
+            }
             thisService.fakeData = newData;
             resolve(true);
         });
