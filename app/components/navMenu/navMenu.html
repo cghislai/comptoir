@@ -1,7 +1,7 @@
 <div class="container">
-    <div class="headerNav" [hidden]="isLogin()"
+    <div class="headerNav" [hidden]="login"
          (click)="switchMenuVisibility()">
-        <h1 (click)="switchMenuVisibility()">{{ getPageName() }} ▼</h1>
+        <h1 (click)="switchMenuVisibility()">{{ pageName }} ▼</h1>
 
         <div class="navMenu" [hidden]="!menuVisible">
             <a [router-link]="['/salesSale', {id: 'new'}]" [class.active]="isActive('/sales')"
@@ -17,8 +17,8 @@
 
         </div>
     </div>
-    <div class="headerNav disabled" [hidden]="!isLogin()">
-        <h1>{{getPageName()}}   </h1>
+    <div class="headerNav disabled" [hidden]="!login">
+        <h1>{{ pageName }}</h1>
     </div>
 
     <div class="navTabs">

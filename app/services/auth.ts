@@ -6,11 +6,17 @@ import {EmployeeRef} from 'client/domain/employee';
 import {EmployeeLoginRequest,EmployeeLoginResponse, AuthToken} from 'client/domain/auth';
 import {AuthClient} from 'client/auth';
 
+export enum LoginRquiredReason {
+    NO_SESSION,
+    SESSION_EXPIRED
+}
 
 export class AuthService {
     client:AuthClient;
     loggedEmployee:EmployeeRef;
     authToken:AuthToken;
+    loginRequired: boolean;
+    loginRequiredReason: LoginRquiredReason;
 
     constructor() {
         this.client = new AuthClient();
@@ -34,15 +40,20 @@ export class AuthService {
             });
     }
 
-    isLoggedIn():boolean {
+    checkLoginRequired() {
         if (this.authToken == null) {
-            return false;
+            this.loginRequired = true;
+            this.loginRequiredReason = LoginRquiredReason.NO_SESSION;
+            return true;
         }
         var expireDate = this.authToken.validity;
         var nowDate = new Date();
         if (nowDate.getTime() <= expireDate.getTime()) {
-            return false;
+            this.loginRequired = true;
+            this.loginRequiredReason = LoginRquiredReason.SESSION_EXPIRED;
+            return true;
         }
-        return true;
+        return false;
     }
+
 }

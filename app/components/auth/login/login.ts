@@ -3,7 +3,7 @@
  */
 
 import {Component, View, formDirectives} from 'angular2/angular2';
-import {AuthService} from 'services/auth';
+import {AuthService, LoginRquiredReason} from 'services/auth';
 import {ApplicationService} from 'services/application';
 
 @Component({
@@ -23,9 +23,12 @@ export class LoginView {
     error:boolean;
     errorReason:string;
 
+    introText:string;
+
     constructor(authService:AuthService, appService:ApplicationService) {
         this.authService = authService;
         this.appService = appService;
+        this.checkLoginReason();
     }
 
     onSubmit() {
@@ -42,5 +45,27 @@ export class LoginView {
             .catch(function (error) {
                 thisView.appService.showError(error);
             });
+    }
+
+    checkLoginReason() {
+        var reason = this.authService.loginRequiredReason;
+        if (reason == undefined) {
+            this.introText = "Bienvenue dans " + this.appService.appName +'.';
+            this.introText += " Veuillez vous identifier pour continuer.";
+            return;
+        }
+        switch (reason) {
+            case LoginRquiredReason.NO_SESSION:
+            {
+                this.introText = "Vous devez vous identifier pour pouvoir utiliser ";
+                this.introText += this.appService.appName+'.';
+                break;
+            }
+            case LoginRquiredReason.SESSION_EXPIRED:
+            {
+                this.introText = "Votre session a expiré. Veuillez vous identifier à nouveau."
+                break;
+            }
+        }
     }
 }

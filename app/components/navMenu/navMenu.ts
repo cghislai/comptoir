@@ -3,7 +3,7 @@
  */
 
 import {Component, View, EventEmitter} from 'angular2/angular2';
-import {RouterLink, RouteConfig, Location} from 'angular2/router';
+import {RouterLink, Router,  RouteConfig} from 'angular2/router';
 
 
 @Component({
@@ -18,22 +18,33 @@ import {RouterLink, RouteConfig, Location} from 'angular2/router';
 
 export class NavMenu {
     menuVisible:boolean;
-    location:Location;
+    currentPath: string;
+    pageName: string;
+    login: boolean;
 
-    constructor(location:Location) {
-        this.location = location;
+    constructor(router: Router) {
+        var thisMenu = this;
+        router.subscribe(function(path) {
+            thisMenu.onNaviagated(path);
+        })
+    }
+
+    onNaviagated(path: string) {
+        this.currentPath = path;
+        this.pageName = this.getPageName();
+        this.login = this.isActive('/login');
     }
 
     switchMenuVisibility() {
         this.menuVisible = !this.menuVisible;
     }
 
-    getPath() {
-        return this.location.path();
-    }
 
     isActive(path:string) {
-        return this.location.path().indexOf(path) == 0;
+        if (this.currentPath == null) {
+            return false;
+        }
+        return this.currentPath.indexOf(path) == 0;
     }
 
     getPageName() {
@@ -56,10 +67,8 @@ export class NavMenu {
             return "Connection";
         }
     }
-    isLogin() {
-        return this.isActive('/login');
-    }
-open() {
+
+    open() {
         this.menuVisible = true;
     }
 

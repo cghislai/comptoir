@@ -9,29 +9,42 @@
   text-align: center;
 
   .dialog {
-    display: inline-block;
-    vertical-align: middle;
     background-color: white;
     border: .1em solid $blueColor;
     box-shadow: 0 0 .2em .1em $blueColor;
 
-    max-height: 80vh;
     max-width: 80vw;
-
+    max-height: 70vh;
     font-size: 1em;
+    overflow: visible;
+    display: inline-block;
+    top: 20vh;
+    position: relative;
+    background-color: white;
+    margin: 0;
+    padding: 0;
 
     header {
       text-align: left;
       color: white;
       background-color: $blueColor;
-      >h2 {
+      position: relative;
+      margin-top: -2em;
+      height: 2em;
+
+      border: 0.1em solid rgb(139, 170, 242);
+      box-shadow: rgb(139, 170, 242) 0px 0px 0.2em 0.2em;
+      border-bottom: none;
+      padding: 0;
+
+      > h2 {
         padding: .5em;
         margin: 0;
         font-weight: bold;
         display: inline-block;
         font-size: .9em;
       }
-      >.actions {
+      > .actions {
         float: right;
         margin: .2em;
         margin-left: 1em;
@@ -51,8 +64,15 @@
       }
     }
 
-    .content {
-      padding: 1em;
+    .content_container {
+      max-width: 80vw;
+      max-height: 70vh;
+      overflow-y: auto;
+      position: relative;
+
+      .content {
+        padding: 1em;
+      }
     }
   }
 }

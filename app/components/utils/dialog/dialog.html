@@ -1,7 +1,6 @@
 <div class="container" *ng-if="visible"
      [class.modal]="isModal"
      (^click)="onContainerClick()">
-    <span class="valignAnchor"></span>
 
     <div class="dialog">
         <header [hidden]="!isClosable && title == undefined">
@@ -14,9 +13,11 @@
                     </span>
             </span>
         </header>
-        <div class="content">
-            <content></content>
-            <ng-content></ng-content>
+        <div class="content_container">
+            <div class="content">
+                <content></content>
+                <ng-content></ng-content>
+            </div>
         </div>
     </div>
 </div>
