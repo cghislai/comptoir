@@ -4,7 +4,7 @@
 
 
 import {Component, View, EventEmitter, NgFor, NgIf} from 'angular2/angular2';
-import {CommandService, Command} from 'services/commandService'
+import {Command} from 'services/saleService'
 import {AutoFocusDirective} from 'directives/autoFocus'
 
 enum PayMethod  {

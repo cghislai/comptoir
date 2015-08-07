@@ -6,7 +6,7 @@ import {Component, View, NgFor, NgIf, EventEmitter} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
 import {LocaleText} from 'client/domain/lang';
-import {CommandService, CommandItem, Command} from 'services/commandService';
+import {SaleService, CommandItem, Command} from 'services/saleService';
 import {Item} from 'services/itemService';
 import {AutoFocusDirective} from 'directives/autoFocus';
 import {ApplicationService} from 'services/application';
@@ -35,7 +35,7 @@ class ToAddItem {
 })
 
 export class CommandView {
-    commandService:CommandService;
+    saleService:SaleService;
     command:Command;
     locale:Locale;
     router: Router;
@@ -48,9 +48,9 @@ export class CommandView {
     validate = new EventEmitter();
     validated:boolean = false;
 
-    constructor(commandService:CommandService, applicationService:ApplicationService,
+    constructor(saleService:SaleService, applicationService:ApplicationService,
                 router: Router) {
-        this.commandService = commandService;
+        this.saleService = saleService;
         this.applicationService = applicationService;
         this.locale = applicationService.locale;
         this.router = router;

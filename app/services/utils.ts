@@ -22,11 +22,6 @@ export class Pagination {
     }
 }
 
-export class SearchResult<T> {
-    totalCount: number;
-    results: T[];
-}
-
 export class Locale {
     static FRENCH = new Locale('fr', {'fr':'Français'});
     static DUTCH = new Locale('nl', {'fr':'Néerlandais'});

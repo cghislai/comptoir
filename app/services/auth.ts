@@ -44,7 +44,6 @@ export class AuthService {
         return new Promise((resolve, reject)=> {
             var response = new EmployeeLoginResponse();
             if (Math.random() < .3) {
-                console.log("random: " + Math.random());
                 response.sucess = false;
                 response.errorReaseon = "Fake random fail. Try again :)";
                 resolve(response);

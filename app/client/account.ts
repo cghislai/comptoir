@@ -4,7 +4,9 @@
 
 import {AccountType, Account, AccountRef, AccountSearch, AccountFactory} from 'client/domain/account';
 import {LocaleText, LocaleTextFactory} from 'client/domain/lang';
-import {PromiseRequest} from 'client/utils/request';
+import {ComptoirrRequest} from 'client/utils/request';
+import {SearchResult} from 'client/utils/searchResult';
+
 export class AccountClient {
 
     private static serviceUrl:string = "http://somewhere.com/accout";
@@ -24,53 +26,53 @@ export class AccountClient {
     }
 
     createAccount(account:Account):Promise<AccountRef> {
-        var request = new PromiseRequest();
+        var request = new ComptoirrRequest();
         var url = this.getAccountUrl();
         var accountJSON = JSON.stringify(account);
 
         return request
             .post(accountJSON, url)
             .then(function (response) {
-                var accountRef = AccountFactory.getAccountRefFromJSON(response);
+                var accountRef = AccountFactory.getAccountRefFromJSON(response.json);
                 return accountRef;
             })
     }
 
     updateAccount(account:Account):Promise<AccountRef> {
-        var request = new PromiseRequest();
+        var request = new ComptoirrRequest();
         var url = this.getAccountUrl(account.id);
         var accountJSON = JSON.stringify(account);
 
         return request
             .put(accountJSON, url)
             .then(function (response) {
-                var accountRef = AccountFactory.getAccountRefFromJSON(response);
+                var accountRef = AccountFactory.getAccountRefFromJSON(response.json);
                 return accountRef;
             });
     }
 
     getAccount(id:number):Promise<Account> {
-        var request = new PromiseRequest();
+        var request = new ComptoirrRequest();
         var url = this.getAccountUrl(id);
 
         return request
             .get(url)
             .then(function (response) {
-                var account = AccountFactory.getAccountFromJSON(response);
+                var account = AccountFactory.getAccountFromJSON(response.json);
                 return account;
             });
     }
 
-    findAccounts(search:AccountSearch):Promise<Account[]> {
-        var request = new PromiseRequest();
+    searchAccounts(search:AccountSearch):Promise<SearchResult<Account>> {
+        var request = new ComptoirrRequest();
         var url = this.getSearchUrl();
         var searchJSON = JSON.stringify(search);
 
         return request
             .post(searchJSON, url)
             .then(function (response) {
-                var accountsArray = AccountFactory.getAccountsArrayFromJson(response);
-                return accountsArray;
+                var result = new SearchResult<Account>().parseResponse(response, AccountFactory.getAccountFromJSON);
+                return result;
             });
     }
 }

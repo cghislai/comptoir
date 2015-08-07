@@ -5,7 +5,7 @@ import {Component, View, NgFor, formDirectives} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
 import {ApplicationService} from 'services/application';
-import {Command, CommandSearch, CommandService} from 'services/commandService';
+import {Command, CommandSearch, SaleService} from 'services/saleService';
 import {Pagination, Locale} from 'services/utils';
 import {Paginator} from 'components/utils/paginator/paginator';
 
@@ -20,7 +20,7 @@ import {Paginator} from 'components/utils/paginator/paginator';
 })
 
 export class ActiveSalesListView {
-    commandService:CommandService;
+    saleService:SaleService;
     router:Router;
     appLocale: Locale;
 
@@ -32,8 +32,8 @@ export class ActiveSalesListView {
     loading:boolean;
 
 
-    constructor(commandService:CommandService, applicationService: ApplicationService, router:Router) {
-        this.commandService = commandService;
+    constructor(saleService:SaleService, applicationService: ApplicationService, router:Router) {
+        this.saleService = saleService;
         this.router = router;
         this.commandSearch = new CommandSearch();
         this.commandSearch.pagination = new Pagination(0, this.commandsPerPage);
@@ -46,11 +46,11 @@ export class ActiveSalesListView {
         // TODO: cancel existing promises;
         this.loading = true;
         var thisView = this;
-        this.commandService
+        this.saleService
             .searchCommands(this.commandSearch)
             .then(function (result) {
-                thisView.commandsCount = result.totalCount;
-                thisView.commands = result.results;
+                thisView.commandsCount = result.count;
+                thisView.commands = result.list;
                 thisView.loading = false;
             });
     }
@@ -68,7 +68,7 @@ export class ActiveSalesListView {
 
     doRemoveCommand(command:Command) {
         var thisView = this;
-        this.commandService.removeCommand(command)
+        this.saleService.removeCommand(command)
             .then(function (result) {
                 thisView.searchCommands();
             });

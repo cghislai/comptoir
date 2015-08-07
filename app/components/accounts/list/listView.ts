@@ -7,11 +7,12 @@ import {Router} from 'angular2/router';
 
 import {LocaleText} from 'client/domain/lang';
 import {Account, AccountType, AccountSearch} from 'client/domain/account';
+import {SearchResult} from 'client/utils/searchResult';
 
 import {AccountService, NamedAccountType} from 'services/account';
 import {ApplicationService} from 'services/application';
 import {AuthService} from 'services/auth';
-import {Pagination, Locale, SearchResult} from 'services/utils';
+import {Pagination, Locale} from 'services/utils';
 
 import {Paginator} from 'components/utils/paginator/paginator';
 import {AutoFocusDirective} from 'directives/autoFocus'
@@ -38,17 +39,15 @@ export class AccountsListView {
     accountsCount:number;
     accountsPerPage:number = 25;
 
-    countPromise:Promise<any>;
-    searchPromise:Promise<any>;
     loading:boolean;
 
     // Delay filter input keyevent for 200ms
     //keyboardTimeoutSet: boolean;
     //keyboardTimeout: number = 200;
 
-    constructor(accouService:AccountService, appService:ApplicationService,
+    constructor(accountService:AccountService, appService:ApplicationService,
                 authService:AuthService, router:Router) {
-        this.accountService = accouService;
+        this.accountService = accountService;
         this.applicationService = appService;
         this.router = router;
         this.appLocale = appService.locale;
@@ -67,10 +66,10 @@ export class AccountsListView {
         this.loading = true;
         var thisView = this;
         this.accountService
-            .findAccounts(this.accountSearch)
+            .searchAccounts(this.accountSearch)
             .then(function (result:SearchResult<Account>) {
-                thisView.accountsCount = result.totalCount;
-                thisView.accounts = result.results;
+                thisView.accountsCount = result.count;
+                thisView.accounts = result.list;
                 thisView.loading = false;
             }, function (error) {
                 console.log("Failed to load accounts : " + error);

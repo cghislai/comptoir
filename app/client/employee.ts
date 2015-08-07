@@ -3,8 +3,9 @@
  */
 
 
-import {PromiseRequest} from 'client/utils/request';
+import {ComptoirrRequest} from 'client/utils/request';
 import {EmployeeRef,EmployeeSearch, Employee, EmployeeFactory} from 'client/domain/employee';
+import {SearchResult} from 'client/utils/searchResult';
 
 export class EmployeeClient {
     private static serviceUrl:string = "http://somewhere.com/employee";
@@ -16,23 +17,23 @@ export class EmployeeClient {
     getEmployee(id:number):Promise<Employee> {
         var thisClient = this;
         var url = this.getEmployeeUrl(id);
-        var request = new PromiseRequest();
+        var request = new ComptoirrRequest();
         return request.get(url)
             .then(function (response) {
-                var employee = EmployeeFactory.getEmployeeFromJSON(response);
+                var employee = EmployeeFactory.getEmployeeFromJSON(response.json);
                 return employee;
             });
     }
 
-    searchEmployee(search:EmployeeSearch):Promise<Employee[]> {
+    searchEmployee(search:EmployeeSearch):Promise<SearchResult<Employee>> {
         var thisClient = this;
         var url = EmployeeClient.serviceUrl + '/search';
         var searchJSON = JSON.stringify(search);
-        var request = new PromiseRequest();
+        var request = new ComptoirrRequest();
         return request.post(searchJSON, url)
             .then(function (response) {
-                var employees = EmployeeFactory.getEmployeeArrayFromJSON(response);
-                return employees;
+                var result = new SearchResult<Employee>().parseResponse(response, EmployeeFactory.getEmployeeFromJSON);
+                return result;
             });
     }
 
@@ -40,10 +41,10 @@ export class EmployeeClient {
         var thisClient = this;
         var url = EmployeeClient.serviceUrl;
         var employeeJSON = JSON.stringify(employee);
-        var request = new PromiseRequest();
+        var request = new ComptoirrRequest();
         return request.post(employeeJSON, url)
             .then(function (response) {
-                var employeeRef = EmployeeFactory.getEmployeeRefFromJSON(response);
+                var employeeRef = EmployeeFactory.getEmployeeRefFromJSON(response.json);
                 return employeeRef;
             });
     }
@@ -52,10 +53,10 @@ export class EmployeeClient {
         var thisClient = this;
         var url = this.getEmployeeUrl(employee.id);
         var employeeJSON = JSON.stringify(employee);
-        var request = new PromiseRequest();
+        var request = new ComptoirrRequest();
         return request.put(employeeJSON, url)
             .then(function (response) {
-                var employeeRef = EmployeeFactory.getEmployeeRefFromJSON(response);
+                var employeeRef = EmployeeFactory.getEmployeeRefFromJSON(response.json);
                 return employeeRef;
             });
     }

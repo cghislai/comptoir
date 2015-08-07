@@ -2,7 +2,8 @@
  * Created by cghislai on 28/07/15.
  */
 import {Item} from 'services/itemService';
-import {Pagination, SearchResult} from 'services/utils';
+import {Pagination} from 'services/utils';
+import {SearchResult} from 'client/utils/searchResult';
 
 export class CommandItem {
     item: Item;
@@ -152,7 +153,7 @@ export class Command {
     }
 }
 
-export class CommandService {
+export class SaleService {
     fakeData: Command[];
     fakeIdCounter: number = 0;
     activeCommand: Command;
@@ -187,8 +188,8 @@ export class CommandService {
                 paginatedData.push(command);
             }
             var result = new SearchResult<Command>();
-            result.totalCount = foundData.length;
-            result.results = paginatedData;
+            result.count = foundData.length;
+            result.list = paginatedData;
             resolve(result);
         });
     }

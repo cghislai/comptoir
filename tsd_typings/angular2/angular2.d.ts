@@ -4335,7 +4335,7 @@ declare module ng {
     
 
     /**
-     * {@link EventEmitter} of {@link Response}. Can be subscribed to in order to be notified when a
+     * {@link EventEmitter} of {@link ComptoirResponse}. Can be subscribed to in order to be notified when a
      * response is available.
      */
      response: EventEmitter;
@@ -4366,14 +4366,14 @@ declare module ng {
     /**
      * Not yet implemented!
      * 
-     * Sends the provided {@link Response} to the `downloadObserver` of the `Request`
+     * Sends the provided {@link ComptoirResponse} to the `downloadObserver` of the `Request`
      * associated with this connection.
      */
      mockDownload(res: Response): void;
     
 
     /**
-     * Emits the provided error object as an error to the {@link Response} {@link EventEmitter}
+     * Emits the provided error object as an error to the {@link ComptoirResponse} {@link EventEmitter}
      * returned
      * from {@link Http}.
      */
@@ -4821,7 +4821,7 @@ declare module ng {
    * [ResponseInit](https://fetch.spec.whatwg.org/#responseinit) description
    * in the Fetch
    * Spec to be optionally provided when instantiating a
-   * {@link Response}.
+   * {@link ComptoirResponse}.
    * 
    * All values are null by default.
    */
@@ -4888,7 +4888,7 @@ declare module ng {
     
 
     /**
-     * Response {@link EventEmitter} which emits a single {@link Response} value on load event of
+     * Response {@link EventEmitter} which emits a single {@link ComptoirResponse} value on load event of
      * `XMLHttpRequest`.
      */
      response: EventEmitter;
@@ -4927,7 +4927,7 @@ declare module ng {
    * Performs http requests using `XMLHttpRequest` as the default backend.
    * 
    * `Http` is available as an injectable class, with methods to perform http requests. Calling
-   * `request` returns an {@link EventEmitter} which will emit a single {@link Response} when a
+   * `request` returns an {@link EventEmitter} which will emit a single {@link ComptoirResponse} when a
    * response is received.
    * 
    * 
@@ -5118,7 +5118,7 @@ declare module ng {
   
 
   /**
-   * Acceptable response types to be associated with a {@link Response}, based on
+   * Acceptable response types to be associated with a {@link ComptoirResponse}, based on
    * [ResponseType](https://fetch.spec.whatwg.org/#responsetype) from the Fetch spec.
    */
   enum ResponseTypes {

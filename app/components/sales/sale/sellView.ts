@@ -4,7 +4,7 @@
 import {Component, View, NgIf} from 'angular2/angular2';
 import {Router, RouteParams, Location} from 'angular2/router';
 
-import {CommandService, Command} from 'services/commandService';
+import {SaleService, Command} from 'services/saleService';
 import {Item} from 'services/itemService';
 import {ItemList} from 'components/sales/sale/itemList/itemList';
 import {CommandView} from 'components/sales/sale/commandView/commandView';
@@ -21,15 +21,15 @@ import {PayView} from 'components/sales/sale/payView/payView'
 
 
 export class SellView {
-    commandService:CommandService;
+    saleService:SaleService;
     commandValidated:boolean;
     command:Command;
     router:Router;
     location: Location;
 
-    constructor(commandService:CommandService,
+    constructor(saleService :SaleService,
                 router:Router, routeParams:RouteParams, location:Location) {
-        this.commandService = commandService;
+        this.saleService = saleService;
         this.commandValidated = false;
         this.router = router;
         this.location = location;
@@ -41,23 +41,23 @@ export class SellView {
 
     findCommand(idValue:string) {
         if (idValue == 'new') {
-            this.command = this.commandService.newCommand();
+            this.command = this.saleService.newCommand();
             return;
         }
         var idNumber = parseInt(idValue);
         if (isNaN(idNumber)) {
-            if (this.commandService.activeCommand != null) {
-                this.command = this.commandService.activeCommand;
+            if (this.saleService.activeCommand != null) {
+                this.command = this.saleService.activeCommand;
                 return;
             }
-            this.command = this.commandService.newCommand();
+            this.command = this.saleService.newCommand();
             return;
         }
-        this.command = this.commandService.getCommand(idNumber);
+        this.command = this.saleService.getCommand(idNumber);
         if (this.command == undefined) {
             this.router.navigate('/sales/sale');
         }
-        this.commandService.activeCommand = this.command;
+        this.saleService.activeCommand = this.command;
     }
 
     onItemClicked(item:Item, commandView:CommandView, itemList:ItemList) {
@@ -65,14 +65,14 @@ export class SellView {
         itemList.focus();
         if (this.command.id == null) {
             this.command.active = true;
-            this.commandService.saveCommand(this.command);
+            this.saleService.saveCommand(this.command);
             this.router.navigate('/sales/sale/'+this.command.id);
         }
     }
 
     onCommandValidated(validated:boolean, payView:PayView) {
         if (validated) {
-            this.commandService.saveCommand(this.command);
+            this.saleService.saveCommand(this.command);
             payView.calcRemaining();
         }
         this.commandValidated = validated;
@@ -81,11 +81,11 @@ export class SellView {
     onCommandPaid() {
         this.command.active = false;
         this.command.paid = true;
-        this.commandService.saveCommand(this.command);
+        this.saleService.saveCommand(this.command);
 
-        this.command = this.commandService.newCommand();
+        this.command = this.saleService.newCommand();
         this.commandValidated = false;
-        this.commandService.activeCommand = null;
+        this.saleService.activeCommand = null;
         // TODO navigate to new
         this.router.navigate('/sales/sale')
     }

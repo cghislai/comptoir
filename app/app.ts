@@ -7,7 +7,7 @@ import {AuthService} from 'services/auth';
 import {ItemService} from 'services/itemService';
 import {PictureService} from 'services/pictureService';
 import {CashService} from 'services/cashService';
-import {CommandService} from 'services/commandService';
+import {SaleService} from 'services/saleService';
 import {CompanyService} from 'services/company';
 import {AccountService} from 'services/account';
 import {EmployeeService} from 'services/employee';
@@ -88,6 +88,6 @@ export class App {
 
 
 bootstrap(App, [routerInjectables,
-    ApplicationService, ItemService, CashService, PictureService, CommandService,
+    ApplicationService, ItemService, CashService, PictureService, SaleService,
     CompanyService, AccountService, AuthService, EmployeeService, NavMenu
 ]);

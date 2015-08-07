@@ -2,7 +2,7 @@
  * Created by cghislai on 07/08/15.
  */
 
-import {PromiseRequest} from 'client/utils/request';
+import {ComptoirrRequest} from 'client/utils/request';
 import {EmployeeLoginRequest, EmployeeLoginResponse, AuthFactory} from 'client/domain/auth';
 
 export class AuthClient {
@@ -11,11 +11,11 @@ export class AuthClient {
 
     login(loginRequest:EmployeeLoginRequest):Promise<EmployeeLoginResponse> {
         var loginRequestJSON = JSON.stringify(loginRequest);
-        var request = new PromiseRequest();
+        var request = new ComptoirrRequest();
         return request
             .post(loginRequestJSON, AuthClient.loginUrl)
             .then(function (response) {
-                var loginResponse = AuthFactory.getLoginResponsefromJSON(response);
+                var loginResponse = AuthFactory.getLoginResponsefromJSON(response.json);
                 return loginResponse;
             });
     }

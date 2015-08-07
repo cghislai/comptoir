@@ -5,7 +5,7 @@
 import {Account,AccountType, AccountRef, AccountSearch} from 'client/domain/account';
 import {AccountClient} from 'client/account';
 import {LocaleText} from 'client/domain/lang';
-import {SearchResult} from 'services/utils';
+import {SearchResult} from 'client/utils/searchResult';
 
 export class NamedAccountType {
     static OTHER = new NamedAccountType(AccountType.OTHER, {
@@ -48,29 +48,16 @@ export class AccountService {
         this.initFakeData();
     }
 
-    findAccounts(accountSearch:AccountSearch):Promise<SearchResult<Account>> {
-        // TODO: count
-        var countPromise = new Promise<number>((resolve, reject)=> {
-            resolve(10);
-        });
-        var searchPromise = this.client.findAccounts(accountSearch);
-        var searchResults = new SearchResult();
-        countPromise.then(function (count) {
-            searchResults.totalCount = count;
-        })
-        searchPromise.then(function (results) {
-            searchResults.results = results;
-        });
+    searchAccounts(accountSearch:AccountSearch):Promise<SearchResult<Account>> {
+        //return this.client.searchAccounts(accountSearch);
         var thisService = this;
-        var fakeSearchPromise = new Promise<Account[]>((resolve, reject) => {
-            resolve(thisService.fakeData);
-        }).then(function (results) {
-                searchResults.results = results;
-            });
-        return Promise.all<any>([countPromise, fakeSearchPromise])
-            .then(function () {
-                return searchResults;
-            });
+        // FIXME
+        return new Promise((resolve, reject)=>{
+           var r = new SearchResult<Account>();
+            r.count = 10;
+            r.list = thisService.fakeData;
+            resolve(r);
+        });
     }
 
     getAccount(id:number):Promise<Account> {

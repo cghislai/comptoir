@@ -3,7 +3,7 @@
  */
 import {Locale} from 'services/utils'
 import {CompanyRef} from 'client/domain/company'
-import {PromiseRequest} from 'client/utils/request';
+import {ComptoirrRequest} from 'client/utils/request';
 
 export class ApplicationService {
     appName:string;
