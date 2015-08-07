@@ -1,5 +1,5 @@
 <div class="container">
-    <div class="headerNav"
+    <div class="headerNav" [hidden]="isLogin()"
          (click)="switchMenuVisibility()">
         <h1 (click)="switchMenuVisibility()">{{ getPageName() }} ▼</h1>
 
@@ -16,6 +16,9 @@
                (click)="close()">Paramètres</a>
 
         </div>
+    </div>
+    <div class="headerNav disabled" [hidden]="!isLogin()">
+        <h1>{{getPageName()}}   </h1>
     </div>
 
     <div class="navTabs">

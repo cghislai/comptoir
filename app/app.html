@@ -3,9 +3,21 @@
         <navMenu></navMenu>
     </header>
     <section>
-        <router-outlet></router-outlet>
+        <router-outlet requireslogin></router-outlet>
     </section>
     <footer>
         {{ appService.appName }} {{ appService.appVersion }}
     </footer>
+    <dialogview modal="true" closable="true" title="Erreur" *ng-if="appService.hasError"
+            (close)="onErrorClose()">
+        <p>
+            Une erreur est survenue. Le message était:
+        </p>
+        <p class="errorMessage">
+            {{ appService.errorContent }}
+        </p>
+        <p>
+            Veuillez contacter le support.
+        </p>
+    </dialogview>
 </div>

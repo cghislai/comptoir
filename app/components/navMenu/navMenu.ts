@@ -52,6 +52,12 @@ export class NavMenu {
         if (this.isActive('/accounts')) {
             return "Comptes";
         }
+        if (this.isActive('/login')) {
+            return "Connection";
+        }
+    }
+    isLogin() {
+        return this.isActive('/login');
     }
 open() {
         this.menuVisible = true;

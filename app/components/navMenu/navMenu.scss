@@ -83,11 +83,10 @@
 .headerNav {
     padding: 1em;
     h1 {
-
         margin: 0;
     }
 }
-.headerNav:hover {
+.headerNav:not(.disabled):hover {
     color: $onBlueHoverColor;
     cursor: pointer;
 }

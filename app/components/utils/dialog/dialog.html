@@ -1,0 +1,22 @@
+<div class="container" *ng-if="visible"
+     [class.modal]="isModal"
+     (^click)="onContainerClick()">
+    <span class="valignAnchor"></span>
+
+    <div class="dialog">
+        <header [hidden]="!isClosable && title == undefined">
+            <h2 [hidden]="title == undefined">{{ title }}</h2>
+            <span class="actions">
+                <span class="action red"
+                      [hidden]="!isClosable"
+                      (^click)="doClose()">
+                <i class="fi-x"></i>
+                    </span>
+            </span>
+        </header>
+        <div class="content">
+            <content></content>
+            <ng-content></ng-content>
+        </div>
+    </div>
+</div>

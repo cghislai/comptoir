@@ -1,0 +1,29 @@
+<div class="login formPage">
+    <form (ng-submit)="onSubmit()" #form="form">
+        <table>
+            <tr>
+                <td>
+                    <label for="login">Login:</label>
+                </td>
+                <td>
+                    <input id="login" #loginElement
+                            [(ng-model)]="login"
+                            required autofocus>
+                </td>
+                </tr>
+            <tr>
+                <td>
+                    <label for="password">Mot de passe:</label>
+                </td>
+                <td>
+                    <input id="password" type="password" #passwordElement
+                           [(ng-model)]="password" required>
+                </td>
+            </tr>
+        </table>
+        <div [hidden]="!error" class="error">
+            Impossible de se logger: {{ errorReason }}
+        </div>
+        <button type="submit" [disabled]="!form.form.valid">Se connecter</button>
+    </form>
+</div>
