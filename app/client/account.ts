@@ -25,51 +25,51 @@ export class AccountClient {
         return url;
     }
 
-    createAccount(account:Account):Promise<AccountRef> {
+    createAccount(account:Account, authToken: string):Promise<AccountRef> {
         var request = new ComptoirrRequest();
         var url = this.getAccountUrl();
         var accountJSON = JSON.stringify(account);
 
         return request
-            .post(accountJSON, url)
+            .post(accountJSON, url, authToken)
             .then(function (response) {
                 var accountRef = AccountFactory.getAccountRefFromJSON(response.json);
                 return accountRef;
             })
     }
 
-    updateAccount(account:Account):Promise<AccountRef> {
+    updateAccount(account:Account, authToken: string):Promise<AccountRef> {
         var request = new ComptoirrRequest();
         var url = this.getAccountUrl(account.id);
         var accountJSON = JSON.stringify(account);
 
         return request
-            .put(accountJSON, url)
+            .put(accountJSON, url, authToken)
             .then(function (response) {
                 var accountRef = AccountFactory.getAccountRefFromJSON(response.json);
                 return accountRef;
             });
     }
 
-    getAccount(id:number):Promise<Account> {
+    getAccount(id:number, authToken: string):Promise<Account> {
         var request = new ComptoirrRequest();
         var url = this.getAccountUrl(id);
 
         return request
-            .get(url)
+            .get(url, authToken)
             .then(function (response) {
                 var account = AccountFactory.getAccountFromJSON(response.json);
                 return account;
             });
     }
 
-    searchAccounts(search:AccountSearch):Promise<SearchResult<Account>> {
+    searchAccounts(search:AccountSearch, authToken: string):Promise<SearchResult<Account>> {
         var request = new ComptoirrRequest();
         var url = this.getSearchUrl();
         var searchJSON = JSON.stringify(search);
 
         return request
-            .post(searchJSON, url)
+            .post(searchJSON, url, authToken)
             .then(function (response) {
                 var result = new SearchResult<Account>().parseResponse(response, AccountFactory.getAccountFromJSON);
                 return result;

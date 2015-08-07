@@ -1,32 +1,31 @@
 /**
  * Created by cghislai on 04/08/15.
  */
+import {Inject} from 'angular2/angular2';
 
 import {LocaleText, LocaleTextFactory} from 'client/domain/lang';
 import {Company, CompanyRef} from 'client/domain/company';
 import {CompanyClient} from 'client/company';
-import {Locale} from 'services/utils';
 
+import {Locale} from 'services/utils';
+import {AuthService} from 'services/auth';
 
 export class CompanyService {
     private data: Company[];
 
     private client:CompanyClient;
+    private authService:AuthService;
 
-    constructor() {
+    constructor(@Inject authService:AuthService) {
         this.client = new CompanyClient();
+        this.authService = authService;
         this.initFakeData();
     }
 
-    createCompany(locale:Locale, name:string, desc:string):Promise<CompanyRef> {
-        var company = new Company();
-        company.name = new LocaleText();
-        company.name[locale.isoCode] = name;
-        company.description = new LocaleText();
-        company.description[locale.isoCode] = desc;
-
+    createCompany(company: Company):Promise<CompanyRef> {
+        var authToken = this.authService.authToken.token;
         return this.client
-            .createCompany(company)
+            .createCompany(company, authToken)
             .then(function (companyRef:CompanyRef) {
                 console.log("Compagnie créée");
                 return companyRef;
@@ -39,6 +38,7 @@ export class CompanyService {
 
     getCompany(id: number): Promise<Company> {
         var thisService = this;
+        var authToken = this.authService.authToken.token;
         var promise = new Promise<Company>((resolve, reject) => {
             var company = thisService.data[id];
             resolve(company);
@@ -48,6 +48,7 @@ export class CompanyService {
 
     searchCompanies():Promise<Company[]> {
         // TODO
+        var authToken = this.authService.authToken.token;
         var thisService = this;
         var promise = new Promise<Company[]>((resolve, reject) => {
             resolve(thisService.data);

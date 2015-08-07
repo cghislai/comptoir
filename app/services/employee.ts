@@ -1,21 +1,27 @@
 /**
  * Created by cghislai on 07/08/15.
  */
+import {Inject} from 'angular2/angular2';
 
 import {Employee,EmployeeRef} from 'client/domain/employee';
 import {EmployeeClient} from 'client/employee';
 import {CompanyRef} from 'client/domain/company';
 
+import {AuthService} from 'services/auth';
+
 export class EmployeeService {
     fakeData: Employee[];
     client: EmployeeClient;
+    authService:AuthService;
 
-    constructor() {
+    constructor(@Inject authService:AuthService) {
         this.initFakeData();
         this.client = new EmployeeClient();
+        this.authService = authService;
     }
 
     getEmployee(id: number) : Promise<Employee> {
+        var authToken = this.authService.authToken.token;
         // FIXME
         var thisService = this;
         return new Promise((resolve, reject)=>{
@@ -31,7 +37,8 @@ export class EmployeeService {
     }
 
     updateEmployee(employee: Employee): Promise<EmployeeRef> {
-        return this.client.updateEmployee(employee);
+        var authToken = this.authService.authToken.token;
+        return this.client.updateEmployee(employee, authToken);
     }
 
     initFakeData() {

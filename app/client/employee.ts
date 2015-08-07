@@ -14,47 +14,47 @@ export class EmployeeClient {
         return EmployeeClient.serviceUrl + "/" + id;
     }
 
-    getEmployee(id:number):Promise<Employee> {
+    getEmployee(id:number, authToken: string):Promise<Employee> {
         var thisClient = this;
         var url = this.getEmployeeUrl(id);
         var request = new ComptoirrRequest();
-        return request.get(url)
+        return request.get(url, authToken)
             .then(function (response) {
                 var employee = EmployeeFactory.getEmployeeFromJSON(response.json);
                 return employee;
             });
     }
 
-    searchEmployee(search:EmployeeSearch):Promise<SearchResult<Employee>> {
+    searchEmployee(search:EmployeeSearch, authToken: string):Promise<SearchResult<Employee>> {
         var thisClient = this;
         var url = EmployeeClient.serviceUrl + '/search';
         var searchJSON = JSON.stringify(search);
         var request = new ComptoirrRequest();
-        return request.post(searchJSON, url)
+        return request.post(searchJSON, url, authToken)
             .then(function (response) {
                 var result = new SearchResult<Employee>().parseResponse(response, EmployeeFactory.getEmployeeFromJSON);
                 return result;
             });
     }
 
-    createEmployee(employee:Employee):Promise<EmployeeRef> {
+    createEmployee(employee:Employee, authToken: string):Promise<EmployeeRef> {
         var thisClient = this;
         var url = EmployeeClient.serviceUrl;
         var employeeJSON = JSON.stringify(employee);
         var request = new ComptoirrRequest();
-        return request.post(employeeJSON, url)
+        return request.post(employeeJSON, url, authToken)
             .then(function (response) {
                 var employeeRef = EmployeeFactory.getEmployeeRefFromJSON(response.json);
                 return employeeRef;
             });
     }
 
-    updateEmployee(employee:Employee):Promise<EmployeeRef> {
+    updateEmployee(employee:Employee, authToken: string):Promise<EmployeeRef> {
         var thisClient = this;
         var url = this.getEmployeeUrl(employee.id);
         var employeeJSON = JSON.stringify(employee);
         var request = new ComptoirrRequest();
-        return request.put(employeeJSON, url)
+        return request.put(employeeJSON, url, authToken)
             .then(function (response) {
                 var employeeRef = EmployeeFactory.getEmployeeRefFromJSON(response.json);
                 return employeeRef;

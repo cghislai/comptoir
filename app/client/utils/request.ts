@@ -2,8 +2,6 @@
  * Created by cghislai on 04/08/15.
  */
 
-import {ApplicationService} from 'services/application';
-
 export class ComptoirResponse {
     headers: any;
     text: string;
@@ -15,10 +13,12 @@ export class ComptoirrRequest {
 
     static JSON_MIME:string = "application/json";
     static UTF8_CHARSET:string = "UTF-8";
+    static HEADER_OAUTH_TOKEN= "X-Comptoir-OAuthToken";
 
     request:XMLHttpRequest;
     method:string;
     url:string;
+    authToken: string;
     objectToSend:any;
     contentType:string;
     acceptContentType:string;
@@ -32,26 +32,27 @@ export class ComptoirrRequest {
         this.contentType = ComptoirrRequest.JSON_MIME;
     }
 
-    get(url:string):Promise<any> {
-        this.setup('GET', url);
+    get(url:string, authToken: string):Promise<any> {
+        this.setup('GET', url, authToken);
         return this.run();
     }
 
-    put(jsonObject:any, url:string):Promise<ComptoirResponse> {
-        this.setup('PUT', url);
+    put(jsonObject:any, url:string, authToken: string):Promise<ComptoirResponse> {
+        this.setup('PUT', url, authToken);
         this.setupData(jsonObject);
         return this.run();
     }
 
-    post(jsoObject:any, url:string):Promise<ComptoirResponse> {
-        this.setup('POST', url);
+    post(jsoObject:any, url:string, authToken: string):Promise<ComptoirResponse> {
+        this.setup('POST', url, authToken);
         this.setupData(jsoObject);
         return this.run();
     }
 
-    private setup(method:string, url:string) {
+    private setup(method:string, url:string, authToken: string) {
         this.method = method;
         this.url = url;
+        this.authToken = authToken;
     }
 
     private setupData(obj:any) {
@@ -83,6 +84,7 @@ export class ComptoirrRequest {
             xmlRequest.open(thisRequest.method, thisRequest.url);
             xmlRequest.setRequestHeader('Content-Type', thisRequest.contentType + '; charset=' + thisRequest.charset);
             xmlRequest.setRequestHeader('Accept', thisRequest.acceptContentType);
+            xmlRequest.setRequestHeader(ComptoirrRequest.HEADER_OAUTH_TOKEN, this.authToken);
             xmlRequest.send(thisRequest.objectToSend);
         });
     }

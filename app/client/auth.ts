@@ -9,11 +9,11 @@ export class AuthClient {
     private static serviceUrl:string = "http://somewhere.com/";
     private static loginUrl:string = AuthClient.serviceUrl + "/login";
 
-    login(loginRequest:EmployeeLoginRequest):Promise<EmployeeLoginResponse> {
+    login(loginRequest:EmployeeLoginRequest, authToken: string):Promise<EmployeeLoginResponse> {
         var loginRequestJSON = JSON.stringify(loginRequest);
         var request = new ComptoirrRequest();
         return request
-            .post(loginRequestJSON, AuthClient.loginUrl)
+            .post(loginRequestJSON, AuthClient.loginUrl, authToken)
             .then(function (response) {
                 var loginResponse = AuthFactory.getLoginResponsefromJSON(response.json);
                 return loginResponse;
