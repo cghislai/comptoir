@@ -10,6 +10,7 @@ import {CashService} from 'services/cashService';
 import {CommandService} from 'services/commandService';
 import {CompanyService} from 'services/company';
 import {AccountService} from 'services/account';
+import {EmployeeService} from 'services/employee';
 
 import {RequiresLogin} from 'directives/requiresLogin';
 import {NavMenu} from './components/navMenu/navMenu';
@@ -88,5 +89,5 @@ export class App {
 
 bootstrap(App, [routerInjectables,
     ApplicationService, ItemService, CashService, PictureService, CommandService,
-    CompanyService, AccountService, AuthService, NavMenu
+    CompanyService, AccountService, AuthService, EmployeeService, NavMenu
 ]);

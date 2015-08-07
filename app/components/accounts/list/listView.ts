@@ -10,6 +10,7 @@ import {Account, AccountType, AccountSearch} from 'client/domain/account';
 
 import {AccountService, NamedAccountType} from 'services/account';
 import {ApplicationService} from 'services/application';
+import {AuthService} from 'services/auth';
 import {Pagination, Locale, SearchResult} from 'services/utils';
 
 import {Paginator} from 'components/utils/paginator/paginator';
@@ -45,13 +46,14 @@ export class AccountsListView {
     //keyboardTimeoutSet: boolean;
     //keyboardTimeout: number = 200;
 
-    constructor(accouService:AccountService, appService:ApplicationService, router:Router) {
+    constructor(accouService:AccountService, appService:ApplicationService,
+                authService:AuthService, router:Router) {
         this.accountService = accouService;
         this.applicationService = appService;
         this.router = router;
         this.appLocale = appService.locale;
         this.accountSearch = new AccountSearch();
-        this.accountSearch.companyRef = appService.companyRef;
+        this.accountSearch.companyRef = authService.companyRef;
         this.accountSearch.pagination = new Pagination(0, this.accountsPerPage);
         this.searchAccounts();
     }

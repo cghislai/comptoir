@@ -9,15 +9,12 @@ export class ApplicationService {
     appName:string;
     appVersion:string;
     locale:Locale;
-    companyRef:CompanyRef;
     hasError:boolean = false;
     errorContent:string;
 
 
     constructor() {
         this.locale = Locale.DEFAULT_LOCALE;
-        this.companyRef = new CompanyRef();
-        this.companyRef.id = 0;
     }
 
     showError(error: Error) {

@@ -19,6 +19,10 @@ export class Employee {
     locale: string;
 }
 
+export class EmployeeSearch {
+
+}
+
 export class EmployeeFactory {
     static getEmployeeRefFromJSON(jsonObject: any): EmployeeRef {
         if (jsonObject == undefined) {
@@ -43,5 +47,13 @@ export class EmployeeFactory {
         employee.locale = jsonObject.locale;
         employee.login = jsonObject.login;
         return employee;
+    }
+    static getEmployeeArrayFromJSON(jsonObject: any[]):Employee[] {
+        var employees: Employee[] = [];
+        for (var jsonEmployee of jsonObject) {
+            var employee = EmployeeFactory.getEmployeeFromJSON(jsonEmployee);
+            employees.push(employee);
+        }
+        return employees;
     }
 }

@@ -9,6 +9,8 @@ import {LocaleText} from 'client/domain/lang';
 import {Account, AccountType} from 'client/domain/account';
 import {AccountService, NamedAccountType} from 'services/account';
 import {ApplicationService} from 'services/application';
+import {AuthService} from 'services/auth';
+
 
 class AccountFormModel {
     locale:Locale;
@@ -53,6 +55,7 @@ export class EditAccountView {
     accountId: number;
     accountService: AccountService;
     applicationService:ApplicationService;
+    authService:AuthService;
     router: Router;
 
     appLocale:Locale;
@@ -61,7 +64,7 @@ export class EditAccountView {
     lastUsedLocale:Locale;
     allAccountTypes: any[];
 
-    constructor(accountService:AccountService, appService:ApplicationService,
+    constructor(accountService:AccountService, authService:AuthService, appService: ApplicationService,
                 routeParams:RouteParams, router: Router) {
         var itemIdParam = routeParams.get('id');
         this.accountId = parseInt(itemIdParam);
@@ -70,6 +73,7 @@ export class EditAccountView {
         }
         this.router = router;
         this.accountService = accountService;
+        this.authService = authService;
         this.applicationService = appService;
         this.appLocale = appService.locale;
         this.lastUsedLocale = this.appLocale;
@@ -106,7 +110,7 @@ export class EditAccountView {
         account.accountType = this.accountModel.accountType;
         account.accountingNumber = this.accountModel.accountingNumber;
         account.bic = this.accountModel.bic;
-        account.company = this.applicationService.companyRef;
+        account.company = this.authService.companyRef;
         account.description = this.accountModel.description;
         account.iban = this.accountModel.iban;
         account.name = this.accountModel.name;

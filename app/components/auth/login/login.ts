@@ -3,6 +3,7 @@
  */
 
 import {Component, View, formDirectives} from 'angular2/angular2';
+import {Router} from 'angular2/router';
 import {AuthService, LoginRquiredReason} from 'services/auth';
 import {ApplicationService} from 'services/application';
 
@@ -17,6 +18,7 @@ import {ApplicationService} from 'services/application';
 export class LoginView {
     authService:AuthService;
     appService:ApplicationService;
+    router: Router;
     login:string;
     password:string;
 
@@ -25,9 +27,10 @@ export class LoginView {
 
     introText:string;
 
-    constructor(authService:AuthService, appService:ApplicationService) {
+    constructor(authService:AuthService, appService:ApplicationService, router:Router) {
         this.authService = authService;
         this.appService = appService;
+        this.router = router;
         this.checkLoginReason();
     }
 
@@ -36,7 +39,7 @@ export class LoginView {
         this.authService.login(this.login, this.password)
             .then(function (response) {
                 if (response.sucess) {
-
+                    thisView.router.navigate('/sales/sale');
                 } else {
                     thisView.error = true;
                     thisView.errorReason = response.errorReaseon;
