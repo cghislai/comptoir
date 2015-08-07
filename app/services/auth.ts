@@ -7,25 +7,31 @@ import {EmployeeRef, Employee} from 'client/domain/employee';
 import {CompanyRef} from 'client/domain/company';
 import {AuthClient} from 'client/auth';
 import {EmployeeService} from 'services/employee';
+import {ApplicationService} from 'services/application';
+import {Locale} from 'services/utils';
 
-export enum LoginRquiredReason {
+export enum LoginRequiredReason {
     NO_SESSION,
     SESSION_EXPIRED
 }
 
 export class AuthService {
     client:AuthClient;
-    employeeService: EmployeeService;
+    employeeService:EmployeeService;
+    applicationService:ApplicationService;
+
     loggedEmployeeRef:EmployeeRef;
     loggedEmployee:Employee;
     companyRef:CompanyRef;
     authToken:AuthToken;
     loginRequired:boolean;
-    loginRequiredReason:LoginRquiredReason;
+    loginRequiredReason:LoginRequiredReason;
 
-    constructor(@Inject employeeService: EmployeeService) {
+    constructor(@Inject employeeService:EmployeeService,
+                @Inject appService:ApplicationService) {
         this.client = new AuthClient();
         this.employeeService = employeeService;
+        this.applicationService = appService;
         this.authToken = null;
     }
 
@@ -64,16 +70,7 @@ export class AuthService {
             response.sucess = true;
             resolve(response);
         }).then(function (loginResponse:EmployeeLoginResponse) {
-                if (!loginResponse.sucess) {
-                    return loginResponse;
-                }
-                thisService.loggedEmployeeRef = loginResponse.employeeRef;
-                thisService.authToken = loginResponse.authToken;
-                thisService.employeeService.getEmployee(loginResponse.employeeRef.id)
-                    .then(function (employee) {
-                        thisService.companyRef = employee.companyRef;
-                        thisService.loggedEmployee = employee;
-                    });
+                thisService.onEmployeeLoggedIn(loginResponse);
                 return loginResponse;
             });
         /*
@@ -89,17 +86,37 @@ export class AuthService {
          });*/
     }
 
+    private onEmployeeLoggedIn(response:EmployeeLoginResponse) {
+        if (!response.sucess) {
+            return;
+        }
+        var thisService = this;
+        this.loggedEmployeeRef = response.employeeRef;
+        this.authToken = response.authToken;
+        this.employeeService.getEmployee(response.employeeRef.id)
+            .then(function (employee) {
+                thisService.onEmployeeFetched(employee);
+            });
+    }
+
+    private onEmployeeFetched(employee:Employee) {
+        this.companyRef = employee.companyRef;
+        this.loggedEmployee = employee;
+        var locale = Locale.formIsoCode(employee.locale);
+        this.applicationService.locale = locale;
+    }
+
     checkLoginRequired() {
         if (this.authToken == null) {
             this.loginRequired = true;
-            this.loginRequiredReason = LoginRquiredReason.NO_SESSION;
+            this.loginRequiredReason = LoginRequiredReason.NO_SESSION;
             return true;
         }
         var expireDate = this.authToken.validity;
 
         if (Date.now() >= expireDate.getTime()) {
             this.loginRequired = true;
-            this.loginRequiredReason = LoginRquiredReason.SESSION_EXPIRED;
+            this.loginRequiredReason = LoginRequiredReason.SESSION_EXPIRED;
             return true;
         }
         this.loginRequired = false;

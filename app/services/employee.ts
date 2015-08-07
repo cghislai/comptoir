@@ -2,7 +2,7 @@
  * Created by cghislai on 07/08/15.
  */
 
-import {Employee} from 'client/domain/employee';
+import {Employee,EmployeeRef} from 'client/domain/employee';
 import {EmployeeClient} from 'client/employee';
 import {CompanyRef} from 'client/domain/company';
 
@@ -28,6 +28,10 @@ export class EmployeeService {
             resolve(null);
         });
         //return this.client.getEmployee(id);
+    }
+
+    updateEmployee(employee: Employee): Promise<EmployeeRef> {
+        return this.client.updateEmployee(employee);
     }
 
     initFakeData() {

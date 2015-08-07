@@ -5,6 +5,17 @@
         <table>
             <tr>
                 <td class="label">
+                    <label for="employee">Loggé comme:</label>
+                </td>
+                <td class="field">
+                    <label id="employee"
+                           *ng-if="employeeValue != undefined">
+                        {{ employeeValue.getFullName() }}
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">
                     <label for="company">Compagnie:</label>
                 </td>
                 <td class="field">

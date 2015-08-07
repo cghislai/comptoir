@@ -17,6 +17,10 @@ export class Employee {
     firstName: string;
     lastName: string;
     locale: string;
+
+    getFullName(): string {
+        return this.firstName+' '+this.lastName;
+    }
 }
 
 export class EmployeeSearch {

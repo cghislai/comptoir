@@ -4,7 +4,7 @@
 
 import {Component, View, formDirectives} from 'angular2/angular2';
 import {Router} from 'angular2/router';
-import {AuthService, LoginRquiredReason} from 'services/auth';
+import {AuthService, LoginRequiredReason} from 'services/auth';
 import {ApplicationService} from 'services/application';
 
 @Component({
@@ -58,13 +58,13 @@ export class LoginView {
             return;
         }
         switch (reason) {
-            case LoginRquiredReason.NO_SESSION:
+            case LoginRequiredReason.NO_SESSION:
             {
                 this.introText = "Vous devez vous identifier pour pouvoir utiliser ";
                 this.introText += this.appService.appName+'.';
                 break;
             }
-            case LoginRquiredReason.SESSION_EXPIRED:
+            case LoginRequiredReason.SESSION_EXPIRED:
             {
                 this.introText = "Votre session a expiré. Veuillez vous identifier à nouveau."
                 break;
