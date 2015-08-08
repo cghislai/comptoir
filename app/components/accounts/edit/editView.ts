@@ -4,7 +4,7 @@
 import {Component, View, NgFor, NgIf, formDirectives} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
-import {Locale} from 'services/utils';
+import {Language, LocaleTexts} from 'client/utils/lang';
 import {LocaleText} from 'client/domain/lang';
 import {Account, AccountType} from 'client/domain/account';
 import {AccountService, NamedAccountType} from 'services/account';
@@ -13,25 +13,25 @@ import {AuthService} from 'services/auth';
 
 
 class AccountFormModel {
-    locale:Locale;
+    language:string;
     accountingNumber: string;
     iban: string;
     bic: string;
     name: string;
-    description: LocaleText;
+    description: LocaleTexts;
     accountType: AccountType;
 
     account: Account;
 
     constructor();
-    constructor(account:Account, locale:Locale);
-    constructor(account?:Account, locale?:Locale) {
+    constructor(account:Account, lang:Language);
+    constructor(account?:Account, lang?:Language) {
         if (account == undefined) {
             this.account = new Account();
-            this.description = new LocaleText();
+            this.description = new LocaleTexts();
             return;
         }
-        this.locale = locale;
+        this.language = lang.locale;
         this.account = account;
         this.accountingNumber = account.accountingNumber;
         this.iban = account.iban;
@@ -58,10 +58,10 @@ export class EditAccountView {
     authService:AuthService;
     router: Router;
 
-    appLocale:Locale;
-    allLocales:Locale[] = Locale.ALL_LOCALES;
+    language: Language;
+    allLanguages:Language[] = Language.ALL_LANGUAGES;
+    lastUsedLang:Language;
     accountModel:AccountFormModel;
-    lastUsedLocale:Locale;
     allAccountTypes: any[];
 
     constructor(accountService:AccountService, authService:AuthService, appService: ApplicationService,
@@ -75,8 +75,8 @@ export class EditAccountView {
         this.accountService = accountService;
         this.authService = authService;
         this.applicationService = appService;
-        this.appLocale = appService.locale;
-        this.lastUsedLocale = this.appLocale;
+        this.language = appService.language;
+        this.lastUsedLang = appService.language;
 
         this.allAccountTypes = NamedAccountType.ALL_TYPES;
         this.buildFormModel();
@@ -85,27 +85,22 @@ export class EditAccountView {
     buildFormModel() {
         if (this.accountId == null) {
             this.accountModel = new AccountFormModel();
-            this.accountModel.locale = this.appLocale;
+            this.accountModel.language = this.language.locale;
             return;
         }
         var thisView = this;
         this.accountService.getAccount(this.accountId)
             .then(function (account: Account) {
-                thisView.accountModel = new AccountFormModel(account, thisView.appLocale);
+                thisView.accountModel = new AccountFormModel(account, thisView.lastUsedLang);
             });
     }
 
-    onLanguageSelected(locale:Locale) {
-        this.lastUsedLocale = locale;
-        this.accountModel.locale = locale;
-        if (!this.accountModel.description.localeTextMap.hasOwnProperty(locale.isoCode)) {
-            this.accountModel.description.localeTextMap[locale.isoCode] = null;
-        }
+    onLanguageSelected(lang:Language) {
+        this.lastUsedLang = lang;
+        this.accountModel.language = lang.locale;
     }
 
     doSaveEdit() {
-        this.lastUsedLocale = this.accountModel.locale;
-
         var account = this.accountModel.account;
         account.accountType = this.accountModel.accountType;
         account.accountingNumber = this.accountModel.accountingNumber;

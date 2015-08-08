@@ -7,13 +7,13 @@
             <tr>
                 <td><label>Langue:</label></td>
                 <td>
-                        <span *ng-for="#locale of allLocales">
-                            <input type="radio" name="langue"
-                                   [checked]="locale == accountModel.locale"
-                                   (change)="onLanguageSelected(locale)"
-                                   [attr.id]="locale.isoCode">
-                            <label [attr.for]="locale.isoCode">
-                                {{ locale.label[appLocale.isoCode] }}
+                        <span *ng-for="#lang of allLanguages">
+                            <input type="radio" name="lang"
+                                   [checked]="lang.locale == accountModel.language"
+                                   (change)="onLanguageSelected(lang)"
+                                   [attr.id]="lang.locale">
+                            <label [attr.for]="lang.locale">
+                                {{ lang.label[language.locale] }}
                             </label>
                         </span>
                 </td>
@@ -25,7 +25,7 @@
                             [(ng-model)]="accountModel.accountType">
                         <option *ng-for="#accountType of allAccountTypes"
                                 [value]="accountType.type">
-                            {{ accountType.label[appLocale.isoCode] }}
+                            {{ accountType.label[language.locale] }}
                         </option>
                     </select>
                 </td>
@@ -41,7 +41,7 @@
                 <td><label for="description">Description:</label></td>
                 <td>
                     <textarea type="text" id="description" rows="3"
-                              [(ng-model)]="accountModel.description.localeTextMap[accountModel.locale.isoCode]">s</textarea>
+                              [(ng-model)]="accountModel.description[accountModel.language]">s</textarea>
                 </td>
             </tr>
             <tr>

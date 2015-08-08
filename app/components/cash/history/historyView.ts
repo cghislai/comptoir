@@ -3,8 +3,8 @@
  */
 
 import {Component, View, NgFor} from 'angular2/angular2';
-import {CashState, CashStateSearch, CashService} from 'services/cashService';
 import {Pagination} from 'client/utils/pagination';
+import {CashState, CashStateSearch, CashService} from 'services/cashService';
 import {Paginator} from 'components/utils/paginator/paginator';
 
 @Component({

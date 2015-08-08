@@ -46,7 +46,7 @@
                 </span>
             </td>
             <td class="name">
-                {{ commandItem.item.name.localeTextMap[locale.isoCode] }}
+                {{ commandItem.item.name[language] }}
             </td>
             <td class="amount number">
                 <a class="quantityLink" (^click)="doEditItemAmount(commandItem)"

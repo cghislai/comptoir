@@ -20,9 +20,9 @@
         </thead>
         <tbody>
         <tr *ng-for="#account of accounts" class="account" (^click)="doEditAccount(account)">
-            <td class="type">{{ getAccountTypeLabel(account.accountType)[appLocale.isoCode] }}</td>
+            <td class="type">{{ getAccountTypeLabel(account.accountType)[language] }}</td>
             <td class="name">{{ account.name }}</td>
-            <td class="desc">{{ account.description.localeTextMap[appLocale.isoCode] }}</td>
+            <td class="desc">{{ account.description[language] }}</td>
             <td class="actions">
                 <a class="remove actionIcon" (^click)="doRemoveAccount(account)">
                     <i class="fi-x red"></i>

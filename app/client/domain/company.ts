@@ -3,11 +3,12 @@
  */
 
 import {LocaleText, LocaleTextFactory} from 'client/domain/lang';
+import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 
 export class Company {
     id: number;
-    name: LocaleText;
-    description: LocaleText;
+    name: LocaleTexts;
+    description: LocaleTexts;
 }
 
 export class CompanyRef {
@@ -33,8 +34,10 @@ export class CompanyFactory {
         }
         var company = new Company();
         company.id = jsonObject.id;
-        company.name = LocaleTextFactory.getLocaleTextFromJSON(jsonObject.name);
-        company.description = LocaleTextFactory.getLocaleTextFromJSON(jsonObject.description);
+        var names = LocaleTextFactory.getLocaleTextArrayFromJSON(jsonObject.name);
+        company.name = LocaleTextsFactory.getLocaleTextsFromTextArray(names);
+        var descriptions = LocaleTextFactory.getLocaleTextArrayFromJSON(jsonObject.description);
+        company.description = LocaleTextsFactory.getLocaleTextsFromTextArray(descriptions);
         return company;
     }
 }

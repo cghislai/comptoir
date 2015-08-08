@@ -5,13 +5,13 @@
 
     <div class="dataTable">
         <div class="dataTableHead"
-             [hidden]="!propHeaders">
+             [hidden]="!headers">
             <div class="dataTableRow">
             <span class="dataTableCell"
-                  *ng-for="#col of propColumns"
+                  *ng-for="#col of columns"
                   [class.right]="col.alignRight">
                     <span *ng-if="col.title != undefined">
-                        {{ col.title.localeTextMap[lang.isoCode] }}
+                        {{ col.title[language] }}
                     </span>
             </span>
             </div>
@@ -19,16 +19,16 @@
         <div class="dataTableBody" *ng-if="items != undefined">
             <div *ng-for="#itempic of items"
                  class="dataTableRow item"
-                 [class.selectable]="propSelectable"
+                 [class.selectable]="selectable"
                  focusable>
-                <itemColumn *ng-for="#col of propColumns"
+                <itemColumn *ng-for="#col of columns"
                             class="dataTableCell"
                             (action)="onColumnAction($event)"
                             (^click)="onItemClick(itempic.item, col)"
                             [class.right]="col.alignRight"
                             [item]="itempic"
                             [column]="col"
-                            [lang]="lang"></itemColumn>
+                            [lang]="language"></itemColumn>
             </div>
         </div>
     </div>

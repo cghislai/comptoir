@@ -32,7 +32,7 @@
                     <span *ng-for="#commandItem of command.items; #index=index">
                         <span [hidden]="index == 0">, </span>
                         <span>
-                            {{ commandItem.amount }} x {{ commandItem.item.name.localeTextMap[appLocale.isoCode] }}
+                            {{ commandItem.amount }} x {{ commandItem.item.name[language] }}
                         </span>
                     </span>
                 </span>

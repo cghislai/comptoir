@@ -2,16 +2,18 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, NgIf, EventEmitter, ViewQuery, QueryList} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, EventEmitter} from 'angular2/angular2';
+
 import {Item, ItemSearch} from 'client/domain/item';
-import {ItemList, ItemColumn} from 'components/items/itemList/itemList';
 import {SearchResult} from 'client/utils/searchResult';
 import {PicturedItem} from 'client/utils/picture';
-import {AutoFocusDirective} from 'directives/autoFocus';
-import {FocusableDirective} from 'directives/focusable';
-import {Locale} from 'services/utils';
+
 import {ApplicationService} from 'services/application';
 import {ItemService} from 'services/itemService';
+
+import {ItemList, ItemColumn} from 'components/items/itemList/itemList';
+import {AutoFocusDirective} from 'directives/autoFocus';
+import {FocusableDirective} from 'directives/focusable';
 
 
 @Component({
@@ -28,7 +30,7 @@ import {ItemService} from 'services/itemService';
 export class ItemListView {
     itemClicked = new EventEmitter();
     columns:ItemColumn[];
-    lang:Locale;
+    language:string;
     // Delay keyevent for 500ms
     keyboardTimeoutSet:boolean;
     keyboardTimeout:number = 200;
@@ -38,7 +40,7 @@ export class ItemListView {
     itemSearchResult: SearchResult<PicturedItem>;
 
     constructor(applicationService:ApplicationService, itemService:ItemService) {
-        this.lang = applicationService.locale;
+        this.language = applicationService.language.locale;
 
         this.itemSearch = new ItemSearch();
         this.itemSearch.multiSearch = null;

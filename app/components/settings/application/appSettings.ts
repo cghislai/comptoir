@@ -6,7 +6,7 @@ import {Component, View, NgFor, NgIf, formDirectives} from 'angular2/angular2';
 
 import {Company} from 'client/domain/company';
 import {Employee} from 'client/domain/employee';
-import {Locale} from 'services/utils';
+import {Language} from 'client/utils/lang';
 import {ApplicationService} from 'services/application';
 import {EmployeeService} from 'services/employee';
 import {CompanyService} from 'services/company';
@@ -28,8 +28,8 @@ export class ApplicationSettingsView {
 
     companyValue:Company;
     employeeValue: Employee;
-    localeList:Locale[];
-    localeValue:Locale;
+    allLanguages=Language.ALL_LANGUAGES;
+    language:Language;
 
     constructor(applicationService:ApplicationService, companyService:CompanyService,
                 authService:AuthService, employeeService: EmployeeService) {
@@ -38,10 +38,9 @@ export class ApplicationSettingsView {
         this.authService = authService;
         this.employeeValue = this.authService.loggedEmployee;
         this.employeeService = employeeService;
+        this.language = applicationService.language;
 
         this.searchCompany();
-        this.localeList = Locale.ALL_LOCALES;
-        this.localeValue = applicationService.locale;
     }
 
     searchCompany() {
@@ -59,12 +58,12 @@ export class ApplicationSettingsView {
 
     onLocaleSelected(event) {
         var localeValue = event.target.value;
-        this.localeValue = Locale.formIsoCode(localeValue);
+        this.language = Language.fromLanguage(localeValue);
     }
 
     doSave(form) {
-        if (this.employeeValue.locale != this.localeValue.isoCode) {
-            this.employeeValue.locale = this.localeValue.isoCode;
+        if (this.employeeValue.locale != this.language.locale) {
+            this.employeeValue.locale = this.language.locale;
             this.authService.loggedEmployee = this.employeeValue;
             var thisView = this;
             this.employeeService.updateEmployee(this.employeeValue)

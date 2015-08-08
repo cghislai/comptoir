@@ -6,7 +6,6 @@ import {Router} from 'angular2/router';
 
 import {ApplicationService} from 'services/application';
 import {Command, CommandSearch, SaleService} from 'services/saleService';
-import {Locale} from 'services/utils';
 import {Pagination} from 'client/utils/pagination';
 import {Paginator} from 'components/utils/paginator/paginator';
 
@@ -23,7 +22,7 @@ import {Paginator} from 'components/utils/paginator/paginator';
 export class ActiveSalesListView {
     saleService:SaleService;
     router:Router;
-    appLocale: Locale;
+    language: string;
 
     commandSearch:CommandSearch;
     commands:Command[];
@@ -39,7 +38,7 @@ export class ActiveSalesListView {
         this.commandSearch = new CommandSearch();
         this.commandSearch.pagination = new Pagination(0, this.commandsPerPage);
         this.commandSearch.active = true;
-        this.appLocale = applicationService.locale;
+        this.language = applicationService.language.locale;
         this.searchCommands();
     }
 

@@ -1,20 +1,20 @@
 /**
  * Created by cghislai on 29/07/15.
  */
-import {Locale} from 'services/utils'
 import {CompanyRef} from 'client/domain/company'
-import {ComptoirrRequest} from 'client/utils/request';
+import {Language} from 'client/utils/lang'
+
 
 export class ApplicationService {
     appName:string;
     appVersion:string;
-    locale:Locale;
+    language: Language;
     hasError:boolean = false;
     errorContent:string;
 
 
     constructor() {
-        this.locale = Locale.DEFAULT_LOCALE;
+        this.language = Language.DEFAULT_LANGUAGE;
     }
 
     showError(error: Error) {

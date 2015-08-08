@@ -4,7 +4,7 @@
 import {Inject} from 'angular2/angular2';
 
 import {Account,AccountType, AccountRef, AccountSearch} from 'client/domain/account';
-import {LocaleText} from 'client/domain/lang';
+import {LocaleTexts} from 'client/utils/lang';
 import {SearchResult} from 'client/utils/searchResult';
 import {AccountClient} from 'client/account';
 
@@ -32,8 +32,8 @@ export class NamedAccountType {
     }
 
     type: AccountType;
-    label: any;
-    constructor(accountType:AccountType, label: any) {
+    label: LocaleTexts;
+    constructor(accountType:AccountType, label: LocaleTexts) {
         this.type = accountType;
         this.label = label;
     }
@@ -99,8 +99,8 @@ export class AccountService {
         account1.id = 0;
         account1.name = "Caisse";
         account1.accountingNumber = "1329189";
-        account1.description = new LocaleText();
-        account1.description.localeTextMap['fr'] = "Caisse du magasin";
+        account1.description = new LocaleTexts();
+        account1.description['fr'] = "Caisse du magasin";
         account1.accountType = AccountType.OTHER;
         this.fakeData[0] = account1;
     }

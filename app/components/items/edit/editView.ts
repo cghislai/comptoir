@@ -4,20 +4,19 @@
 import {Component, View, NgFor, NgIf, formDirectives} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
-import {LocaleText} from 'client/domain/lang';
 import {Item} from 'client/domain/item';
 import {ItemPicture} from 'client/domain/itemPicture';
 import {PicturedItem} from 'client/utils/picture';
+import {Language, LocaleTexts} from 'client/utils/lang';
 
-import {Locale} from 'services/utils';
 import {ItemService} from 'services/itemService';
 import {ApplicationService} from 'services/application';
 
 class ItemFormModel {
-    locale:Locale;
+    language:string;
     reference:string;
-    name:LocaleText;
-    description:LocaleText;
+    name:LocaleTexts;
+    description:LocaleTexts;
     model:string;
     price:number;
     vat:number;
@@ -25,25 +24,25 @@ class ItemFormModel {
     item:PicturedItem;
 
     constructor();
-    constructor(item:PicturedItem, locale:Locale);
-    constructor(item?:PicturedItem, locale?:Locale) {
+    constructor(item:PicturedItem, lang:Language);
+    constructor(item?:PicturedItem, lang?:Language) {
         if (item == undefined) {
             this.item = new PicturedItem();
             this.item.item = new Item();
             this.item.picture = new ItemPicture();
-            this.name = new LocaleText();
-            this.description = new LocaleText();
+            this.name = new LocaleTexts();
+            this.description = new LocaleTexts();
             return;
         }
-        this.locale = locale;
+        this.language = lang.locale;
         this.reference = item.item.reference;
         this.name = item.item.name;
         if (this.name == undefined) {
-            this.name = new LocaleText();
+            this.name = new LocaleTexts();
         }
         this.description = item.item.description;
         if (this.description == undefined) {
-            this.description = new LocaleText();
+            this.description = new LocaleTexts();
         }
         this.model = item.item.model;
         this.price = item.item.vatExclusive;
@@ -68,10 +67,10 @@ export class EditProductView {
     applicationService:ApplicationService;
     router:Router;
 
-    appLocale:Locale;
-    allLocales:Locale[] = Locale.ALL_LOCALES;
+    language:Language;
+    allLanguages:Language[] = Language.ALL_LANGUAGES;
     itemModel:ItemFormModel;
-    lastUsedLocale:Locale;
+    lastUsedLang:Language;
 
     constructor(itemService:ItemService, appService:ApplicationService,
                 routeParams:RouteParams, router:Router) {
@@ -83,28 +82,28 @@ export class EditProductView {
         this.router = router;
         this.itemService = itemService;
         this.applicationService = appService;
-        this.appLocale = appService.locale;
-        this.lastUsedLocale = this.appLocale;
+        this.language = appService.language;
+        this.lastUsedLang = this.language;
         this.buildFormModel();
     }
 
     buildFormModel() {
         if (this.itemId == null) {
             this.itemModel = new ItemFormModel();
-            this.itemModel.locale = this.appLocale;
+            this.itemModel.language = this.language.locale;
             return;
         }
         var thisView = this;
 
         this.itemService.getPicturedItemSync(this.itemId)
             .then((picItem:PicturedItem)=> {
-                thisView.itemModel = new ItemFormModel(picItem, thisView.appLocale);
+                thisView.itemModel = new ItemFormModel(picItem, thisView.language);
             });
     }
 
-    onLanguageSelected(locale:Locale) {
-        this.lastUsedLocale = locale;
-        this.itemModel.locale = locale;
+    onLanguageSelected(lang:Language) {
+        this.lastUsedLang = lang;
+        this.itemModel.language = lang.locale;
     }
 
     onFileSelected(form, event) {
@@ -135,8 +134,6 @@ export class EditProductView {
     }
 
     doSaveEdit() {
-        this.lastUsedLocale = this.itemModel.locale;
-
         var item = this.itemModel.item.item;
         item.vatExclusive = this.itemModel.price;
         item.vatRate = Number((this.itemModel.vat * 0.01).toFixed(2));

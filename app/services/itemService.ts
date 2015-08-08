@@ -6,15 +6,14 @@ import {Inject} from 'angular2/angular2';
 
 import {Item, ItemRef, ItemSearch, ItemFactory} from 'client/domain/item';
 import {ItemPicture, ItemPictureRef} from 'client/domain/itemPicture';
-import {LocaleText, LocaleTextFactory} from 'client/domain/lang';
+import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
+import {PicturedItem, PicturedItemFactory} from 'client/utils/picture';
 import {Pagination} from 'client/utils/pagination';
 import {SearchResult} from 'client/utils/searchResult';
-import {PicturedItem, PicturedItemFactory} from 'client/utils/picture';
 import {ItemClient} from 'client/item';
 import {ItemPictureClient} from 'client/itemPicture'
 
 import {AuthService} from 'services/auth';
-import {Locale} from 'services/utils'
 
 
 export class ItemService {
@@ -188,9 +187,9 @@ export class ItemService {
                         foundItems.push(item);
                         continue;
                     }
-                    var localeName = item.name.localeTextMap;
-                    for (var lang in localeName) {
-                        var name:string = localeName[lang];
+                    var itemName = item.name;
+                    for (var lang in itemName) {
+                        var name:string = itemName[lang];
                         if (name != undefined && name.indexOf(multiStringValue) >= 0) {
                             foundItems.push(item);
                             continue;
@@ -314,12 +313,8 @@ export class ItemService {
                 companyId: 0,
                 reference: "BO001",
                 model: null,
-                name: LocaleTextFactory.getLocaleTextFromJSON({
-                    localeTextMap: {'fr': "Bonnet Minnie"}
-                }),
-                description: LocaleTextFactory.getLocaleTextFromJSON({
-                    localeTextMap: {'fr': "Un bonnet à l'effigie de Minnie, la copine de Mickey."}
-                }),
+                name: [{locale:'fr', text:"Bonnet Minnie"}],
+                description:  [{locale:'fr', text:"Un bonnet à l'effigie de Minnie, la copine de Mickey."}],
                 vatRate: 0.21,
                 vatExclusive: 5.9
             },
@@ -328,12 +323,8 @@ export class ItemService {
                 companyId: 0,
                 reference: "BO002",
                 model: undefined,
-                name: LocaleTextFactory.getLocaleTextFromJSON({
-                    localeTextMap: {'fr': "Bonnet Mickey"}
-                }),
-                description: LocaleTextFactory.getLocaleTextFromJSON({
-                    localeTextMap: {'fr': "Un bonnet à l'effigie de Mickey Mouse. Pour garçons et filles"}
-                }),
+                name:  [{locale:'fr', text: "Bonnet Mickey"}],
+                description: [{locale:'fr', text:"Un bonnet à l'effigie de Mickey Mouse. Pour garçons et filles"}],
                 vatRate: 0.21,
                 vatExclusive: 5.9
             },
@@ -342,9 +333,7 @@ export class ItemService {
                 companyId: 0,
                 reference: "PU001",
                 model: "8 ans vert",
-                name: LocaleTextFactory.getLocaleTextFromJSON({
-                    localeTextMap: {'fr': "Pull en laine Defrost"}
-                }),
+                name: [{locale:'fr', text:"Pull en laine Defrost"}],
                 description: undefined,
                 vatRate: 0.21,
                 vatExclusive: 21.5
@@ -354,9 +343,7 @@ export class ItemService {
                 companyId: 0,
                 reference: "PU002",
                 model: "8 ans rouge",
-                name: LocaleTextFactory.getLocaleTextFromJSON({
-                    localeTextMap: {'fr': "Pull en laine Defrost"}
-                }),
+                name:[{locale:'fr', text:"Pull en laine Defrost"}],
                 description: undefined,
                 vatRate: 0.21,
                 vatExclusive: 21.5
@@ -366,9 +353,7 @@ export class ItemService {
                 companyId: 0,
                 reference: "PU003",
                 model: "10-12 ans vert",
-                name: LocaleTextFactory.getLocaleTextFromJSON({
-                    localeTextMap: {'fr': "Pull en laine Defrost"}
-                }),
+                name: [{locale:'fr', text: "Pull en laine Defrost"}],
                 description: undefined,
                 vatRate: 0.21,
                 vatExclusive: 21.5
@@ -378,9 +363,7 @@ export class ItemService {
                 companyId: 0,
                 reference: "PU004",
                 model: "12-12 ans rouge",
-                name: LocaleTextFactory.getLocaleTextFromJSON({
-                    localeTextMap: {'fr': "Pull en laine Defrost"}
-                }),
+                name:[{locale:'fr', text:"Pull en laine Defrost"}],
                 description: undefined,
                 vatRate: 0.21,
                 vatExclusive: 21.5
@@ -390,12 +373,8 @@ export class ItemService {
                 companyId: 0,
                 reference: "JDA001",
                 model: "8 ans rouge",
-                name: LocaleTextFactory.getLocaleTextFromJSON({
-                    localeTextMap: {'fr': "T-shirt Joli"}
-                }),
-                description: LocaleTextFactory.getLocaleTextFromJSON({
-                    localeTextMap: {'fr': "Un joli T-shirt rouge"}
-                }),
+                name:[{locale:'fr', text: "T-shirt Joli"}],
+                description: [{locale:'fr', text: "Un joli T-shirt rouge"}],
                 vatRate: 0.21,
                 vatExclusive: 6
             },
@@ -404,12 +383,8 @@ export class ItemService {
                 companyId: 0,
                 reference: "JDA002",
                 model: "10-12 ans rouge",
-                name: LocaleTextFactory.getLocaleTextFromJSON({
-                    localeTextMap: {'fr': "T-shirt Joli"}
-                }),
-                description: LocaleTextFactory.getLocaleTextFromJSON({
-                    localeTextMap: {'fr': "Un joli T-shirt rouge"}
-                }),
+                name:  [{locale:'fr', text: "T-shirt Joli"}],
+                description: [{locale:'fr', text: "Un joli T-shirt rouge"}],
                 vatRate: 0.21,
                 vatExclusive: 6
             },
@@ -418,12 +393,8 @@ export class ItemService {
                 companyId: 0,
                 reference: "JDA003",
                 model: "S rouge",
-                name: LocaleTextFactory.getLocaleTextFromJSON({
-                    localeTextMap: {'fr': "T-shirt Joli"}
-                }),
-                description: LocaleTextFactory.getLocaleTextFromJSON({
-                    localeTextMap: {'fr': "Un joli T-shirt rouge"}
-                }),
+                name: [{locale:'fr', text: "T-shirt Joli"}],
+                description:[{locale:'fr', text: "Un joli T-shirt rouge"}],
                 vatRate: 0.21,
                 vatExclusive: 6
             },
@@ -432,12 +403,8 @@ export class ItemService {
                 companyId: 0,
                 reference: "JDA004",
                 model: "M rouge",
-                name: LocaleTextFactory.getLocaleTextFromJSON({
-                    localeTextMap: {'fr': "T-shirt Joli"}
-                }),
-                description: LocaleTextFactory.getLocaleTextFromJSON({
-                    localeTextMap: {'fr': "Un joli T-shirt rouge"}
-                }),
+                name:  [{locale:'fr', text: "T-shirt Joli"}],
+                description: [{locale:'fr', text: "Un joli T-shirt rouge"}],
                 vatRate: 0.21,
                 vatExclusive: 6
             }

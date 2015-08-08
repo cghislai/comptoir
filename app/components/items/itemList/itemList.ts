@@ -2,17 +2,14 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, NgIf, ElementRef,
+import {Component, View, NgFor, NgIf,
     EventEmitter, Attribute, ViewEncapsulation} from 'angular2/angular2';
 
 import {Item, ItemSearch} from 'client/domain/item';
 import {PicturedItem} from 'client/utils/picture';
-import {Pagination} from 'client/utils/pagination';
-import {LocaleText, LocaleTextFactory} from 'client/domain/lang';
+import {LocaleTexts} from 'client/utils/lang';
 
 import {ApplicationService} from 'services/application';
-import {ItemService} from 'services/itemService';
-import {Locale} from 'services/utils';
 
 import {AutoFocusDirective} from 'directives/autoFocus';
 import {FocusableDirective} from 'directives/focusable';
@@ -30,14 +27,15 @@ import {FocusableDirective} from 'directives/focusable';
     templateUrl: './components/items/itemList/itemColumn.html',
     styleUrls: ['./components/items/itemList/itemList.css'],
     directives: [NgIf],
+    // eases styling
     encapsulation: ViewEncapsulation.NONE
 })
 export class ItemColumnComponent {
-    action= new EventEmitter();
+    action = new EventEmitter();
 
     onColumnAction(item:PicturedItem, column:ItemColumn, event) {
         this.action.next({item: item, column: column});
-      //  event.stopPropagation();
+        //  event.stopPropagation();
     }
 
 }
@@ -49,7 +47,7 @@ export class ItemColumnComponent {
 
 @Component({
     selector: 'itemList',
-    properties: ['items', 'propColumns: columns', 'selectable', 'headers'],
+    properties: ['items', 'columns', 'selectable', 'headers'],
     events: ['itemClicked', 'columnAction']
 })
 
@@ -61,47 +59,42 @@ export class ItemColumnComponent {
 
 export class ItemList {
     // properties
-    propColumns:ItemColumn[];
-    propSelectable:boolean;
-    propHeaders:boolean;
-
-    itemService:ItemService;
     items:PicturedItem[];
-    itemSearch: ItemSearch;
-    itemClicked = new EventEmitter();
-    columnAction= new EventEmitter();
-     loading:boolean = false;
-    lang:Locale;
+    columns:ItemColumn[];
+    selectable:boolean;
+    headers:boolean;
 
-    constructor(itemService:ItemService, applicationService:ApplicationService,
+    itemClicked = new EventEmitter();
+    columnAction = new EventEmitter();
+    loading:boolean = false;
+    language:string;
+
+    constructor(applicationService:ApplicationService,
                 @Attribute('selectable') selectable,
                 @Attribute('headers') headers) {
-        this.itemService = itemService;
-        this.lang = applicationService.locale;
+        this.language = applicationService.language.locale;
 
         if (selectable != undefined) {
-            this.propSelectable = selectable != 'false';
+            this.selectable = selectable != 'false';
         } else {
-            this.propSelectable = true;
+            this.selectable = true;
         }
         if (headers != undefined) {
-            this.propHeaders = headers != 'false';
+            this.selectable = headers != 'false';
         } else {
-            this.propHeaders = true;
+            this.selectable = true;
         }
     }
 
 
-
-
-    onItemClick(item:Item, col: ItemColumn) {
+    onItemClick(item:Item, col:ItemColumn) {
         if (col == ItemColumn.ACTION_REMOVE) {
             return;
         }
         this.itemClicked.next(item);
     }
 
-    onColumnAction(event: any) {
+    onColumnAction(event:any) {
         this.columnAction.next(event);
         console.log("click");
     }
@@ -121,76 +114,60 @@ export class ItemColumn {
     static ACTION_REMOVE:ItemColumn;
     static ALL_COLUMNS:ItemColumn[];
 
-    title:LocaleText;
+    title:LocaleTexts;
     name:string;
     alignRight:boolean;
 
     static init() {
         ItemColumn.REFERENCE = new ItemColumn();
         ItemColumn.REFERENCE.name = 'ref';
-        ItemColumn.REFERENCE.title = LocaleTextFactory.getLocaleTextFromJSON({
-            localeTextMap: {
-                'fr': "Ref"
-            }
-        });
+        ItemColumn.REFERENCE.title = {
+            'fr': "Ref"
+        };
 
         ItemColumn.NAME = new ItemColumn();
         ItemColumn.NAME.name = 'name';
-        ItemColumn.NAME.title = LocaleTextFactory.getLocaleTextFromJSON({
-            localeTextMap: {
-                'fr': "Nom"
-            }
-        });
+        ItemColumn.NAME.title = {
+            'fr': "Nom"
+        };
 
         ItemColumn.MODEL = new ItemColumn();
         ItemColumn.MODEL.name = 'model';
-        ItemColumn.MODEL.title = LocaleTextFactory.getLocaleTextFromJSON({
-            localeTextMap: {
-                'fr': "Modèle"
-            }
-        });
+        ItemColumn.MODEL.title = {
+            'fr': "Modèle"
+        };
 
         ItemColumn.DESCRIPTION = new ItemColumn();
         ItemColumn.DESCRIPTION.name = 'description';
-        ItemColumn.DESCRIPTION.title = LocaleTextFactory.getLocaleTextFromJSON({
-            localeTextMap: {
-                'fr': "Description"
-            }
-        });
+        ItemColumn.DESCRIPTION.title = {
+            'fr': "Description"
+        };
 
         ItemColumn.NAME_MODEL = new ItemColumn();
         ItemColumn.NAME_MODEL.name = 'name_model';
-        ItemColumn.NAME_MODEL.title = LocaleTextFactory.getLocaleTextFromJSON({
-            localeTextMap: {
-                'fr': "Nom / Modèle"
-            }
-        });
+        ItemColumn.NAME_MODEL.title = {
+            'fr': "Nom / Modèle"
+        };
 
         ItemColumn.TVA_EXCLUSIVE = new ItemColumn();
         ItemColumn.TVA_EXCLUSIVE.name = 'tva_excl';
         ItemColumn.TVA_EXCLUSIVE.alignRight = true;
-        ItemColumn.TVA_EXCLUSIVE.title = LocaleTextFactory.getLocaleTextFromJSON({
-            localeTextMap: {
-                'fr': "Prix HTVA"
-            }
-        });
+        ItemColumn.TVA_EXCLUSIVE.title = {
+            'fr': "Prix HTVA"
+        };
 
         ItemColumn.TVA_RATE = new ItemColumn();
         ItemColumn.TVA_RATE.name = 'tva_rate';
         ItemColumn.TVA_RATE.alignRight = true;
-        ItemColumn.TVA_RATE.title = LocaleTextFactory.getLocaleTextFromJSON({
-            localeTextMap: {
-                'fr': "TVA%"
-            }
-        });
+        ItemColumn.TVA_RATE.title = {
+            'fr': "TVA%"
+        };
 
         ItemColumn.PICTURE = new ItemColumn();
         ItemColumn.PICTURE.name = 'picture';
-        ItemColumn.PICTURE.title = LocaleTextFactory.getLocaleTextFromJSON({
-            localeTextMap: {
-                'fr': "Image"
-            }
-        });
+        ItemColumn.PICTURE.title = {
+            'fr': "Image"
+        };
 
         ItemColumn.ACTION_REMOVE = new ItemColumn();
         ItemColumn.ACTION_REMOVE.name = 'action_remove';

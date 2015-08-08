@@ -1,20 +1,18 @@
 /**
  * Created by cghislai on 31/07/15.
  */
-import {Component, View, NgFor, NgIf, formDirectives,
-    Query, QueryList} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, formDirectives} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
 
-import {LocaleText} from 'client/domain/lang';
 import {Item, ItemSearch} from 'client/domain/item';
 import {SearchResult} from 'client/utils/searchResult';
 import {PicturedItem} from 'client/utils/picture';
+import {LocaleTexts} from 'client/utils/lang';
 import {Pagination} from 'client/utils/pagination';
-import {ItemService} from 'services/itemService';
 
 import {ApplicationService} from 'services/application';
-import {Locale} from 'services/utils';
+import {ItemService} from 'services/itemService';
 
 import {ItemList, ItemColumn} from 'components/items/itemList/itemList';
 import {Paginator} from 'components/utils/paginator/paginator';
@@ -30,8 +28,6 @@ import {Paginator} from 'components/utils/paginator/paginator';
 })
 
 export class ProductsListView {
-    applicationService:ApplicationService;
-    appLocale:Locale;
     router:Router;
 
     itemService:ItemService;
@@ -46,9 +42,7 @@ export class ProductsListView {
     itemList:ItemList;
 
     constructor(appService:ApplicationService, itemService:ItemService, router:Router) {
-        this.applicationService = appService;
         this.router = router;
-        this.appLocale = appService.locale;
         this.itemService = itemService;
 
         this.itemSearch = new ItemSearch();

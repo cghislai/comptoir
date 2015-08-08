@@ -6,7 +6,7 @@
 <span class="name"
     *ng-if="column.name == 'name'">
     <span *ng-if="picItem.item.name != undefined">
-        {{ picItem.item.name.localeTextMap[lang.isoCode] }}
+        {{ picItem.item.name[lang] }}
     </span>
 </span>
 <span class="model"
@@ -16,13 +16,13 @@
 <span class="desc"
     *ng-if="column.name == 'desc'">
     <span *ng-if="picItem.item.description != undefined">
-    {{ picItem.item.description.localeTextMap[lang.isoCode] }}
+    {{ picItem.item.description[lang] }}
         </span>
 </span>
 <span class="name_model"
     *ng-if="column.name == 'name_model'">
     <div clas="name" *ng-if="picItem.item.name != undefined">
-        {{ picItem.item.name.localeTextMap[lang.isoCode] }}
+        {{ picItem.item.name[lang] }}
     </div>
     <div class="model">
         {{ picItem.item.model }}

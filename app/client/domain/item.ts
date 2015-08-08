@@ -5,6 +5,7 @@ import {LocaleText, LocaleTextFactory} from 'client/domain/lang';
 import {CompanyRef, CompanyFactory} from 'client/domain/company';
 import {ItemPictureRef, ItemPictureFactory} from 'client/domain/itemPicture';
 import {Pagination} from 'client/utils/pagination';
+import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 
 export class ItemRef {
     id:number;
@@ -17,8 +18,8 @@ export class Item {
     mainPictureRef:ItemPictureRef;
     reference:string;
     model:string;
-    name:LocaleText;
-    description:LocaleText;
+    name:LocaleTexts;
+    description:LocaleTexts;
     vatExclusive:number;
     vatRate:number;
 }
@@ -49,8 +50,10 @@ export class ItemFactory {
         item.mainPictureRef = ItemPictureFactory.buildItemPictureRefFromJSON(jsonObject.companyref);
         item.reference = jsonObject.reference;
         item.model = jsonObject.model;
-        item.name = LocaleTextFactory.getLocaleTextFromJSON(jsonObject.name);
-        item.description = LocaleTextFactory.getLocaleTextFromJSON(jsonObject.description);
+        var names = LocaleTextFactory.getLocaleTextArrayFromJSON(jsonObject.name);
+        item.name = LocaleTextsFactory.getLocaleTextsFromTextArray(names);
+        var descriptions = LocaleTextFactory.getLocaleTextArrayFromJSON(jsonObject.description);
+        item.description = LocaleTextsFactory.getLocaleTextsFromTextArray(descriptions);
         item.vatExclusive = jsonObject.vatExclusive;
         item.vatRate = jsonObject.vatRate;
         return item;

@@ -3,11 +3,9 @@
  */
 import {Inject} from 'angular2/angular2';
 
-import {LocaleText, LocaleTextFactory} from 'client/domain/lang';
 import {Company, CompanyRef} from 'client/domain/company';
 import {CompanyClient} from 'client/company';
 
-import {Locale} from 'services/utils';
 import {AuthService} from 'services/auth';
 
 export class CompanyService {
@@ -60,22 +58,14 @@ export class CompanyService {
         var companyList = [];
         var testCompany = new Company();
         testCompany.id = 0;
-        testCompany.name = LocaleTextFactory.getLocaleTextFromJSON({
-            localeTextMap: {'fr': 'Test'}
-        });
-        testCompany.description = LocaleTextFactory.getLocaleTextFromJSON({
-            localeTextMap: {'fr': 'Compagnie de test'}
-        });
+        testCompany.name ={'fr': 'Test'};
+        testCompany.description = {'fr': 'Compagnie de test'};
         companyList[0] = testCompany;
 
         var testCompany2 = new Company();
         testCompany2.id=1;
-        testCompany2.name = LocaleTextFactory.getLocaleTextFromJSON({
-            localeTextMap: {'fr': 'Test 2'}
-        });
-        testCompany2.description = LocaleTextFactory.getLocaleTextFromJSON({
-            localeTextMap: {'fr': 'Deuxième compagnie de test'}
-        });
+        testCompany2.name = {'fr': 'Test 2'}
+        testCompany2.description = {'fr': 'Deuxième compagnie de test'}
         companyList[1] = testCompany2;
         this.data = companyList;
     }

@@ -1,14 +1,17 @@
 /**
  * Created by cghislai on 07/08/15.
  */
-import {Inject, forwardRef} from 'angular2/angular2';
-import {EmployeeLoginRequest,EmployeeLoginResponse, AuthToken} from 'client/domain/auth';
-import {EmployeeRef, Employee} from 'client/domain/employee';
+import {Inject} from 'angular2/angular2';
+
 import {CompanyRef} from 'client/domain/company';
+import {EmployeeRef, Employee} from 'client/domain/employee';
+import {EmployeeLoginRequest,EmployeeLoginResponse, AuthToken} from 'client/domain/auth';
+import {Language} from 'client/utils/lang';
+
 import {AuthClient} from 'client/auth';
 import {EmployeeClient} from 'client/employee';
+
 import {ApplicationService} from 'services/application';
-import {Locale} from 'services/utils';
 
 export enum LoginRequiredReason {
     NO_SESSION,
@@ -92,8 +95,8 @@ export class AuthService {
     private onEmployeeFetched(employee:Employee) {
         this.companyRef = employee.companyRef;
         this.loggedEmployee = employee;
-        var locale = Locale.formIsoCode(employee.locale);
-        this.applicationService.locale = locale;
+        var lang = Language.fromLanguage(employee.locale);
+        this.applicationService.language = lang;
     }
 
     checkLoginRequired() {

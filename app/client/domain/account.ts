@@ -5,6 +5,7 @@
 import {CompanyRef, CompanyFactory} from 'client/domain/company';
 import {LocaleText, LocaleTextFactory} from 'client/domain/lang';
 import {Pagination} from 'client/utils/pagination';
+import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 
 export enum AccountType {
     PAYMENT,
@@ -19,7 +20,7 @@ export class Account {
     iban: string;
     bic: string;
     name: string;
-    description: LocaleText;
+    description: LocaleTexts;
     accountType: AccountType;
 }
 
@@ -72,7 +73,8 @@ export class AccountFactory {
         account.iban = jsonObject.iban;
         account.bic = jsonObject.bic;
         account.name = jsonObject.name;
-        account.description = LocaleTextFactory.getLocaleTextFromJSON(jsonObject.description);
+        var descriptionTexts = LocaleTextFactory.getLocaleTextArrayFromJSON(jsonObject.description);
+        account.description = LocaleTextsFactory.getLocaleTextsFromTextArray(descriptionTexts);
         account.accountType = AccountFactory.getAccountTypeFromString(jsonObject.type);
         return account;
     }

@@ -2,11 +2,9 @@
  * Created by cghislai on 02/08/15.
  */
 import {Component, View, FormBuilder, formDirectives, NgFor, NgIf} from 'angular2/angular2';
-import {RouteConfig, RouterOutlet, RouterLink, routerInjectables} from 'angular2/router';
 
-
-import {CashService, CashState, CashTransaction} from 'services/cashService';
 import {Pagination} from 'client/utils/pagination';
+import {CashService, CashState, CashTransaction} from 'services/cashService';
 import {Paginator} from 'components/utils/paginator/paginator';
 import {AutoFocusDirective} from 'directives/autoFocus'
 

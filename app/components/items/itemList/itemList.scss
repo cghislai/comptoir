@@ -54,9 +54,6 @@
 .price {
   text-align: right;
   font-size: 1.1em;
-  ::after {
-    content: " | test";
-  }
 }
 
 .ref {

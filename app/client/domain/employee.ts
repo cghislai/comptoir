@@ -48,7 +48,7 @@ export class EmployeeFactory {
         employee.firstName = jsonObject.firstName;
         employee.id = jsonObject.id;
         employee.lastName = jsonObject.lastName;
-        employee.locale = jsonObject.locale;
+        employee.locale = jsonObject.language;
         employee.login = jsonObject.login;
         return employee;
     }

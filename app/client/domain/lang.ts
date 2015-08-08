@@ -3,25 +3,30 @@
  */
 
 export class LocaleText {
-    id: number;
-    localeTextMap: {[locale: string]: string} = {};
+    locale:  string;
+    text: string;
 }
 
 export class LocaleTextFactory {
+
     static getLocaleTextFromJSON(jsonObject: any) : LocaleText {
         if (jsonObject === undefined) {
             return undefined;
         }
         var localeText = new LocaleText();
-        localeText.id = jsonObject.id;
-        localeText.localeTextMap = {};
-
-        if (jsonObject.hasOwnProperty('localeTextMap')) {
-            var jsonMap = jsonObject.localeTextMap;
-           for (var lang in jsonMap) {
-               localeText.localeTextMap[lang] = jsonMap[lang];
-           }
-        }
+        localeText.text = jsonObject.text;
+        localeText.locale = jsonObject.locale;
         return localeText;
+    }
+    static getLocaleTextArrayFromJSON(jsonObject: any) : LocaleText[] {
+        if (jsonObject === undefined) {
+            return undefined;
+        }
+        var localeTexts=[];
+        for (var localeTextJSON of jsonObject) {
+            var localetext = LocaleTextFactory.getLocaleTextFromJSON(localeTextJSON);
+            localeTexts.push(localetext);
+        }
+        return localeTexts;
     }
 }

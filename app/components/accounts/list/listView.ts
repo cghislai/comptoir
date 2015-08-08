@@ -5,14 +5,13 @@ import {Component, View, NgFor, formDirectives} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
 
-import {LocaleText} from 'client/domain/lang';
 import {Account, AccountType, AccountSearch} from 'client/domain/account';
 import {SearchResult} from 'client/utils/searchResult';
+import {LocaleTexts, Language} from 'client/utils/lang';
 
 import {AccountService, NamedAccountType} from 'services/account';
 import {ApplicationService} from 'services/application';
 import {AuthService} from 'services/auth';
-import {Locale} from 'services/utils';
 import {Pagination} from 'client/utils/pagination';
 
 import {Paginator} from 'components/utils/paginator/paginator';
@@ -32,8 +31,8 @@ import {FocusableDirective} from 'directives/focusable'
 export class AccountsListView {
     accountService:AccountService;
     applicationService:ApplicationService;
-    appLocale:Locale;
     router:Router;
+    language:string;
 
     accountSearch:AccountSearch;
     accounts:Account[];
@@ -42,16 +41,12 @@ export class AccountsListView {
 
     loading:boolean;
 
-    // Delay filter input keyevent for 200ms
-    //keyboardTimeoutSet: boolean;
-    //keyboardTimeout: number = 200;
-
     constructor(accountService:AccountService, appService:ApplicationService,
                 authService:AuthService, router:Router) {
         this.accountService = accountService;
         this.applicationService = appService;
         this.router = router;
-        this.appLocale = appService.locale;
+        this.language = appService.language.locale;
         this.accountSearch = new AccountSearch();
         this.accountSearch.companyRef = authService.companyRef;
         this.accountSearch.pagination = new Pagination(0, this.accountsPerPage);

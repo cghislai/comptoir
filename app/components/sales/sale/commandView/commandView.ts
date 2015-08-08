@@ -3,14 +3,13 @@
  */
 
 import {Component, View, NgFor, NgIf, EventEmitter} from 'angular2/angular2';
-import {Router} from 'angular2/router';
 
-import {LocaleText} from 'client/domain/lang';
-import {SaleService, CommandItem, Command} from 'services/saleService';
 import {Item} from 'client/domain/item';
+import {LocaleTexts} from 'client/utils/lang';
+import {SaleService, CommandItem, Command} from 'services/saleService';
+
 import {AutoFocusDirective} from 'directives/autoFocus';
 import {ApplicationService} from 'services/application';
-import {Locale} from 'services/utils';
 
 
 // TODO: use angular2 form validators
@@ -37,10 +36,8 @@ class ToAddItem {
 export class CommandView {
     saleService:SaleService;
     command:Command;
-    locale:Locale;
-    router: Router;
+    language:string;
 
-    applicationService:ApplicationService;
     toAddItem:ToAddItem;
     editingReductionItem:CommandItem = null;
     editingAmountItem:CommandItem = null;
@@ -48,12 +45,9 @@ export class CommandView {
     validate = new EventEmitter();
     validated:boolean = false;
 
-    constructor(saleService:SaleService, applicationService:ApplicationService,
-                router: Router) {
+    constructor(saleService:SaleService, applicationService:ApplicationService) {
         this.saleService = saleService;
-        this.applicationService = applicationService;
-        this.locale = applicationService.locale;
-        this.router = router;
+        this.language = applicationService.language.locale;
         this.renewToAddCustomItem();
     }
 
@@ -78,9 +72,8 @@ export class CommandView {
 
     doAddCustomItem() {
         var item = new Item();
-        var lang = this.applicationService.locale;
         item.vatExclusive = this.toAddItem.price;
-        item.name[lang.isoCode] = this.toAddItem.name;
+        item.name[this.language] = this.toAddItem.name;
         item.reference = null;
         var commandItem = new CommandItem(item);
         commandItem.amount = this.toAddItem.amount;

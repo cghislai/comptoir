@@ -14,6 +14,7 @@
                [page-size]="itemsPerPage"
                show-prev-next="true" show-first-last="true"
                (pagechange)="onPageChanged($event)"></paginator>
+
     <itemList #itemlistcomp *ng-if="itemSearchResult != undefined"
               [columns]="columns" [items]="itemSearchResult.list"
               selectable="true" headers="true"
