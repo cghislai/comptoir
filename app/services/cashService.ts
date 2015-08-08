@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 02/08/15.
  */
-import {Pagination} from 'services/utils';
+import {Pagination} from 'client/utils/pagination';
 
 export  enum TransactionType {
     DEPOSIT,

@@ -4,7 +4,7 @@
 
 import {Component, View, NgFor} from 'angular2/angular2';
 import {Command, CommandSearch, SaleService} from 'services/saleService';
-import {Pagination} from 'services/utils';
+import {Pagination} from 'client/utils/pagination';
 import {Paginator} from 'components/utils/paginator/paginator';
 
 @Component({

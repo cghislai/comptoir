@@ -23,8 +23,8 @@ import {SellView} from 'components/sales/sale/sellView';
 import {ActiveSalesListView} from 'components/sales/actives/listView';
 import {HistoryView as SellHistoryView} from 'components/sales/history/historyView';
 
-import {ProductsListView} from 'components/products/list/listView';
-import {EditProductView} from 'components/products/edit/editView';
+import {ProductsListView} from 'components/items/list/listView';
+import {EditProductView} from 'components/items/edit/editView';
 
 import {CountCashView} from 'components/cash/count/countView';
 import {CashHistoryView} from 'components/cash/history/historyView';
@@ -54,9 +54,9 @@ import {Parent} from 'components/test/test';
     {path: '/sales/actives', component: ActiveSalesListView, as: 'salesActives'},
     {path: '/sales/history', component: SellHistoryView, as: 'salesHistory'},
 
-    {path: '/products/list', component: ProductsListView, as: 'productsList'},
-    {path: '/products/edit', component: EditProductView, as: 'productsEditNew'},
-    {path: '/products/edit/:id', component: EditProductView, as: 'productsEdit'},
+    {path: '/items/list', component: ProductsListView, as: 'itemsList'},
+    {path: '/items/edit', component: EditProductView, as: 'itemsEditNew'},
+    {path: '/items/edit/:id', component: EditProductView, as: 'itemsEdit'},
 
     {path: '/accounts/list', component: AccountsListView, as: 'accountsList'},
     {path: '/accounts/edit', component: EditAccountView, as: 'accountsEditNew'},
@@ -87,7 +87,19 @@ export class App {
 }
 
 
-bootstrap(App, [routerInjectables,
-    ApplicationService, ItemService, CashService, PictureService, SaleService,
-    CompanyService, AccountService, AuthService, EmployeeService, NavMenu
+bootstrap(App, [
+    routerInjectables,
+
+    AuthService,
+    ApplicationService,
+
+    AccountService,
+    CashService,
+    CompanyService,
+    EmployeeService,
+    ItemService,
+    PictureService,
+    SaleService,
+
+    NavMenu
 ]);

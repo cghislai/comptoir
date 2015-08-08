@@ -8,10 +8,8 @@
             <tr>
                 <td><label for="picture">Image:</label></td>
                 <td>
-                    <img [src]="itemModel.picture.imageUrl" class="itemPicture medium"
-                         [hidden]="itemModel.picture.imageUrl == null">
-                    <img [src]="itemModel.picture.dataUrl" class="itemPicture medium"
-                         [hidden]="itemModel.picture.dataUrl == null">
+                    <img [src]="itemModel.pictureDataURI" class="itemPicture medium"
+                         *ng-if="itemModel.pictureDataURI != undefined">
                     <input type="file" id="picture" accept="image/*"
                            ng-control="picture"
                            (change)="onFileSelected(f, $event)"
@@ -22,7 +20,7 @@
                 <td><label>Langue:</label></td>
                 <td>
                         <span *ng-for="#locale of allLocales">
-                            <input type="radio" name="langue"
+                            <input type="radio" name="locale"
                                    [checked]="locale == itemModel.locale"
                                    (change)="onLanguageSelected(locale)"
                                    [attr.id]="locale.isoCode">
@@ -87,7 +85,7 @@
         </table>
         <div class="actions">
             <button type="submit" [disabled]="!f.form.valid">Enregistrer</button>
-            <a [router-link]="['/productsList']">Annuler</a>
+            <a [router-link]="['/itemsList']">Annuler</a>
         </div>
     </form>
 </div>

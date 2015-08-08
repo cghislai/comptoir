@@ -5,22 +5,6 @@
 
 import {LocaleText, LocaleTextFactory} from 'client/domain/lang';
 
-export class Pagination {
-    pageIndex: number;
-    firstIndex: number;
-    pageSize: number;
-
-    constructor();
-    constructor(firstIndex: number, pageSize: number);
-    constructor(firstIndex?: number, pageSize?: number) {
-        if (firstIndex != undefined) {
-            this.firstIndex = firstIndex;
-        }
-        if (pageSize != undefined) {
-            this.pageSize = pageSize;
-        }
-    }
-}
 
 export class Locale {
     static FRENCH = new Locale('fr', {'fr':'Français'});

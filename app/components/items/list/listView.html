@@ -1,0 +1,22 @@
+<div class="listPage">
+    <h1>Édition des produits</h1>
+    <div class="topActions">
+        <span class="input">
+            <input [(ng-model)]="itemSearch.multiSearch" autofocus
+                   placeholder="Filtrer les produits"
+                   (keyup)="handleFilterKeyUp($event)"
+                   (change)="searchItems()">
+        </span>
+    </div>
+
+    <paginator [total-count]="itemlistcomp.itemCount"
+               [page-size]="itemsPerPage"
+               show-prev-next="true" show-first-last="true"
+               (pagechange)="onPageChanged($event)"></paginator>
+    <itemList #itemlistcomp
+            [search]="itemSearch" [columns]="columns"
+            selectable="true" headers="true"
+            (item-clicked)="doEditItem($event)">
+
+    </itemList>
+</div>

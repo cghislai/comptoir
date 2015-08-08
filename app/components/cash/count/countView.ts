@@ -6,7 +6,7 @@ import {RouteConfig, RouterOutlet, RouterLink, routerInjectables} from 'angular2
 
 
 import {CashService, CashState, CashTransaction} from 'services/cashService';
-import {Pagination} from 'services/utils';
+import {Pagination} from 'client/utils/pagination';
 import {Paginator} from 'components/utils/paginator/paginator';
 import {AutoFocusDirective} from 'directives/autoFocus'
 

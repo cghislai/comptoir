@@ -4,7 +4,7 @@
 
 
 import {Component, View, Attribute, EventEmitter, NgFor} from 'angular2/angular2';
-import {Pagination} from 'services/utils'
+import {Pagination} from 'client/utils/pagination';
 
 
 @Component({

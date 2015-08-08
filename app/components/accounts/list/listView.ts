@@ -12,7 +12,8 @@ import {SearchResult} from 'client/utils/searchResult';
 import {AccountService, NamedAccountType} from 'services/account';
 import {ApplicationService} from 'services/application';
 import {AuthService} from 'services/auth';
-import {Pagination, Locale} from 'services/utils';
+import {Locale} from 'services/utils';
+import {Pagination} from 'client/utils/pagination';
 
 import {Paginator} from 'components/utils/paginator/paginator';
 import {AutoFocusDirective} from 'directives/autoFocus'

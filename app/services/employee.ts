@@ -3,16 +3,16 @@
  */
 import {Inject} from 'angular2/angular2';
 
+import {CompanyRef} from 'client/domain/company';
 import {Employee,EmployeeRef} from 'client/domain/employee';
 import {EmployeeClient} from 'client/employee';
-import {CompanyRef} from 'client/domain/company';
 
 import {AuthService} from 'services/auth';
 
 export class EmployeeService {
     fakeData: Employee[];
     client: EmployeeClient;
-    authService:AuthService;
+    authService :AuthService;
 
     constructor(@Inject authService:AuthService) {
         this.initFakeData();

@@ -1,8 +1,8 @@
 /**
  * Created by cghislai on 28/07/15.
  */
-import {Item} from 'services/itemService';
-import {Pagination} from 'services/utils';
+import {Item} from 'client/domain/item' ;
+import {Pagination} from 'client/utils/pagination';
 import {SearchResult} from 'client/utils/searchResult';
 
 export class CommandItem {
@@ -64,7 +64,7 @@ export class Command {
         var oldItems = this.items;
         var newItems:CommandItem[] = [];
         oldItems.forEach(function(commandItem: CommandItem) {
-            if (commandItem.item.equals(item)) {
+            if (commandItem.item == item) {
                 return;
             }
             newItems.push(commandItem);
@@ -92,7 +92,7 @@ export class Command {
     getCommandItem(item: Item) {
         var foundCommandItem = null;
         this.items.forEach(function(commandItem: CommandItem) {
-            if (commandItem.item.equals(item)) {
+            if (commandItem.item == item) {
                 foundCommandItem = commandItem;
                 return;
             }
@@ -119,7 +119,7 @@ export class Command {
             var price = item.price;
             thisService.vatExclusiveAmount += price;
 
-            var vat = item.item.currentPrice.vatRate * price;
+            var vat = item.item.vatRate * price;
             thisService.vatAmount += vat;
         });
         if (this.globalReduction != null) {
@@ -140,7 +140,7 @@ export class Command {
         if (item == null) {
             return;
         }
-        var itemPrice = item.currentPrice.vatExclusive;
+        var itemPrice = item.vatExclusive;
         var amount = commandItem.amount;
         var totalPrice = amount * itemPrice ;
 

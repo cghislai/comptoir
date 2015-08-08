@@ -7,7 +7,7 @@ import {Router} from 'angular2/router';
 
 import {LocaleText} from 'client/domain/lang';
 import {SaleService, CommandItem, Command} from 'services/saleService';
-import {Item} from 'services/itemService';
+import {Item} from 'client/domain/item';
 import {AutoFocusDirective} from 'directives/autoFocus';
 import {ApplicationService} from 'services/application';
 import {Locale} from 'services/utils';
@@ -79,7 +79,7 @@ export class CommandView {
     doAddCustomItem() {
         var item = new Item();
         var lang = this.applicationService.locale;
-        item.currentPrice.vatExclusive = this.toAddItem.price;
+        item.vatExclusive = this.toAddItem.price;
         item.name[lang.isoCode] = this.toAddItem.name;
         item.reference = null;
         var commandItem = new CommandItem(item);

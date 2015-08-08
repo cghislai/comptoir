@@ -13,7 +13,7 @@ export class ComptoirrRequest {
 
     static JSON_MIME:string = "application/json";
     static UTF8_CHARSET:string = "UTF-8";
-    static HEADER_OAUTH_TOKEN= "X-Comptoir-OAuthToken";
+    static HEADER_OAUTH_TOKEN= "Authorisation";
 
     request:XMLHttpRequest;
     method:string;
@@ -84,7 +84,7 @@ export class ComptoirrRequest {
             xmlRequest.open(thisRequest.method, thisRequest.url);
             xmlRequest.setRequestHeader('Content-Type', thisRequest.contentType + '; charset=' + thisRequest.charset);
             xmlRequest.setRequestHeader('Accept', thisRequest.acceptContentType);
-            xmlRequest.setRequestHeader(ComptoirrRequest.HEADER_OAUTH_TOKEN, this.authToken);
+            xmlRequest.setRequestHeader(ComptoirrRequest.HEADER_OAUTH_TOKEN, 'Bearer '+this.authToken);
             xmlRequest.send(thisRequest.objectToSend);
         });
     }

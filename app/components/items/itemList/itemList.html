@@ -1,0 +1,39 @@
+<div class="itemList listPage">
+    <div class="busy" [hidden]="!loading">
+        <img src="../../../../res/img/ajax-loader.white.gif">
+    </div>
+
+    <div class="dataTable">
+        <div class="dataTableHead"
+             [hidden]="!propHeaders">
+            <div class="dataTableRow">
+            <span class="dataTableCell"
+                  *ng-for="#col of propColumns"
+                  [class.right]="col.alignRight">
+                    <span *ng-if="col.title != undefined">
+                        {{ col.title.localeTextMap[lang.isoCode] }}
+                    </span>
+            </span>
+            </div>
+        </div>
+        <div class="dataTableBody">
+            <div *ng-for="#itemPic of items"
+                 class="dataTableRow item"
+                 [class.selectable]="propSelectable"
+                 (^click)="onItemClick(itemPic.item)" focusable>
+                <itemColumn *ng-for="#col of propColumns"
+                            class="dataTableCell"
+                            [class.right]="col.alignRight"
+                            [item]="itemPic"
+                            [column]="col"
+                            [lang]="lang"></itemColumn>
+            </div>
+        </div>
+    </div>
+
+    <table class="dataTable">
+        <tbody>
+
+        </tbody>
+    </table>
+</div>

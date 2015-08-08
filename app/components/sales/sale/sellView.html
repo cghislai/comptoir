@@ -2,7 +2,7 @@
     <table *ng-if="command != undefined">
         <tr>
             <td class="itemList"  [hidden]="commandValidated">
-                <itemList #itemlist (item-clicked)="onItemClicked($event, commandview, itemlist)"></itemList>
+                <itemListView #itemlist (item-clicked)="onItemClicked($event, commandview, itemlist)"></itemListView>
             </td>
             <td class="commandView">
                 <commandView #commandview (validate)="onCommandValidated($event, payview)"

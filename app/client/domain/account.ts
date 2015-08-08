@@ -4,7 +4,7 @@
 
 import {CompanyRef, CompanyFactory} from 'client/domain/company';
 import {LocaleText, LocaleTextFactory} from 'client/domain/lang';
-import {Pagination} from 'services/utils';
+import {Pagination} from 'client/utils/pagination';
 
 export enum AccountType {
     PAYMENT,

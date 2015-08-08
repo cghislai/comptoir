@@ -58,7 +58,7 @@
                             {{ commandItem.amount}} x
                         </span>
                         <span class="price">
-                            {{ commandItem.item.currentPrice.vatExclusive | currency:'EUR':true:'.2-2'  }}
+                            {{ commandItem.item.vatExclusive | currency:'EUR':true:'.2-2'  }}
                         </span>
                 </a>
                 <span class="editAmount" *ng-if="editingAmountItem == commandItem">

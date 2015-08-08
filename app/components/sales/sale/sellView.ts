@@ -5,8 +5,8 @@ import {Component, View, NgIf} from 'angular2/angular2';
 import {Router, RouteParams, Location} from 'angular2/router';
 
 import {SaleService, Command} from 'services/saleService';
-import {Item} from 'services/itemService';
-import {ItemList} from 'components/sales/sale/itemList/itemList';
+import {Item} from 'client/domain/item';
+import {ItemListView} from 'components/sales/sale/itemList/listView';
 import {CommandView} from 'components/sales/sale/commandView/commandView';
 import {PayView} from 'components/sales/sale/payView/payView'
 
@@ -16,7 +16,7 @@ import {PayView} from 'components/sales/sale/payView/payView'
 @View({
     templateUrl: "./components/sales/sale/sellView.html",
     styleUrls: ["./components/sales/sale/sellView.css"],
-    directives: [ItemList, CommandView, PayView, NgIf]
+    directives: [ItemListView, CommandView, PayView, NgIf]
 })
 
 
@@ -60,7 +60,7 @@ export class SellView {
         this.saleService.activeCommand = this.command;
     }
 
-    onItemClicked(item:Item, commandView:CommandView, itemList:ItemList) {
+    onItemClicked(item:Item, commandView:CommandView, itemList:ItemListView) {
         commandView.doAddItem(item);
         itemList.focus();
         if (this.command.id == null) {

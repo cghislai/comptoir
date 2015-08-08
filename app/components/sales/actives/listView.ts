@@ -6,7 +6,8 @@ import {Router} from 'angular2/router';
 
 import {ApplicationService} from 'services/application';
 import {Command, CommandSearch, SaleService} from 'services/saleService';
-import {Pagination, Locale} from 'services/utils';
+import {Locale} from 'services/utils';
+import {Pagination} from 'client/utils/pagination';
 import {Paginator} from 'components/utils/paginator/paginator';
 
 @Component({

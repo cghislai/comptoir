@@ -1,0 +1,18 @@
+<div class="itemList" (show)="searchItems()">
+    <header class="coloredHeader">
+        <div class="filter">
+        <input #filter id="itemListFilterInput"
+               (keyup)="onFilterKeyUp($event)"
+               (change)="onFilterChange($event)"
+               [value]="itemSearch.multiSearch"
+               placeholder="Filtrer les produits" autofocusselect/>
+        </div>
+
+    </header>
+    <div class="scrollPane">
+       <itemList [search]="itemSearch" [columns]="columns"
+                 selectable="true" headers="false"
+               (item-clicked)="onItemClicked($event)"></itemList>
+
+    </div>
+</div>

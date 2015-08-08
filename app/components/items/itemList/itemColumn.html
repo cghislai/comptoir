@@ -1,0 +1,42 @@
+
+<span class="ref"
+    *ng-if="column.name == 'ref' ">
+    {{ picItem.item.reference }}
+</span>
+<span class="name"
+    *ng-if="column.name == 'name'">
+    <span *ng-if="picItem.item.name != undefined">
+        {{ picItem.item.name.localeTextMap[lang.isoCode] }}
+    </span>
+</span>
+<span class="model"
+    *ng-if="column.name == 'model'">
+    {{ picItem.item.model }}
+</span>
+<span class="desc"
+    *ng-if="column.name == 'desc'">
+    <span *ng-if="picItem.item.description != undefined">
+    {{ picItem.item.description.localeTextMap[lang.isoCode] }}
+        </span>
+</span>
+<span class="name_model"
+    *ng-if="column.name == 'name_model'">
+    <div clas="name" *ng-if="picItem.item.name != undefined">
+        {{ picItem.item.name.localeTextMap[lang.isoCode] }}
+    </div>
+    <div class="model">
+        {{ picItem.item.model }}
+    </div>
+</span>
+<span class="picture"
+    *ng-if="column.name == 'picture'">
+    <img [src]="picItem.pictureDataURI" *ng-if="picItem.pictureDataURI != undefined">
+</span>
+<span class="tva_excl price"
+        *ng-if="column.name == 'tva_excl'">
+    {{ picItem.item.vatExclusive | currency:'EUR':true:'.2-2' }}
+</span>
+<span class="tva_rate price"
+    *ng-if="column.name == 'tva_rate'">
+    {{ ( picItem.item.vatRate * 100 )| number:'.0-2' }}
+</span>

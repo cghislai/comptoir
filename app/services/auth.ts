@@ -6,7 +6,7 @@ import {EmployeeLoginRequest,EmployeeLoginResponse, AuthToken} from 'client/doma
 import {EmployeeRef, Employee} from 'client/domain/employee';
 import {CompanyRef} from 'client/domain/company';
 import {AuthClient} from 'client/auth';
-import {EmployeeService} from 'services/employee';
+import {EmployeeClient} from 'client/employee';
 import {ApplicationService} from 'services/application';
 import {Locale} from 'services/utils';
 
@@ -17,7 +17,7 @@ export enum LoginRequiredReason {
 
 export class AuthService {
     client:AuthClient;
-    employeeService:EmployeeService;
+    employeeClient:EmployeeClient;
     applicationService:ApplicationService;
 
     loggedEmployeeRef:EmployeeRef;
@@ -27,12 +27,11 @@ export class AuthService {
     loginRequired:boolean;
     loginRequiredReason:LoginRequiredReason;
 
-    constructor(@Inject employeeService:EmployeeService,
-                @Inject appService:ApplicationService) {
+    constructor(@Inject appService:ApplicationService) {
         this.client = new AuthClient();
-        this.employeeService = employeeService;
+        this.employeeClient = new EmployeeClient();
         this.applicationService = appService;
-        this.authToken = null;
+        this.authToken = new AuthToken();
     }
 
     login(login:string, password:string):Promise<EmployeeLoginResponse> {
@@ -92,7 +91,7 @@ export class AuthService {
         var thisService = this;
         this.loggedEmployeeRef = response.employeeRef;
         this.authToken = response.authToken;
-        this.employeeService.getEmployee(response.employeeRef.id)
+        this.employeeClient.getEmployee(response.employeeRef.id, response.authToken.token)
             .then(function (employee) {
                 thisService.onEmployeeFetched(employee);
             });
@@ -106,13 +105,17 @@ export class AuthService {
     }
 
     checkLoginRequired() {
-        if (this.authToken == null) {
+        if (this.authToken == undefined) {
             this.loginRequired = true;
             this.loginRequiredReason = LoginRequiredReason.NO_SESSION;
             return true;
         }
         var expireDate = this.authToken.validity;
-
+        if (expireDate == undefined) {
+            this.loginRequired = true;
+            this.loginRequiredReason = LoginRequiredReason.NO_SESSION;
+            return true;
+        }
         if (Date.now() >= expireDate.getTime()) {
             this.loginRequired = true;
             this.loginRequiredReason = LoginRequiredReason.SESSION_EXPIRED;
