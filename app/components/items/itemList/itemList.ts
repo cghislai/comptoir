@@ -3,7 +3,7 @@
  */
 
 import {Component, View, NgFor, NgIf, ElementRef,
-    EventEmitter, Attribute} from 'angular2/angular2';
+    EventEmitter, Attribute, ViewEncapsulation} from 'angular2/angular2';
 
 import {Item, ItemSearch} from 'client/domain/item';
 import {PicturedItem} from 'client/utils/picture';
@@ -17,6 +17,7 @@ import {Locale} from 'services/utils';
 import {AutoFocusDirective} from 'directives/autoFocus';
 import {FocusableDirective} from 'directives/focusable';
 
+
 /****
  * Column component
  */
@@ -28,7 +29,8 @@ import {FocusableDirective} from 'directives/focusable';
 @View({
     templateUrl: './components/items/itemList/itemColumn.html',
     styleUrls: ['./components/items/itemList/itemList.css'],
-    directives: [NgIf]
+    directives: [NgIf],
+    encapsulation: ViewEncapsulation.NONE
 })
 export class ItemColumnComponent {
     action= new EventEmitter();

@@ -42,7 +42,8 @@
 </span>
 <span class="action remove"
       *ng-if="column.name == 'action_remove' " >
-    <span (^click)="onColumnAction(picItem, column, $event)">
-    <i class="fi-x"></i>
-    </span>
+    <a class="actionIcon "
+       (^click)="onColumnAction(picItem, column, $event)">
+    <i class="fi-x red"></i>
+    </a>
 </span>

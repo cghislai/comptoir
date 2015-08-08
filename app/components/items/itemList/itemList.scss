@@ -20,9 +20,10 @@
 
   .dataTable {
 
-    .dataTableHead {
+    .dataTableHead .dataTableCell {
       font-size: .9em;
       font-weight: bold;
+      border-bottom: .1em solid lightgray;
     }
     .item.selectable:hover {
       cursor: pointer;
