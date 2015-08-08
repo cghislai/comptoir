@@ -97,13 +97,22 @@ table.dataTable, div.dataTable {
     height: 1.5em;
   }
 
+
+
   tbody, .dataTableBody {
     tr:not(:last-child), .dataTableRow:not(:last-child) {
-      border-bottom: .08em solid lightgray;
+      border: 0.1em solid transparent;;
+      border-bottom: .1em solid lightgray;
     }
     tr:hover, .dataTableRow:hover {
       background-color: $tableRowHoverColor;
     }
+
+
+    tr[focusable]:focus, .dataTableRow[focusable]:focus {
+      background-color: $focusColor;
+    }
+
   }
 
   thead, .dataTableHead {

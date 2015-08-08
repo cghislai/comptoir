@@ -16,29 +16,3 @@
     font-size: 1em;
   }
 }
-.busy {
-  img {
-    padding: .6em;
-    height: 100%;
-  }
-}
-
-.item {
-  @extend .boxedHoverableLink;
-  font-weight: normal;
-}
-
-.item .name {
-  font-size: 1.1em;
-  font-weight: bold;
-}
-
-.item .model {
-  font-size: .8em;
-  font-weight: lighter;
-}
-
-.item .price {
-  text-align: right;
-  font-size: 1.1em;
-}

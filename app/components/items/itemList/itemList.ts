@@ -2,7 +2,7 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, NgIf,
+import {Component, View, NgFor, NgIf, ElementRef,
     EventEmitter, Attribute} from 'angular2/angular2';
 
 import {Item, ItemSearch} from 'client/domain/item';
@@ -22,7 +22,8 @@ import {FocusableDirective} from 'directives/focusable';
  */
 @Component({
     selector: "itemColumn",
-    properties: ['picItem: item', 'column', 'lang']
+    properties: ['picItem: item', 'column', 'lang'],
+    events: ['action']
 })
 @View({
     templateUrl: './components/items/itemList/itemColumn.html',
@@ -30,6 +31,12 @@ import {FocusableDirective} from 'directives/focusable';
     directives: [NgIf]
 })
 export class ItemColumnComponent {
+    action= new EventEmitter();
+
+    onColumnAction(item:PicturedItem, column:ItemColumn, event) {
+        this.action.next({item: item, column: column});
+      //  event.stopPropagation();
+    }
 
 }
 
@@ -40,8 +47,8 @@ export class ItemColumnComponent {
 
 @Component({
     selector: 'itemList',
-    properties: ['propColumns: columns', 'propSearch: search', 'selectable', 'headers'],
-    events: ['itemClicked']
+    properties: ['items', 'propColumns: columns', 'selectable', 'headers'],
+    events: ['itemClicked', 'columnAction']
 })
 
 @View({
@@ -55,34 +62,21 @@ export class ItemList {
     propColumns:ItemColumn[];
     propSelectable:boolean;
     propHeaders:boolean;
-    propSearch:ItemSearch;
 
     itemService:ItemService;
     items:PicturedItem[];
-    itemCount:number;
+    itemSearch: ItemSearch;
     itemClicked = new EventEmitter();
-    loading:boolean = false;
+    columnAction= new EventEmitter();
+     loading:boolean = false;
     lang:Locale;
 
     constructor(itemService:ItemService, applicationService:ApplicationService,
-                @Attribute('search') search,
-                @Attribute('columns') columns,
                 @Attribute('selectable') selectable,
                 @Attribute('headers') headers) {
         this.itemService = itemService;
         this.lang = applicationService.locale;
-/*
-        if (search != undefined) {
-            this.propSearch = search;
-        } else {
-            this.propSearch = new ItemSearch();
-            this.propSearch.pagination = new Pagination(0, 10);
-        }
-        if (columns != undefined) {
-            this.propColumns = columns;
-        } else {
-            this.propColumns = ItemColumn.ALL_COLUMNS;
-        }*/
+
         if (selectable != undefined) {
             this.propSelectable = selectable != 'false';
         } else {
@@ -93,46 +87,21 @@ export class ItemList {
         } else {
             this.propHeaders = true;
         }
-
-
-        this.searchItems();
     }
 
 
-    searchItems(itemSearch?:ItemSearch) {
-        if (itemSearch != undefined) {
-            this.propSearch = itemSearch;
+
+
+    onItemClick(item:Item, col: ItemColumn) {
+        if (col == ItemColumn.ACTION_REMOVE) {
+            return;
         }
-        this.loading = true;
-        var thisList = this;
-        // TODO: cancel running promises
-        this.itemService.searchPicturedItems(this.propSearch)
-            .then(function (result) {
-                thisList.itemCount = result.count;
-                thisList.items = result.list;
-                thisList.loading = false;
-            })
-    }
-
-    onItemClick(item:Item) {
         this.itemClicked.next(item);
     }
 
-    doremoveItem(item:Item) {
-        var thisList = this;
-        this.itemService.removeItem(item)
-            .then(()=> {
-                thisList.searchItems();
-            });
-    }
-
-    onColumnAction(item: PicturedItem, column: ItemColumn) {
-        switch (column) {
-            case (ItemColumn.ACTION_REMOVE): {
-                this.doremoveItem(item.item);
-                break;
-            }
-        }
+    onColumnAction(event: any) {
+        this.columnAction.next(event);
+        console.log("click");
     }
 
 }
@@ -152,7 +121,7 @@ export class ItemColumn {
 
     title:LocaleText;
     name:string;
-    alignRight: boolean;
+    alignRight:boolean;
 
     static init() {
         ItemColumn.REFERENCE = new ItemColumn();
@@ -222,7 +191,7 @@ export class ItemColumn {
         });
 
         ItemColumn.ACTION_REMOVE = new ItemColumn();
-        ItemColumn.ACTION_REMOVE.name = 'action_    remove';
+        ItemColumn.ACTION_REMOVE.name = 'action_remove';
         ItemColumn.ACTION_REMOVE.title = null;
     }
 }

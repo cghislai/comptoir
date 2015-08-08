@@ -1,53 +1,55 @@
-@import '../../../styles/_list';
+@import '../../../styles/_main';
 
-.busy:not([hidden]) {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255, 255, 255, .7);
-  text-align: center;
+.itemList {
+  position: relative;
 
-  img {
-    position: relative;
-    display: inline-block;
-    vertical-align: middle;
-    height: 2em;
+  .busy:not([hidden]) {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, .7);
+    text-align: center;
+
+    img {
+      position: relative;
+      display: inline-block;
+      vertical-align: middle;
+      height: 2em;
+    }
+  }
+
+  .dataTable {
+
+    .dataTableHead {
+      font-size: .9em;
+      font-weight: bold;
+    }
+    .item.selectable:hover {
+      cursor: pointer;
+    }
+
+    .item:not(.selectable):hover {
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .dataTableCell.right {
+      text-align: right !important;
+    }
   }
 }
-
-.dataTable {
-
-  .dataTableHead {
-    font-size: .9em;
-    font-weight: bold;
-  }
-  .item {
-    @extend .boxedHoverableLink;
-    font-weight: normal;
-  }
-
-  .item:not(.selectable):hover {
-    cursor: default;
-    pointer-events: none;
-  }
-}
-
-
-.dataTableCell.right{
-  text-align: right !important;
-}
-
-
 
 .name {
   font-size: 1.1em;
   font-weight: bold;
 }
+
 .model {
   font-size: .8em;
   font-weight: lighter;
 
 }
+
 .price {
   text-align: right;
   font-size: 1.1em;
@@ -55,12 +57,14 @@
     content: " | test";
   }
 }
+
 .ref {
   font-size: .8em;
   font-family: monospace;
   text-align: left;
   max-width: 10%;
 }
+
 .description {
   font-size: .8em;
   max-width: 20%;

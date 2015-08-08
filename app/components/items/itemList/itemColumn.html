@@ -40,3 +40,9 @@
     *ng-if="column.name == 'tva_rate'">
     {{ ( picItem.item.vatRate * 100 )| number:'.0-2' }}
 </span>
+<span class="action remove"
+      *ng-if="column.name == 'action_remove' " >
+    <span (^click)="onColumnAction(picItem, column, $event)">
+    <i class="fi-x"></i>
+    </span>
+</span>

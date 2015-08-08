@@ -1,5 +1,6 @@
 <div class="listPage">
     <h1>Édition des produits</h1>
+
     <div class="topActions">
         <span class="input">
             <input [(ng-model)]="itemSearch.multiSearch" autofocus
@@ -9,14 +10,15 @@
         </span>
     </div>
 
-    <paginator [total-count]="itemlistcomp.itemCount"
+    <paginator [total-count]="itemCount"
                [page-size]="itemsPerPage"
                show-prev-next="true" show-first-last="true"
                (pagechange)="onPageChanged($event)"></paginator>
-    <itemList #itemlistcomp
-            [search]="itemSearch" [columns]="columns"
-            selectable="true" headers="true"
-            (item-clicked)="doEditItem($event)">
+    <itemList #itemlistcomp *ng-if="itemSearchResult != undefined"
+              [columns]="columns" [items]="itemSearchResult.list"
+              selectable="true" headers="true"
+              (column-action)="onColumnAction($event)"
+              (item-clicked)="doEditItem($event)">
 
     </itemList>
 </div>

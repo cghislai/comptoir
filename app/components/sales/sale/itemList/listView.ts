@@ -2,13 +2,16 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, EventEmitter, Query, QueryList} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, EventEmitter, ViewQuery, QueryList} from 'angular2/angular2';
 import {Item, ItemSearch} from 'client/domain/item';
 import {ItemList, ItemColumn} from 'components/items/itemList/itemList';
+import {SearchResult} from 'client/utils/searchResult';
+import {PicturedItem} from 'client/utils/picture';
 import {AutoFocusDirective} from 'directives/autoFocus';
 import {FocusableDirective} from 'directives/focusable';
 import {Locale} from 'services/utils';
 import {ApplicationService} from 'services/application';
+import {ItemService} from 'services/itemService';
 
 
 @Component({
@@ -19,30 +22,27 @@ import {ApplicationService} from 'services/application';
 @View({
     templateUrl: './components/sales/sale/itemList/listView.html',
     styleUrls: ['./components/sales/sale/itemList/listView.css'],
-    directives: [NgFor, AutoFocusDirective, FocusableDirective, ItemList]
+    directives: [NgFor, NgIf, AutoFocusDirective, FocusableDirective, ItemList]
 })
 
 export class ItemListView {
     itemClicked = new EventEmitter();
-    itemSearch:ItemSearch;
     columns:ItemColumn[];
     lang:Locale;
-    // Only 1 query at a time
-    countPromise:Promise<any> = null;
-    searchPromise:Promise<any> = null;
-    picturePromise:Promise<any> = null;
     // Delay keyevent for 500ms
     keyboardTimeoutSet:boolean;
     keyboardTimeout:number = 200;
     //
-    itemList: ItemList;
+    itemService: ItemService;
+    itemSearch:ItemSearch;
+    itemSearchResult: SearchResult<PicturedItem>;
 
-    constructor(applicationService:ApplicationService,
-                @Query(ItemList,{descendants: true}) itemListQuery:QueryList<ItemList>) {
+    constructor(applicationService:ApplicationService, itemService:ItemService) {
         this.lang = applicationService.locale;
 
         this.itemSearch = new ItemSearch();
         this.itemSearch.multiSearch = null;
+        this.itemService = itemService;
 
         this.columns = [
             ItemColumn.REFERENCE,
@@ -50,21 +50,14 @@ export class ItemListView {
             ItemColumn.NAME_MODEL,
             ItemColumn.TVA_EXCLUSIVE
         ];
-        var thisView = this;
-        var queryCallback = function () {
-            var first:ItemList = itemListQuery.first;
-            thisView.itemList = first;
-            thisView.searchItems();
-            itemListQuery.removeCallback(queryCallback);
-        };
-        itemListQuery.onChange(queryCallback);
+        this.searchItems();
     }
 
     searchItems() {
-        if (this.itemList == undefined) {
-            return;
-        }
-        this.itemList.searchItems(this.itemSearch);
+        this.itemService.searchPicturedItems(this.itemSearch)
+            .then((result:SearchResult<PicturedItem>)=> {
+                this.itemSearchResult = result;
+            });
     }
 
     onFilterKeyUp($event) {

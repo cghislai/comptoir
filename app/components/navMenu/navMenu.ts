@@ -51,7 +51,7 @@ export class NavMenu {
         if (this.isActive('/sale')) {
             return "Ventes";
         }
-        if (this.isActive('/products')) {
+        if (this.isActive('/items')) {
             return "Produits";
         }
         if (this.isActive('/cash')) {

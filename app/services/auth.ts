@@ -71,17 +71,6 @@ export class AuthService {
                 thisService.onEmployeeLoggedIn(loginResponse);
                 return loginResponse;
             });
-        /*
-         return this.client
-         .login(loginRequest)
-         .then(function (loginResponse:EmployeeLoginResponse) {
-         if (!loginResponse.sucess) {
-         return loginResponse;
-         }
-         thisService.loggedEmployee = loginResponse.employeeRef;
-         thisService.authToken = loginResponse.authToken;
-         return loginResponse;
-         });*/
     }
 
     private onEmployeeLoggedIn(response:EmployeeLoginResponse) {
@@ -94,6 +83,9 @@ export class AuthService {
         this.employeeClient.getEmployee(response.employeeRef.id, response.authToken.token)
             .then(function (employee) {
                 thisService.onEmployeeFetched(employee);
+            }, (error)=> {
+                // TODO
+                return null;
             });
     }
 

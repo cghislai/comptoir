@@ -78,6 +78,7 @@ export class ItemService {
                             picItem.dataURI = dataURI;
                         }
                     });
+                return picItem;
             });
     }
 
@@ -125,23 +126,46 @@ export class ItemService {
         var authToken = this.authService.authToken.token;
         var thisService = this;
 
-        var result = new SearchResult<PicturedItem>();
         return this.searchItems(itemSearch)
-            .then(function (itemResult) {
+            .then(function (itemResult : SearchResult<Item>) {
+                var result = new SearchResult<PicturedItem>();
                 result.count = itemResult.count;
                 result.list = [];
                 for (var item of itemResult.list) {
                     var picItem = new PicturedItem();
                     picItem.item = item;
                     result.list.push(picItem);
-
-                    thisService.pictureClient.getItemPicture(item.id, authToken)
-                        .then(function (itemPicture:ItemPicture) {
-                            var dataURI = PicturedItemFactory.buildPictureURI(itemPicture);
-                            picItem.dataURI = dataURI;
-                        })
                 }
                 return result;
+/*            }).then((result)=> {
+
+                var allImagesPromise = Promise.all(
+                    result.list.map((picItem:PicturedItem)=> {
+                        var item = picItem.item;
+                        var picRef = item.mainPictureRef;
+                        console.log("pic ref: " + picRef);
+                        if (picRef == undefined) {
+                            return Promise.resolve();
+                        }
+                        var picId = picRef.id;
+                        console.log("pic id: " + picId);
+                        return thisService.pictureClient.getItemPicture(picId, authToken)
+                            .then(function (itemPic:ItemPicture) {
+                                console.log("got item pic : " + itemPic);
+                                if (itemPic != undefined) {
+                                    var dataURI = PicturedItemFactory.buildPictureURI(itemPic);
+                                    picItem.dataURI = dataURI;
+                                }
+                                return itemPic;
+                            }, (error)=> {
+                                return null;
+                            });
+                    })
+                )
+                var resultPromise = Promise.resolve();
+                return resultPromise.then(()=>{
+                    return result;
+                });*/
             });
     }
 
@@ -271,7 +295,7 @@ export class ItemService {
             thisService.fakeData = [];
             for (var index = 0; index < oldItems.length; index++) {
                 var oldItem = oldItems[index];
-                if (oldItem == item) {
+                if (oldItem.id == item.id && item.id != undefined) {
                     continue;
                 }
                 thisService.fakeData.push(oldItem);

@@ -16,24 +16,20 @@
             </span>
             </div>
         </div>
-        <div class="dataTableBody">
-            <div *ng-for="#itemPic of items"
+        <div class="dataTableBody" *ng-if="items != undefined">
+            <div *ng-for="#itempic of items"
                  class="dataTableRow item"
                  [class.selectable]="propSelectable"
-                 (^click)="onItemClick(itemPic.item)" focusable>
+                 focusable>
                 <itemColumn *ng-for="#col of propColumns"
                             class="dataTableCell"
+                            (action)="onColumnAction($event)"
+                            (^click)="onItemClick(itempic.item, col)"
                             [class.right]="col.alignRight"
-                            [item]="itemPic"
+                            [item]="itempic"
                             [column]="col"
                             [lang]="lang"></itemColumn>
             </div>
         </div>
     </div>
-
-    <table class="dataTable">
-        <tbody>
-
-        </tbody>
-    </table>
 </div>

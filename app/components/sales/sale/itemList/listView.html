@@ -9,8 +9,9 @@
         </div>
 
     </header>
-    <div class="scrollPane">
-       <itemList [search]="itemSearch" [columns]="columns"
+    <div class="scrollPane" *ng-if="itemSearchResult != undefined">
+       <itemList [columns]="columns" #itemlistcomp
+                 [items]="itemSearchResult.list"
                  selectable="true" headers="false"
                (item-clicked)="onItemClicked($event)"></itemList>
 
