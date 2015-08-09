@@ -21,7 +21,7 @@ export class EmployeeService {
     }
 
     getEmployee(id: number) : Promise<Employee> {
-        var authToken = this.authService.authToken.token;
+        var authToken = this.authService.authToken;
         // FIXME
         var thisService = this;
         return new Promise((resolve, reject)=>{
@@ -37,7 +37,7 @@ export class EmployeeService {
     }
 
     updateEmployee(employee: Employee): Promise<EmployeeRef> {
-        var authToken = this.authService.authToken.token;
+        var authToken = this.authService.authToken;
         return this.client.updateEmployee(employee, authToken);
     }
 

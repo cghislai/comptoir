@@ -28,36 +28,7 @@ export class EmployeeSearch {
 }
 
 export class EmployeeFactory {
-    static getEmployeeRefFromJSON(jsonObject: any): EmployeeRef {
-        if (jsonObject == undefined) {
-            return undefined;
-        }
-        var employeeRef = new EmployeeRef;
-        employeeRef.id = jsonObject.id;
-        employeeRef.link = jsonObject.link;
-        return employeeRef;
-    }
-
-    static getEmployeeFromJSON(jsonObject: any):Employee {
-        if (jsonObject == undefined) {
-            return undefined;
-        }
-        var employee = new Employee();
-        employee.active = jsonObject.active;
-        employee.companyRef = EmployeeFactory.getEmployeeRefFromJSON(jsonObject.companyRef);
-        employee.firstName = jsonObject.firstName;
-        employee.id = jsonObject.id;
-        employee.lastName = jsonObject.lastName;
-        employee.locale = jsonObject.language;
-        employee.login = jsonObject.login;
-        return employee;
-    }
-    static getEmployeeArrayFromJSON(jsonObject: any[]):Employee[] {
-        var employees: Employee[] = [];
-        for (var jsonEmployee of jsonObject) {
-            var employee = EmployeeFactory.getEmployeeFromJSON(jsonEmployee);
-            employees.push(employee);
-        }
-        return employees;
+    static fromJSONEmployeeReviver = (key,value)=>{
+        return value;
     }
 }

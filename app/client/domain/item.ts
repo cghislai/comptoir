@@ -1,11 +1,11 @@
 /**
  * Created by cghislai on 07/08/15.
  */
-import {LocaleText, LocaleTextFactory} from 'client/domain/lang';
-import {CompanyRef, CompanyFactory} from 'client/domain/company';
-import {ItemPictureRef, ItemPictureFactory} from 'client/domain/itemPicture';
-import {Pagination} from 'client/utils/pagination';
+
+import {CompanyRef} from 'client/domain/company';
+import {ItemPictureRef} from 'client/domain/itemPicture';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
+import {Pagination} from 'client/utils/pagination';
 
 export class ItemRef {
     id:number;
@@ -36,26 +36,11 @@ export class ItemSearch {
 }
 
 export class ItemFactory {
-    static buildItemRefFromJSON(jsonObject:any):ItemRef {
-        var itemRef = new ItemRef();
-        itemRef.id = jsonObject.id;
-        itemRef.link = jsonObject.link;
-        return itemRef;
-    }
+    static fromJSONItemReviver = (key, value)=>{
+        if (key == 'name' || key == "description") {
+            return JSON.parse(value, LocaleTextsFactory.fromJSONLocaleTextsReviver);
+        }
+        return value;
+    };
 
-    static buildItemFromJSON(jsonObject:any):Item {
-        var item = new Item();
-        item.id = jsonObject.id;
-        item.companyRef = CompanyFactory.getCompanyRefFromJSON(jsonObject.companyRef);
-        item.mainPictureRef = ItemPictureFactory.buildItemPictureRefFromJSON(jsonObject.companyref);
-        item.reference = jsonObject.reference;
-        item.model = jsonObject.model;
-        var names = LocaleTextFactory.getLocaleTextArrayFromJSON(jsonObject.name);
-        item.name = LocaleTextsFactory.getLocaleTextsFromTextArray(names);
-        var descriptions = LocaleTextFactory.getLocaleTextArrayFromJSON(jsonObject.description);
-        item.description = LocaleTextsFactory.getLocaleTextsFromTextArray(descriptions);
-        item.vatExclusive = jsonObject.vatExclusive;
-        item.vatRate = jsonObject.vatRate;
-        return item;
-    }
 }

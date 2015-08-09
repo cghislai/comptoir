@@ -2,7 +2,6 @@
  * Created by cghislai on 04/08/15.
  */
 
-import {LocaleText, LocaleTextFactory} from 'client/domain/lang';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 
 export class Company {
@@ -17,27 +16,10 @@ export class CompanyRef {
 }
 
 export class CompanyFactory {
-
-    static getCompanyRefFromJSON(jsonObject: any) : CompanyRef {
-        if (jsonObject === undefined) {
-            return undefined;
-        }
-        var companyRef = new CompanyRef();
-        companyRef.id = jsonObject.id;
-        companyRef.link = jsonObject.link;
-        return companyRef;
-    }
-
-    static getCompanyFromJSON(jsonObject: any) : Company {
-        if (jsonObject === undefined) {
-            return undefined;
-        }
-        var company = new Company();
-        company.id = jsonObject.id;
-        var names = LocaleTextFactory.getLocaleTextArrayFromJSON(jsonObject.name);
-        company.name = LocaleTextsFactory.getLocaleTextsFromTextArray(names);
-        var descriptions = LocaleTextFactory.getLocaleTextArrayFromJSON(jsonObject.description);
-        company.description = LocaleTextsFactory.getLocaleTextsFromTextArray(descriptions);
-        return company;
-    }
+    static fromJSONCompanyReviver=(key,value)=>{
+      if (key == 'name' || key == "description") {
+          return JSON.parse(value, LocaleTextsFactory.fromJSONLocaleTextsReviver);
+      }
+        return value;
+    };
 }

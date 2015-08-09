@@ -2,21 +2,43 @@
  * Created by cghislai on 07/08/15.
  */
 
+import {Registration, LoginResponse, AuthFactory} from 'client/domain/auth';
+import {CompanyRef} from 'client/domain/company';
 import {ComptoirrRequest} from 'client/utils/request';
-import {EmployeeLoginRequest, EmployeeLoginResponse, AuthFactory} from 'client/domain/auth';
+import {ServiceConfig} from 'client/utils/service';
 
 export class AuthClient {
-    private static serviceUrl:string = "http://somewhere.com/";
-    private static loginUrl:string = AuthClient.serviceUrl + "/login";
 
-    login(loginRequest:EmployeeLoginRequest, authToken: string):Promise<EmployeeLoginResponse> {
-        var loginRequestJSON = JSON.stringify(loginRequest);
+    private getLoginUrl():string {
+        return ServiceConfig.URL + "/login";
+    }
+
+    private getRegisterUrl():string {
+        return ServiceConfig.URL + "/register";
+    }
+
+    login(login:string, password:string):Promise<LoginResponse> {
+        var request = new ComptoirrRequest();
+        var body = {
+            'login': login,
+            'password': password
+        };
+
+        return request
+            .post(body, this.getLoginUrl(), null)
+            .then(function (response) {
+                var loginResponse:LoginResponse = JSON.parse(response.text, AuthFactory.fromJSONLoginResponseReviver);
+                return loginResponse;
+            });
+    }
+
+    register(registration:Registration):Promise<CompanyRef> {
         var request = new ComptoirrRequest();
         return request
-            .post(loginRequestJSON, AuthClient.loginUrl, authToken)
-            .then(function (response) {
-                var loginResponse = AuthFactory.getLoginResponsefromJSON(response.json);
-                return loginResponse;
+            .post(registration, this.getRegisterUrl(), null)
+            .then((response)=> {
+                var companyRef: CompanyRef = JSON.parse(response.text);
+                return companyRef;
             });
     }
 }

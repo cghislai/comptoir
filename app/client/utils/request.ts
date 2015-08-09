@@ -1,12 +1,12 @@
 /**
  * Created by cghislai on 04/08/15.
  */
+import {JSONFactory} from 'client/utils/factory';
 
 export class ComptoirResponse {
     headers: any;
     text: string;
     code: number;
-    json: any;
 }
 
 export class ComptoirrRequest {
@@ -27,7 +27,7 @@ export class ComptoirrRequest {
 
     constructor() {
         this.request = new XMLHttpRequest();
-        this.acceptContentType = ComptoirrRequest.JSON_MIME;
+        this.acceptContentType = ComptoirrRequest.JSON_MIME+','+'text/*';
         this.charset = ComptoirrRequest.UTF8_CHARSET;
         this.contentType = ComptoirrRequest.JSON_MIME;
     }
@@ -75,19 +75,24 @@ export class ComptoirrRequest {
                 response.code = xmlRequest.status;
                 response.headers = xmlRequest.getAllResponseHeaders();
                 response.text = xmlRequest.responseText;
-                response.json = JSON.parse(xmlRequest.responseText);
                 resolve(response);
             }
             xmlRequest.onerror = function () {
                 reject(new Error('XMLHttpRequest Error: ' + xmlRequest.statusText));
             };
             xmlRequest.open(thisRequest.method, thisRequest.url);
-            xmlRequest.setRequestHeader('Content-Type', thisRequest.contentType + '; charset=' + thisRequest.charset);
             xmlRequest.setRequestHeader('Accept', thisRequest.acceptContentType);
-            xmlRequest.setRequestHeader(ComptoirrRequest.HEADER_OAUTH_TOKEN, 'Bearer '+this.authToken);
-            xmlRequest.send(thisRequest.objectToSend);
+            xmlRequest.setRequestHeader('Content-Type', thisRequest.contentType + '; charset=' + thisRequest.charset);
+            if (this.authToken != null) {
+                xmlRequest.setRequestHeader(ComptoirrRequest.HEADER_OAUTH_TOKEN, 'Bearer '+this.authToken);
+            }
+
+            if (thisRequest.objectToSend != null) {
+                var stringifiedJSON = JSON.stringify(thisRequest.objectToSend, JSONFactory.toJSONReplacer);
+                xmlRequest.send(stringifiedJSON);
+            } else {
+                xmlRequest.send();
+            }
         });
     }
-
-
 }

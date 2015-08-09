@@ -5,40 +5,44 @@
 import {Company, CompanyRef, CompanyFactory} from 'client/domain/company';
 import {ComptoirrRequest} from 'client/utils/request';
 import {SearchResult} from 'client/utils/searchResult';
+import {ServiceConfig} from 'client/utils/service';
 
 export class CompanyClient {
 
-    private static serviceUrl:string = "http://somewhere.com/company";
+    private static RESOURCE_PATH="/company";
 
     private getCompanyUrl(id?:number) {
-        var url = CompanyClient.serviceUrl;
+        var url = ServiceConfig.URL + CompanyClient.RESOURCE_PATH;
         if (id != undefined) {
             url += "/" + id;
         }
         return url;
     }
+    private getSearchUrl() {
+        var url = ServiceConfig.URL + CompanyClient.RESOURCE_PATH;
+        url += '/search';
+        return url;
+    }
 
     createCompany(company:Company, authToken: string):Promise<CompanyRef> {
-        var companyJSON = JSON.stringify(company);
         var request = new ComptoirrRequest();
         var url = this.getCompanyUrl();
         return request
-            .post(companyJSON, url, authToken)
+            .post(company, url, authToken)
             .then(function (response) {
-                var companyRef = CompanyFactory.getCompanyRefFromJSON(response.json);
+                var companyRef = JSON.parse(response.text);
                 return companyRef;
             });
     }
 
     updateCompany(company:Company, authToken: string):Promise<CompanyRef> {
-        var companyJSON = JSON.stringify(company);
         var request = new ComptoirrRequest();
         var url = this.getCompanyUrl(company.id);
 
         return request
-            .put(companyJSON, url, authToken)
+            .put(company, url, authToken)
             .then(function (response) {
-                var companyRef = CompanyFactory.getCompanyRefFromJSON(response.json);
+                var companyRef = JSON.parse(response.text);
                 return companyRef;
             });
     }
@@ -50,7 +54,7 @@ export class CompanyClient {
         return request
             .get(url, authToken)
             .then(function (response) {
-                var company = CompanyFactory.getCompanyFromJSON(response.json);
+                var company = JSON.parse(response.text, CompanyFactory.fromJSONCompanyReviver);
                 return company;
             });
     }

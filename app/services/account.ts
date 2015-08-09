@@ -56,7 +56,7 @@ export class AccountService {
     searchAccounts(accountSearch:AccountSearch):Promise<SearchResult<Account>> {
         //return this.client.searchAccounts(accountSearch);
         var thisService = this;
-        var authToken  = this.authService.authToken.token;
+        var authToken  = this.authService.authToken;
         // FIXME
         return new Promise((resolve, reject)=>{
            var r = new SearchResult<Account>();
@@ -69,7 +69,7 @@ export class AccountService {
     getAccount(id:number):Promise<Account> {
         // TODO
         var thisService = this;
-        var authToken  = this.authService.authToken.token;
+        var authToken  = this.authService.authToken;
         return new Promise((resolve, reject)=> {
             resolve(thisService.fakeData[0]);
         })
@@ -77,7 +77,7 @@ export class AccountService {
     }
 
     saveAccount(account:Account):Promise<AccountRef> {
-        var authToken  = this.authService.authToken.token;
+        var authToken  = this.authService.authToken;
         if (account.id == undefined) {
             return this.client.createAccount(account, authToken);
         }
@@ -85,7 +85,7 @@ export class AccountService {
     }
 
     removeAccount(account:Account):Promise<boolean> {
-        var authToken  = this.authService.authToken.token;
+        var authToken  = this.authService.authToken;
         // TODO
         return new Promise((resolve, reject) => {
             resolve(true);

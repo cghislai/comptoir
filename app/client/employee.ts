@@ -14,51 +14,46 @@ export class EmployeeClient {
         return EmployeeClient.serviceUrl + "/" + id;
     }
 
-    getEmployee(id:number, authToken: string):Promise<Employee> {
-        var thisClient = this;
-        var url = this.getEmployeeUrl(id);
-        var request = new ComptoirrRequest();
-        return request.get(url, authToken)
-            .then(function (response) {
-                var employee = EmployeeFactory.getEmployeeFromJSON(response.json);
-                return employee;
-            });
-    }
-
-    searchEmployee(search:EmployeeSearch, authToken: string):Promise<SearchResult<Employee>> {
-        var thisClient = this;
-        var url = EmployeeClient.serviceUrl + '/search';
-        var searchJSON = JSON.stringify(search);
-        var request = new ComptoirrRequest();
-        return request.post(searchJSON, url, authToken)
-            .then(function (response) {
-                var result = new SearchResult<Employee>().parseResponse(response, EmployeeFactory.getEmployeeFromJSON);
-                return result;
-            });
-    }
 
     createEmployee(employee:Employee, authToken: string):Promise<EmployeeRef> {
-        var thisClient = this;
         var url = EmployeeClient.serviceUrl;
-        var employeeJSON = JSON.stringify(employee);
         var request = new ComptoirrRequest();
-        return request.post(employeeJSON, url, authToken)
+        return request.post(employee, url, authToken)
             .then(function (response) {
-                var employeeRef = EmployeeFactory.getEmployeeRefFromJSON(response.json);
+                var employeeRef = JSON.parse(response.text);
                 return employeeRef;
             });
     }
 
     updateEmployee(employee:Employee, authToken: string):Promise<EmployeeRef> {
-        var thisClient = this;
         var url = this.getEmployeeUrl(employee.id);
-        var employeeJSON = JSON.stringify(employee);
         var request = new ComptoirrRequest();
-        return request.put(employeeJSON, url, authToken)
+        return request.put(employee, url, authToken)
             .then(function (response) {
-                var employeeRef = EmployeeFactory.getEmployeeRefFromJSON(response.json);
+                var employeeRef = JSON.parse(response.text);
                 return employeeRef;
             });
     }
+
+    getEmployee(id:number, authToken: string):Promise<Employee> {
+        var url = this.getEmployeeUrl(id);
+        var request = new ComptoirrRequest();
+        return request.get(url, authToken)
+            .then(function (response) {
+                var employee = JSON.parse(response.text, EmployeeFactory.fromJSONEmployeeReviver);
+                return employee;
+            });
+    }
+
+    searchEmployee(search:EmployeeSearch, authToken: string):Promise<SearchResult<Employee>> {
+        var url = EmployeeClient.serviceUrl + '/search';
+        var request = new ComptoirrRequest();
+        return request.post(search, url, authToken)
+            .then(function (response) {
+                var result = new SearchResult<Employee>().parseResponse(response, EmployeeFactory.fromJSONEmployeeReviver);
+                return result;
+            });
+    }
+
 
 }

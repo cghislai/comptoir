@@ -13,13 +13,13 @@ export class SearchResult<T> {
 
     }
 
-    parseResponse(response:ComptoirResponse, factoryFunction:(json:any)=>T): SearchResult<T> {
+    parseResponse(response:ComptoirResponse, jsonReviver:(key, value)=>any): SearchResult<T> {
         this.count = response.headers[SearchResult.HEADER_TOTAL_COUT];
-        this.list = [];
-        for (var element of response.json) {
-            var built:T = factoryFunction(element);
-            this.list.push(built);
-        }
-        return this;
+        var list: T[] = JSON.parse(response.text, jsonReviver);
+        var count =response.headers[SearchResult.HEADER_TOTAL_COUT];
+        var result = new SearchResult();
+        result.list = list;
+        result.count = count;
+        return result;
     }
 }

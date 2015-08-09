@@ -5,7 +5,7 @@ import {Inject} from 'angular2/angular2';
 
 import {CompanyRef} from 'client/domain/company';
 import {EmployeeRef, Employee} from 'client/domain/employee';
-import {EmployeeLoginRequest,EmployeeLoginResponse, AuthToken} from 'client/domain/auth';
+import {LoginResponse, Registration} from 'client/domain/auth';
 import {Language} from 'client/utils/lang';
 
 import {AuthClient} from 'client/auth';
@@ -19,14 +19,17 @@ export enum LoginRequiredReason {
 }
 
 export class AuthService {
+    static STORAGE_TOKEN_KEY = "AuthToken";
+
     client:AuthClient;
     employeeClient:EmployeeClient;
     applicationService:ApplicationService;
 
-    loggedEmployeeRef:EmployeeRef;
     loggedEmployee:Employee;
-    companyRef:CompanyRef;
-    authToken:AuthToken;
+    authToken:string;
+    // TODO
+    authTokenExpireDate:Date;
+
     loginRequired:boolean;
     loginRequiredReason:LoginRequiredReason;
 
@@ -34,70 +37,43 @@ export class AuthService {
         this.client = new AuthClient();
         this.employeeClient = new EmployeeClient();
         this.applicationService = appService;
-        this.authToken = new AuthToken();
+
+        this.authToken = localStorage.getItem(AuthService.STORAGE_TOKEN_KEY);
+        this.authTokenExpireDate = null;
     }
 
-    login(login:string, password:string):Promise<EmployeeLoginResponse> {
-        var loginRequest = new EmployeeLoginRequest();
-        loginRequest.login = login;
-        loginRequest.password = password;
+    login(login:string, password:string):Promise<Employee> {
         var thisService = this;
-        // FIXME
-        return new Promise((resolve, reject)=> {
-            var response = new EmployeeLoginResponse();
-            if (Math.random() < .3) {
-                response.sucess = false;
-                response.errorReaseon = "Fake random fail. Try again :)";
-                resolve(response);
-                return;
-            }
-            var expireDate = new Date();
-            var hours = expireDate.getHours();
-            var minutes = expireDate.getMinutes();
-            minutes += 30;
-            if (minutes > 60) {
-                hours += 1;
-                minutes -= 60;
-            }
-            expireDate.setMinutes(minutes);
-            expireDate.setHours(hours);
-            var token = new AuthToken();
-            token.validity = expireDate;
-            token.token = "mdslfse";
-            response.authToken = token;
-            var employeeRef = new EmployeeRef();
-            employeeRef.id = 0;
-            response.employeeRef = employeeRef;
-            response.sucess = true;
-            resolve(response);
-        }).then(function (loginResponse:EmployeeLoginResponse) {
-                thisService.onEmployeeLoggedIn(loginResponse);
-                return loginResponse;
+        return this.client.login(login, password)
+            .then((response:LoginResponse) => {
+                var authToken = response.authToken;
+                thisService.saveAuthToken(authToken);
+
+                var employeeId = response.employeeRef.id;
+                return thisService.employeeClient.getEmployee(employeeId, authToken);
+            }).then((employee:Employee) => {
+                thisService.loggedEmployee = employee;
+                return employee;
             });
     }
 
-    private onEmployeeLoggedIn(response:EmployeeLoginResponse) {
-        if (!response.sucess) {
-            return;
-        }
+    // Register then log in
+    register(registration:Registration):Promise<Employee> {
         var thisService = this;
-        this.loggedEmployeeRef = response.employeeRef;
-        this.authToken = response.authToken;
-        this.employeeClient.getEmployee(response.employeeRef.id, response.authToken.token)
-            .then(function (employee) {
-                thisService.onEmployeeFetched(employee);
-            }, (error)=> {
-                // TODO
-                return null;
+        return this.client.register(registration)
+            .then((companyRef: CompanyRef)=> {
+                console.log('Sucessfully registerd for company #'+companyRef.id);
+                var login = registration.employee.login;
+                var password = registration.employeePassword;
+                return thisService.login(login, password);
             });
     }
 
-    private onEmployeeFetched(employee:Employee) {
-        this.companyRef = employee.companyRef;
-        this.loggedEmployee = employee;
-        var lang = Language.fromLanguage(employee.locale);
-        this.applicationService.language = lang;
+    private saveAuthToken(token:string) {
+        this.authToken = token;
+        localStorage.setItem(AuthService.STORAGE_TOKEN_KEY, token);
     }
+
 
     checkLoginRequired() {
         if (this.authToken == undefined) {
@@ -105,7 +81,10 @@ export class AuthService {
             this.loginRequiredReason = LoginRequiredReason.NO_SESSION;
             return true;
         }
-        var expireDate = this.authToken.validity;
+        var expireDate = this.authTokenExpireDate;
+        if (expireDate == null) {
+            return true;
+        }
         if (expireDate == undefined) {
             this.loginRequired = true;
             this.loginRequiredReason = LoginRequiredReason.NO_SESSION;

@@ -21,7 +21,7 @@ export class CompanyService {
     }
 
     createCompany(company: Company):Promise<CompanyRef> {
-        var authToken = this.authService.authToken.token;
+        var authToken = this.authService.authToken;
         return this.client
             .createCompany(company, authToken)
             .then(function (companyRef:CompanyRef) {
@@ -36,7 +36,7 @@ export class CompanyService {
 
     getCompany(id: number): Promise<Company> {
         var thisService = this;
-        var authToken = this.authService.authToken.token;
+        var authToken = this.authService.authToken;
         var promise = new Promise<Company>((resolve, reject) => {
             var company = thisService.data[id];
             resolve(company);
@@ -46,7 +46,7 @@ export class CompanyService {
 
     searchCompanies():Promise<Company[]> {
         // TODO
-        var authToken = this.authService.authToken.token;
+        var authToken = this.authService.authToken;
         var thisService = this;
         var promise = new Promise<Company[]>((resolve, reject) => {
             resolve(thisService.data);

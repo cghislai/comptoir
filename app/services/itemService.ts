@@ -53,7 +53,7 @@ export class ItemService {
      * @returns {Promise<PicturedItem>}
      */
     public getPicturedItemAsync(id:number):Promise<PicturedItem> {
-        var authToken = this.authService.authToken.token;
+        var authToken = this.authService.authToken;
         var thisService = this;
 
         return this.getItem(id)
@@ -88,7 +88,7 @@ export class ItemService {
      * @returns {Promise<PicturedItem>}
      */
     public getPicturedItemSync(id:number):Promise<PicturedItem> {
-        var authToken = this.authService.authToken.token;
+        var authToken = this.authService.authToken;
         var thisService = this;
 
         return new Promise((resolve, reject)=> {
@@ -122,7 +122,7 @@ export class ItemService {
      * @returns {Promise<SearchResult<PicturedItem>>}
      */
     public searchPicturedItems(itemSearch:ItemSearch):Promise<SearchResult<PicturedItem>> {
-        var authToken = this.authService.authToken.token;
+        var authToken = this.authService.authToken;
         var thisService = this;
 
         return this.searchItems(itemSearch)
@@ -234,7 +234,7 @@ export class ItemService {
     public savePicturedItem(picturedItem:PicturedItem):Promise<PicturedItem> {
         // TODO
         var thisService = this;
-        var authToken = this.authService.authToken.token;
+        var authToken = this.authService.authToken;
 
         return new Promise<PicturedItem>((resolve, reject)=> {
             // Convert, save, update or remove picture
@@ -259,7 +259,6 @@ export class ItemService {
             } else {
                 // No picture data
                 if (pic != undefined) {
-                    thisService.pictureClient.removeItemPicture(pic);
                     picturedItem.picture = null;
                 }
                 resolve(picturedItem);
@@ -411,7 +410,7 @@ export class ItemService {
         ];
         this.fakeData = [];
         for (var json of allItems) {
-            var item = ItemFactory.buildItemFromJSON(json)
+            var item = JSON.parse(json, ItemFactory.fromJSONItemReviver);
             this.fakeData.push(item);
         }
     }

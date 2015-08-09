@@ -2,17 +2,19 @@
  * Created by cghislai on 06/08/15.
  */
 
-import {AccountType, Account, AccountRef, AccountSearch, AccountFactory} from 'client/domain/account';
-import {LocaleText, LocaleTextFactory} from 'client/domain/lang';
+
+import {Account, AccountRef, AccountSearch, AccountFactory} from 'client/domain/account';
 import {ComptoirrRequest} from 'client/utils/request';
 import {SearchResult} from 'client/utils/searchResult';
+import {ServiceConfig} from 'client/utils/service';
+
 
 export class AccountClient {
 
-    private static serviceUrl:string = "http://somewhere.com/accout";
+    private static RESOURCE_PATH:string = "/account";
 
     private getAccountUrl(id?:number) {
-        var url = AccountClient.serviceUrl;
+        var url = ServiceConfig.URL + AccountClient.RESOURCE_PATH;
         if (id != undefined) {
             url += "/" + id;
         }
@@ -20,50 +22,48 @@ export class AccountClient {
     }
 
     private getSearchUrl() {
-        var url = AccountClient.serviceUrl;
+        var url = ServiceConfig.URL + AccountClient.RESOURCE_PATH;
         url += '/search';
         return url;
     }
 
-    createAccount(account:Account, authToken: string):Promise<AccountRef> {
+    createAccount(account:Account, authToken:string):Promise<AccountRef> {
         var request = new ComptoirrRequest();
         var url = this.getAccountUrl();
-        var accountJSON = JSON.stringify(account);
 
         return request
-            .post(accountJSON, url, authToken)
+            .post(account, url, authToken)
             .then(function (response) {
-                var accountRef = AccountFactory.getAccountRefFromJSON(response.json);
+                var accountRef = JSON.parse(response.text);
                 return accountRef;
             })
     }
 
-    updateAccount(account:Account, authToken: string):Promise<AccountRef> {
+    updateAccount(account:Account, authToken:string):Promise<AccountRef> {
         var request = new ComptoirrRequest();
         var url = this.getAccountUrl(account.id);
-        var accountJSON = JSON.stringify(account);
 
         return request
-            .put(accountJSON, url, authToken)
+            .put(account, url, authToken)
             .then(function (response) {
-                var accountRef = AccountFactory.getAccountRefFromJSON(response.json);
+                var accountRef = JSON.parse(response.text);
                 return accountRef;
             });
     }
 
-    getAccount(id:number, authToken: string):Promise<Account> {
+    getAccount(id:number, authToken:string):Promise<Account> {
         var request = new ComptoirrRequest();
         var url = this.getAccountUrl(id);
 
         return request
             .get(url, authToken)
             .then(function (response) {
-                var account = AccountFactory.getAccountFromJSON(response.json);
+                var account = JSON.parse(response.text, AccountFactory.fromJSONAccountReviver);
                 return account;
             });
     }
 
-    searchAccounts(search:AccountSearch, authToken: string):Promise<SearchResult<Account>> {
+    searchAccounts(search:AccountSearch, authToken:string):Promise<SearchResult<Account>> {
         var request = new ComptoirrRequest();
         var url = this.getSearchUrl();
         var searchJSON = JSON.stringify(search);
@@ -71,7 +71,7 @@ export class AccountClient {
         return request
             .post(searchJSON, url, authToken)
             .then(function (response) {
-                var result = new SearchResult<Account>().parseResponse(response, AccountFactory.getAccountFromJSON);
+                var result = new SearchResult<Account>().parseResponse(response, AccountFactory.fromJSONAccountReviver);
                 return result;
             });
     }
