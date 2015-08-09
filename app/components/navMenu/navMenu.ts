@@ -32,7 +32,7 @@ export class NavMenu {
     onNaviagated(path: string) {
         this.currentPath = path;
         this.pageName = this.getPageName();
-        this.login = this.isActive('/login');
+        this.login = this.isActive('/login') || this.isActive('/register');
     }
 
     switchMenuVisibility() {
@@ -65,6 +65,9 @@ export class NavMenu {
         }
         if (this.isActive('/login')) {
             return "Connection";
+        }
+        if (this.isActive('/register')) {
+            return "Nouveau Compte";
         }
     }
 

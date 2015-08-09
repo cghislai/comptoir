@@ -19,6 +19,9 @@
     },
     "angular2/router.d.ts": {
       "commit": "284c2b8828f06bdde1f949a22ad174f5221d57f9"
+    },
+    "crypto-js/crypto-js.d.ts": {
+      "commit": "3b0f362204ea965952dafdb682a5274d527ef9d0"
     }
   }
 }

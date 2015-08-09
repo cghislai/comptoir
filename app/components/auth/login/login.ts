@@ -6,7 +6,7 @@ import {Component, View, formDirectives} from 'angular2/angular2';
 import {Router, RouterLink} from 'angular2/router';
 import {AuthService, LoginRequiredReason} from 'services/auth';
 import {ApplicationService} from 'services/application';
-
+import {MD5} from 'components/auth/login/md5';
 @Component({
     selector: "loginView"
 })
@@ -36,7 +36,9 @@ export class LoginView {
 
     onSubmit() {
         var thisView = this;
-        this.authService.login(this.login, this.password)
+
+        var hashedPassword = MD5.encode(this.password);
+        this.authService.login(this.login, hashedPassword)
             .then(function (employee) {
                 thisView.router.navigate('/sales/sale');
             }).catch(function (error) {
