@@ -6,15 +6,20 @@ import {LocaleTextsFactory} from 'client/utils/lang';
 
 export class JSONFactory {
     static replacers=  {
-        'LocaleTexts':LocaleTextsFactory.toJSONLocaleTextsReplacer
     };
 
     static toJSONReplacer(key: string, value: any) : string {
         var valueType = typeof value;
-        var replacer = this.replacers[valueType];
+        var replacer = JSONFactory.replacers[valueType];
         if (replacer == undefined) {
             return value;
         }
         return replacer(value);
     }
+
+    static initReplacers() {
+        JSONFactory.replacers['LocaleTexts'] = LocaleTextsFactory.toJSONLocaleTextsReplacer;
+    }
 }
+
+JSONFactory.initReplacers();

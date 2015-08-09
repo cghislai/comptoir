@@ -3,7 +3,7 @@
  */
 
 import {Component, View, formDirectives} from 'angular2/angular2';
-import {Router} from 'angular2/router';
+import {Router, RouterLink} from 'angular2/router';
 import {AuthService, LoginRequiredReason} from 'services/auth';
 import {ApplicationService} from 'services/application';
 
@@ -13,7 +13,7 @@ import {ApplicationService} from 'services/application';
 @View({
     templateUrl: './components/auth/login/login.html',
     styleUrls: ['./components/auth/login/login.css'],
-    directives: [formDirectives]
+    directives: [formDirectives, RouterLink]
 })
 export class LoginView {
     authService:AuthService;
@@ -37,15 +37,9 @@ export class LoginView {
     onSubmit() {
         var thisView = this;
         this.authService.login(this.login, this.password)
-            .then(function (response) {
-                if (response.sucess) {
-                    thisView.router.navigate('/sales/sale');
-                } else {
-                    thisView.error = true;
-                    thisView.errorReason = response.errorReaseon;
-                }
-            })
-            .catch(function (error) {
+            .then(function (employee) {
+                thisView.router.navigate('/sales/sale');
+            }).catch(function (error) {
                 thisView.appService.showError(error);
             });
     }

@@ -45,7 +45,7 @@ export class ApplicationSettingsView {
 
     searchCompany() {
         var thisView = this;
-        var companyRef = this.authService.companyRef;
+        var companyRef = this.authService.loggedEmployee.companyRef;
         if (companyRef == null) {
             return;
         }

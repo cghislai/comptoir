@@ -27,6 +27,9 @@ export class RequiresLogin {
         if (path.indexOf('/login') >= 0) {
             return;
         }
+        if (path.indexOf('/register') >= 0) {
+            return;
+        }
         // Check if loggedin
         var loginRequired = this.authService.checkLoginRequired();
         if (loginRequired) {

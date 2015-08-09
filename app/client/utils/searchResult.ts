@@ -17,7 +17,7 @@ export class SearchResult<T> {
         this.count = response.headers[SearchResult.HEADER_TOTAL_COUT];
         var list: T[] = JSON.parse(response.text, jsonReviver);
         var count =response.headers[SearchResult.HEADER_TOTAL_COUT];
-        var result = new SearchResult();
+        var result = new SearchResult<T>();
         result.list = list;
         result.count = count;
         return result;

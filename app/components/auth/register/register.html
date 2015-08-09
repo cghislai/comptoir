@@ -1,0 +1,118 @@
+<div class="login formPage">
+    <h1>Créer un compte</h1>
+    <p class="introText">
+        Remplissez ce formularie pour cous créer un compte
+    </p>
+    <form (ng-submit)="onSubmit()" #form="form">
+        <table>
+            <tbody>
+
+            </tbody>
+
+            <thead>
+            <tr>
+                <th colspan="2">
+                    <h2>Compagnie</h2>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><label>Langue:</label></td>
+                <td>
+                        <span *ng-for="#lang of allLanguages">
+                            <input type="radio" name="lang"
+                                   [checked]="lang.locale == editLocale"
+                                   (change)="onLanguageSelected(lang.locale)"
+                                   [attr.id]="lang.locale">
+                            <label [attr.for]="lang.locale">
+                                {{ lang.label[appLocale] }}
+                            </label>
+                        </span>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="name">Nom:</label></td>
+                <td>
+                    <input type="text" id="name"
+                           [(ng-model)]="company.name[editLocale]" required>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="description">Description:</label></td>
+                <td>
+                        <textarea type="text" id="description" rows="3"
+                                  [(ng-model)]="company.description[editLocale]" ></textarea>
+                </td>
+            </tr>
+            </tbody>
+
+
+            <thead>
+            <tr>
+                <th colspan="2">
+                    <h2>Employé</h2>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><label for="firstname">Prénom:</label></td>
+                <td>
+                    <input type="text" id="firstname"
+                           [(ng-model)]="employee.firstName">
+                </td>
+            </tr>
+            <tr>
+                <td><label for="lastname">Nom:</label></td>
+                <td>
+                        <input type="text" id="lastname"
+                                  [(ng-model)]="employee.lastName"></input>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="language">Langue:</label></td>
+                <td>
+                       <select id="language" [(ng-model)]="employee.locale">
+                           <option *ng-for="#lang of allLanguages"
+                                   [value]="lang.locale">
+                               {{ lang.label[appLocale] }}
+                           </option>
+                       </select>
+                </td>
+            </tr>
+            </tbody>
+
+
+            <thead>
+            <tr>
+                <th colspan="2">
+                    <h2>Identifiants</h2>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <label for="login">Login:</label>
+                </td>
+                <td>
+                    <input id="login" #loginElement
+                            [(ng-model)]="employee.login"
+                            required >
+                </td>
+                </tr>
+            <tr>
+                <td>
+                    <label for="password">Mot de passe:</label>
+                </td>
+                <td>
+                    <input id="password" type="password" #passwordElement
+                           [(ng-model)]="password" required>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <button type="submit" [disabled]="!form.form.valid">Créer un compte</button>
+    </form>
+</div>

@@ -3,5 +3,5 @@
  */
 
 export class ServiceConfig {
-    static URL: string ;
+    static URL: string ="http://localhost:8181/comptoir";
 }

@@ -48,7 +48,7 @@ export class AccountsListView {
         this.router = router;
         this.language = appService.language.locale;
         this.accountSearch = new AccountSearch();
-        this.accountSearch.companyRef = authService.companyRef;
+        this.accountSearch.companyRef = authService.loggedEmployee.companyRef;
         this.accountSearch.pagination = new Pagination(0, this.accountsPerPage);
         this.searchAccounts();
     }

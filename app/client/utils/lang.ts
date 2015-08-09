@@ -32,7 +32,7 @@ export class LocaleTextsFactory {
         // The main object
         // Convert the array to a LocaleTexts;
         var localeTexts = new LocaleTexts();
-        for (var localeText:LocaleText of value) {
+        for (var localeText of value) {
             var lang = localeText.locale;
             var text = localeText.text;
             localeTexts[lang] = text;

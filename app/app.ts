@@ -18,6 +18,7 @@ import {DialogView} from 'components/utils/dialog/dialog';
 
 
 import {LoginView} from 'components/auth/login/login';
+import {RegisterView} from 'components/auth/register/register';
 
 import {SellView} from 'components/sales/sale/sellView';
 import {ActiveSalesListView} from 'components/sales/actives/listView';
@@ -48,6 +49,7 @@ import {Parent} from 'components/test/test';
 @RouteConfig([
     {path: '/', redirectTo:'/login'},
     {path: '/login', component: LoginView, as:'login'},
+    {path: '/register', component: RegisterView, as:'register'},
 
     {path: '/sales/sale', component: SellView, as: 'saleCurrent'},
     {path: '/sales/sale/:id', component: SellView, as: 'salesSale'},

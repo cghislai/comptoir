@@ -409,9 +409,7 @@ export class ItemService {
             }
         ];
         this.fakeData = [];
-        for (var json of allItems) {
-            var item = JSON.parse(json, ItemFactory.fromJSONItemReviver);
-            this.fakeData.push(item);
-        }
+        var jsonText = JSON.stringify(allItems);
+        this.fakeData = JSON.parse(jsonText, ItemFactory.fromJSONItemReviver);
     }
 }
