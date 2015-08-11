@@ -6,17 +6,31 @@
 import {EmployeeRef,EmployeeSearch, Employee, EmployeeFactory} from 'client/domain/employee';
 import {ComptoirrRequest} from 'client/utils/request';
 import {SearchResult} from 'client/utils/searchResult';
+import {ServiceConfig} from 'client/utils/service';
 
 export class EmployeeClient {
-    private static serviceUrl:string = "http://somewhere.com/employee";
+
+    private static RESOURCE_PATH:string = "/employee";
+
+    private getResourceUrl():string {
+        return ServiceConfig.URL + EmployeeClient.RESOURCE_PATH;
+    }
 
     private getEmployeeUrl(id:number) {
-        return EmployeeClient.serviceUrl + "/" + id;
+        var url = this.getResourceUrl();
+        url += "/" + id;
+        return url;
+    }
+
+    private getSearchUrl() {
+        var url = this.getResourceUrl();
+        url += "/search";
+        return url;
     }
 
 
-    createEmployee(employee:Employee, authToken: string):Promise<EmployeeRef> {
-        var url = EmployeeClient.serviceUrl;
+    createEmployee(employee:Employee, authToken:string):Promise<EmployeeRef> {
+        var url = this.getResourceUrl();
         var request = new ComptoirrRequest();
         return request.post(employee, url, authToken)
             .then(function (response) {
@@ -25,7 +39,7 @@ export class EmployeeClient {
             });
     }
 
-    updateEmployee(employee:Employee, authToken: string):Promise<EmployeeRef> {
+    updateEmployee(employee:Employee, authToken:string):Promise<EmployeeRef> {
         var url = this.getEmployeeUrl(employee.id);
         var request = new ComptoirrRequest();
         return request.put(employee, url, authToken)
@@ -35,7 +49,7 @@ export class EmployeeClient {
             });
     }
 
-    getEmployee(id:number, authToken: string):Promise<Employee> {
+    getEmployee(id:number, authToken:string):Promise<Employee> {
         var url = this.getEmployeeUrl(id);
         var request = new ComptoirrRequest();
         return request.get(url, authToken)
@@ -45,8 +59,8 @@ export class EmployeeClient {
             });
     }
 
-    searchEmployee(search:EmployeeSearch, authToken: string):Promise<SearchResult<Employee>> {
-        var url = EmployeeClient.serviceUrl + '/search';
+    searchEmployee(search:EmployeeSearch, authToken:string):Promise<SearchResult<Employee>> {
+        var url = this.getSearchUrl();
         var request = new ComptoirrRequest();
         return request.post(search, url, authToken)
             .then(function (response) {

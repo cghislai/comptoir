@@ -10,7 +10,7 @@
                 <td class="field">
                     <label id="employee"
                            *ng-if="employeeValue != undefined">
-                        {{ employeeValue.getFullName() }}
+                        {{ employeeValue.firstName }} {{ employeeValue.lastName}}
                     </label>
                 </td>
             </tr>
@@ -21,7 +21,7 @@
                 <td class="field">
                     <label id="company"
                            *ng-if="companyValue != undefined">
-                        {{ companyValue.name.localeTextMap[localeValue.isoCode] }}
+                        {{ companyValue.name[language.locale] }}
                     </label>
                 </td>
             </tr>

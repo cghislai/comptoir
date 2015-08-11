@@ -38,7 +38,7 @@ export class ItemSearch {
 export class ItemFactory {
     static fromJSONItemReviver = (key, value)=>{
         if (key == 'name' || key == "description") {
-            return JSON.parse(value, LocaleTextsFactory.fromJSONLocaleTextsReviver);
+            return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
         return value;
     };

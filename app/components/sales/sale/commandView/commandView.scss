@@ -32,51 +32,10 @@ header {
     border: none !important;
     color: white !important;
   }
-
-  .commandsMenu {
-    position: absolute;
-    border: .2em solid $blueColor;
-    background: white;
-    padding: .5em;
-    font-size: .9em;
-    color: black;
-    z-index: 2;
-
-    .command:not([hidden]) {
-      display: table;
-      width: 100%;
-      padding: .2em;;
-      > span:not([hidden
-      ]) {
-        display: table-cell;
-        vertical-align: middle;
-      }
-      span.name {
-        @extend .lightBlueLink;
-      }
-      span.total {
-        text-align: right;
-      }
-      span.reduction {
-        text-align: right;
-        color: red;
-        font-size: .7em;
-      }
-    }
-
-    .links {
-      margin-top: .5em;
-      a:not([hidden ]) {
-        @extend .lightBlueLink;
-        display: block;
-        padding: .2em;
-      }
-    }
-  }
 }
 
 table {
-  font-size: 1.1em !important;
+
 
   td > *:not([hidden]) {
     display: inline-block;

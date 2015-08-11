@@ -39,6 +39,16 @@ export class LocaleTextsFactory {
         }
         return localeTexts;
     }
+
+    static fromLocaleTextArrayReviver = (jsonArray)=>{
+        var localeTexts = new LocaleTexts();
+        for (var localeText of jsonArray) {
+            var lang = localeText.locale;
+            var text = localeText.text;
+            localeTexts[lang] = text;
+        }
+        return localeTexts;
+    }
 }
 
 

@@ -18,7 +18,7 @@ export class CompanyRef {
 export class CompanyFactory {
     static fromJSONCompanyReviver=(key,value)=>{
       if (key == 'name' || key == "description") {
-          return JSON.parse(value, LocaleTextsFactory.fromJSONLocaleTextsReviver);
+          return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
       }
         return value;
     };

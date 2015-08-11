@@ -38,7 +38,7 @@ export class AccountFactory {
 
     static fromJSONAccountReviver = (key, value)=>{
         if (key == 'description') {
-            return JSON.parse(value, LocaleTextsFactory.fromJSONLocaleTextsReviver);
+            return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
         if (key == 'accountType') {
             return AccountFactory.getAccountTypeFromString(value);
