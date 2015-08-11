@@ -1,25 +1,15 @@
 /**
  * Created by cghislai on 09/08/15.
  */
-import {LocaleTextsFactory} from 'client/utils/lang';
+import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 
 
 export class JSONFactory {
-    static replacers=  {
-    };
-
-    static toJSONReplacer(key: string, value: any) : string {
-        var valueType = typeof value;
-        var replacer = JSONFactory.replacers[valueType];
-        if (replacer == undefined) {
-            return value;
+      static toJSONReplacer(key: string, value: any) : any {
+        if (value instanceof LocaleTexts) {
+            var localeTextArray = LocaleTextsFactory.toJSONArrayLocaleTextsTransformer(value);
+            return localeTextArray;
         }
-        return replacer(value);
-    }
-
-    static initReplacers() {
-        JSONFactory.replacers['LocaleTexts'] = LocaleTextsFactory.toJSONLocaleTextsReplacer;
+        return value;
     }
 }
-
-JSONFactory.initReplacers();

@@ -3,6 +3,7 @@
  */
 
 import {LocaleText, LocaleTextFactory} from 'client/domain/lang';
+
 // localeText[lang]=text
 export class LocaleTexts {
 }
@@ -40,7 +41,7 @@ export class LocaleTextsFactory {
         return localeTexts;
     }
 
-    static fromLocaleTextArrayReviver = (jsonArray)=>{
+    static fromLocaleTextArrayReviver = (jsonArray)=> {
         var localeTexts = new LocaleTexts();
         for (var localeText of jsonArray) {
             var lang = localeText.locale;
@@ -48,6 +49,18 @@ export class LocaleTextsFactory {
             localeTexts[lang] = text;
         }
         return localeTexts;
+    }
+
+    static toJSONArrayLocaleTextsTransformer = (texts:LocaleTexts)=> {
+        var textArray = [];
+        for (var lang in texts) {
+            var text = texts[lang];
+            var localeText = new LocaleText();
+            localeText.locale = lang;
+            localeText.text = text;
+            textArray.push(localeText);
+        }
+        return textArray;
     }
 }
 

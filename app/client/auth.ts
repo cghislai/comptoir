@@ -14,7 +14,7 @@ export class AuthClient {
     }
 
     private getRegisterUrl():string {
-        return ServiceConfig.URL + "/register";
+        return ServiceConfig.URL + "/registration";
     }
 
     login(login:string, password:string):Promise<LoginResponse> {
