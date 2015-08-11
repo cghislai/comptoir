@@ -22,10 +22,19 @@
 <body>
 
   <app>Loading...</app>
-
   <!-- inject:js -->
   <!-- endinject -->
+<script>
+  System.config({
+    baseURL: '<%= APP_BASE %>',
+    paths: {'*': '*.js?v=<%= VERSION %>'},
+    defaultJSExtensions: true
+  });
 
+</script>
+  <!--// FIX alpha 34 router-->
+  <script src="<%= APP_BASE %>res/lib/router.js"></script>
+  <script src="<%= APP_BASE %>lib/angular2.js"></script>
   <script src="<%= APP_BASE %>init.js?v=<%= VERSION %>"></script>
 </body>
 </html>

@@ -329,8 +329,10 @@ function injectableDevAssetsRef() {
   var src = PATH.src.lib.map(function(path) {
     return join(PATH.dest.dev.lib, path.split('/').pop());
   });
-  src.push(PATH.dest.dev.ng2, PATH.dest.dev.router,
-           join(PATH.dest.dev.all, '**/*.css'));
+  // FIX for alpha34 router
+  src.push(join(PATH.dest.dev.all, '**/*.css'));
+  //src.push(PATH.dest.dev.ng2, PATH.dest.dev.router,
+  //    join(PATH.dest.dev.all, '**/*.css'));
   return src;
 }
 
