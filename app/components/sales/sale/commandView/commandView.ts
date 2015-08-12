@@ -2,7 +2,7 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, NgIf, EventEmitter} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, EventEmitter, formDirectives} from 'angular2/angular2';
 
 import {Item} from 'client/domain/item';
 import {LocaleTexts} from 'client/utils/lang';
@@ -17,6 +17,7 @@ class ToAddItem {
     name:string = null;
     amount:number = 1;
     price:number = null;
+    vat: number = 21.0;
 }
 
 
@@ -30,7 +31,7 @@ class ToAddItem {
 @View({
     templateUrl: './components/sales/sale/commandView/commandView.html',
     styleUrls: ['./components/sales/sale/commandView/commandView.css'],
-    directives: [AutoFocusDirective, NgFor,NgIf]
+    directives: [AutoFocusDirective, NgFor,NgIf, formDirectives]
 })
 
 export class CommandView {
@@ -73,6 +74,8 @@ export class CommandView {
     doAddCustomItem() {
         var item = new Item();
         item.vatExclusive = this.toAddItem.price;
+        item.vatRate = this.toAddItem.vat * 0.01;
+        item.name = new LocaleTexts();
         item.name[this.language] = this.toAddItem.name;
         item.reference = null;
         var commandItem = new CommandItem(item);
@@ -192,6 +195,24 @@ export class CommandView {
         this.toAddItem.price = price;
     }
 
+    handleToAddItemVatKeyUp(event) {
+        if (event.which == 13) { // Enter
+            this.setToAddItemVat(event);
+            return;
+        }
+        if (event.which == 27) { // Escape
+            return;
+        }
+    }
+
+    setToAddItemVat(event) {
+        var vat = parseFloat(event.target.value);
+        if (this.toAddItem.vat == vat) {
+            return;
+        }
+        this.toAddItem.vat = vat;
+    }
+
     isItemToAddValid() {
         if (this.toAddItem.name == null
             || this.toAddItem.name.length <= 0) {
@@ -205,6 +226,11 @@ export class CommandView {
         if (this.toAddItem.price == null
             || isNaN(this.toAddItem.price)
             || this.toAddItem.price < 0.01) {
+            return false
+        }
+        if (this.toAddItem.vat == null
+            || isNaN(this.toAddItem.vat)
+            || this.toAddItem.vat < 0.01) {
             return false
         }
         return true;

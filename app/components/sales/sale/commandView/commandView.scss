@@ -119,30 +119,30 @@ table {
   font-size: 1em;
   padding: .5em;
   border: 1px solid lightsteelblue;
-}
 
-.newItem h2 {
-  font-size: 1em;
-  font-weight: bolder;
-  margin: 0;
-}
+  h2 {
+    font-size: 1em;
+    font-weight: bolder;
+    margin: 0;
+  }
 
-.newItem input, .newItem button {
-  font-size: .9em;
-}
+  input, button {
+    font-size: .9em;
+  }
 
-.newItem .ref {
-  width: 10%;
-}
-
-.newItem .name {
-  width: 50%;
-}
-
-.newItem .price {
-  width: 15%;
-}
-
-.newItem .amount {
-  width: 10%;
+  .ref {
+    width: 10%;
+  }
+  .name {
+    width: 45%;
+  }
+  .amount {
+    width: 7%;
+  }
+  .price {
+    width: 15%;
+  }
+  .vat {
+    width: 10%;
+  }
 }

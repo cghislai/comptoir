@@ -27,7 +27,7 @@
         </div>
     </header>
     <table class="dataTable" [hidden]="command.getItems().length == 0">
-        <thead >
+        <thead>
         <tr>
             <th>Ref</th>
             <th>Nom</th>
@@ -53,7 +53,7 @@
                    [class.editing]="editingAmountItem == commandItem"
                    [class.unneeded]="commandItem.amount <= 1 || editingAmountItem == commandItem"
                    [class.nolink]="validated"
-                        [class.actionLink]="!validated">
+                   [class.actionLink]="!validated">
                         <span class="count">
                             {{ commandItem.amount}} x
                         </span>
@@ -124,7 +124,7 @@
     <div class="newItem" [hidden]="validated">
         <h2>Ajouter un produit</h2>
 
-        <form>
+        <form (ng-submit)="doAddCustomItem()">
             <input #name placeholder="Nom" class="name"
                    [value]="toAddItem.name" (keyup)="toAddItem.name = name.value">
             <input #amount placeholder="Quantité" class="amount"
@@ -132,12 +132,21 @@
                    [value]="toAddItem.amount"
                    (keyup)="setToAddItemAmount(amount.value)"
                    (change)="setToAddItemAmount(amount.value)">
+            <span>
             <input #price placeholder="Prix unitaire" class="price number"
                    type="number" min="0.01" step="0.01"
                    [value]="toAddItem.price | number:'.2-2'"
                    (keyup)="handleToAddItemPriceKeyUp($event)"
-                   (change)="setToAddItemPrice($event)">
-            <button (click)="doAddCustomItem()" [disabled]="!isItemToAddValid()">Ajouter</button>
+                   (change)="setToAddItemPrice($event)">€
+            </span>
+            <span>
+            <input #vat placeholder="TVA" class="vat number"
+                   type="number" min="0.01" step="0.01"
+                   [value]="toAddItem.vat | number:'.2-2'"
+                   (keyup)="handleToAddItemVatKeyUp($event)"
+                   (change)="setToAddItemVat($event)">%
+            </span>
+            <button type='submit' [disabled]="!isItemToAddValid()">Ajouter</button>
         </form>
     </div>
 

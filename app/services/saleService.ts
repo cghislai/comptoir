@@ -6,12 +6,12 @@ import {Pagination} from 'client/utils/pagination';
 import {SearchResult} from 'client/utils/search';
 
 export class CommandItem {
-    item: Item;
-    amount: number;
-    reduction: number;
-    price: number;
+    item:Item;
+    amount:number;
+    reduction:number;
+    price:number;
 
-    constructor(item: Item) {
+    constructor(item:Item) {
         this.item = item;
         this.amount = 0;
         this.reduction = null;
@@ -20,37 +20,38 @@ export class CommandItem {
 }
 
 export class CommandSearch {
-    pagination: Pagination;
-    active: boolean;
+    pagination:Pagination;
+    active:boolean;
 }
 
 export class Command {
-    items: CommandItem[];
-    globalReduction: number;
-    vatExclusiveAmount: number;
-    vatAmount: number;
-    reductionAmount: number;
-    totalPrice: number;
-    id: number;
-    companyId: number;
-    dateTime: Date;
-    active: boolean;
-    paid: boolean;
+    items:CommandItem[];
+    globalReduction:number;
+    vatExclusiveAmount:number;
+    vatAmount:number;
+    reductionAmount:number;
+    totalPrice:number;
+    id:number;
+    companyId:number;
+    dateTime:Date;
+    active:boolean;
+    paid:boolean;
 
     constructor() {
         this.items = [];
         this.globalReduction = null;
         this.vatExclusiveAmount = 0;
     }
+
     reset() {
         this.items = [];
         this.vatExclusiveAmount = 0;
         this.globalReduction = null;
     }
 
-    addItem(item: Item) {
+    addItem(item:Item) {
         var id = item.id;
-        var commandItem: CommandItem = this.getCommandItem(item);
+        var commandItem:CommandItem = this.getCommandItem(item);
         if (commandItem == null) {
             commandItem = new CommandItem(item);
             this.items.push(commandItem);
@@ -60,10 +61,11 @@ export class Command {
         this.calcTotalPrice();
         return commandItem;
     }
-    removeItem(item: Item) {
+
+    removeItem(item:Item) {
         var oldItems = this.items;
         var newItems:CommandItem[] = [];
-        oldItems.forEach(function(commandItem: CommandItem) {
+        oldItems.forEach(function (commandItem:CommandItem) {
             if (commandItem.item == item) {
                 return;
             }
@@ -72,15 +74,17 @@ export class Command {
         this.items = newItems;
         this.calcTotalPrice();
     }
-    addCommandItem(commandItem: CommandItem) {
+
+    addCommandItem(commandItem:CommandItem) {
         this.calcItemPrice(commandItem);
         this.items.push(commandItem);
         this.calcTotalPrice();
     }
-    removeCommandItem(commandItem: CommandItem) {
+
+    removeCommandItem(commandItem:CommandItem) {
         var oldItems = this.items;
         var newItems:CommandItem[] = [];
-        oldItems.forEach(function(existingItem: CommandItem) {
+        oldItems.forEach(function (existingItem:CommandItem) {
             if (commandItem == existingItem) {
                 return;
             }
@@ -89,20 +93,29 @@ export class Command {
         this.items = newItems;
         this.calcTotalPrice();
     }
-    getCommandItem(item: Item) {
+
+    getCommandItem(item:Item) {
         var foundCommandItem = null;
-        this.items.forEach(function(commandItem: CommandItem) {
+        this.items.forEach(function (commandItem:CommandItem) {
             if (commandItem.item == item) {
+                foundCommandItem = commandItem;
+                return;
+            }
+            if (commandItem.item != undefined
+                && commandItem.item.id != undefined
+                && commandItem.item.id == item.id) {
                 foundCommandItem = commandItem;
                 return;
             }
         });
         return foundCommandItem;
     }
+
     getItems() {
         return this.items;
     }
-    setReduction(item: Item, reduction: number) {
+
+    setReduction(item:Item, reduction:number) {
         var commandItem:CommandItem = this.getCommandItem(item);
         if (commandItem == null) {
             return;
@@ -111,11 +124,12 @@ export class Command {
         this.calcItemPrice(commandItem);
         this.calcTotalPrice();
     }
+
     calcTotalPrice() {
         this.vatExclusiveAmount = 0;
         this.vatAmount = 0;
         var thisService = this;
-        this.items.forEach(function(item: CommandItem) {
+        this.items.forEach(function (item:CommandItem) {
             var price = item.price;
             thisService.vatExclusiveAmount += price;
 
@@ -123,7 +137,7 @@ export class Command {
             thisService.vatAmount += vat;
         });
         if (this.globalReduction != null) {
-            this.reductionAmount = this.globalReduction * 0.01  * this.vatExclusiveAmount;
+            this.reductionAmount = this.globalReduction * 0.01 * this.vatExclusiveAmount;
             this.vatExclusiveAmount -= this.reductionAmount;
             var vatReduction = this.vatAmount * this.globalReduction * 0.01;
             this.vatAmount -= vatReduction;
@@ -132,17 +146,17 @@ export class Command {
         }
         this.vatExclusiveAmount = Number((this.vatExclusiveAmount).toFixed(2));
         this.vatAmount = Number(( this.vatAmount).toFixed(2));
-        this.totalPrice =  Number((this.vatExclusiveAmount + this.vatAmount).toFixed(2));
+        this.totalPrice = Number((this.vatExclusiveAmount + this.vatAmount).toFixed(2));
     }
 
-    calcItemPrice(commandItem: CommandItem) {
+    calcItemPrice(commandItem:CommandItem) {
         var item = commandItem.item;
         if (item == null) {
             return;
         }
         var itemPrice = item.vatExclusive;
         var amount = commandItem.amount;
-        var totalPrice = amount * itemPrice ;
+        var totalPrice = amount * itemPrice;
 
         var reduction = commandItem.reduction;
         if (reduction != null) {
@@ -154,15 +168,15 @@ export class Command {
 }
 
 export class SaleService {
-    fakeData: Command[];
-    fakeIdCounter: number = 0;
-    activeCommand: Command;
+    fakeData:Command[];
+    fakeIdCounter:number = 0;
+    activeCommand:Command;
 
     constructor() {
         this.initFakeData();
     }
 
-    searchCommands(commandSearch: CommandSearch): Promise<SearchResult<Command>> {
+    searchCommands(commandSearch:CommandSearch):Promise<SearchResult<Command>> {
         // TODO
         var thisService = this;
         return new Promise((resolve, reject)=> {
@@ -194,10 +208,10 @@ export class SaleService {
         });
     }
 
-    removeCommand(command: Command): Promise<boolean>{
+    removeCommand(command:Command):Promise<boolean> {
         var thisService = this;
         var data = this.fakeData;
-        return new Promise((resolve, reject)=>{
+        return new Promise((resolve, reject)=> {
             var newData = [];
             for (var exitingCommand of data) {
                 if (exitingCommand != command) {
@@ -212,14 +226,14 @@ export class SaleService {
         });
     }
 
-    newCommand(): Command {
+    newCommand():Command {
         var command = null;
         command = new Command();
         command.active = true;
         return command;
     }
 
-    saveCommand(command: Command) {
+    saveCommand(command:Command) {
         if (command.id == undefined) {
             this.fakeIdCounter++;
             command.id = this.fakeIdCounter;
@@ -227,7 +241,7 @@ export class SaleService {
         }
     }
 
-    getCommand(id: number) {
+    getCommand(id:number) {
         for (var command of this.fakeData) {
             if (command.id == id) {
                 return command;

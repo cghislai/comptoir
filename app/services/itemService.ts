@@ -161,7 +161,6 @@ export class ItemService {
                 picItem.picture = pic;
                 if (pic != undefined) {
                     picItem.dataURI = PicturedItemFactory.buildPictureURI(pic);
-                    console.log("picitem " + picItem.item.id + " to picture " + pic.id);
                 }
                 return picItem;
             });
