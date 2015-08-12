@@ -6,7 +6,7 @@ import {Router} from 'angular2/router';
 
 
 import {Item, ItemSearch} from 'client/domain/item';
-import {SearchResult} from 'client/utils/searchResult';
+import {SearchResult} from 'client/utils/search';
 import {PicturedItem} from 'client/utils/picture';
 import {LocaleTexts} from 'client/utils/lang';
 import {Pagination} from 'client/utils/pagination';
@@ -32,6 +32,7 @@ export class ProductsListView {
 
     itemService:ItemService;
     itemSearch:ItemSearch;
+    pagination: Pagination;
     itemSearchResult:SearchResult<PicturedItem>;
     columns:ItemColumn[];
     itemsPerPage:number = 25;
@@ -46,7 +47,7 @@ export class ProductsListView {
         this.itemService = itemService;
 
         this.itemSearch = new ItemSearch();
-        this.itemSearch.pagination = new Pagination(0, this.itemsPerPage);
+        this.pagination = new Pagination(0, this.itemsPerPage);
 
         this.columns = [
             ItemColumn.REFERENCE,
@@ -61,14 +62,14 @@ export class ProductsListView {
     }
 
     searchItems() {
-        this.itemService.searchPicturedItems(this.itemSearch)
+        this.itemService.searchPicturedItems(this.itemSearch, this.pagination)
             .then((result:SearchResult<PicturedItem>)=> {
                 this.itemSearchResult = result;
             });
     }
 
     onPageChanged(pagination:Pagination) {
-        this.itemSearch.pagination = pagination;
+        this.pagination = pagination;
         this.searchItems();
     }
 

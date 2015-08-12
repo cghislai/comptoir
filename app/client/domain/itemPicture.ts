@@ -16,13 +16,15 @@ export class ItemPicture {
     contentType:string;
 }
 
-export class ItemPictureSearch {
+export class ItemPictureSearch{
 
 }
 
 export class ItemPictureFactory {
-    static fromJSONPictureReviver = (key, value)=>{
+    static fromJSONPictureReviver = (key, value)=> {
         return value;
     }
+
+
 
 }

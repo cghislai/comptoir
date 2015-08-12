@@ -5,8 +5,9 @@
 import {Component, View, NgFor, NgIf, EventEmitter} from 'angular2/angular2';
 
 import {Item, ItemSearch} from 'client/domain/item';
-import {SearchResult} from 'client/utils/searchResult';
+import {SearchResult} from 'client/utils/search';
 import {PicturedItem} from 'client/utils/picture';
+import {Pagination} from 'client/utils/pagination';
 
 import {ApplicationService} from 'services/application';
 import {ItemService} from 'services/itemService';
@@ -37,6 +38,7 @@ export class ItemListView {
     //
     itemService: ItemService;
     itemSearch:ItemSearch;
+    pagination: Pagination;
     itemSearchResult: SearchResult<PicturedItem>;
 
     constructor(applicationService:ApplicationService, itemService:ItemService) {
@@ -44,6 +46,7 @@ export class ItemListView {
 
         this.itemSearch = new ItemSearch();
         this.itemSearch.multiSearch = null;
+        this.pagination = new Pagination(0, 20);
         this.itemService = itemService;
 
         this.columns = [
@@ -56,7 +59,7 @@ export class ItemListView {
     }
 
     searchItems() {
-        this.itemService.searchPicturedItems(this.itemSearch)
+        this.itemService.searchPicturedItems(this.itemSearch, this.pagination)
             .then((result:SearchResult<PicturedItem>)=> {
                 this.itemSearchResult = result;
             });

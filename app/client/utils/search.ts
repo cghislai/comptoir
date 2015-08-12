@@ -1,6 +1,7 @@
 /**
- * Created by cghislai on 07/08/15.
+ * Created by cghislai on 11/08/15.
  */
+
 import {ComptoirResponse} from 'client/utils/request';
 
 export class SearchResult<T> {

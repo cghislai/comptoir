@@ -4,18 +4,46 @@
 
 import {ItemPicture, ItemPictureRef, ItemPictureSearch, ItemPictureFactory} from 'client/domain/itemPicture';
 import {ComptoirrRequest} from 'client/utils/request';
-import {SearchResult} from 'client/utils/searchResult';
+import {SearchResult} from 'client/utils/search';
+import {ServiceConfig} from 'client/utils/service';
+import {Pagination} from'client/utils/pagination';pagination:Pagination
 
 export class ItemPictureClient {
     private static serviceUrl:string = "http://somewhere.com/itemPicture";
 
-    private getItemPictureUrl(id:number) {
-        return ItemPictureClient.serviceUrl + "/" + id;
+    private getResourceUrl(itemPicture: ItemPicture) : string {
+        var itemId = itemPicture.itemRef.id;
+        var url = ServiceConfig.URL;
+        url += "/item";
+        url += "/"+itemId;
+        url += "/picture";
+        if (itemPicture.id != null) {
+            url += "/" + itemPicture.id;
+        }
+        return url;
+    }
+
+    private getItemPictureUrl(itemId: number, pictureId: number) {
+        var url = ServiceConfig.URL;
+        url += "/item";
+        url += "/"+itemId;
+        url += "/picture";
+        url += "/" + pictureId;
+        return url;
+    }
+
+    private getItemPictureSearchUrl(itemId: number, pagination:Pagination) {
+        var url = ServiceConfig.URL;
+        url += "/item";
+        url += "/"+itemId;
+        url += "/picture";
+        url += "/search";
+        return url;
     }
 
 
     createItemPicture(itemPicture:ItemPicture, authToken: string):Promise<ItemPictureRef> {
-        var url = ItemPictureClient.serviceUrl;
+        var url = this.getResourceUrl(itemPicture);
         var request = new ComptoirrRequest();
         return request.post(itemPicture, url, authToken)
             .then(function (response) {
@@ -25,7 +53,7 @@ export class ItemPictureClient {
     }
 
     updateItemPicture(itemPicture:ItemPicture, authToken: string):Promise<ItemPictureRef> {
-        var url = this.getItemPictureUrl(itemPicture.id);
+        var url = this.getResourceUrl(itemPicture);
         var request = new ComptoirrRequest();
         return request.put(itemPicture, url, authToken)
             .then(function (response) {
@@ -34,8 +62,8 @@ export class ItemPictureClient {
             });
     }
 
-    getItemPicture(id:number, authToken: string):Promise<ItemPicture> {
-        var url = this.getItemPictureUrl(id);
+    getItemPicture(itemId: number, id:number, authToken: string):Promise<ItemPicture> {
+        var url = this.getItemPictureUrl(itemId, id);
         var request = new ComptoirrRequest();
         return request.get(url, authToken)
             .then(function (response) {
@@ -44,10 +72,10 @@ export class ItemPictureClient {
             });
     }
 
-    searchItemPicture(search:ItemPictureSearch, authToken: string):Promise<SearchResult<ItemPicture>> {
-        var url = ItemPictureClient.serviceUrl + '/search';
+    searchItemPicture(itemId: number, pagination: Pagination, authToken: string):Promise<SearchResult<ItemPicture>> {
+        var url = this.getItemPictureSearchUrl(itemId, pagination);
         var request = new ComptoirrRequest();
-        return request.post(search, url, authToken)
+        return request.get(url, authToken)
             .then(function (response) {
                 var result = new SearchResult<ItemPicture>().parseResponse(response, ItemPictureFactory.fromJSONPictureReviver);
                 return result;

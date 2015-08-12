@@ -7,7 +7,7 @@ import {ItemPicture} from 'client/domain/itemPicture';
 
 export class PicturedItem {
     item:Item;
-    picture: ItemPicture;
+    picture:ItemPicture;
     dataURI:string;
 }
 
@@ -20,7 +20,7 @@ export class PicturedItemFactory {
         return picturedItem;
     }
 
-    static buildPictureURI(picture: ItemPicture):string {
+    static buildPictureURI(picture:ItemPicture):string {
         if (picture == undefined) {
             return undefined;
         }
@@ -34,7 +34,7 @@ export class PicturedItemFactory {
         return undefined;
     }
 
-    static buildPictureDataFromDataURI(dataURI: string, picture: ItemPicture) {
+    static buildPictureDataFromDataURI(dataURI:string, picture:ItemPicture) {
         if (picture == undefined) {
             return;
         }
@@ -45,8 +45,17 @@ export class PicturedItemFactory {
 
         var contentType = dataURI.substring(contentTypeStartIndex, contentTypeEndIndex);
         var encodedData = dataURI.substring(dataStartIndex, dataEndIndex);
-        var data = atob(encodedData);
         picture.contentType = contentType;
-        picture.data = data;
+        picture.data = encodedData;
+    }
+
+    static getPictureDataFromString(datastring:string) {
+        var buf = new ArrayBuffer(datastring.length * 2); // 2 bytes for each char
+        var bufView = new Uint16Array(buf);
+        for (var i = 0; i < datastring.length; i++) {
+            bufView[i] = datastring.charCodeAt(i);
+        }
+        var data:number[] = Array.prototype.slice.call(bufView);
+        return data;
     }
 }

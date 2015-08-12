@@ -25,8 +25,7 @@ export class Item {
 }
 
 export class ItemSearch {
-    pagination:Pagination;
-    companyId:number;
+    companyRef: CompanyRef;
     multiSearch:string;
     nameContains:string;
     descriptionContains:string;

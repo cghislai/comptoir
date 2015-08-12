@@ -3,7 +3,7 @@
  */
 import {Item} from 'client/domain/item' ;
 import {Pagination} from 'client/utils/pagination';
-import {SearchResult} from 'client/utils/searchResult';
+import {SearchResult} from 'client/utils/search';
 
 export class CommandItem {
     item: Item;

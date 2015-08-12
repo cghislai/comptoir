@@ -6,7 +6,7 @@ import {Router} from 'angular2/router';
 
 
 import {Account, AccountType, AccountSearch} from 'client/domain/account';
-import {SearchResult} from 'client/utils/searchResult';
+import {SearchResult} from 'client/utils/search';
 import {LocaleTexts, Language} from 'client/utils/lang';
 
 import {AccountService, NamedAccountType} from 'services/account';

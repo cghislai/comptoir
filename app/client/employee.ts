@@ -5,7 +5,7 @@
 
 import {EmployeeRef,EmployeeSearch, Employee, EmployeeFactory} from 'client/domain/employee';
 import {ComptoirrRequest} from 'client/utils/request';
-import {SearchResult} from 'client/utils/searchResult';
+import {SearchResult} from 'client/utils/search';
 import {ServiceConfig} from 'client/utils/service';
 
 export class EmployeeClient {

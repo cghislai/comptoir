@@ -144,9 +144,12 @@ export class EditProductView {
         item.reference = this.itemModel.reference;
 
         this.itemModel.item.dataURI = this.itemModel.pictureDataURI;
-        this.itemService.savePicturedItem(this.itemModel.item);
+        this.itemService.savePicturedItem(this.itemModel.item).then(
+            () => {
+                this.router.navigate('/items/list');
+            }
+        );
 
-        this.router.navigate('/items/list');
     }
 
 }

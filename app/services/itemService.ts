@@ -9,7 +9,7 @@ import {ItemPicture, ItemPictureRef} from 'client/domain/itemPicture';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 import {PicturedItem, PicturedItemFactory} from 'client/utils/picture';
 import {Pagination} from 'client/utils/pagination';
-import {SearchResult} from 'client/utils/searchResult';
+import {SearchResult} from 'client/utils/search';
 import {ItemClient} from 'client/item';
 import {ItemPictureClient} from 'client/itemPicture'
 
@@ -21,28 +21,33 @@ export class ItemService {
     private pictureClient:ItemPictureClient;
     private authService:AuthService;
 
-    private fakeData:Item[];
-
     constructor(@Inject authService:AuthService) {
         this.authService = authService;
         this.itemClient = new ItemClient();
         this.pictureClient = new ItemPictureClient();
-        this.initFakeData();
     }
 
 
+    public createItem(item:Item):Promise<ItemRef> {
+        item.companyRef = this.authService.loggedEmployee.companyRef;
+        var authToken = this.authService.authToken;
+        return this.itemClient.createIem(item, authToken);
+    }
+
+    public updateItem(item:Item):Promise<ItemRef> {
+        var authToken = this.authService.authToken;
+        return this.itemClient.updateItem(item, authToken);
+    }
+
     public getItem(id:number):Promise<Item> {
-        var allItems = this.fakeData;
-        // TODO
-        return new Promise((resolve, reject) => {
-            for (var item of allItems) {
-                if (item.id == id) {
-                    resolve(item);
-                    return;
-                }
-            }
-            resolve(null); //TODO: or throw?
-        });
+        var authToken = this.authService.authToken;
+        return this.itemClient.getItem(id, authToken);
+    }
+
+    public searchItems(itemSearch:ItemSearch, pagination:Pagination):Promise<SearchResult<Item>> {
+        itemSearch.companyRef = this.authService.loggedEmployee.companyRef;
+        var authToken = this.authService.authToken;
+        return this.itemClient.searchItems(itemSearch, pagination, authToken);
     }
 
     /**
@@ -69,7 +74,7 @@ export class ItemService {
                 }
 
                 var picId = picRef.id;
-                this.pictureClient.getItemPicture(picId, authToken)
+                this.pictureClient.getItemPicture(id, picId, authToken)
                     .then((pic)=> {
                         picItem.picture = pic;
                         if (pic != undefined) {
@@ -102,7 +107,7 @@ export class ItemService {
                         return;
                     }
                     var picId = item.mainPictureRef.id;
-                    this.pictureClient.getItemPicture(picId, authToken)
+                    this.pictureClient.getItemPicture(id, picId, authToken)
                         .then((pic)=> {
                             picItem.picture = pic;
                             if (pic != undefined) {
@@ -121,12 +126,9 @@ export class ItemService {
      * @param itemSearch
      * @returns {Promise<SearchResult<PicturedItem>>}
      */
-    public searchPicturedItems(itemSearch:ItemSearch):Promise<SearchResult<PicturedItem>> {
-        var authToken = this.authService.authToken;
-        var thisService = this;
-
-        return this.searchItems(itemSearch)
-            .then(function (itemResult : SearchResult<Item>) {
+    public searchPicturedItems(itemSearch:ItemSearch, pagination:Pagination):Promise<SearchResult<PicturedItem>> {
+        return this.searchItems(itemSearch, pagination)
+            .then(function (itemResult:SearchResult<Item>) {
                 var result = new SearchResult<PicturedItem>();
                 result.count = itemResult.count;
                 result.list = [];
@@ -136,280 +138,95 @@ export class ItemService {
                     result.list.push(picItem);
                 }
                 return result;
-/*            }).then((result)=> {
+                /*            }).then((result)=> {
 
-                var allImagesPromise = Promise.all(
-                    result.list.map((picItem:PicturedItem)=> {
-                        var item = picItem.item;
-                        var picRef = item.mainPictureRef;
-                        console.log("pic ref: " + picRef);
-                        if (picRef == undefined) {
-                            return Promise.resolve();
-                        }
-                        var picId = picRef.id;
-                        console.log("pic id: " + picId);
-                        return thisService.pictureClient.getItemPicture(picId, authToken)
-                            .then(function (itemPic:ItemPicture) {
-                                console.log("got item pic : " + itemPic);
-                                if (itemPic != undefined) {
-                                    var dataURI = PicturedItemFactory.buildPictureURI(itemPic);
-                                    picItem.dataURI = dataURI;
-                                }
-                                return itemPic;
-                            }, (error)=> {
-                                return null;
-                            });
-                    })
-                )
-                var resultPromise = Promise.resolve();
-                return resultPromise.then(()=>{
-                    return result;
-                });*/
+                 var allImagesPromise = Promise.all(
+                 result.list.map((picItem:PicturedItem)=> {
+                 var item = picItem.item;
+                 var picRef = item.mainPictureRef;
+                 console.log("pic ref: " + picRef);
+                 if (picRef == undefined) {
+                 return Promise.resolve();
+                 }
+                 var picId = picRef.id;
+                 console.log("pic id: " + picId);
+                 return thisService.pictureClient.getItemPicture(picId, authToken)
+                 .then(function (itemPic:ItemPicture) {
+                 console.log("got item pic : " + itemPic);
+                 if (itemPic != undefined) {
+                 var dataURI = PicturedItemFactory.buildPictureURI(itemPic);
+                 picItem.dataURI = dataURI;
+                 }
+                 return itemPic;
+                 }, (error)=> {
+                 return null;
+                 });
+                 })
+                 )
+                 var resultPromise = Promise.resolve();
+                 return resultPromise.then(()=>{
+                 return result;
+                 });*/
             });
     }
 
-    public searchItems(itemSearch:ItemSearch):Promise<SearchResult<Item>> {
-        // TODO
-        var allItems = this.fakeData;
-        return new Promise((resolve, reject) => {
-            var items = allItems;
-            var searchResult = new SearchResult<Item>();
-            if (itemSearch == null) {
-                searchResult.count = allItems.length;
-                searchResult.list = allItems;
-                resolve(searchResult);
-            }
-            var multiStringValue = itemSearch.multiSearch;
-            if (multiStringValue != null && multiStringValue.length > 0) {
-                var foundItems = [];
-                for (var item of allItems) {
-                    if (item.reference.indexOf(multiStringValue) == 0) {
-                        foundItems.push(item);
-                        continue;
-                    }
-                    var itemName = item.name;
-                    for (var lang in itemName) {
-                        var name:string = itemName[lang];
-                        if (name != undefined && name.indexOf(multiStringValue) >= 0) {
-                            foundItems.push(item);
-                            continue;
-                        }
-                    }
-                }
-                items = foundItems;
-            }
-            var pagination = itemSearch.pagination;
-            if (pagination != null) {
-                var first = pagination.firstIndex;
-                var size = pagination.pageSize;
-                size = Math.min(size, items.length);
-                var pageItems = [];
-                for (var pageIndex = 0; pageIndex < size; pageIndex++) {
-                    var item = items[first + pageIndex];
-                    pageItems.push(item);
-                }
-                items = pageItems;
-            }
-            var result = new SearchResult<Item>();
-            result.count = allItems.length;
-            result.list = items;
-            resolve(result);
-        });
-    }
 
-    public saveItem(item:Item):Promise<Item> {
-        // TODO
-        var id = this.fakeData.length;
-        item.id = id;
-        var thisService = this;
-        return new Promise((resolve, reject) => {
-            if (item.id != null) {
-                resolve(item);
-            }
-            thisService.fakeData.push(item);
-            resolve(item);
-        });
-    }
-
-    public savePicturedItem(picturedItem:PicturedItem):Promise<PicturedItem> {
-        // TODO
+    public savePicturedItem(picturedItem:PicturedItem):Promise<ItemPictureRef> {
         var thisService = this;
         var authToken = this.authService.authToken;
 
-        return new Promise<PicturedItem>((resolve, reject)=> {
-            // Convert, save, update or remove picture
-            var pic = picturedItem.picture;
-            var dataURI = picturedItem.dataURI;
+        var item = picturedItem.item;
+        var picture = picturedItem.picture;
+        var pictureDataURI = picturedItem.dataURI;
 
-            if (dataURI != null) {
-                if (pic == undefined) {
-                    pic = new ItemPicture();
-                }
-                PicturedItemFactory.buildPictureDataFromDataURI(dataURI, pic);
-                if (pic.id == undefined) {
-                    thisService.pictureClient.createItemPicture(pic, authToken)
-                        .then((picRef)=> {
-                            pic.id = picRef.id;
-                            resolve(picturedItem);
-                        })
-                } else {
-                    thisService.pictureClient.updateItemPicture(pic, authToken);
-                    resolve(picturedItem);
-                }
+        if (picture == null) {
+            if (pictureDataURI == null) {
+                item.mainPictureRef = null;
             } else {
-                // No picture data
-                if (pic != undefined) {
-                    picturedItem.picture = null;
-                }
-                resolve(picturedItem);
-            }
-        }).then((picItem:PicturedItem)=> {
-                // Save item
-                var item = picItem.item;
-                var pic = picItem.picture;
-                if (pic == undefined) {
-                    item.mainPictureRef = null;
-                } else {
-                    var picRef = new ItemPictureRef();
-                    picRef.id = pic.id;
-                    item.mainPictureRef = picRef;
-                }
+                picture = new ItemPicture();
+                PicturedItemFactory.buildPictureDataFromDataURI(pictureDataURI, picture);
+                picturedItem.picture = picture;
 
-                return thisService.saveItem(item)
-                    .then((savedItem)=> {
-                        picItem.item = savedItem;
-                        return picItem;
-                    });
+            }
+        }
+        var saveAction:Promise<ItemRef>;
+        if (item.id == null) {
+            saveAction = this.itemClient.createIem(item, authToken);
+        } else {
+            saveAction = this.itemClient.updateItem(item, authToken);
+        }
+
+        return saveAction
+            .then((itemRef:ItemRef)=> {
+                // Save picture
+                item.id = itemRef.id;
+                if (picture == null) {
+                    return null;
+                }
+                picture.itemRef = itemRef;
+
+                if (picture != null) {
+                    if (picture.id == null) {
+                        return this.pictureClient.createItemPicture(picture, authToken);
+                    } else {
+                        return this.pictureClient.updateItemPicture(picture, authToken);
+                    }
+                }
+            }).then((pictureRef:ItemPictureRef)=> {
+                item.mainPictureRef = pictureRef;
+                return pictureRef;
             });
+
     }
 
 
-    public
-    removeItem(item:Item):Promise<boolean> {
+    public removeItem(item:Item):Promise<boolean> {
         // TODO
         var thisService = this;
         return new Promise((resolve, reject) => {
-            var oldItems = thisService.fakeData;
-            thisService.fakeData = [];
-            for (var index = 0; index < oldItems.length; index++) {
-                var oldItem = oldItems[index];
-                if (oldItem.id == item.id && item.id != undefined) {
-                    continue;
-                }
-                thisService.fakeData.push(oldItem);
-            }
             resolve(true);
         });
 
     }
 
-    private
-    initFakeData() {
-        // TODO REMOVE
-        var allItems = [
-            {
-                id: 0,
-                companyId: 0,
-                reference: "BO001",
-                model: null,
-                name: [{locale:'fr', text:"Bonnet Minnie"}],
-                description:  [{locale:'fr', text:"Un bonnet à l'effigie de Minnie, la copine de Mickey."}],
-                vatRate: 0.21,
-                vatExclusive: 5.9
-            },
-            {
-                id: 1,
-                companyId: 0,
-                reference: "BO002",
-                model: undefined,
-                name:  [{locale:'fr', text: "Bonnet Mickey"}],
-                description: [{locale:'fr', text:"Un bonnet à l'effigie de Mickey Mouse. Pour garçons et filles"}],
-                vatRate: 0.21,
-                vatExclusive: 5.9
-            },
-            {
-                id: 2,
-                companyId: 0,
-                reference: "PU001",
-                model: "8 ans vert",
-                name: [{locale:'fr', text:"Pull en laine Defrost"}],
-                description: undefined,
-                vatRate: 0.21,
-                vatExclusive: 21.5
-            },
-            {
-                id: 3,
-                companyId: 0,
-                reference: "PU002",
-                model: "8 ans rouge",
-                name:[{locale:'fr', text:"Pull en laine Defrost"}],
-                description: undefined,
-                vatRate: 0.21,
-                vatExclusive: 21.5
-            },
-            {
-                id: 4,
-                companyId: 0,
-                reference: "PU003",
-                model: "10-12 ans vert",
-                name: [{locale:'fr', text: "Pull en laine Defrost"}],
-                description: undefined,
-                vatRate: 0.21,
-                vatExclusive: 21.5
-            },
-            {
-                id: 5,
-                companyId: 0,
-                reference: "PU004",
-                model: "12-12 ans rouge",
-                name:[{locale:'fr', text:"Pull en laine Defrost"}],
-                description: undefined,
-                vatRate: 0.21,
-                vatExclusive: 21.5
-            },
-            {
-                id: 6,
-                companyId: 0,
-                reference: "JDA001",
-                model: "8 ans rouge",
-                name:[{locale:'fr', text: "T-shirt Joli"}],
-                description: [{locale:'fr', text: "Un joli T-shirt rouge"}],
-                vatRate: 0.21,
-                vatExclusive: 6
-            },
-            {
-                id: 7,
-                companyId: 0,
-                reference: "JDA002",
-                model: "10-12 ans rouge",
-                name:  [{locale:'fr', text: "T-shirt Joli"}],
-                description: [{locale:'fr', text: "Un joli T-shirt rouge"}],
-                vatRate: 0.21,
-                vatExclusive: 6
-            },
-            {
-                id: 8,
-                companyId: 0,
-                reference: "JDA003",
-                model: "S rouge",
-                name: [{locale:'fr', text: "T-shirt Joli"}],
-                description:[{locale:'fr', text: "Un joli T-shirt rouge"}],
-                vatRate: 0.21,
-                vatExclusive: 6
-            },
-            {
-                id: 9,
-                companyId: 0,
-                reference: "JDA004",
-                model: "M rouge",
-                name:  [{locale:'fr', text: "T-shirt Joli"}],
-                description: [{locale:'fr', text: "Un joli T-shirt rouge"}],
-                vatRate: 0.21,
-                vatExclusive: 6
-            }
-        ];
-        this.fakeData = [];
-        var jsonText = JSON.stringify(allItems);
-        this.fakeData = JSON.parse(jsonText, ItemFactory.fromJSONItemReviver);
-    }
 }

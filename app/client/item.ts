@@ -4,16 +4,38 @@
 
 import {Item, ItemRef, ItemSearch, ItemFactory} from 'client/domain/item';
 import {ComptoirrRequest} from 'client/utils/request';
-import {SearchResult} from 'client/utils/searchResult';
+import {SearchResult} from 'client/utils/search';
+import {ServiceConfig} from 'client/utils/service'
+import {Pagination} from'client/utils/pagination';pagination:Pagination
 
 export class ItemClient {
-    private static serviceUrl:string = "http://somewhere.com/item";
+    private static RESOURCE_PATH = "/item";
 
-    private getItemUrl(id:number) {
-        return ItemClient.serviceUrl + "/" + id;
+    private getResourceUrl():string {
+        return ServiceConfig.URL + ItemClient.RESOURCE_PATH;
     }
-    createIem(item:Item, authToken: string):Promise<ItemRef> {
-        var url = ItemClient.serviceUrl;
+
+    private getItemUrl(id:number):string {
+        var url = this.getResourceUrl();
+        url += "/" + id;
+        return url;
+    }
+
+    private getSearchUrl(pagination:Pagination):string {
+        var url = this.getResourceUrl();
+        url += "/search";
+        if (pagination != null) {
+            url += ';offset=';
+            url += pagination.firstIndex;
+            url += ";maxResults=";
+            url += pagination.pageSize;
+            return url;
+        }
+    }
+
+
+    createIem(item:Item, authToken:string):Promise<ItemRef> {
+        var url = this.getResourceUrl();
         var request = new ComptoirrRequest();
         return request.post(item, url, authToken)
             .then(function (response) {
@@ -22,7 +44,7 @@ export class ItemClient {
             });
     }
 
-    updateItem(item:Item, authToken: string):Promise<ItemRef> {
+    updateItem(item:Item, authToken:string):Promise<ItemRef> {
         var url = this.getItemUrl(item.id);
         var request = new ComptoirrRequest();
         return request.put(item, url, authToken)
@@ -31,7 +53,8 @@ export class ItemClient {
                 return itemRef;
             });
     }
-    getItem(id:number, authToken: string):Promise<Item> {
+
+    getItem(id:number, authToken:string):Promise<Item> {
         var url = this.getItemUrl(id);
         var request = new ComptoirrRequest();
         return request.get(url, authToken)
@@ -41,8 +64,8 @@ export class ItemClient {
             });
     }
 
-    searchItems(search:ItemSearch, authToken: string):Promise<SearchResult<Item>> {
-        var url = ItemClient.serviceUrl + '/search';
+    searchItems(search:ItemSearch, pagination:Pagination, authToken:string):Promise<SearchResult<Item>> {
+        var url = this.getSearchUrl(pagination);
         var request = new ComptoirrRequest();
         return request.post(search, url, authToken)
             .then(function (response) {

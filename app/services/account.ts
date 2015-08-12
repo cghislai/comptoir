@@ -5,7 +5,7 @@ import {Inject} from 'angular2/angular2';
 
 import {Account,AccountType, AccountRef, AccountSearch} from 'client/domain/account';
 import {LocaleTexts} from 'client/utils/lang';
-import {SearchResult} from 'client/utils/searchResult';
+import {SearchResult} from 'client/utils/search';
 import {AccountClient} from 'client/account';
 
 import {AuthService} from 'services/auth';
