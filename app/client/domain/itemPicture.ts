@@ -12,7 +12,7 @@ export class ItemPictureRef {
 export class ItemPicture {
     id:number;
     itemRef:ItemRef;
-    base64Data:string;
+    data:string;
     contentType:string;
 }
 

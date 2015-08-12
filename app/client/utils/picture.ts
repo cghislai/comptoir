@@ -24,10 +24,10 @@ export class PicturedItemFactory {
         if (picture == undefined) {
             return undefined;
         }
-        if (picture.contentType != undefined && picture.base64Data != undefined
-            && picture.base64Data.length > 0) {
+        if (picture.contentType != undefined && picture.data != undefined
+            && picture.data.length > 0) {
             var uri = "data:" + picture.contentType;
-            uri += ";base64," + picture.base64Data;
+            uri += ";base64," + picture.data;
             return uri;
         }
         return undefined;
@@ -45,7 +45,7 @@ export class PicturedItemFactory {
         var contentType = dataURI.substring(contentTypeStartIndex, contentTypeEndIndex);
         var encodedData = dataURI.substring(dataStartIndex, dataEndIndex);
         picture.contentType = contentType;
-        picture.base64Data = encodedData;
+        picture.data = encodedData;
     }
 
     static getPictureDataFromString(datastring:string) {

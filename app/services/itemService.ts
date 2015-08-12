@@ -184,6 +184,13 @@ export class ItemService {
                 picturedItem.picture = picture;
 
             }
+        } else {
+            if (pictureDataURI == null) {
+                item.mainPictureRef = null;
+            } else {
+                PicturedItemFactory.buildPictureDataFromDataURI(pictureDataURI, picture);
+                picturedItem.picture = picture;
+            }
         }
         var saveAction:Promise<ItemRef>;
         if (item.id == null) {
