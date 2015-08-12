@@ -115,10 +115,11 @@ export class ItemService {
                             }
                             resolve(picItem);
                             return;
-                        })
+                        });
                 });
         });
     }
+
 
     /**
      * Fetches the picture asynchronlously. The resolved SearchResult
@@ -127,46 +128,42 @@ export class ItemService {
      * @returns {Promise<SearchResult<PicturedItem>>}
      */
     public searchPicturedItems(itemSearch:ItemSearch, pagination:Pagination):Promise<SearchResult<PicturedItem>> {
+        var thisService = this;
+        var authToken = this.authService.authToken;
         return this.searchItems(itemSearch, pagination)
             .then(function (itemResult:SearchResult<Item>) {
                 var result = new SearchResult<PicturedItem>();
                 result.count = itemResult.count;
                 result.list = [];
+
+
                 for (var item of itemResult.list) {
-                    var picItem = new PicturedItem();
-                    picItem.item = item;
-                    result.list.push(picItem);
+                    var picturesPromise = [];
+                    var picPromise = new Promise((resolve, reject)=> {
+                        var picItem = new PicturedItem();
+                        picItem.item = item;
+                        thisService.findPicItemPicture(picItem);
+                        result.list.push(picItem);
+                    });
                 }
                 return result;
-                /*            }).then((result)=> {
+            });
 
-                 var allImagesPromise = Promise.all(
-                 result.list.map((picItem:PicturedItem)=> {
-                 var item = picItem.item;
-                 var picRef = item.mainPictureRef;
-                 console.log("pic ref: " + picRef);
-                 if (picRef == undefined) {
-                 return Promise.resolve();
-                 }
-                 var picId = picRef.id;
-                 console.log("pic id: " + picId);
-                 return thisService.pictureClient.getItemPicture(picId, authToken)
-                 .then(function (itemPic:ItemPicture) {
-                 console.log("got item pic : " + itemPic);
-                 if (itemPic != undefined) {
-                 var dataURI = PicturedItemFactory.buildPictureURI(itemPic);
-                 picItem.dataURI = dataURI;
-                 }
-                 return itemPic;
-                 }, (error)=> {
-                 return null;
-                 });
-                 })
-                 )
-                 var resultPromise = Promise.resolve();
-                 return resultPromise.then(()=>{
-                 return result;
-                 });*/
+    }
+
+    private findPicItemPicture(picItem:PicturedItem) {
+        var itemId = picItem.item.id;
+        var picId = picItem.item.mainPictureRef.id;
+        var authToken = this.authService.authToken;
+
+        return this.pictureClient.getItemPicture(itemId, picId, authToken)
+            .then((pic)=> {
+                picItem.picture = pic;
+                if (pic != undefined) {
+                    picItem.dataURI = PicturedItemFactory.buildPictureURI(pic);
+                    console.log("picitem " + picItem.item.id + " to picture " + pic.id);
+                }
+                return picItem;
             });
     }
 

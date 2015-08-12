@@ -29,8 +29,8 @@
     </div>
 </span>
 <span class="picture"
-    *ng-if="column.name == 'picture'">
-    <img [src]="picItem.pictureDataURI" *ng-if="picItem.pictureDataURI != undefined">
+    *ng-if="column.name == 'picture' ">
+    <img [src]="picItem.dataURI" *ng-if="picItem.dataURI != undefined">
 </span>
 <span class="tva_excl price"
         *ng-if="column.name == 'tva_excl'">

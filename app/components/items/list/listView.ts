@@ -94,7 +94,7 @@ export class ProductsListView {
                 thisView.searchItems();
             });
     }
-    handleFilterKeyUp() {
+    handleFilterKeyUp(event) {
         if (this.keyboardTimeoutSet) {
             return;
         }

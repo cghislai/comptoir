@@ -70,3 +70,8 @@
   text-overflow: ellipsis;
   overflow: hidden;
 }
+
+.picture img {
+  max-height: 3em;
+  max-width: 3em;
+}
