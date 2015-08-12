@@ -2,18 +2,15 @@
  * Created by cghislai on 02/08/15.
  */
 
-
-import {Component, View, Attribute, EventEmitter, NgFor} from 'angular2/angular2';
+import {Component, View, Attribute, EventEmitter, NgFor, Observable} from 'angular2/angular2';
 import {Pagination} from 'client/utils/pagination';
-
+import {SearchResult} from 'client/utils/search';
 
 @Component({
     selector: 'paginator',
-    events: ['pagechange'],
-    properties: ['totalCountParam: total-count', 'pageSizeParam: page-size'],
-    host: {
-        '(show)': 'buildPagesLinksArray()'
-    }
+    events: ['pageChange'],
+    properties: ['totalCountParam: totalCount', 'pageSizeParam: pageSize',
+        "showPrevNextLink", 'showFirstLastLink']
 })
 @View({
     templateUrl: './components/utils/paginator/paginator.html',
@@ -22,35 +19,30 @@ import {Pagination} from 'client/utils/pagination';
 })
 
 export class Paginator {
-    pageCount: number;
+    pageCount:number;
     pageSize: number;
-    total: number;
-    showPrevNextLink: boolean;
-    showFirstLastLink: boolean;
-    pages: number[];
-    activePage: number;
-    pagechange: EventEmitter;
-    maxPageLinks: number = 10;
+    totalCount: number;
 
-    constructor(@Attribute('show-prev-next') showPrevNext,
-                @Attribute('show-first-last') showFirstLast) {
-        this.showFirstLastLink = showFirstLast;
-        this.showPrevNextLink = showPrevNext;
+    showPrevNextLink:boolean;
+    showFirstLastLink:boolean;
+    pages:number[];
+    activePage:number;
+    maxPageLinks:number = 10;
+    pageChange:EventEmitter;
+
+    constructor() {
         this.activePage = 0;
-        this.pagechange = new EventEmitter();
+        this.pageChange = new EventEmitter();
+        this.buildPagesLinksArray();
     }
 
-    set totalCountParam(total: number) {
-        this.total = total;
-        this.buildPagesLinksArray();
-    }
-    set pageSizeParam(pageSize: number) {
-        this.pageSize = pageSize;
-        this.buildPagesLinksArray();
-    }
     buildPagesLinksArray() {
+        if (this.totalCount == null) {
+            return;
+        }
         this.pages = [];
-        this.pageCount = Math.ceil(this.total / this.pageSize);
+        this.pageCount = Math.ceil(this.totalCount / this.pageSize);
+        console.log('build array with page count as ' + this.pageCount);
 
         var pageLinkShown = 0;
         var firstIndex = this.activePage - this.maxPageLinks / 2;
@@ -62,42 +54,61 @@ export class Paginator {
         }
     }
 
+    set totalCountParam(value:string) {
+        this.totalCount = parseInt(value);
+        this.buildPagesLinksArray();
+    }
+    set pageSizeParam(value:string) {
+        this.pageSize = parseInt(value);
+        this.buildPagesLinksArray();
+    }
     goToFirst() {
+        if (this.activePage <= 0) {
+            return;
+        }
         this.goToPage(0);
     }
+
     goToLast() {
+        if (this.activePage >= this.pageCount - 1) {
+            return;
+        }
         this.goToPage(this.pageCount - 1);
     }
+
     goToPrev() {
         if (this.activePage == 0) {
             return;
         }
         this.goToPage(this.activePage - 1);
     }
+
     goToNext() {
         if (this.activePage >= this.pageCount - 1) {
             return;
         }
         this.goToPage(this.activePage + 1);
     }
+
     hasPrev() {
         return this.activePage > 0;
     }
+
     hasNext() {
         return this.activePage < this.pageCount - 1;
     }
 
-    goToPage(pageIndex: number) {
+    goToPage(pageIndex:number) {
         this.activePage = pageIndex;
         var pagination = new Pagination();
         pagination.pageIndex = pageIndex;
         var firstIndex = pageIndex * this.pageSize;
-        var pageSize = Math.min(this.pageSize, this.total - firstIndex);
+        var pageSize = Math.min(this.pageSize, this.totalCount- firstIndex);
         pagination.firstIndex = firstIndex;
         pagination.pageSize = pageSize;
         this.buildPagesLinksArray();
 
-        this.pagechange.next(pagination);
+        this.pageChange.next(pagination);
     }
 
 }

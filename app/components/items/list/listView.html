@@ -5,15 +5,15 @@
         <span class="input">
             <input [(ng-model)]="itemSearch.multiSearch" autofocus
                    placeholder="Filtrer les produits"
-                   (keyup)="handleFilterKeyUp($event)"
-                   (change)="searchItems()">
+                   (input)="handleFilterKeyUp($event)">
         </span>
     </div>
 
-    <paginator [total-count]="itemCount"
+   <paginator *ng-if="itemSearchResult != undefined"
+              [total-count]="itemCount"
                [page-size]="itemsPerPage"
-               show-prev-next="true" show-first-last="true"
-               (pagechange)="onPageChanged($event)"></paginator>
+               show-prev-next-link="true" show-first-last-link="true"
+               (page-change)="onPageChanged($event)"></paginator>
 
     <itemList #itemlistcomp *ng-if="itemSearchResult != undefined"
               [columns]="columns" [items]="itemSearchResult.list"

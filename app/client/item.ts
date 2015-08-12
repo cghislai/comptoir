@@ -25,9 +25,9 @@ export class ItemClient {
         var url = this.getResourceUrl();
         url += "/search";
         if (pagination != null) {
-            url += ';offset=';
+            url += '?offset=';
             url += pagination.firstIndex;
-            url += ";maxResults=";
+            url += "&length=";
             url += pagination.pageSize;
             return url;
         }

@@ -4,9 +4,9 @@
 import {JSONFactory} from 'client/utils/factory';
 
 export class ComptoirResponse {
-    headers: any;
     text: string;
     code: number;
+    listTotalCountHeader: string;
 }
 
 export class ComptoirrRequest {
@@ -14,6 +14,7 @@ export class ComptoirrRequest {
     static JSON_MIME:string = "application/json";
     static UTF8_CHARSET:string = "UTF-8";
     static HEADER_OAUTH_TOKEN= "Authorisation";
+    static HEADER_TOTAL_COUNT='X-Comptoir-ListTotalCount';
 
     request:XMLHttpRequest;
     method:string;
@@ -73,7 +74,7 @@ export class ComptoirrRequest {
                 }
                 var response = new ComptoirResponse();
                 response.code = xmlRequest.status;
-                response.headers = xmlRequest.getAllResponseHeaders();
+                response.listTotalCountHeader = xmlRequest.getResponseHeader(ComptoirrRequest.HEADER_TOTAL_COUNT);
                 response.text = xmlRequest.responseText;
                 resolve(response);
             }

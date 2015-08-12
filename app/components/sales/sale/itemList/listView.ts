@@ -59,9 +59,10 @@ export class ItemListView {
     }
 
     searchItems() {
+        var thisView = this;
         this.itemService.searchPicturedItems(this.itemSearch, this.pagination)
             .then((result:SearchResult<PicturedItem>)=> {
-                this.itemSearchResult = result;
+                thisView.itemSearchResult = result;
             });
     }
 

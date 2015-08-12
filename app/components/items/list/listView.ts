@@ -24,7 +24,7 @@ import {Paginator} from 'components/utils/paginator/paginator';
 @View({
     templateUrl: './components/items/list/listView.html',
     styleUrls: ['./components/items/list/listView.css'],
-    directives: [NgFor,NgIf, Paginator, formDirectives, ItemList]
+    directives: [NgFor, NgIf, Paginator, formDirectives, ItemList]
 })
 
 export class ProductsListView {
@@ -32,15 +32,16 @@ export class ProductsListView {
 
     itemService:ItemService;
     itemSearch:ItemSearch;
-    pagination: Pagination;
+    pagination:Pagination;
     itemSearchResult:SearchResult<PicturedItem>;
+    itemCount: number;
     columns:ItemColumn[];
     itemsPerPage:number = 25;
+    paginator: any;
 
     // Delay filter input keyevent for 200ms
     keyboardTimeoutSet:boolean;
     keyboardTimeout:number = 200;
-    itemList:ItemList;
 
     constructor(appService:ApplicationService, itemService:ItemService, router:Router) {
         this.router = router;
@@ -62,20 +63,30 @@ export class ProductsListView {
     }
 
     searchItems() {
+        var thisView = this;
         this.itemService.searchPicturedItems(this.itemSearch, this.pagination)
             .then((result:SearchResult<PicturedItem>)=> {
-                this.itemSearchResult = result;
+                thisView.itemSearchResult = result;
+                thisView.itemCount = result.count;
+                console.log("setting count to " + result.count);
+                if (thisView.paginator != null) {
+                    thisView.paginator.dispatchEvent(new Event('count-changed'))
+                }
             });
     }
 
+    onPaginatorInitialized(event) {
+        this.paginator = event.target;
+        console.log("inited to "+event.target);
+    }
     onPageChanged(pagination:Pagination) {
         this.pagination = pagination;
         this.searchItems();
     }
 
     onColumnAction(event) {
-        var item : PicturedItem = event.item;
-        var column: ItemColumn = event.column;
+        var item:PicturedItem = event.item;
+        var column:ItemColumn = event.column;
         if (column == ItemColumn.ACTION_REMOVE) {
             this.doRemoveItem(item.item);
         }
@@ -87,13 +98,14 @@ export class ProductsListView {
         this.router.navigate(url);
     }
 
-    doRemoveItem(item: Item) {
+    doRemoveItem(item:Item) {
         var thisView = this;
         this.itemService.removeItem(item)
-        .then(()=>{
+            .then(()=> {
                 thisView.searchItems();
             });
     }
+
     handleFilterKeyUp(event) {
         if (this.keyboardTimeoutSet) {
             return;
