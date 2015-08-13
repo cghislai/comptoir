@@ -14,7 +14,7 @@ export enum AccountType {
 
 export class Account {
     id: number;
-    company: CompanyRef;
+    companyRef: CompanyRef;
     accountingNumber: string;
     iban: string;
     bic: string;
@@ -30,7 +30,6 @@ export class AccountRef {
 
 export class AccountSearch {
     companyRef: CompanyRef;
-    pagination: Pagination;
 }
 
 
@@ -53,7 +52,7 @@ export class AccountFactory {
         if (type == 'PAYMENT') {
             return AccountType.PAYMENT;
         }
-        if (type == 'VAR') {
+        if (type == 'VAT') {
             return AccountType.VAT;
         }
         if (type == 'OTHER') {

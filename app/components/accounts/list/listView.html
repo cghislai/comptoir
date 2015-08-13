@@ -5,11 +5,12 @@
     <div class="topActions">
 
     </div>
-    <paginator [total-count]="accountsCount"
+    <paginator *ng-if="accountSearchResult != undefined"
+               [total-count]="accountCount"
                [page-size]="accountsPerPage"
                show-prev-next="true" show-first-last="true"
                (pagechange)="onPageChanged($event)"></paginator>
-    <table class="accounts">
+    <table class="accounts" *ng-if="accountSearchResult != undefined">
         <thead>
         <tr>
             <th>Type</th>
@@ -19,8 +20,8 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ng-for="#account of accounts" class="account" (^click)="doEditAccount(account)">
-            <td class="type">{{ getAccountTypeLabel(account.accountType)[language] }}</td>
+        <tr *ng-for="#account of accountSearchResult.list" class="account" (^click)="doEditAccount(account)">
+            <td class="type">{{ getAccountTypeLabel(account.accountType) }}</td>
             <td class="name">{{ account.name }}</td>
             <td class="desc">{{ account.description[language] }}</td>
             <td class="actions">

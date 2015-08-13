@@ -4,6 +4,7 @@
 
 
 import {Account, AccountRef, AccountSearch, AccountFactory} from 'client/domain/account';
+import {Pagination} from 'client/utils/pagination';
 import {ComptoirrRequest} from 'client/utils/request';
 import {SearchResult} from 'client/utils/search';
 import {ServiceConfig} from 'client/utils/service';
@@ -21,9 +22,16 @@ export class AccountClient {
         return url;
     }
 
-    private getSearchUrl() {
+    private getSearchUrl(pagination:Pagination) {
         var url = ServiceConfig.URL + AccountClient.RESOURCE_PATH;
         url += '/search';
+        if (pagination != null) {
+            url += '?offset=';
+            url += pagination.firstIndex;
+            url += "&length=";
+            url += pagination.pageSize;
+            return url;
+        }
         return url;
     }
 
@@ -63,13 +71,12 @@ export class AccountClient {
             });
     }
 
-    searchAccounts(search:AccountSearch, authToken:string):Promise<SearchResult<Account>> {
+    searchAccounts(search:AccountSearch, pagination:Pagination, authToken:string):Promise<SearchResult<Account>> {
         var request = new ComptoirrRequest();
-        var url = this.getSearchUrl();
-        var searchJSON = JSON.stringify(search);
+        var url = this.getSearchUrl(pagination);
 
         return request
-            .post(searchJSON, url, authToken)
+            .post(search, url, authToken)
             .then(function (response) {
                 var result = new SearchResult<Account>().parseResponse(response, AccountFactory.fromJSONAccountReviver);
                 return result;

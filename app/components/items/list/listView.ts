@@ -28,16 +28,15 @@ import {Paginator} from 'components/utils/paginator/paginator';
 })
 
 export class ProductsListView {
+    itemService:ItemService;
     router:Router;
 
-    itemService:ItemService;
     itemSearch:ItemSearch;
     pagination:Pagination;
     itemSearchResult:SearchResult<PicturedItem>;
     itemCount: number;
     columns:ItemColumn[];
     itemsPerPage:number = 25;
-    paginator: any;
 
     // Delay filter input keyevent for 200ms
     keyboardTimeoutSet:boolean;
@@ -68,17 +67,9 @@ export class ProductsListView {
             .then((result:SearchResult<PicturedItem>)=> {
                 thisView.itemSearchResult = result;
                 thisView.itemCount = result.count;
-                console.log("setting count to " + result.count);
-                if (thisView.paginator != null) {
-                    thisView.paginator.dispatchEvent(new Event('count-changed'))
-                }
             });
     }
 
-    onPaginatorInitialized(event) {
-        this.paginator = event.target;
-        console.log("inited to "+event.target);
-    }
     onPageChanged(pagination:Pagination) {
         this.pagination = pagination;
         this.searchItems();

@@ -105,7 +105,7 @@ export class EditAccountView {
         account.accountType = this.accountModel.accountType;
         account.accountingNumber = this.accountModel.accountingNumber;
         account.bic = this.accountModel.bic;
-        account.company = this.authService.loggedEmployee.companyRef;
+        account.companyRef = this.authService.loggedEmployee.companyRef;
         account.description = this.accountModel.description;
         account.iban = this.accountModel.iban;
         account.name = this.accountModel.name;

@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 06/08/15.
  */
-import {Component, View, NgFor, formDirectives} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, formDirectives} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
 
@@ -25,31 +25,32 @@ import {FocusableDirective} from 'directives/focusable'
 @View({
     templateUrl: './components/accounts/list/listView.html',
     styleUrls: ['./components/accounts/list/listView.css'],
-    directives: [NgFor, Paginator, formDirectives]
+    directives: [NgFor, NgIf, Paginator, formDirectives]
 })
 
 export class AccountsListView {
     accountService:AccountService;
-    applicationService:ApplicationService;
     router:Router;
-    language:string;
 
     accountSearch:AccountSearch;
-    accounts:Account[];
-    accountsCount:number;
+    pagination:Pagination;
+    accountSearchResult:SearchResult<Account>;
+    accountCount: number;
     accountsPerPage:number = 25;
 
+    language:string;
     loading:boolean;
 
     constructor(accountService:AccountService, appService:ApplicationService,
                 authService:AuthService, router:Router) {
         this.accountService = accountService;
-        this.applicationService = appService;
         this.router = router;
-        this.language = appService.language.locale;
+
         this.accountSearch = new AccountSearch();
         this.accountSearch.companyRef = authService.loggedEmployee.companyRef;
-        this.accountSearch.pagination = new Pagination(0, this.accountsPerPage);
+        this.pagination = new Pagination(0, this.accountsPerPage);
+
+        this.language = appService.language.locale;
         this.searchAccounts();
     }
 
@@ -62,10 +63,10 @@ export class AccountsListView {
         this.loading = true;
         var thisView = this;
         this.accountService
-            .searchAccounts(this.accountSearch)
+            .searchAccounts(this.accountSearch, this.pagination)
             .then(function (result:SearchResult<Account>) {
-                thisView.accountsCount = result.count;
-                thisView.accounts = result.list;
+                thisView.accountSearchResult = result;
+                thisView.accountCount = result.count;
                 thisView.loading = false;
             }, function (error) {
                 console.log("Failed to load accounts : " + error);
@@ -74,11 +75,18 @@ export class AccountsListView {
     }
 
     getAccountTypeLabel(accountType: AccountType): any {
-        return NamedAccountType.getNamedForType(accountType).label;
+        if (accountType == undefined) {
+            return null;
+        }
+        var namedAccountType =NamedAccountType.getNamedForType(accountType);
+        if (namedAccountType == null) {
+            return null;
+        }
+        return namedAccountType.label[this.language];
     }
 
     onPageChanged(pagination:Pagination) {
-        this.accountSearch.pagination = pagination;
+        this.pagination = pagination;
         this.searchAccounts();
     }
 
