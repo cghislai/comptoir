@@ -194,9 +194,9 @@ export class ItemService {
         }
         var saveAction:Promise<ItemRef>;
         if (item.id == null) {
-            saveAction = this.itemClient.createIem(item, authToken);
+            saveAction = this.createItem(item);
         } else {
-            saveAction = this.itemClient.updateItem(item, authToken);
+            saveAction = this.updateItem(item);
         }
 
         return saveAction
