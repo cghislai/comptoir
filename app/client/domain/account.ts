@@ -20,7 +20,7 @@ export class Account {
     bic: string;
     name: string;
     description: LocaleTexts;
-    accountType: AccountType;
+    accountType: string;
 }
 
 export class AccountRef {
@@ -39,25 +39,7 @@ export class AccountFactory {
         if (key == 'description') {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
-        if (key == 'accountType') {
-            return AccountFactory.getAccountTypeFromString(value);
-        }
         return value;
     }
 
-    static getAccountTypeFromString(type: string) : AccountType {
-        if (type === undefined) {
-            return undefined;
-        }
-        if (type == 'PAYMENT') {
-            return AccountType.PAYMENT;
-        }
-        if (type == 'VAT') {
-            return AccountType.VAT;
-        }
-        if (type == 'OTHER') {
-            return AccountType.OTHER;
-        }
-        return undefined;
-    }
 }

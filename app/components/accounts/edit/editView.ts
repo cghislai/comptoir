@@ -7,7 +7,8 @@ import {RouteParams, Router, RouterLink} from 'angular2/router';
 import {Language, LocaleTexts} from 'client/utils/lang';
 import {LocaleText} from 'client/domain/lang';
 import {Account, AccountType} from 'client/domain/account';
-import {AccountService, NamedAccountType} from 'services/account';
+import {NamedAccountType} from 'client/utils/account';
+import {AccountService} from 'services/account';
 import {ApplicationService} from 'services/application';
 import {AuthService} from 'services/auth';
 
@@ -38,7 +39,7 @@ class AccountFormModel {
         this.bic = account.bic;
         this.name = account.name;
         this.description = account.description;
-        this.accountType = account.accountType;
+        this.accountType = AccountType[account.accountType];
     }
 }
 
@@ -102,7 +103,7 @@ export class EditAccountView {
 
     doSaveEdit() {
         var account = this.accountModel.account;
-        account.accountType = this.accountModel.accountType;
+        account.accountType = AccountType[this.accountModel.accountType];
         account.accountingNumber = this.accountModel.accountingNumber;
         account.bic = this.accountModel.bic;
         account.companyRef = this.authService.loggedEmployee.companyRef;
