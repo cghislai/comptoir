@@ -15,14 +15,14 @@ import {AuthService} from 'services/auth';
 
 class AccountFormModel {
     language:string;
-    accountingNumber: string;
-    iban: string;
-    bic: string;
-    name: string;
-    description: LocaleTexts;
-    accountType: AccountType;
+    accountingNumber:string;
+    iban:string;
+    bic:string;
+    name:string;
+    description:LocaleTexts;
+    accountType:AccountType;
 
-    account: Account;
+    account:Account;
 
     constructor();
     constructor(account:Account, lang:Language);
@@ -53,20 +53,20 @@ class AccountFormModel {
     directives: [NgFor, NgIf, formDirectives, RouterLink]
 })
 export class EditAccountView {
-    accountId: number;
-    accountService: AccountService;
+    accountId:number;
+    accountService:AccountService;
     applicationService:ApplicationService;
     authService:AuthService;
-    router: Router;
+    router:Router;
 
-    language: Language;
+    language:Language;
     allLanguages:Language[] = Language.ALL_LANGUAGES;
     lastUsedLang:Language;
     accountModel:AccountFormModel;
-    allAccountTypes: any[];
+    allAccountTypes:any[];
 
-    constructor(accountService:AccountService, authService:AuthService, appService: ApplicationService,
-                routeParams:RouteParams, router: Router) {
+    constructor(accountService:AccountService, authService:AuthService, appService:ApplicationService,
+                routeParams:RouteParams, router:Router) {
         var itemIdParam = routeParams.get('id');
         this.accountId = parseInt(itemIdParam);
         if (isNaN(this.accountId)) {
@@ -91,7 +91,7 @@ export class EditAccountView {
         }
         var thisView = this;
         this.accountService.getAccount(this.accountId)
-            .then(function (account: Account) {
+            .then(function (account:Account) {
                 thisView.accountModel = new AccountFormModel(account, thisView.lastUsedLang);
             });
     }
@@ -111,9 +111,11 @@ export class EditAccountView {
         account.iban = this.accountModel.iban;
         account.name = this.accountModel.name;
         // TODO
-        this.accountService.saveAccount(account);
+        this.accountService.saveAccount(account)
+            .then((accountRef)=> {
+                this.router.navigate('/accounts/list');
+            });
 
-        this.router.navigate('/accounts/list');
     }
 
 }
