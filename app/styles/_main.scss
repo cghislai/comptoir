@@ -8,7 +8,7 @@ $focusColor: $onWhiteHoverColor;
 :focus {
   border: .1em solid $focusColor;
   box-shadow: 0 0 .2em .1em $focusColor;
-  }
+}
 
 .coloredHeader:not([hidden]) {
   background: $blueColor;
@@ -60,16 +60,22 @@ $focusColor: $onWhiteHoverColor;
   color: black;
   text-decoration: none;
   background-color: white;
-}
 
-.boxedHoverableLink:hover {
-  background-color: $onWhiteHoverColor;
-  cursor: pointer;
-}
+  &:hover {
+    background-color: $onWhiteHoverColor;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  &:focus {
+    background-color: $onWhiteHoverColor;
+  }
 
-
-.boxedHoverableLink:focus {
-  background-color: $onWhiteHoverColor;
+  &[disabled], &[disabled]:focus, &[disabled]:hover {
+    border-color: lightgray;
+    background-color: white;
+    text-decoration: none;
+    cursor: default;
+  }
 }
 
 .lightBlueLink {
@@ -97,8 +103,6 @@ table.dataTable, div.dataTable {
     height: 1.5em;
   }
 
-
-
   tbody, .dataTableBody {
     tr:not(:last-child), .dataTableRow:not(:last-child) {
       border: 0.1em solid transparent;;
@@ -107,7 +111,6 @@ table.dataTable, div.dataTable {
     tr:hover, .dataTableRow:hover {
       background-color: $tableRowHoverColor;
     }
-
 
     tr[focusable]:focus, .dataTableRow[focusable]:focus {
       background-color: $focusColor;
@@ -123,12 +126,11 @@ table.dataTable, div.dataTable {
     }
   }
 
-  td, th , .dataTableCell{
+  td, th, .dataTableCell {
     padding: .2em;
     vertical-align: middle;
     text-align: left;
   }
-
 
   td.center, th.center {
     text-align: center;
@@ -138,8 +140,7 @@ table.dataTable, div.dataTable {
     text-align: right;
   }
 
-
-  td, .dataTableCell{
+  td, .dataTableCell {
     a.actionIcon:not([hidden]) {
       color: rgb(220, 220, 220);
       font-size: 1em;
@@ -153,7 +154,7 @@ table.dataTable, div.dataTable {
     }
   }
 
-  tr:hover  td , .dataTableRow:hover  .dataTableCell {
+  tr:hover td, .dataTableRow:hover .dataTableCell {
     a.actionIcon:not([hidden]) {
       -webkit-filter: none;
       color: black;
@@ -196,24 +197,28 @@ div.dataTable:not([hidden]) {
   }
 }
 
-
 .actionlink:not([hidden]) {
   color: black;
 }
+
 .actionlink.green:not([hidden]) {
   color: darkgreen;
 }
+
 .actionlink.red:not([hidden]) {
   color: red;
 }
+
 .actionlink:not([hidden]):hover {
   text-decoration: underline;
   cursor: pointer;
   color: lighten(black, 50%);
 }
+
 .actionlink.green:not([hidden]):hover {
   color: lighten(darkgreen, 30%);
 }
+
 .actionlink.red:not([hidden]):hover {
   color: lighten(red, 30%);
 }

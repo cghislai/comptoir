@@ -12,6 +12,7 @@ import {CompanyService} from 'services/company';
 import {AccountService} from 'services/account';
 import {EmployeeService} from 'services/employee';
 import {PosService} from 'services/pos';
+import {FileUploadService} from "services/fileUpload";
 
 import {RequiresLogin} from 'directives/requiresLogin';
 import {NavMenu} from './components/navMenu/navMenu';
@@ -24,6 +25,7 @@ import {RegisterView} from 'components/auth/register/register';
 import {SellView} from 'components/sales/sale/sellView';
 import {ActiveSalesListView} from 'components/sales/actives/listView';
 import {HistoryView as SellHistoryView} from 'components/sales/history/historyView';
+import {ImportProductView} from 'components/items/import/importView';
 
 import {ProductsListView} from 'components/items/list/listView';
 import {EditProductView} from 'components/items/edit/editView';
@@ -63,6 +65,7 @@ import {Parent} from 'components/test/test';
     {path: '/items/list', component: ProductsListView, as: 'itemsList'},
     {path: '/items/edit', component: EditProductView, as: 'itemsEditNew'},
     {path: '/items/edit/:id', component: EditProductView, as: 'itemsEdit'},
+    {path: '/items/import', component: ImportProductView, as: 'itemsImport'},
 
     {path: '/accounts/list', component: AccountsListView, as: 'accountsList'},
     {path: '/accounts/edit', component: EditAccountView, as: 'accountsEditNew'},
@@ -107,6 +110,7 @@ bootstrap(App, [
     CashService,
     CompanyService,
     EmployeeService,
+    FileUploadService,
     ItemService,
     PictureService,
     PosService,

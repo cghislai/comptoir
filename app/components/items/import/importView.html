@@ -1,0 +1,59 @@
+<div class="formPage">
+    <div style="display: inline-block;">
+
+
+    <h1>Importer des produits</h1>
+
+    <p>
+        Créez un fichier zip contenant:
+        <ul>
+            <li>
+                items.csv: Liste des produits au format csv
+            </li>
+            <li>
+                items-labels.csv: Noms et descriptions, par langue, format cvs
+            </li>
+            <li>
+                pictures.zip: Images, nommées {id}-picture.jpg
+            </li>
+        </ul>
+    Uploadez ensuite ici ce fichier pour importer vos produits.
+    </p>
+
+    <form #f="form" (ng-submit)="onSubmit()"
+          enctype="multipart/form-data" >
+        <label for="file">Fichier à importer:</label>
+        <input type="file" id="file" accept="*/*" #file-input
+               name="fileInput"
+               (change)="onFileSelected(f, $event)"
+               (fileread) required hidden>
+        <div class="boxedHoverableLink" (^click)="fileInput.click()">
+            Choisir un fichier
+        </div>
+        <div class="fileInfo"*ng-if="toUploadFile != null">
+            <table><tr>
+                <td><label>Nom:</label></td>
+                <td>{{ toUploadFile.name}}</td>
+            </tr><tr>
+                <td><label>Taille:</label></td>
+                <td>{{ toUploadFileSizeLabel}}</td>
+            </tr><tr>
+                <td><label>Type:</label></td>
+                <td>{{ toUploadFile.type}}</td>
+            </tr></table>
+        </div>
+        <div class="uploadProgress" *ng-if="uploadInProgress">
+            <span class="busy">
+                <img src="/res/img/ajax-loader.black.gif">
+            </span>
+            <span>
+                {{ uploadPercentage | number:'.0' }} %
+            </span>
+        </div>
+        <div class="actions">
+            <button type="submit" [disabled]="uploadInProgress ||toUploadFile == null ">Importer</button>
+            <a [router-link]="['/itemsList']">Annuler</a>
+        </div>
+    </form>
+    </div>
+</div>

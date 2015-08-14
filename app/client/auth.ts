@@ -21,7 +21,7 @@ export class AuthClient {
         var request = new ComptoirrRequest();
         var body = {
             'login': login,
-            'password': password
+            'passwordHash': password
         };
 
         return request

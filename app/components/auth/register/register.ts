@@ -59,7 +59,7 @@ export class RegisterView {
 
         this.authService.register(registration)
             .then((employee)=> {
-                thisView.router.navigate('/sales/sale');
+                thisView.router.navigate('/sales/sale/new');
             }).catch((error)=> {
                 this.appService.showError(error);
             });
