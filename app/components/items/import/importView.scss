@@ -1,5 +1,14 @@
 @import '../../../styles/_form';
 
-ul {
-  text-align: left;
+.fileInfo {
+  font-size: .8em;
+  margin: 1em;
+  border: .1em solid lightgray;
+  padding: .5em;
+
+  h2 {
+    margin: .1em;
+    font-size: .9em;
+  }
+
 }
