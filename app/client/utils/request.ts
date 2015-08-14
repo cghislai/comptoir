@@ -9,7 +9,7 @@ export class ComptoirResponse {
     listTotalCountHeader: string;
 }
 
-export class ComptoirrRequest {
+export class ComptoirRequest {
 
     static JSON_MIME:string = "application/json";
     static UTF8_CHARSET:string = "UTF-8";
@@ -28,9 +28,9 @@ export class ComptoirrRequest {
 
     constructor() {
         this.request = new XMLHttpRequest();
-        this.acceptContentType = ComptoirrRequest.JSON_MIME+','+'text/*';
-        this.charset = ComptoirrRequest.UTF8_CHARSET;
-        this.contentType = ComptoirrRequest.JSON_MIME;
+        this.acceptContentType = ComptoirRequest.JSON_MIME+','+'text/*';
+        this.charset = ComptoirRequest.UTF8_CHARSET;
+        this.contentType = ComptoirRequest.JSON_MIME;
     }
 
     get(url:string, authToken: string):Promise<any> {
@@ -74,7 +74,7 @@ export class ComptoirrRequest {
                 }
                 var response = new ComptoirResponse();
                 response.code = xmlRequest.status;
-                response.listTotalCountHeader = xmlRequest.getResponseHeader(ComptoirrRequest.HEADER_TOTAL_COUNT);
+                response.listTotalCountHeader = xmlRequest.getResponseHeader(ComptoirRequest.HEADER_TOTAL_COUNT);
                 response.text = xmlRequest.responseText;
                 resolve(response);
             }
@@ -85,7 +85,7 @@ export class ComptoirrRequest {
             xmlRequest.setRequestHeader('Accept', thisRequest.acceptContentType);
             xmlRequest.setRequestHeader('Content-Type', thisRequest.contentType + '; charset=' + thisRequest.charset);
             if (this.authToken != null) {
-                xmlRequest.setRequestHeader(ComptoirrRequest.HEADER_OAUTH_TOKEN, 'Bearer '+this.authToken);
+                xmlRequest.setRequestHeader(ComptoirRequest.HEADER_OAUTH_TOKEN, 'Bearer '+this.authToken);
             }
 
             if (thisRequest.objectToSend != null) {

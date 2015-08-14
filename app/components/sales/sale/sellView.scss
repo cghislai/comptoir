@@ -1,4 +1,3 @@
-
 @mixin transition($args...) {
   -webkit-transition: $args;
   -moz-transition: $args;
@@ -8,48 +7,27 @@
 }
 
 .wrapper {
-  min-height: 90vh;
-  position: relative;
   overflow-x: hidden;
 }
 
 .sellView {
-  width: 100%;
-  height: 100%;
-  position: absolute;
+  width: 150vw;
+  position: relative;
+  left: 0;
+
+  @include transition(left 300ms ease-in-out);
+
+  &.slide-left {
+    left: -50vw;
+  }
 
   > * {
     display: inline-block;
-    position: absolute;
+    position: relative;
     vertical-align: top;
-    width: 50%;
-    @include transition(left 300ms ease-in-out);
-
+    width: 49vw;
     > * {
       margin: 1em;
-    }
-  }
-
-  .itemList {
-      left: 0;
-
-    &.slide-left {
-      left: -50%;
-    }
-  }
-
-  .commandView {
-    left: 50%;
-
-    &.slide-left {
-      left: 0;
-    }
-  }
-  .payView {
-    left: 100%;
-
-    &.slide-left {
-      left: 50%;
     }
   }
 

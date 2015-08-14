@@ -4,7 +4,7 @@
 
 
 import {EmployeeRef,EmployeeSearch, Employee, EmployeeFactory} from 'client/domain/employee';
-import {ComptoirrRequest} from 'client/utils/request';
+import {ComptoirRequest} from 'client/utils/request';
 import {SearchResult} from 'client/utils/search';
 import {ServiceConfig} from 'client/utils/service';
 
@@ -31,7 +31,7 @@ export class EmployeeClient {
 
     createEmployee(employee:Employee, authToken:string):Promise<EmployeeRef> {
         var url = this.getResourceUrl();
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         return request.post(employee, url, authToken)
             .then(function (response) {
                 var employeeRef = JSON.parse(response.text);
@@ -41,7 +41,7 @@ export class EmployeeClient {
 
     updateEmployee(employee:Employee, authToken:string):Promise<EmployeeRef> {
         var url = this.getEmployeeUrl(employee.id);
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         return request.put(employee, url, authToken)
             .then(function (response) {
                 var employeeRef = JSON.parse(response.text);
@@ -51,7 +51,7 @@ export class EmployeeClient {
 
     getEmployee(id:number, authToken:string):Promise<Employee> {
         var url = this.getEmployeeUrl(id);
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         return request.get(url, authToken)
             .then(function (response) {
                 var employee = JSON.parse(response.text, EmployeeFactory.fromJSONEmployeeReviver);
@@ -61,7 +61,7 @@ export class EmployeeClient {
 
     searchEmployee(search:EmployeeSearch, authToken:string):Promise<SearchResult<Employee>> {
         var url = this.getSearchUrl();
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         return request.post(search, url, authToken)
             .then(function (response) {
                 var result = new SearchResult<Employee>().parseResponse(response, EmployeeFactory.fromJSONEmployeeReviver);

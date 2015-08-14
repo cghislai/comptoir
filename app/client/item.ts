@@ -3,7 +3,7 @@
  */
 
 import {Item, ItemRef, ItemSearch, ItemFactory} from 'client/domain/item';
-import {ComptoirrRequest} from 'client/utils/request';
+import {ComptoirRequest} from 'client/utils/request';
 import {SearchResult} from 'client/utils/search';
 import {ServiceConfig} from 'client/utils/service'
 import {Pagination} from'client/utils/pagination';pagination:Pagination
@@ -29,14 +29,14 @@ export class ItemClient {
             url += pagination.firstIndex;
             url += "&length=";
             url += pagination.pageSize;
-            return url;
         }
+        return url;
     }
 
 
     createIem(item:Item, authToken:string):Promise<ItemRef> {
         var url = this.getResourceUrl();
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         return request.post(item, url, authToken)
             .then(function (response) {
                 var itemRef = JSON.parse(response.text);
@@ -46,7 +46,7 @@ export class ItemClient {
 
     updateItem(item:Item, authToken:string):Promise<ItemRef> {
         var url = this.getItemUrl(item.id);
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         return request.put(item, url, authToken)
             .then(function (response) {
                 var itemRef = JSON.parse(response.text);
@@ -56,7 +56,7 @@ export class ItemClient {
 
     getItem(id:number, authToken:string):Promise<Item> {
         var url = this.getItemUrl(id);
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         return request.get(url, authToken)
             .then(function (response) {
                 var item = JSON.parse(response.text, ItemFactory.fromJSONItemReviver);
@@ -66,7 +66,7 @@ export class ItemClient {
 
     searchItems(search:ItemSearch, pagination:Pagination, authToken:string):Promise<SearchResult<Item>> {
         var url = this.getSearchUrl(pagination);
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         return request.post(search, url, authToken)
             .then(function (response) {
                 var result = new SearchResult<Item>().parseResponse(response, ItemFactory.fromJSONItemReviver);

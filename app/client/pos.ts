@@ -5,7 +5,7 @@
 
 import {Pos, PosRef, PosSearch, PosFactory} from 'client/domain/pos';
 import {Pagination} from 'client/utils/pagination';
-import {ComptoirrRequest} from 'client/utils/request';
+import {ComptoirRequest} from 'client/utils/request';
 import {SearchResult} from 'client/utils/search';
 import {ServiceConfig} from 'client/utils/service';
 
@@ -29,13 +29,12 @@ export class PosClient {
             url += pagination.firstIndex;
             url += "&length=";
             url += pagination.pageSize;
-            return url;
         }
         return url;
     }
 
     createPos(pos:Pos, authToken:string):Promise<PosRef> {
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         var url = this.getPosUrl();
 
         return request
@@ -47,7 +46,7 @@ export class PosClient {
     }
 
     updatePos(pos:Pos, authToken:string):Promise<PosRef> {
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         var url = this.getPosUrl(pos.id);
 
         return request
@@ -59,7 +58,7 @@ export class PosClient {
     }
 
     getPos(id:number, authToken:string):Promise<Pos> {
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         var url = this.getPosUrl(id);
 
         return request
@@ -71,7 +70,7 @@ export class PosClient {
     }
 
     searchPos(search:PosSearch, pagination:Pagination, authToken:string):Promise<SearchResult<Pos>> {
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         var url = this.getSearchUrl(pagination);
 
         return request

@@ -5,9 +5,11 @@
 import {Component, View, NgFor, NgIf, EventEmitter, formDirectives} from 'angular2/angular2';
 
 import {Item} from 'client/domain/item';
+import {ItemSale} from 'client/domain/itemSale';
 import {LocaleTexts} from 'client/utils/lang';
-import {SaleService, CommandItem, Command} from 'services/saleService';
+import {ItemSaleService} from 'services/itemSale';
 
+import {ActiveSale, ActiveSaleItem} from 'components/sales/sale/sellView';
 import {AutoFocusDirective} from 'directives/autoFocus';
 import {ApplicationService} from 'services/application';
 
@@ -17,7 +19,7 @@ class ToAddItem {
     name:string = null;
     amount:number = 1;
     price:number = null;
-    vat: number = 21.0;
+    vat:number = 21.0;
 }
 
 
@@ -25,29 +27,29 @@ class ToAddItem {
 @Component({
     selector: 'commandView',
     events: ['validate'],
-    properties: ['command', 'validated']
+    properties: ['sale', 'validated']
 })
 
 @View({
     templateUrl: './components/sales/sale/commandView/commandView.html',
     styleUrls: ['./components/sales/sale/commandView/commandView.css'],
-    directives: [AutoFocusDirective, NgFor,NgIf, formDirectives]
+    directives: [AutoFocusDirective, NgFor, NgIf, formDirectives]
 })
 
 export class CommandView {
-    saleService:SaleService;
-    command:Command;
+    itemSaleService:ItemSaleService;
+    sale:ActiveSale;
     language:string;
 
     toAddItem:ToAddItem;
-    editingReductionItem:CommandItem = null;
-    editingAmountItem:CommandItem = null;
+    editingReductionItem:ActiveSaleItem = null;
+    editingAmountItem:ActiveSaleItem = null;
     editingGlobalReduction:boolean = false;
     validate = new EventEmitter();
     validated:boolean = false;
 
-    constructor(saleService:SaleService, applicationService:ApplicationService) {
-        this.saleService = saleService;
+    constructor(itemSaleService:ItemSaleService, applicationService:ApplicationService) {
+        this.itemSaleService = itemSaleService;
         this.language = applicationService.language.locale;
         this.renewToAddCustomItem();
     }
@@ -57,41 +59,30 @@ export class CommandView {
     }
 
 
-    doClearItem(commandItem:CommandItem) {
-        this.command.removeCommandItem(commandItem);
-    }
-
-    doAddItem(item:Item) {
-        var commandIitem = this.command.addItem(item);
-        // If added a new item, allow to edit quantity directly
-        /*   if (commandIitem.amount > 1) {
-         this.editingAmountItem = null;
-         } else {
-         this.editingAmountItem = commandIitem;
-         }*/
+    doClearItem(saleItem:ActiveSaleItem) {
+        // TODO: remove items
     }
 
     doAddCustomItem() {
+        // TODO: create custom
         var item = new Item();
         item.vatExclusive = this.toAddItem.price;
         item.vatRate = this.toAddItem.vat * 0.01;
         item.name = new LocaleTexts();
         item.name[this.language] = this.toAddItem.name;
         item.reference = null;
-        var commandItem = new CommandItem(item);
-        commandItem.amount = this.toAddItem.amount;
-        this.command.addCommandItem(commandItem);
+        // TODO: mark item as custom, save, create itemSale, save, add to ActiveSale
         this.renewToAddCustomItem();
     }
 
-    doEditItemReduction(commandItem:CommandItem) {
-        this.editingReductionItem = commandItem;
+    doEditItemReduction(activeItem:ActiveSaleItem) {
+        this.editingReductionItem = activeItem;
     }
 
     onEditItemReductionKeyUp(event) {
         if (event.which == 13) { // Enter
             var reduction:number = event.target.value;
-           this.doApplyItemReduction(reduction);
+            this.doApplyItemReduction(reduction);
             return;
         }
         if (event.which == 27) { // Escape
@@ -100,10 +91,9 @@ export class CommandView {
         }
     }
 
-    doApplyItemReduction(reduction: number) {
+    doApplyItemReduction(reduction:number) {
         this.editingReductionItem.reduction = reduction;
-        this.command.calcItemPrice(this.editingReductionItem);
-        this.command.calcTotalPrice();
+        // TODO: handle eeduction in backend
         this.editingReductionItem = null;
     }
 
@@ -111,21 +101,18 @@ export class CommandView {
         this.editingReductionItem = null;
     }
 
-    doEditItemAmount(commandItem:CommandItem) {
-        this.editingAmountItem = commandItem;
+    doEditItemAmount(activeItem:ActiveSaleItem) {
+        this.editingAmountItem = activeItem;
     }
 
-    applyItemAmount(event) {
+    onItemAmountKeyEvent(event) {
         if (event.which == 13) { // Enter
             var amount:string = event.target.value;
             var amountVal = parseInt(amount);
             if (isNaN(amountVal)) {
                 return false;
             }
-            this.editingAmountItem.amount = amountVal;
-            this.command.calcItemPrice(this.editingAmountItem);
-            this.command.calcTotalPrice();
-            this.editingAmountItem = null;
+            this.applyItemAmount(amountVal);
             return false;
         }
         if (event.which == 27) { // Escape
@@ -135,21 +122,29 @@ export class CommandView {
         return false;
     }
 
+    applyItemAmount(amount:number) {
+        var itemSale = this.editingAmountItem.itemSale;
+        itemSale.quantity = amount;
+        var activeItem = this.editingAmountItem;
+
+        this.itemSaleService.updateItemSale(itemSale);
+        this.editingAmountItem = null;
+        return false;
+    }
+
+
     cancelItemAmount() {
         this.editingAmountItem = null;
     }
 
-    applyGlobalReduction(event) {
+    onGlobalReductionKeyEvent(event) {
         if (event.which == 13) { // Enter
-            var reduction:string= event.target.value;
+            var reduction:string = event.target.value;
             var reductionVal = parseFloat(reduction);
             if (isNaN(reductionVal)) {
-                this.command.globalReduction = null;
-            } else {
-                this.command.globalReduction = reductionVal;
+               return false;
             }
-            this.command.calcTotalPrice();
-            this.editingGlobalReduction = false;
+            this.applyGlobalReduction(reductionVal);
             return false;
         }
         if (event.which == 27) { // Escape
@@ -157,6 +152,12 @@ export class CommandView {
             return false;
         }
         return false;
+    }
+
+    applyGlobalReduction(reduction: number) {
+        this.sale.reduction = reduction;
+        // TODO: handle reduction in backend
+        this.editingGlobalReduction = false;
     }
 
     cancelGlobalReduction() {

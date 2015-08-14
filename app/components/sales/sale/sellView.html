@@ -1,18 +1,19 @@
-<div class="wrapper">
+<div class="wrapper" >
 
-    <div class="sellView">
-        <div class="itemList" [class.slide-left]="commandValidated">
+    <div class="sellView" [class.slide-left]="payStep">
+        <div class="itemList" >
             <div>
                 <itemListView #itemlist (item-clicked)="onItemClicked($event, commandview, itemlist)"></itemListView>
             </div>
         </div>
-        <div class="commandView" [class.slide-left]="commandValidated">
+        <div class="commandView" >
             <div>
-                <commandView #commandview (validate)="onCommandValidated($event, payview)"
-                             [command]="command" [validated]="commandValidated"></commandView>
+                <commandView #commandview
+                             (validate)="onCommandValidated($event, payview)"
+                             [sale]="activeSale" [validated]="commandValidated"></commandView>
             </div>
         </div>
-        <div class="payView" [class.slide-left]="commandValidated">
+        <div class="payView">
             <div>
                 <payView #payview (paid)="onCommandPaid()"
                          [command]="command"></payView>

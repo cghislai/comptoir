@@ -5,7 +5,7 @@
 
 import {Sale, SaleRef, SaleSearch, SaleFactory} from 'client/domain/sale';
 import {Pagination} from 'client/utils/pagination';
-import {ComptoirrRequest} from 'client/utils/request';
+import {ComptoirRequest} from 'client/utils/request';
 import {SearchResult} from 'client/utils/search';
 import {ServiceConfig} from 'client/utils/service';
 
@@ -30,13 +30,12 @@ export class SaleClient {
             url += pagination.firstIndex;
             url += "&length=";
             url += pagination.pageSize;
-            return url;
         }
         return url;
     }
 
     createSale(sale:Sale, authToken:string):Promise<SaleRef> {
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         var url = this.getSaleUrl();
 
         return request
@@ -48,7 +47,7 @@ export class SaleClient {
     }
 
     updateSale(sale:Sale, authToken:string):Promise<SaleRef> {
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         var url = this.getSaleUrl(sale.id);
 
         return request
@@ -60,7 +59,7 @@ export class SaleClient {
     }
 
     getSale(id:number, authToken:string):Promise<Sale> {
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         var url = this.getSaleUrl(id);
 
         return request
@@ -72,7 +71,7 @@ export class SaleClient {
     }
 
     searchSales(search:SaleSearch, pagination:Pagination, authToken:string):Promise<SearchResult<Sale>> {
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         var url = this.getSearchUrl(pagination);
 
         return request

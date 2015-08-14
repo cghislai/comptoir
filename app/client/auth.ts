@@ -4,7 +4,7 @@
 
 import {Registration, LoginResponse, AuthFactory} from 'client/domain/auth';
 import {CompanyRef} from 'client/domain/company';
-import {ComptoirrRequest} from 'client/utils/request';
+import {ComptoirRequest} from 'client/utils/request';
 import {ServiceConfig} from 'client/utils/service';
 
 export class AuthClient {
@@ -18,7 +18,7 @@ export class AuthClient {
     }
 
     login(login:string, password:string):Promise<LoginResponse> {
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         var body = {
             'login': login,
             'passwordHash': password
@@ -33,7 +33,7 @@ export class AuthClient {
     }
 
     register(registration:Registration):Promise<CompanyRef> {
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         return request
             .post(registration, this.getRegisterUrl(), null)
             .then((response)=> {

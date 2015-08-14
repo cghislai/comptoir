@@ -5,7 +5,7 @@
 
 import {Account, AccountRef, AccountSearch, AccountFactory} from 'client/domain/account';
 import {Pagination} from 'client/utils/pagination';
-import {ComptoirrRequest} from 'client/utils/request';
+import {ComptoirRequest} from 'client/utils/request';
 import {SearchResult} from 'client/utils/search';
 import {ServiceConfig} from 'client/utils/service';
 
@@ -30,13 +30,12 @@ export class AccountClient {
             url += pagination.firstIndex;
             url += "&length=";
             url += pagination.pageSize;
-            return url;
         }
         return url;
     }
 
     createAccount(account:Account, authToken:string):Promise<AccountRef> {
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         var url = this.getAccountUrl();
 
         return request
@@ -48,7 +47,7 @@ export class AccountClient {
     }
 
     updateAccount(account:Account, authToken:string):Promise<AccountRef> {
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         var url = this.getAccountUrl(account.id);
 
         return request
@@ -60,7 +59,7 @@ export class AccountClient {
     }
 
     getAccount(id:number, authToken:string):Promise<Account> {
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         var url = this.getAccountUrl(id);
 
         return request
@@ -72,7 +71,7 @@ export class AccountClient {
     }
 
     searchAccounts(search:AccountSearch, pagination:Pagination, authToken:string):Promise<SearchResult<Account>> {
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         var url = this.getSearchUrl(pagination);
 
         return request

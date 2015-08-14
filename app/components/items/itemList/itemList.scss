@@ -25,6 +25,9 @@
       font-weight: bold;
       border-bottom: .1em solid lightgray;
     }
+    .item {
+      border: .1em solid transparent;
+    }
     .item.selectable:hover {
       cursor: pointer;
     }

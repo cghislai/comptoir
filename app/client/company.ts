@@ -3,7 +3,7 @@
  */
 
 import {Company, CompanyRef, CompanyFactory} from 'client/domain/company';
-import {ComptoirrRequest} from 'client/utils/request';
+import {ComptoirRequest} from 'client/utils/request';
 import {SearchResult} from 'client/utils/search';
 import {ServiceConfig} from 'client/utils/service';
 
@@ -25,7 +25,7 @@ export class CompanyClient {
     }
 
     createCompany(company:Company, authToken: string):Promise<CompanyRef> {
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         var url = this.getCompanyUrl();
         return request
             .post(company, url, authToken)
@@ -36,7 +36,7 @@ export class CompanyClient {
     }
 
     updateCompany(company:Company, authToken: string):Promise<CompanyRef> {
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         var url = this.getCompanyUrl(company.id);
 
         return request
@@ -48,7 +48,7 @@ export class CompanyClient {
     }
 
     getCompany(id:number, authToken: string):Promise<Company> {
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         var url = this.getCompanyUrl(id);
 
         return request

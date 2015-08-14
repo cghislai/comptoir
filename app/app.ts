@@ -7,7 +7,8 @@ import {AuthService} from 'services/auth';
 import {ItemService} from 'services/itemService';
 import {PictureService} from 'services/pictureService';
 import {CashService} from 'services/cashService';
-import {SaleService} from 'services/saleService';
+import {SaleService} from 'services/sale';
+import {ItemSaleService} from 'services/itemSale';
 import {CompanyService} from 'services/company';
 import {AccountService} from 'services/account';
 import {EmployeeService} from 'services/employee';
@@ -112,6 +113,7 @@ bootstrap(App, [
     EmployeeService,
     FileUploadService,
     ItemService,
+    ItemSaleService,
     PictureService,
     PosService,
     SaleService,

@@ -3,7 +3,7 @@
  */
 
 import {ItemPicture, ItemPictureRef, ItemPictureSearch, ItemPictureFactory} from 'client/domain/itemPicture';
-import {ComptoirrRequest} from 'client/utils/request';
+import {ComptoirRequest} from 'client/utils/request';
 import {SearchResult} from 'client/utils/search';
 import {ServiceConfig} from 'client/utils/service';
 import {Pagination} from'client/utils/pagination';pagination:Pagination
@@ -44,7 +44,7 @@ export class ItemPictureClient {
 
     createItemPicture(itemPicture:ItemPicture, authToken: string):Promise<ItemPictureRef> {
         var url = this.getResourceUrl(itemPicture);
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         return request.post(itemPicture, url, authToken)
             .then(function (response) {
                 var itemPictureRef = JSON.parse(response.text);
@@ -54,7 +54,7 @@ export class ItemPictureClient {
 
     updateItemPicture(itemPicture:ItemPicture, authToken: string):Promise<ItemPictureRef> {
         var url = this.getResourceUrl(itemPicture);
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         return request.put(itemPicture, url, authToken)
             .then(function (response) {
                 var itemPictureRef = JSON.parse(response.text);
@@ -64,7 +64,7 @@ export class ItemPictureClient {
 
     getItemPicture(itemId: number, id:number, authToken: string):Promise<ItemPicture> {
         var url = this.getItemPictureUrl(itemId, id);
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         return request.get(url, authToken)
             .then(function (response) {
                 var itemPicture = JSON.parse(response.text, ItemPictureFactory.fromJSONPictureReviver);
@@ -74,7 +74,7 @@ export class ItemPictureClient {
 
     searchItemPicture(itemId: number, pagination: Pagination, authToken: string):Promise<SearchResult<ItemPicture>> {
         var url = this.getItemPictureSearchUrl(itemId, pagination);
-        var request = new ComptoirrRequest();
+        var request = new ComptoirRequest();
         return request.get(url, authToken)
             .then(function (response) {
                 var result = new SearchResult<ItemPicture>().parseResponse(response, ItemPictureFactory.fromJSONPictureReviver);

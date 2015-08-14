@@ -1,32 +1,40 @@
-<div class="commandView">
-    <header class="coloredHeader">
-        <h1>Commande {{ command.id }}</h1>
+<div class="commandView" *ng-if="sale != null">
 
-        <div class="actions" [hidden]="command.getItems().length == 0">
+    <header class="coloredHeader">
+        <h1>
+            <span>Vente</span>
+            <span class="saleRef" *ng-if="sale.sale != null">
+                #{{ sale.sale.id }}
+            </span>
+        </h1>
+
+        <div class="actions" [hidden]="sale.items.length == 0">
+
             <div class="action reduction" [hidden]="validated"
                  (^click)="editingGlobalReduction = true"
                  [class.editing]="editingGlobalReduction"
-                 [class.has-reduction]="command.globalReduction > 0">
-                <span [hidden]="editingGlobalReduction || command.globalReduction > 0">
+                 [class.has-reduction]="sale.reduction > 0">
+                <span [hidden]="editingGlobalReduction || sale.reduction > 0">
                     Réduction
                 </span>
-                <span [hidden]="editingGlobalReduction || command.globalReduction == null">
-                    -{{ command.globalReduction}} %
+                <span [hidden]="editingGlobalReduction || sale.reduction <= 0">
+                    -{{ sale.reduction }} %
                 </span>
                 <span *ng-if="editingGlobalReduction">
-                    <input #reduction [value]="command.globalReduction"
-                           (keyup)="applyGlobalReduction($event)"
+                    <input #reduction [value]="sale.reduction"
+                           (keyup)="onGlobalReductionKeyEvent($event)"
                            (blur)="cancelGlobalReduction()"
                            type="number" min="0.01" step="0.01"
                            size="2" autofocusselect/>
                     %
                 </span>
             </div>
-            <div class="action cashIn" (click)="doValidate()" [hidden]="validated">Encaisser</div>
-            <div class="action cashIn" (click)="doUnvalidate()" [hidden]="!validated">Retour</div>
+            <div class="action validate" (click)="doValidate()" [hidden]="validated">Encaisser</div>
+            <div class="action back" (click)="doUnvalidate()" [hidden]="!validated">Retour</div>
         </div>
     </header>
-    <table class="dataTable" [hidden]="command.getItems().length == 0">
+
+    <table class="dataTable" [hidden]="sale.items.length == 0">
         <thead>
         <tr>
             <th>Ref</th>
@@ -36,34 +44,35 @@
             <th class="actions" [hidden]="validated"></th>
         </tr>
         </thead>
+
         <tbody>
-        <tr *ng-for="#commandItem of command.items"
-            class="commandItem">
+        <tr *ng-for="#saleItem of sale.items"
+            class="saleItem">
 
             <td class="ref">
-                <span [hidden]="commandItem.item.reference == null">
-                    {{ commandItem.item.reference }}
+                <span [hidden]="saleItem.item.reference == null">
+                    {{ saleItem.item.reference }}
                 </span>
             </td>
             <td class="name">
-                {{ commandItem.item.name[language] }}
+                {{ saleItem.item.name[language] }}
             </td>
             <td class="amount number">
-                <a class="quantityLink" (^click)="doEditItemAmount(commandItem)"
-                   [class.editing]="editingAmountItem == commandItem"
-                   [class.unneeded]="commandItem.amount <= 1 || editingAmountItem == commandItem"
+                <a class="quantityLink" (^click)="doEditItemAmount(saleItem)"
+                   [class.editing]="editingAmountItem == saleItem"
+                   [class.unneeded]="saleItem.itemSale.quantity <= 1 || editingAmountItem == saleItem"
                    [class.nolink]="validated"
                    [class.actionLink]="!validated">
                         <span class="count">
-                            {{ commandItem.amount}} x
+                            {{ saleItem.itemSale.quantity}} x
                         </span>
                         <span class="price">
-                            {{ commandItem.item.vatExclusive | currency:'EUR':true:'.2-2'  }}
+                            {{ saleItem.item.vatExclusive | currency:'EUR':true:'.2-2'  }}
                         </span>
                 </a>
-                <span class="editAmount" *ng-if="editingAmountItem == commandItem">
-                    <input #amount [value]="commandItem.amount"
-                           (keyup)="applyItemAmount($event)"
+                <span class="editAmount" *ng-if="editingAmountItem == saleItem">
+                    <input #amount [value]="saleItem.itemSale.quantity"
+                           (keyup)="onItemAmountKeyEvent($event)"
                            (blur)="cancelItemAmount()"
                            type="number" min="1"
                            size="4" autofocusselect/>
@@ -71,28 +80,28 @@
             </td>
             <td class="price number">
                 <a class="reduction green"
-                   [class.unneeded]="commandItem.reduction <= 0 || editingReductionItem == commandItem"
+                   [class.unneeded]="saleItem.reduction <= 0 || editingReductionItem == saleItem"
                    [class.nolink]="validated"
                    [class.actionLink]="!validated"
-                   (^click)="doEditItemReduction(commandItem)">
-                    -{{commandItem.reduction}}%
+                   (^click)="doEditItemReduction(saleItem)">
+                    -{{saleItem.reduction}}%
                 </a>
-                <span class="setReduction" *ng-if="editingReductionItem == commandItem">
-                    <input #reduction [value]="commandItem.reduction"
+                <span class="setReduction" *ng-if="editingReductionItem == saleItem">
+                    <input #reduction [value]="saleItem.reduction"
                            (keyup)="onEditItemReductionKeyUp($event)"
                            (blur)="doCancelItemReduction()"
                            type="number" min="0.1" step="0.1"
                            size="2" autofocusselect/>
                     %
                 </span>
-                <span>{{ commandItem.price | currency:'EUR':true:'.2-2' }}</span>
+                <span>{{ saleItem.price | currency:'EUR':true:'.2-2' }}</span>
             </td>
             <td class="actions" [hidden]="validated">
-                <a class="actionIcon remove" (^click)="doClearItem(commandItem)">
+                <a class="actionIcon remove" (^click)="doClearItem(saleItem)">
                     <i class="fi-x red"></i>
                 </a>
-                <a class="actionIcon setReductionLink" (^click)="doEditItemReduction(commandItem)"
-                   [hidden]="commandItem.reduction > 0 || editingReductionItem == commandItem">
+                <a class="actionIcon setReductionLink" (^click)="doEditItemReduction(saleItem)"
+                   [hidden]="saleItem.reduction > 0 || editingReductionItem == saleItem">
                     <span class="green" style="font-weight: bold;">%</span>
                 </a>
             </td>
@@ -100,24 +109,24 @@
 
         </tbody>
         <tfoot>
-        <tr [hidden]="command.globalReduction <= 0" class="details">
+        <tr [hidden]="sale.reduction<= 0" class="details">
             <th colspan="3" class="reduction">
-                Réduction {{command.globalReduction}}%
+                Réduction {{ sale.reduction}}%
             </th>
-            <th class="reduction number">-{{ command.reductionAmount | currency:'EUR':true:'.2-2'}}</th>
+            <th class="reduction number">-{{ sale.reductionAmount | currency:'EUR':true:'.2-2'}}</th>
         </tr>
         <tr class="details">
             <th colspan="3">Total HTVA</th>
-            <th class="number">{{ command.vatExclusiveAmount | currency:'EUR':true:'.2-2'}}</th>
+            <th class="number">{{ sale.vatExclusiveAmount | currency:'EUR':true:'.2-2'}}</th>
         </tr>
         <tr class="details">
             <th colspan="3">TVA</th>
-            <th class="number">{{ command.vatAmount | currency:'EUR':true:'.2-2'}}</th>
+            <th class="number">{{ sale.vatAmount | currency:'EUR':true:'.2-2'}}</th>
         </tr>
 
         <tr>
             <th colspan="3" class="total">Total</th>
-            <th class="total price number">{{ command.totalPrice | currency:'EUR':true:'.2-2'}}</th>
+            <th class="total price number">{{ sale.total | currency:'EUR':true:'.2-2'}}</th>
         </tr>
         </tfoot>
     </table>
