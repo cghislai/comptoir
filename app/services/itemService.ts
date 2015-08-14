@@ -153,7 +153,11 @@ export class ItemService {
 
     private findPicItemPicture(picItem:PicturedItem) {
         var itemId = picItem.item.id;
-        var picId = picItem.item.mainPictureRef.id;
+        var picRef = picItem.item.mainPictureRef;
+        if (picRef == null) {
+            return null;
+        }
+        var picId = picRef.id;
         var authToken = this.authService.authToken;
 
         return this.pictureClient.getItemPicture(itemId, picId, authToken)
@@ -174,20 +178,20 @@ export class ItemService {
         var item = picturedItem.item;
         var picture = picturedItem.picture;
         var pictureDataURI = picturedItem.dataURI;
+        var hasPicture = (picture != undefined && picture.data != undefined)
+            || pictureDataURI != undefined;
 
-        if (picture == null) {
-            if (pictureDataURI == null) {
-                item.mainPictureRef = null;
-            } else {
+        if (!hasPicture) {
+            item.mainPictureRef == null;
+            picturedItem.picture = null;
+            picture = null;
+        } else {
+            if (picturedItem.picture == null) {
                 picture = new ItemPicture();
                 PicturedItemFactory.buildPictureDataFromDataURI(pictureDataURI, picture);
                 picturedItem.picture = picture;
-
             }
-        } else {
-            if (pictureDataURI == null) {
-                item.mainPictureRef = null;
-            } else {
+            if (pictureDataURI != null) {
                 PicturedItemFactory.buildPictureDataFromDataURI(pictureDataURI, picture);
                 picturedItem.picture = picture;
             }

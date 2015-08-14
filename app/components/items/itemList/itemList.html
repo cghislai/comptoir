@@ -5,7 +5,7 @@
 
     <div class="dataTable">
         <div class="dataTableHead"
-             [hidden]="!headers">
+             [hidden]="headers == false">
             <div class="dataTableRow">
             <span class="dataTableCell"
                   *ng-for="#col of columns"

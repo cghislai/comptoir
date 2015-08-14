@@ -2,8 +2,8 @@
     <header class="coloredHeader">
         <navMenu></navMenu>
     </header>
-    <section>
-        <router-outlet requireslogin></router-outlet>
+    <section requireslogin>
+        <router-outlet ></router-outlet>
     </section>
     <footer>
         {{ appService.appName }} {{ appService.appVersion }}

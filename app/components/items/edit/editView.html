@@ -11,7 +11,6 @@
                     <img [src]="itemModel.pictureDataURI" class="itemPicture medium"
                          *ng-if="itemModel.pictureDataURI != undefined">
                     <input type="file" id="picture" accept="image/*"
-                           ng-control="picture"
                            (change)="onFileSelected(f, $event)"
                            (fileread)>
                 </td>
@@ -33,15 +32,15 @@
             <tr>
                 <td><label for="reference">Référence:</label></td>
                 <td>
-                    <input type="text" id="reference"
-                           ng-control="reference" [(ng-model)]="itemModel.reference">
+                    <input type="text" id="reference" required
+                           [(ng-model)]="itemModel.reference">
                 </td>
             </tr>
             <tr>
                 <td><label for="name">Nom:</label></td>
                 <td>
-                    <input type="text" id="name"
-                           ng-control="name" [(ng-model)]="itemModel.name[itemModel.language]">
+                    <input type="text" id="name" required
+                           [(ng-model)]="itemModel.name[itemModel.language]">
                 </td>
             </tr>
             <tr>
@@ -55,15 +54,15 @@
                 <td><label for="model">Modèle:</label></td>
                 <td>
                     <input type="text" id="model"
-                           ng-control="model" [(ng-model)]="itemModel.model">
+                           [(ng-model)]="itemModel.model">
                 </td>
             </tr>
             <tr>
                 <td><label for="price">Prix:</label></td>
                 <td>
                         <span>
-                        <input class="number" type="number" min="0" step="0.01" id="price"
-                               ng-control="price"
+                        <input class="number" type="number"  required
+                               min="0" step="0.01" id="price"
                                [ng-model]="itemModel.price | number:'.2-2'"
                                (change)="onCurrentPriceChanged($event)">
                             </span>
@@ -74,8 +73,8 @@
                 <td><label for="vat">TVA:</label></td>
                 <td>
                         <span>
-                        <input class="number" type="number" min="0" max="100" step="1" id="vat"
-                               ng-control="vat"
+                        <input class="number" type="number" required
+                               min="0" max="100" step="1" id="vat"
                                [ng-model]="itemModel.vat | number:'.2-2'"
                                (change)="onVatChanged($event)">
                             </span>

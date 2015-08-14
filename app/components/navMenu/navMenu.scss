@@ -45,7 +45,8 @@
     }
 }
 .navTabs {
-    display: inline-block;
+    display: table-cell;
+    vertical-align: bottom;
     height: 100%;
     margin-left: 3em;
 

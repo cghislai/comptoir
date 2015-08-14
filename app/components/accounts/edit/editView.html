@@ -21,7 +21,7 @@
             <tr>
                 <td><label for="type">Type:</label></td>
                 <td>
-                    <select id="type"
+                    <select id="type" required
                             [(ng-model)]="accountModel.accountType">
                         <option *ng-for="#accountType of allAccountTypes"
                                 [value]="accountType.type">
@@ -33,7 +33,7 @@
             <tr>
                 <td><label for="name">Nom:</label></td>
                 <td>
-                    <input id="name" type="text"
+                    <input id="name" type="text" required
                            [(ng-model)]="accountModel.name">
                 </td>
             </tr>

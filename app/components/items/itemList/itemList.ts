@@ -47,7 +47,7 @@ export class ItemColumnComponent {
 
 @Component({
     selector: 'itemList',
-    properties: ['items', 'columns', 'selectable', 'headers'],
+    properties: ['items', 'columns', 'selectable', 'headersParams: headers'],
     events: ['itemClicked', 'columnAction']
 })
 
@@ -70,8 +70,7 @@ export class ItemList {
     language:string;
 
     constructor(applicationService:ApplicationService,
-                @Attribute('selectable') selectable,
-                @Attribute('headers') headers) {
+                @Attribute('selectable') selectable) {
         this.language = applicationService.language.locale;
 
         if (selectable != undefined) {
@@ -79,13 +78,11 @@ export class ItemList {
         } else {
             this.selectable = true;
         }
-        if (headers != undefined) {
-            this.selectable = headers != 'false';
-        } else {
-            this.selectable = true;
-        }
     }
 
+    set headersParams(value: string) {
+        this.headers = value != 'false';
+    }
 
     onItemClick(item:Item, col:ItemColumn) {
         if (col == ItemColumn.ACTION_REMOVE) {

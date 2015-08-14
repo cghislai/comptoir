@@ -1,18 +1,57 @@
-table {
-    width: 100%;
+
+@mixin transition($args...) {
+  -webkit-transition: $args;
+  -moz-transition: $args;
+  -ms-transition: $args;
+  -o-transition: $args;
+  transition: $args;
 }
-table td {
-    padding: .5em;
+
+.wrapper {
+  min-height: 90vh;
+  position: relative;
+  overflow-x: hidden;
 }
-td.itemList {
+
+.sellView {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+
+  > * {
+    display: inline-block;
+    position: absolute;
     vertical-align: top;
     width: 50%;
+    @include transition(left 300ms ease-in-out);
+
+    > * {
+      margin: 1em;
+    }
+  }
+
+  .itemList {
+      left: 0;
+
+    &.slide-left {
+      left: -50%;
+    }
+  }
+
+  .commandView {
+    left: 50%;
+
+    &.slide-left {
+      left: 0;
+    }
+  }
+  .payView {
+    left: 100%;
+
+    &.slide-left {
+      left: 50%;
+    }
+  }
+
 }
-td.commandView {
-    vertical-align: top;
-    width: 50%;
-}
-td.payView {
-    vertical-align: top;
-    width: 50%;
-}
+

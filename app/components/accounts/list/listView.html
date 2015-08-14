@@ -9,7 +9,7 @@
                [total-count]="accountCount"
                [page-size]="accountsPerPage"
                show-prev-next="true" show-first-last="true"
-               (pagechange)="onPageChanged($event)"></paginator>
+               (page-change)="onPageChanged($event)"></paginator>
     <table class="accounts" *ng-if="accountSearchResult != undefined">
         <thead>
         <tr>

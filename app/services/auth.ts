@@ -153,6 +153,11 @@ export class AuthService {
             this.loginRequiredReason = LoginRequiredReason.SESSION_EXPIRED;
             return true;
         }
+        if (this.loggedEmployee == null) {
+            this.loginRequired = true;
+            this.loginRequiredReason = LoginRequiredReason.NO_SESSION;
+            return true;
+        }
         this.loginRequired = false;
         this.loginRequiredReason = null;
         return false;
