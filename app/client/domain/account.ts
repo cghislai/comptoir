@@ -3,8 +3,8 @@
  */
 
 import {CompanyRef} from 'client/domain/company';
+import {PosRef} from 'client/domain/pos';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
-import {Pagination} from 'client/utils/pagination';
 
 export enum AccountType {
     PAYMENT,
@@ -30,6 +30,7 @@ export class AccountRef {
 
 export class AccountSearch {
     companyRef: CompanyRef;
+    posRef: PosRef;
 }
 
 

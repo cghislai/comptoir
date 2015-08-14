@@ -40,7 +40,7 @@ export class LoginView {
         var hashedPassword = MD5.encode(this.password);
         this.authService.login(this.login, hashedPassword)
             .then(function (employee) {
-                thisView.router.navigate('/sales/sale');
+                thisView.router.navigate('/sales/sale/new');
             }).catch(function (error) {
                 thisView.appService.showError(error);
             });
