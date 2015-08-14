@@ -50,12 +50,14 @@ export class SellView {
                 this.command = this.saleService.activeCommand;
                 return;
             }
-            this.command = this.saleService.newCommand();
+            this.router.navigate('/sales/sale/new');
             return;
         }
         this.command = this.saleService.getCommand(idNumber);
         if (this.command == undefined) {
-            this.router.navigate('/sales/sale');
+            this.router.navigate('/sales/sale/new');
+            this.command = this.saleService.newCommand();
+            return;
         }
         this.saleService.activeCommand = this.command;
     }

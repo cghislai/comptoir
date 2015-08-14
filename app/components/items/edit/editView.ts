@@ -19,7 +19,7 @@ class ItemFormModel {
     description:LocaleTexts;
     model:string;
     price:number;
-    vat:number;
+    vat:number = 21.0;
     pictureDataURI:string;
     item:PicturedItem;
 
