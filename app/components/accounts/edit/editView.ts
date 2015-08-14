@@ -110,7 +110,6 @@ export class EditAccountView {
         account.description = this.accountModel.description;
         account.iban = this.accountModel.iban;
         account.name = this.accountModel.name;
-        // TODO
         this.accountService.saveAccount(account)
             .then((accountRef)=> {
                 this.router.navigate('/accounts/list');

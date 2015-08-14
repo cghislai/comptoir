@@ -17,6 +17,9 @@ export class SearchResult<T> {
     parseResponse(response:ComptoirResponse, jsonReviver:(key, value)=>any): SearchResult<T> {
         var list: T[] = JSON.parse(response.text, jsonReviver);
         var count =parseInt(response.listTotalCountHeader);
+        if (isNaN(count)) {
+            count = 0;
+        }
         var result = new SearchResult<T>();
         result.list = list;
         result.count = count;

@@ -69,6 +69,9 @@ export class NavMenu {
         if (this.isActive('/register')) {
             return "Nouveau Compte";
         }
+        if (this.isActive('/pos')) {
+            return "Points de vente";
+        }
     }
 
     open() {

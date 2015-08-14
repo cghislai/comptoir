@@ -11,6 +11,7 @@ import {SaleService} from 'services/saleService';
 import {CompanyService} from 'services/company';
 import {AccountService} from 'services/account';
 import {EmployeeService} from 'services/employee';
+import {PosService} from 'services/pos';
 
 import {RequiresLogin} from 'directives/requiresLogin';
 import {NavMenu} from './components/navMenu/navMenu';
@@ -32,6 +33,9 @@ import {CashHistoryView} from 'components/cash/history/historyView';
 
 import {AccountsListView} from 'components/accounts/list/listView';
 import {EditAccountView} from 'components/accounts/edit/editView';
+
+import {PosListView} from 'components/pos/list/listView';
+import {EditPosView} from 'components/pos/edit/editView';
 
 import {ApplicationSettingsView} from 'components/settings/application/appSettings'
 
@@ -63,6 +67,10 @@ import {Parent} from 'components/test/test';
     {path: '/accounts/list', component: AccountsListView, as: 'accountsList'},
     {path: '/accounts/edit', component: EditAccountView, as: 'accountsEditNew'},
     {path: '/accounts/edit/:id', component: EditAccountView, as: 'accountsEdit'},
+
+    {path: '/pos/list', component: PosListView, as: 'posList'},
+    {path: '/pos/edit', component: EditPosView, as: 'posEditNew'},
+    {path: '/pos/edit/:id', component: EditPosView, as: 'posEdit'},
 
     {path: '/cash/count', component: CountCashView, as: 'cashCount'},
     {path: '/cash/history', component: CashHistoryView, as: 'cashHistory'},
@@ -101,6 +109,7 @@ bootstrap(App, [
     EmployeeService,
     ItemService,
     PictureService,
+    PosService,
     SaleService,
 
     NavMenu
