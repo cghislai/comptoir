@@ -44,7 +44,11 @@ export class ActiveSalesView {
         this.router = router;
         this.saleSearch = new SaleSearch();
         this.saleSearch.companyRef = authService.loggedEmployee.companyRef
+        this.saleSearch.closed = false;
         this.pagination = new Pagination(0, this.salesPerPage);
+        this.pagination.sorts = {
+            'DATETIME': 'desc'
+        };
         this.language = applicationService.language.locale;
         this.columns = [
             SaleColumn.ID,

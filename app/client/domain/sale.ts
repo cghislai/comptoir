@@ -26,6 +26,7 @@ export class SaleRef {
 
 export class SaleSearch {
     companyRef: CompanyRef;
+    closed: boolean;
 }
 
 export class SaleFactory {

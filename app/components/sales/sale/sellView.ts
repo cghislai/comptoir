@@ -59,32 +59,65 @@ export class SellView {
         this.router = router;
         this.location = location;
 
+
+        console.log('constructor');
         var idValue = routeParams.get('id');
         this.findSale(idValue);
+
+        var thisView = this;
+        router.subscribe(function (path) {
+            console.log('router changed with id ' + idValue + ' path ' + path);
+            thisView.findSale(idValue);
+        });
+
+        location.subscribe((val)=> {
+            idValue = routeParams.get('id');
+            console.log('location changed with id ' + idValue + ' val ' + val);
+            thisView.findSale(idValue);
+        });
     }
 
 
     findSale(idValue:string) {
-        this.activeSale = null;
+        var idNumber = parseInt(idValue);
+        if (this.activeSale != null) {
+            var saleExists = this.activeSale.sale != null;
+            if (!saleExists && idValue == 'new') {
+                return;
+            }
+            if (saleExists) {
+                if (this.activeSale.sale.id == idNumber) {
+                    return;
+                }
+            }
+        }
         if (idValue == 'new') {
             this.activeSale = new ActiveSale();
             this.saleService.activeSale = null;
             return;
         }
-        var idNumber = parseInt(idValue);
         if (isNaN(idNumber)) {
             if (this.saleService.activeSale != null) {
                 var activeSale = this.saleService.activeSale;
-                this.router.navigate('/sales/sale/'+activeSale.id);
+                idNumber = activeSale.id;
+                this.router.navigate('/sales/sale/' + idNumber);
+                return;
+            } else {
+                this.saleService.activeSale = null;
+                this.router.navigate('/sales/sale/new');
                 return;
             }
-            this.router.navigate('/sales/sale/new');
-            return;
         }
+        this.getSale(idNumber);
+
+    }
+
+    getSale(idNumber: number) {
+        this.activeSale = new ActiveSale();
+
         var thisView = this;
         this.saleService.getSale(idNumber)
             .then((sale:Sale)=> {
-                thisView.activeSale = new ActiveSale();
                 thisView.activeSale.sale = sale;
                 thisView.saleService.activeSale = sale;
                 // TODO: fetch the sale items
@@ -95,14 +128,16 @@ export class SellView {
 
                 return thisView.itemSaleService.searchItemSales(saleSearch, null);
             }).then((result:SearchResult<ItemSale>)=> {
+                console.log("got results");
                 thisView.setSaleItems(result);
             });
     }
 
-
     onItemClicked(item:Item, commandView:CommandView, itemList:ItemListView) {
         var thisView = this;
         var isNewSale = this.activeSale.sale == null;
+
+
         itemList.focus();
         return this.createSaleIfRequiredAsync()
             .then(()=> {
@@ -179,7 +214,7 @@ export class SellView {
         activeSaleItem.activeSale = this.activeSale;
         activeSaleItem.itemSale = itemSale;
         activeSaleItem.item = item;
-        this.activeSale.items.push(activeSaleItem);
+        //this.activeSale.items.push(activeSaleItem);
         return activeSaleItem;
     }
 

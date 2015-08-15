@@ -88,6 +88,7 @@
             background-color: white;
             color: black;
             border: none;
+            pointer-events: none;
         }
         a:not([href]):not(.active) {
             color: lightgray;

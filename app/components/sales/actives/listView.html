@@ -2,7 +2,7 @@
     <h1>Ventes en cours</h1>
 
     <div class="busy" [hidden]="!loading">
-        <img src="../../../../res/img/ajax-loader.white.gif">
+        <img src="../../../../res/img/ajax-loader.black.gif">
     </div>
 
 
@@ -14,7 +14,7 @@
                 [total-count]="salesResult.count"
                [page-size]="salesPerPage"
                show-prev-next="true" show-first-last="true"
-               (pagechange)="onPageChanged($event)"></paginator>
+               (page-change)="onPageChanged($event)"></paginator>
     <saleList *ng-if="salesResult != null"
             [sales]="salesResult.list"
             [columns]="columns"

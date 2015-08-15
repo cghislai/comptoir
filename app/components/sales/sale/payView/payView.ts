@@ -4,6 +4,7 @@
 
 import {Component, View, EventEmitter, NgFor, NgIf} from 'angular2/angular2';
 
+import {Sale} from 'client/domain/sale';
 import {Account, AccountRef,AccountSearch} from 'client/domain/account';
 import {SearchResult} from 'client/utils/search';
 import {AccountService} from 'services/account';
@@ -20,7 +21,7 @@ class Pay {
 @Component({
     selector: "payView",
     events: ['paid'],
-    properties: ['command']
+    properties: ['sale']
 })
 @View({
     templateUrl: './components/sales/sale/payView/payView.html',
@@ -32,11 +33,10 @@ export class PayView {
     accountService: AccountService;
     language: string;
 
-    command: Command;
+    sale: Sale;
     remainingAmount: number;
     paidAmount: number;
     paid= new EventEmitter();
-    //cancelled= new EventEmitter();
 
     payList: Pay[];
     allAccounts: Account[];
@@ -46,14 +46,9 @@ export class PayView {
     constructor(accountService: AccountService, applicationService: ApplicationService) {
         this.accountService = accountService;
         this.language = applicationService.language.locale;
-        this.reset();
-    }
-
-    reset() {
         this.payList = [];
         this.editingPay = null;
-        this.remainingAmount = undefined;
-        this.paidAmount = 0;
+        this.remainingAmount = 0;
         this.searchAccounts();
     }
 
@@ -98,7 +93,9 @@ export class PayView {
         this.calcRemaining();
     }
     calcRemaining() {
-        var toPay = this.command.totalPrice;
+        var vatExclusive = this.sale.vatExclusiveAmount;
+        var vatAmount = this.sale.vatAmount;
+        var toPay = vatExclusive + vatAmount;
         if (isNaN(toPay)) {
             this.remainingAmount = undefined;
             return;
@@ -132,7 +129,8 @@ export class PayView {
 
     onValidateClicked() {
         // TODO: validate the paiment
-       this.reset();
         this.paid.next(true);
+        this.payList = [];
+        this.editingPay = null;
     }
 }

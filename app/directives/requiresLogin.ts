@@ -39,7 +39,7 @@ export class RequiresLogin {
         var loginRequired = this.authService.checkLoginRequired();
         this.requiresLogin = loginRequired;
         if (loginRequired) {
-            this.location.go('/login');
+            this.router.navigate('/login');
         }
     }
 }

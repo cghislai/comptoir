@@ -44,6 +44,7 @@ export class SaleHistoryView {
         this.router = router;
         this.saleSearch = new SaleSearch();
         this.saleSearch.companyRef = authService.loggedEmployee.companyRef
+        this.saleSearch.closed = true;
         this.pagination = new Pagination(0, this.salesPerPage);
         this.language = applicationService.language.locale;
         this.columns = [

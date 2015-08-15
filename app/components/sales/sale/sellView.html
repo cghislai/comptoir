@@ -16,7 +16,7 @@
         <div class="payView">
             <div>
                 <payView #payview (paid)="onCommandPaid()"
-                         [command]="command"></payView>
+                         [sale]="activeSale.sale"></payView>
             </div>
         </div>
 

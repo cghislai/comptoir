@@ -6,6 +6,7 @@ export class Pagination {
     pageIndex: number;
     firstIndex: number;
     pageSize: number;
+    sorts: any;
 
     constructor();
     constructor(firstIndex: number, pageSize: number);
