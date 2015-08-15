@@ -97,6 +97,8 @@ export class SellView {
             return;
         }
         if (isNaN(idNumber)) {
+            // prevent 'NPE'
+            this.activeSale = new ActiveSale();
             if (this.saleService.activeSale != null) {
                 var activeSale = this.saleService.activeSale;
                 idNumber = activeSale.id;
