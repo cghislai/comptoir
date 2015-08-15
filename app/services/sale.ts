@@ -60,12 +60,12 @@ export class SaleService {
     }
 
 
-    removeSale(sale:Sale):Promise<boolean> {
+    removeSale(id: number):Promise<boolean> {
         var authToken = this.authService.authToken;
-        // TODO
-        return new Promise((resolve, reject) => {
-            resolve(true);
-        });
+        return this.client.deleteSale(id, authToken)
+        .then(()=>{
+                return true;
+            });
     }
 
 }

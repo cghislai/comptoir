@@ -50,6 +50,11 @@ export class ComptoirRequest {
         return this.run();
     }
 
+    delete(url:string, authToken: string):Promise<ComptoirResponse> {
+        this.setup('DELETE', url, authToken);
+        return this.run();
+    }
+
     private setup(method:string, url:string, authToken: string) {
         this.method = method;
         this.url = url;
@@ -68,8 +73,8 @@ export class ComptoirRequest {
                 if (xmlRequest.readyState != 4) {
                     return;
                 }
-                if (xmlRequest.status != 200) {
-                    reject(new Error('XMLHttpRequest Error: ' + xmlRequest.statusText));
+                if (xmlRequest.status != 200 && xmlRequest.status != 204) {
+                    reject(new Error('XMLHttpRequest Error: ' + xmlRequest.status+" : " + xmlRequest.statusText));
                     return;
                 }
                 var response = new ComptoirResponse();

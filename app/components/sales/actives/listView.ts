@@ -83,7 +83,9 @@ export class ActiveSalesView {
         this.doSwitchToSale(sale);
     }
 
-    onColumnAction(sale:Sale, col:SaleColumn) {
+    onColumnAction(event) {
+        var col = event.column;
+        var sale = event.sale;
         if (col == SaleColumn.ACTION_REMOVE) {
             this.doRemoveSale(sale);
         }
@@ -96,6 +98,12 @@ export class ActiveSalesView {
     }
 
     doRemoveSale(sale:Sale) {
+        this.saleService.removeSale(sale.id)
+        .then((result)=>{
+                if (result) {
+                    this.searchSales();
+                }
+            })
         // TODO
     }
 

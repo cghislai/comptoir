@@ -89,4 +89,15 @@ export class SaleClient {
                 return result;
             });
     }
+    deleteSale(id: number, authToken: string) : Promise<any> {
+        var request = new ComptoirRequest();
+        var url = this.getSaleUrl(id);
+        url += "/state/OPEN";
+
+        return request
+            .delete(url, authToken)
+            .then(function (response) {
+                return null;
+            });
+    }
 }

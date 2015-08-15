@@ -9,8 +9,6 @@ import {Account, AccountRef,AccountSearch} from 'client/domain/account';
 import {SearchResult} from 'client/utils/search';
 import {AccountService} from 'services/account';
 import {ApplicationService} from 'services/application';
-
-import {Command} from 'services/saleService'
 import {AutoFocusDirective} from 'directives/autoFocus'
 
 class Pay {

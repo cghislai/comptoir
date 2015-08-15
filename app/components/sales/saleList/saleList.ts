@@ -33,7 +33,7 @@ export class SaleColumnComponent {
     action = new EventEmitter();
 
     onColumnAction(sale:Sale, column:SaleColumn, event) {
-        this.action.next({item: sale, column: column});
+        this.action.next({sale: sale, column: column});
         //  event.stopPropagation();
     }
 
