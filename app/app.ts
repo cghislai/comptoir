@@ -98,6 +98,10 @@ export class App {
         this.appService.dismissError();
     }
 
+    onLoginRequired(required: boolean) {
+        this.loginRequired = required;
+        console.log('required:'+required);
+    }
 
 }
 
@@ -105,8 +109,8 @@ export class App {
 bootstrap(App, [
     routerInjectables,
 
-    AuthService,
     ApplicationService,
+    AuthService,
 
     AccountService,
     CashService,
@@ -118,6 +122,5 @@ bootstrap(App, [
     PictureService,
     PosService,
     SaleService,
-
     NavMenu
 ]);

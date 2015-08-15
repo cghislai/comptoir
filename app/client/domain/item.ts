@@ -10,6 +10,10 @@ import {Pagination} from 'client/utils/pagination';
 export class ItemRef {
     id:number;
     link:string;
+
+    constructor(id?: number) {
+        this.id = id;
+    }
 }
 
 export class Item {

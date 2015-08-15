@@ -5,11 +5,14 @@
 import {Component, View, NgFor, NgIf, EventEmitter, formDirectives} from 'angular2/angular2';
 
 import {Item} from 'client/domain/item';
-import {ItemSale} from 'client/domain/itemSale';
-import {LocaleTexts} from 'client/utils/lang';
-import {ItemSaleService} from 'services/itemSale';
+import {Sale, SaleRef} from 'client/domain/sale';
+import {ItemSale, ItemSaleSearch} from 'client/domain/itemSale';
 
-import {ActiveSale, ActiveSaleItem} from 'components/sales/sale/sellView';
+import {LocaleTexts} from 'client/utils/lang';
+import {ASale, ASaleItem} from 'client/utils/aSale';
+
+import {SaleService} from 'services/sale';
+
 import {AutoFocusDirective} from 'directives/autoFocus';
 import {ApplicationService} from 'services/application';
 
@@ -27,7 +30,7 @@ class ToAddItem {
 @Component({
     selector: 'commandView',
     events: ['validate'],
-    properties: ['sale', 'validated']
+    properties: ['aSale: sale', 'validated']
 })
 
 @View({
@@ -37,19 +40,21 @@ class ToAddItem {
 })
 
 export class CommandView {
-    itemSaleService:ItemSaleService;
-    sale:ActiveSale;
+    saleService:SaleService;
+
+    aSale:ASale;
     language:string;
 
     toAddItem:ToAddItem;
-    editingReductionItem:ActiveSaleItem = null;
-    editingAmountItem:ActiveSaleItem = null;
+    editingReductionItem:ASaleItem = null;
+    editingAmountItem:ASaleItem = null;
     editingGlobalReduction:boolean = false;
     validate = new EventEmitter();
     validated:boolean = false;
 
-    constructor(itemSaleService:ItemSaleService, applicationService:ApplicationService) {
-        this.itemSaleService = itemSaleService;
+    constructor(saleService:SaleService,
+                applicationService:ApplicationService) {
+        this.saleService = saleService;
         this.language = applicationService.language.locale;
         this.renewToAddCustomItem();
     }
@@ -59,7 +64,11 @@ export class CommandView {
     }
 
 
-    doClearItem(saleItem:ActiveSaleItem) {
+    doRemoveItem(saleItem:ASaleItem) {
+        this.saleService.removeASaleItem(saleItem)
+            .then(()=> {
+                // all good;
+            });
         // TODO: remove items
     }
 
@@ -75,7 +84,7 @@ export class CommandView {
         this.renewToAddCustomItem();
     }
 
-    doEditItemReduction(activeItem:ActiveSaleItem) {
+    doEditItemReduction(activeItem:ASaleItem) {
         this.editingReductionItem = activeItem;
     }
 
@@ -101,7 +110,7 @@ export class CommandView {
         this.editingReductionItem = null;
     }
 
-    doEditItemAmount(activeItem:ActiveSaleItem) {
+    doEditItemAmount(activeItem:ASaleItem) {
         this.editingAmountItem = activeItem;
     }
 
@@ -125,9 +134,11 @@ export class CommandView {
     applyItemAmount(amount:number) {
         var itemSale = this.editingAmountItem.itemSale;
         itemSale.quantity = amount;
-        var activeItem = this.editingAmountItem;
 
-        this.itemSaleService.updateItemSale(itemSale);
+        this.saleService.updateASaleItem(this.editingAmountItem)
+            .then(()=> {
+                // all good
+            });
         this.editingAmountItem = null;
         return false;
     }
@@ -142,7 +153,7 @@ export class CommandView {
             var reduction:string = event.target.value;
             var reductionVal = parseFloat(reduction);
             if (isNaN(reductionVal)) {
-               return false;
+                return false;
             }
             this.applyGlobalReduction(reductionVal);
             return false;
@@ -154,8 +165,8 @@ export class CommandView {
         return false;
     }
 
-    applyGlobalReduction(reduction: number) {
-        this.sale.reduction = reduction;
+    applyGlobalReduction(reduction:number) {
+        this.aSale.reduction = reduction;
         // TODO: handle reduction in backend
         this.editingGlobalReduction = false;
     }

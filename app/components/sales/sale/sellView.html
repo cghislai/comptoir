@@ -10,13 +10,13 @@
             <div>
                 <commandView #commandview
                              (validate)="onCommandValidated($event, payview)"
-                             [sale]="activeSale" [validated]="commandValidated"></commandView>
+                             [sale]="aSale" [validated]="commandValidated"></commandView>
             </div>
         </div>
         <div class="payView">
             <div>
                 <payView #payview (paid)="onCommandPaid()"
-                         [sale]="activeSale.sale"></payView>
+                         [sale]="aSale.sale"></payView>
             </div>
         </div>
 

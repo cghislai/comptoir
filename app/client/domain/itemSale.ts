@@ -16,7 +16,7 @@ export class ItemSale {
     vatRate: number;
     quantity: number;
     saleRef: SaleRef;
-    comment: LocaleTexts;
+    comment: LocaleTexts = new LocaleTexts();
 }
 
 export class ItemSaleRef {

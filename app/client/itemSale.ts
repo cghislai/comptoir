@@ -75,4 +75,10 @@ export class ItemSaleClient {
             });
     }
 
+    removeItemSale(id: number, authToken:string) : Promise<any>{
+        var url = this.getItemSaleUrl(id);
+        var request = new ComptoirRequest();
+        return request.delete(url, authToken);
+    }
+
 }

@@ -1,20 +1,21 @@
 /**
  * Created by cghislai on 07/08/15.
  */
-import {Directive, ElementRef, NgIf} from 'angular2/angular2';
-import {Router, Location} from 'angular2/router';
+import {Directive, ElementRef, NgIf, EventEmitter} from 'angular2/angular2';
+import {Router, Location, Instruction} from 'angular2/router';
 
 import {AuthService} from 'services/auth';
 
 @Directive({
     selector: '[requireslogin]',
-    properties: ['requiresLogin']
+    properties: ['requiresLogin'],
+    events: ['requiresLogin']
 })
 export class RequiresLogin {
     location: Location;
     router:Router;
     authService:AuthService;
-    requiresLogin: boolean;
+    requiresLogin= new EventEmitter();
 
     constructor(router:Router, location:Location, authService:AuthService,
                 elementRef:ElementRef) {
@@ -30,14 +31,16 @@ export class RequiresLogin {
 
     checkNewPath(path:string) {
         if (path.indexOf('/login') >= 0) {
+            this.requiresLogin.next(false);
             return;
         }
         if (path.indexOf('/register') >= 0) {
+            this.requiresLogin.next(false);
             return;
         }
-        // Check if loggedin
+        // Check if logged-in
         var loginRequired = this.authService.checkLoginRequired();
-        this.requiresLogin = loginRequired;
+        this.requiresLogin.next(loginRequired);
         if (loginRequired) {
             this.router.navigate('/login');
         }

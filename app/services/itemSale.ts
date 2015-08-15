@@ -52,7 +52,7 @@ export class ItemSaleService {
         }
     }
 
-    public searchItemSales(itemSearch:ItemSaleSearch, pagination:Pagination):Promise<SearchResult<ItemSale>> {
+    searchItemSales(itemSearch:ItemSaleSearch, pagination:Pagination):Promise<SearchResult<ItemSale>> {
         var authToken = this.authService.authToken;
         return this.client.searchItemSales(itemSearch, pagination, authToken);
     }
@@ -60,5 +60,10 @@ export class ItemSaleService {
     getItemSale(id:number):Promise<ItemSale> {
         var authToken = this.authService.authToken;
         return this.client.getItemSale(id, authToken);
+    }
+
+    removeItemSale(id: number) : Promise<any> {
+        var authToken = this.authService.authToken;
+        return this.client.removeItemSale(id, authToken);
     }
 }

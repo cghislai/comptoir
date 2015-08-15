@@ -22,6 +22,10 @@ export class Sale {
 export class SaleRef {
     id: number;
     link: string;
+
+    constructor(id?:number) {
+        this.id = id;
+    }
 }
 
 export class SaleSearch {
