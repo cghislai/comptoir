@@ -66,7 +66,6 @@ export class ItemList {
 
     itemClicked = new EventEmitter();
     columnAction = new EventEmitter();
-    loading:boolean = false;
     language:string;
 
     constructor(applicationService:ApplicationService,
@@ -93,7 +92,6 @@ export class ItemList {
 
     onColumnAction(event:any) {
         this.columnAction.next(event);
-        console.log("click");
     }
 
 }

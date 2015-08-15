@@ -1,27 +1,26 @@
-<div class="historyPage">
-    <h1>Historique des commandes</h1>
-    <div class="search">
+<div class="listPage">
+    <h1>Historique des ventes</h1>
+
+    <div class="busy" [hidden]="!loading">
+        <img src="../../../../res/img/ajax-loader.white.gif">
+    </div>
+
+
+    <div class="topActions">
 
     </div>
-    <paginator [total-count]="commandsCount"
-               [page-size]="commandsPerPage"
-               show-prev-next="true" show-first-last="true"
-               (pagechange)="onPageChanged($event)"
-            [hidden]="commandsCount==0"></paginator>
-    <table class="dataTable" [hidden]="commandsCount==0">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Nom</th>
-                <th class="number">Montant</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ng-for="#command of commands" class="command">
-                <td class="date">{{ command.dateTime | date:'ddMMyyyy HHmm' }}</td>
-                <td class="name"> Commande {{command.id}}</td>
-                <td class="number">{{ command.totalPrice | currency:'EUR':true:'.2-2' }}</td>
-            </tr>
-        </tbody>
-    </table>
+
+    <paginator  *ng-if="salesResult != null"
+                [total-count]="salesResult.count"
+                [page-size]="salesPerPage"
+                show-prev-next="true" show-first-last="true"
+                (pagechange)="onPageChanged($event)"></paginator>
+    <saleList *ng-if="salesResult != null"
+              [sales]="salesResult.list"
+              [columns]="columns"
+              selectable="false"
+              headers="true"
+              (sale-clicked)="onSaleClicked($event)"
+              (column-action)="onColumnAction($event)">
+    </saleList>
 </div>

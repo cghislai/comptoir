@@ -24,12 +24,12 @@ import {LoginView} from 'components/auth/login/login';
 import {RegisterView} from 'components/auth/register/register';
 
 import {SellView} from 'components/sales/sale/sellView';
-import {ActiveSalesListView} from 'components/sales/actives/listView';
-import {HistoryView as SellHistoryView} from 'components/sales/history/historyView';
-import {ImportProductView} from 'components/items/import/importView';
+import {ActiveSalesView} from 'components/sales/actives/listView';
+import {SaleHistoryView} from 'components/sales/history/historyView';
 
 import {ProductsListView} from 'components/items/list/listView';
 import {EditProductView} from 'components/items/edit/editView';
+import {ImportProductView} from 'components/items/import/importView';
 
 import {CountCashView} from 'components/cash/count/countView';
 import {CashHistoryView} from 'components/cash/history/historyView';
@@ -40,7 +40,7 @@ import {EditAccountView} from 'components/accounts/edit/editView';
 import {PosListView} from 'components/pos/list/listView';
 import {EditPosView} from 'components/pos/edit/editView';
 
-import {ApplicationSettingsView} from 'components/settings/application/appSettings'
+import {ApplicationSettingsView} from 'components/settings/application/appSettings';
 
 import {Parent} from 'components/test/test';
 
@@ -60,8 +60,8 @@ import {Parent} from 'components/test/test';
 
     {path: '/sales/sale', component: SellView, as: 'saleCurrent'},
     {path: '/sales/sale/:id', component: SellView, as: 'salesSale'},
-    {path: '/sales/actives', component: ActiveSalesListView, as: 'salesActives'},
-    {path: '/sales/history', component: SellHistoryView, as: 'salesHistory'},
+    {path: '/sales/actives', component: ActiveSalesView, as: 'salesActives'},
+    {path: '/sales/history', component: SaleHistoryView, as: 'salesHistory'},
 
     {path: '/items/list', component: ProductsListView, as: 'itemsList'},
     {path: '/items/edit', component: EditProductView, as: 'itemsEditNew'},
@@ -84,6 +84,7 @@ import {Parent} from 'components/test/test';
 ])
 export class App {
     appService:ApplicationService;
+    loginRequired: boolean;
 
     constructor(appService:ApplicationService) {
         this.appService = appService;

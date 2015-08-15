@@ -1,0 +1,38 @@
+
+<span class="id"
+    *ng-if="column.name == 'id' ">
+    {{ sale.id }}
+</span>
+<span class="dateTime"
+    *ng-if="column.name == 'dateTime'  ">
+    <span *ng-if="sale.dateTime != undefined">
+        {{ sale.dateTime }}
+    </span>
+</span>
+<span class="total number"
+    *ng-if="column.name == 'vatExclusive' ">
+    {{ sale.vatExclusiveAmount | currency:'EUR':true:'.2-2' }}
+</span>
+<span class="vat number"
+    *ng-if="column.name == 'vat'">
+    {{ sale.vatAmount | currency:'EUR':true:'.2-2' }}
+</span>
+<span class="closed"
+      *ng-if="column.name == 'closed' ">
+    <span [hidden]="sale.closed">
+        Non
+    </span>
+    <span [hidden]="sale.closed == false">
+        Oui
+    </span>
+</span>
+<span class="ref" *ng-if="column.name == 'ref' ">
+    {{ sale.reference }}
+</span>
+<span class="action remove"
+      *ng-if="column.name == 'action_remove' " >
+    <a class="actionIcon "
+       (^click)="onColumnAction(sale, column, $event)">
+    <i class="fi-x red"></i>
+    </a>
+</span>

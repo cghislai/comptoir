@@ -1,5 +1,4 @@
-<div class="itemList listPage">
-
+<div class="saleList listPage">
     <div class="dataTable">
         <div class="dataTableHead"
              [hidden]="headers == false">
@@ -13,19 +12,19 @@
             </span>
             </div>
         </div>
-        <div class="dataTableBody" *ng-if="items != undefined">
-            <div *ng-for="#itempic of items"
-                 class="dataTableRow item"
+        <div class="dataTableBody" *ng-if="sales != undefined">
+            <div *ng-for="#sale of sales"
+                 class="dataTableRow sale"
                  [class.selectable]="selectable"
                  [attr.focusable]="selectable">
-                <itemColumn *ng-for="#col of columns"
+                <saleColumn *ng-for="#col of columns"
                             class="dataTableCell"
                             (action)="onColumnAction($event)"
-                            (^click)="onItemClick(itempic.item, col)"
+                            (^click)="onSaleClick(sale, col)"
                             [class.right]="col.alignRight"
-                            [item]="itempic"
+                            [sale]="sale"
                             [column]="col"
-                            [lang]="language"></itemColumn>
+                            [lang]="language"></saleColumn>
             </div>
         </div>
     </div>

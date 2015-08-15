@@ -30,6 +30,11 @@ export class SaleSearch {
 
 export class SaleFactory {
     static fromJSONSaleReviver = (key, value)=> {
+        if (key == 'dateTime') {
+            var date = new Date(value);
+            return date;
+        }
        return value;
     }
+
 }

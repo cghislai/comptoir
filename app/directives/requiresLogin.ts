@@ -7,7 +7,8 @@ import {Router, Location} from 'angular2/router';
 import {AuthService} from 'services/auth';
 
 @Directive({
-    selector: '[requireslogin]'
+    selector: '[requireslogin]',
+    properties: ['requiresLogin']
 })
 export class RequiresLogin {
     location: Location;

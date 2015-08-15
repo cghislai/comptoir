@@ -2,7 +2,8 @@
     <header class="coloredHeader">
         <navMenu></navMenu>
     </header>
-    <section requireslogin>
+    <section requireslogin (requires-login)="loginRequired = $event"
+            *ng-if="loginRequired != true">
         <router-outlet ></router-outlet>
     </section>
     <footer>

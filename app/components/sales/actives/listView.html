@@ -1,52 +1,26 @@
 <div class="listPage">
     <h1>Ventes en cours</h1>
-    <img class="busy" src="../../../res/img/ajax-loader.black.gif" [hidden]="!loading">
+
+    <div class="busy" [hidden]="!loading">
+        <img src="../../../../res/img/ajax-loader.white.gif">
+    </div>
+
 
     <div class="topActions">
 
     </div>
 
-    <paginator [total-count]="commandsCount"
-               [page-size]="commandsPerPage"
+    <paginator  *ng-if="salesResult != null"
+                [total-count]="salesResult.count"
+               [page-size]="salesPerPage"
                show-prev-next="true" show-first-last="true"
                (pagechange)="onPageChanged($event)"></paginator>
-    <table class="commands">
-        <thead>
-        <tr>
-            <th>Id</th>
-            <th>Contenu</th>
-            <th>Réduction</th>
-            <th class="number">Total</th>
-            <th class="actions"></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ng-for="#command of commands" class="command" (^click)="doSwitchToCommand(command)">
-            <td class="id">{{ command.id }}</td>
-            <td class="content">
-                {{ command.items.length }}
-                <span [hidden]="command.items.length != 1">produit</span>
-                <span [hidden]="command.items.length < 2">produits</span>
-                <span> : </span>
-                <span class="details">
-                    <span *ng-for="#commandItem of command.items; #index=index">
-                        <span [hidden]="index == 0">, </span>
-                        <span>
-                            {{ commandItem.amount }} x {{ commandItem.item.name[language] }}
-                        </span>
-                    </span>
-                </span>
-            </td>
-            <td class="reduction">
-                <span [hidden]="command.globalReduction == null">-{{ command.globalReduction | number:'.2-2' }}%</span>
-            </td>
-            <td class="number">{{ command.totalPrice | currency:'EUR':true:'.2-2'}}</td>
-            <td class="actions">
-                <a class="remove actionIcon" (^click)="doRemoveCommand(command)">
-                    <i class="fi-x red"></i>
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <saleList *ng-if="salesResult != null"
+            [sales]="salesResult.list"
+            [columns]="columns"
+            selectable="true"
+            headers="true"
+            (sale-clicked)="onSaleClicked($event)"
+            (column-action)="onColumnAction($event)">
+    </saleList>
 </div>

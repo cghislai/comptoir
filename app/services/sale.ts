@@ -15,6 +15,7 @@ export class SaleService {
 
     client:SaleClient;
     authService:AuthService;
+    activeSale: Sale;
 
     constructor(@Inject authService:AuthService) {
         this.client = new SaleClient();

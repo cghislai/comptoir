@@ -68,10 +68,16 @@ export class SellView {
         this.activeSale = null;
         if (idValue == 'new') {
             this.activeSale = new ActiveSale();
+            this.saleService.activeSale = null;
             return;
         }
         var idNumber = parseInt(idValue);
         if (isNaN(idNumber)) {
+            if (this.saleService.activeSale != null) {
+                var activeSale = this.saleService.activeSale;
+                this.router.navigate('/sales/sale/'+activeSale.id);
+                return;
+            }
             this.router.navigate('/sales/sale/new');
             return;
         }
@@ -80,6 +86,7 @@ export class SellView {
             .then((sale:Sale)=> {
                 thisView.activeSale = new ActiveSale();
                 thisView.activeSale.sale = sale;
+                thisView.saleService.activeSale = sale;
                 // TODO: fetch the sale items
 
                 var saleSearch = new ItemSaleSearch();
@@ -114,7 +121,7 @@ export class SellView {
         return new Promise<Sale>((resolve, reject)=> {
             var sale = thisView.activeSale.sale;
             if (sale != null) {
-                // sale is already createf
+                // sale is already created
                 resolve(sale);
                 return;
             }
@@ -124,6 +131,7 @@ export class SellView {
                     return thisView.saleService.getSale(saleRef.id);
                 }).then((sale:Sale)=> {
                     thisView.activeSale.sale = sale;
+                    thisView.saleService.activeSale = sale;
                     resolve(sale);
                 });
         });
@@ -211,6 +219,7 @@ export class SellView {
 
     onCommandPaid() {
         this.router.navigate('/sales/sale/new')
+        this.saleService.activeSale = null;
     }
 
     getActiveSaleRef():SaleRef {
