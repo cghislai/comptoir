@@ -67,7 +67,7 @@
                             {{ saleItem.itemSale.quantity}} x
                         </span>
                         <span class="price">
-                            {{ saleItem.itemSale.vatExclusive | currency:'EUR':true:'.2-2'  }}
+                            {{ saleItem.item.vatExclusive | currency:'EUR':true:'.2-2'  }}
                         </span>
                 </a>
                 <span class="editAmount" *ng-if="editingAmountItem == saleItem">
@@ -94,7 +94,7 @@
                            size="2" autofocusselect/>
                     %
                 </span>
-                <span>{{ saleItem.itemSale.quantity * saleItem.itemSale.vatExclusive | currency:'EUR':true:'.2-2' }}</span>
+                <span>{{  saleItem.itemSale.vatExclusive | currency:'EUR':true:'.2-2' }}</span>
             </td>
             <td class="actions" [hidden]="validated">
                 <a class="actionIcon remove" (^click)="doRemoveItem(saleItem)">
