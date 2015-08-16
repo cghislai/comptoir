@@ -6,7 +6,7 @@
 <span class="dateTime"
     *ng-if="column.name == 'dateTime'  ">
     <span *ng-if="sale.dateTime != undefined">
-        {{ sale.dateTime }}
+        {{ sale.dateTime | date:'dd/MM/yyyy HH:mm'  }}
     </span>
 </span>
 <span class="total number"
