@@ -3,10 +3,12 @@
  */
 import {Component, View, NgIf, formDirectives} from 'angular2/angular2';
 import {Router, RouterLink} from 'angular2/router';
+
+import {CompanyClient} from 'client/company';
 import {Language, LocaleTexts} from 'client/utils/lang';
 
 import {ApplicationService} from 'services/application';
-import {FileUploadService} from 'services/fileUpload';
+import {AuthService} from 'services/auth';
 
 
 @Component({
@@ -19,9 +21,10 @@ import {FileUploadService} from 'services/fileUpload';
 })
 export class ImportProductView {
     applicationService:ApplicationService;
+    authService:AuthService;
     router:Router;
     language:Language;
-    fileUploadService:FileUploadService;
+    companyClient:CompanyClient;
 
     toUploadFile:File;
     toUploadFileSizeLabel:string;
@@ -30,11 +33,11 @@ export class ImportProductView {
     uploadInProgress:boolean;
     uploadPercentage:number;
 
-    constructor(appService:ApplicationService, fileUplaodService:FileUploadService,
-                router:Router) {
+    constructor(appService:ApplicationService, authService:AuthService, router:Router) {
         this.router = router;
         this.applicationService = appService;
-        this.fileUploadService = fileUplaodService;
+        this.authService = authService;
+        this.companyClient = new CompanyClient();
         this.language = appService.language;
 
         this.toUploadFile = null;
@@ -45,7 +48,7 @@ export class ImportProductView {
     }
 
 
-     onFileSelectClick(fileInput) {
+    onFileSelectClick(fileInput) {
         fileInput.click();
     }
 
@@ -76,9 +79,11 @@ export class ImportProductView {
     onSubmit() {
         var thisView = this;
         this.uploadInProgress = true;
-        this.fileUploadService
-            .uploadFile(this.toUploadData, "https://cghislai:8181/comptoir-ws/item/import",
-            (percentage: number)=>{
+        var authToken = this.authService.authToken;
+        var companyRef = this.authService.loggedEmployee.companyRef;
+        this.companyClient
+            .uploadImportDataFile(this.toUploadData, companyRef, authToken,
+            (percentage:number)=> {
                 thisView.uploadPercentage = percentage;
             })
             .then(()=> {

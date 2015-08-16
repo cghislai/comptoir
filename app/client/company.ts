@@ -59,4 +59,49 @@ export class CompanyClient {
             });
     }
 
+
+    uploadImportDataFile(data:any, companyRef: CompanyRef, authToken: string,
+                         progressCallback?:(precentage:number)=>any): Promise<any> {
+        var request = new XMLHttpRequest();
+        var url = this.getCompanyUrl(companyRef.id)+"/import";
+
+
+        var self = this;
+        if (progressCallback != null) {
+            request.upload.addEventListener("progress", function (e: ProgressEvent) {
+                if (e.lengthComputable) {
+                    var percentage = Math.round((e.loaded * 100) / e.total);
+                    progressCallback(percentage);
+                }
+            }, false);
+        }
+
+        return new Promise<any>((resolve, reject)=>{
+            request.upload.addEventListener("load", function (e) {
+                resolve(e);
+            }, false);
+            request.open("POST",url);
+
+            request.onreadystatechange = function () {
+                if (request.readyState != 4) {
+                    return;
+                }
+                if (request.status != 200 && request.status != 204) {
+                    reject(new Error('XMLHttpRequest Error: ' + request.status+" : " + request.statusText));
+                    return;
+                }
+                resolve(request.status);
+            }
+            request.onerror = function () {
+                reject(new Error('XMLHttpRequest Error: ' + request.statusText));
+            };
+
+            request.setRequestHeader('Content-Type', 'multipart/form-data; charset=UTF-8');
+            if (authToken != null) {
+                request.setRequestHeader(ComptoirRequest.HEADER_OAUTH_TOKEN, 'Bearer '+authToken);
+            }
+            request.send(data);
+        });
+    }
+
 }
