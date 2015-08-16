@@ -110,7 +110,7 @@
 
         </tbody>
         <tfoot *ng-if="aSale.sale != null" [hidden]="aSale.items.length <= 0">
-        <tr [hidden]="aSale.sale.dicountRatio == null || aSale.sale.dicountRatio <= 0"
+        <tr [hidden]="aSale.sale.discountRatio == null || aSale.sale.discountRatio <= 0"
             class="details">
             <th colspan="3" class="reduction">
                 Réduction {{ (aSale.sale.discountRatio * 100) | number:'.0-0' }}%

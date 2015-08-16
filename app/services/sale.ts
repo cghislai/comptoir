@@ -243,7 +243,7 @@ export class SaleService {
         var authToken = this.authService.authToken;
         var sale = aSale.sale;
 
-        sale.dicountRatio = discountRatio;
+        sale.discountRatio = discountRatio;
         return this.client.updateSale(sale, authToken)
             .then((saleRef)=> {
                 return this.client.getSale(saleRef.id, authToken);
@@ -279,6 +279,18 @@ export class SaleService {
             }).then(()=> {
                 return aSale;
             });
+    }
 
+    closeASale(aSale:ASale):Promise<ASale> {
+        var authToken = this.authService.authToken;
+        var saleId = aSale.sale.id;
+
+        return this.client.closeSale(saleId, authToken)
+            .then((saleRef)=> {
+                return this.client.getSale(saleId, authToken);
+            }).then((sale: Sale)=> {
+                aSale.sale = sale;
+                return aSale;
+            });
     }
 }

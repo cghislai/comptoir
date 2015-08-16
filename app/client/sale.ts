@@ -99,4 +99,18 @@ export class SaleClient {
                 return null;
             });
     }
+
+
+    closeSale(id: number, authToken: string) : Promise<SaleRef> {
+        var request = new ComptoirRequest();
+        var url = this.getSaleUrl(id);
+        url += "/state/CLOSED";
+
+        return request
+            .put(null, url, authToken)
+            .then(function (response) {
+                var saleRef = JSON.parse(response.text);
+                return saleRef;
+            });
+    }
 }
