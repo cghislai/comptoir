@@ -92,7 +92,6 @@ export class SaleClient {
     deleteSale(id: number, authToken: string) : Promise<any> {
         var request = new ComptoirRequest();
         var url = this.getSaleUrl(id);
-        url += "/state/OPEN";
 
         return request
             .delete(url, authToken)
