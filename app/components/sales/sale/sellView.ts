@@ -43,21 +43,8 @@ export class SellView {
         this.location = location;
 
 
-        console.log('constructor');
         var idValue = routeParams.get('id');
         this.findSale(idValue);
-
-        var thisView = this;
-        router.subscribe(function (path) {
-            console.log('router changed with id ' + idValue + ' path ' + path);
-            thisView.findSale(idValue);
-        });
-
-        location.subscribe((val)=> {
-            idValue = routeParams.get('id');
-            console.log('location changed with id ' + idValue + ' val ' + val);
-            thisView.findSale(idValue);
-        });
     }
 
 

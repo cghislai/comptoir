@@ -100,7 +100,9 @@ export class App {
 
     onLoginRequired(required: boolean) {
         this.loginRequired = required;
-        console.log('required:'+required);
+        if (required) {
+            console.log("Login required");
+        }
     }
 
 }

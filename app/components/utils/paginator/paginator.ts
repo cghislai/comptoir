@@ -42,7 +42,6 @@ export class Paginator {
         }
         this.pages = [];
         this.pageCount = Math.ceil(this.totalCount / this.pageSize);
-        console.log('build array with page count as ' + this.pageCount);
 
         var pageLinkShown = 0;
         var firstIndex = this.activePage - this.maxPageLinks / 2;
