@@ -22,7 +22,7 @@ export class SaleService {
 
     client:SaleClient;
     itemSaleClient:ItemSaleClient;
-    itemClient: ItemClient;
+    itemClient:ItemClient;
     authService:AuthService;
 
     activeSale:Sale;
@@ -118,7 +118,7 @@ export class SaleService {
                 return Promise.all(itemTasks);
             }).then(()=> {
                 aSale.items = aSaleItemList;
-                for (var aSaleItem of aSaleItemList ) {
+                for (var aSaleItem of aSaleItemList) {
                     aSale.itemsMap[aSaleItem.item.id] = aSaleItem;
                 }
                 return aSale;
@@ -239,4 +239,17 @@ export class SaleService {
             });
     }
 
+    setASaleDiscount(aSale:ASale, discountRatio:number):Promise<ASale> {
+        var sale = aSale.sale;
+        sale.dicountRatio = discountRatio;
+        var authToken = this.authService.authToken;
+
+        return this.client.updateSale(sale, authToken)
+            .then((saleRef)=> {
+                return this.client.getSale(saleRef.id, authToken);
+            }).then((sale : Sale)=> {
+                aSale.sale = sale;
+                return aSale;
+            });
+    }
 }

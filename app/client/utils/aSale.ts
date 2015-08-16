@@ -16,6 +16,4 @@ export class ASale {
     sale:Sale;
     items: ASaleItem[] = [];
     itemsMap:any = {};
-    reduction:number = 0;
-    total:number;
 }

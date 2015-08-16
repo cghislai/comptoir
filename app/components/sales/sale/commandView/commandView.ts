@@ -48,7 +48,7 @@ export class CommandView {
     toAddItem:ToAddItem;
     editingReductionItem:ASaleItem = null;
     editingAmountItem:ASaleItem = null;
-    editingGlobalReduction:boolean = false;
+    editingSaleDiscount:boolean = false;
     validate = new EventEmitter();
     validated:boolean = false;
 
@@ -148,31 +148,35 @@ export class CommandView {
         this.editingAmountItem = null;
     }
 
-    onGlobalReductionKeyEvent(event) {
+    onSaleDiscountKeyEvent(event) {
         if (event.which == 13) { // Enter
-            var reduction:string = event.target.value;
-            var reductionVal = parseFloat(reduction);
-            if (isNaN(reductionVal)) {
+            var discountString:string = event.target.value;
+            var discountRatio = parseFloat(discountString);
+            if (isNaN(discountRatio)) {
                 return false;
             }
-            this.applyGlobalReduction(reductionVal);
+            discountRatio /= 100;
+            this.applySaleDiscount(discountRatio);
             return false;
         }
         if (event.which == 27) { // Escape
-            this.cancelGlobalReduction();
+            this.cancelSaleDiscount();
             return false;
         }
         return false;
     }
 
-    applyGlobalReduction(reduction:number) {
-        this.aSale.reduction = reduction;
-        // TODO: handle reduction in backend
-        this.editingGlobalReduction = false;
+    private applySaleDiscount(discountRatio:number) {
+        this.saleService
+            .setASaleDiscount(this.aSale, discountRatio)
+            .then((aSale)=> {
+                // this.aSale == aSale
+            });
+        this.editingSaleDiscount = false;
     }
 
-    cancelGlobalReduction() {
-        this.editingGlobalReduction = false;
+    cancelSaleDiscount() {
+        this.editingSaleDiscount = false;
     }
 
     doValidate() {

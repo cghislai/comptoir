@@ -17,6 +17,9 @@ export class Sale {
     closed: boolean;
     reference: string;
     accountingTransactionRef: AccountingTransactionRef;
+    dicountRatio: number;
+    discountAmount: number;
+
 }
 
 export class SaleRef {
