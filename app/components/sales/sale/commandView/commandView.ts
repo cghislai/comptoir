@@ -46,7 +46,7 @@ export class CommandView {
     language:string;
 
     toAddItem:ToAddItem;
-    editingReductionItem:ASaleItem = null;
+    editingDiscountSaleItem:ASaleItem = null;
     editingAmountItem:ASaleItem = null;
     editingSaleDiscount:boolean = false;
     validate = new EventEmitter();
@@ -84,30 +84,32 @@ export class CommandView {
         this.renewToAddCustomItem();
     }
 
-    doEditItemReduction(activeItem:ASaleItem) {
-        this.editingReductionItem = activeItem;
+    doEditItemDiscount(aSaleItem:ASaleItem) {
+        this.editingDiscountSaleItem = aSaleItem;
     }
 
-    onEditItemReductionKeyUp(event) {
+    onItemDiscountKeyEvent(event) {
         if (event.which == 13) { // Enter
-            var reduction:number = event.target.value;
-            this.doApplyItemReduction(reduction);
+            var discount:number = event.target.value;
+            discount /= 100;
+            this.applyItemDiscount(discount);
             return;
         }
         if (event.which == 27) { // Escape
-            this.doCancelItemReduction();
+            this.doCancelItemDiscount();
             return;
         }
     }
 
-    doApplyItemReduction(reduction:number) {
-        this.editingReductionItem.reduction = reduction;
-        // TODO: handle eeduction in backend
-        this.editingReductionItem = null;
+    private applyItemDiscount(discountRatio:number) {
+        this.saleService
+            .setASaleItemDiscount(this.editingDiscountSaleItem, discountRatio)
+            .then(()=>{});
+        this.editingDiscountSaleItem = null;
     }
 
-    doCancelItemReduction() {
-        this.editingReductionItem = null;
+    doCancelItemDiscount() {
+        this.editingDiscountSaleItem = null;
     }
 
     doEditItemAmount(activeItem:ASaleItem) {

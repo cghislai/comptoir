@@ -12,11 +12,12 @@ export class ItemSale {
     id: number;
     dateTime: Date;
     itemRef: ItemRef;
-    vatExclusive: number;
-    vatRate: number;
     quantity: number;
     saleRef: SaleRef;
     comment: LocaleTexts = new LocaleTexts();
+    vatExclusive: number;
+    vatRate: number;
+    discountRatio: number;
 }
 
 export class ItemSaleRef {

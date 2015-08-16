@@ -9,8 +9,6 @@ export class ASaleItem {
     aSale:ASale;
     item:Item;
     itemSale:ItemSale;
-    reduction:number = 0;
-    total:number;
 }
 export class ASale {
     sale:Sale;

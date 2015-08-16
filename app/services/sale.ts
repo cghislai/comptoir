@@ -240,16 +240,45 @@ export class SaleService {
     }
 
     setASaleDiscount(aSale:ASale, discountRatio:number):Promise<ASale> {
-        var sale = aSale.sale;
-        sale.dicountRatio = discountRatio;
         var authToken = this.authService.authToken;
+        var sale = aSale.sale;
 
+        sale.dicountRatio = discountRatio;
         return this.client.updateSale(sale, authToken)
             .then((saleRef)=> {
                 return this.client.getSale(saleRef.id, authToken);
-            }).then((sale : Sale)=> {
+            }).then((sale:Sale)=> {
                 aSale.sale = sale;
                 return aSale;
             });
+    }
+
+    setASaleItemDiscount(aSaleItem:ASaleItem, discountRatio:number):Promise<ASale> {
+        var authToken = this.authService.authToken;
+        var itemSale = aSaleItem.itemSale;
+        var aSale = aSaleItem.aSale;
+        var saleId = aSale.sale.id;
+
+        itemSale.discountRatio = discountRatio;
+        return this.itemSaleClient.updateItemSale(itemSale, authToken)
+            .then((itemSaleRef)=> {
+                // Get itemSale and sale async
+                var taskList:Promise<any>[] = [
+                    // Get itemSale
+                    this.itemSaleClient.getItemSale(itemSaleRef.id, authToken)
+                        .then((itemSale)=> {
+                            aSaleItem.itemSale = itemSale;
+                        }),
+                    // Get Sale
+                    this.client.getSale(saleId, authToken)
+                        .then((sale)=> {
+                            aSale.sale = sale;
+                        })
+                ];
+                return Promise.all(taskList);
+            }).then(()=> {
+                return aSale;
+            });
+
     }
 }
