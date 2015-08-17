@@ -50,10 +50,15 @@ export class PaymentService {
             });
     }
 
-        closePayment(balance: Balance):Promise<any> {
+        closePayment(balance: Balance):Promise<Balance> {
         var authToken = this.authService.authToken;
 
-        return this.balanceClient.closeBalance(balance.id, authToken);
+        return this.balanceClient.closeBalance(balance.id, authToken)
+            .then((balanceRef)=>{
+                return this.balanceClient.getBalance(balanceRef.id, authToken);
+            }).then((balance)=>{
+                return balance;
+            });
     }
 
     removePayment(balance: Balance):Promise<any> {
