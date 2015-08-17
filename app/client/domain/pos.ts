@@ -11,26 +11,30 @@ export class Pos {
     companyRef:CompanyRef;
     name:string;
     description:LocaleTexts;
-    defaultCustomerRef: CustomerRef;
+    defaultCustomerRef:CustomerRef;
 }
 
 export class PosRef {
-    id: number;
-    link: string;
+    id:number;
+    link:string;
+
+    constructor(id?:number) {
+        this.id = id;
+    }
 }
 
 export class PosSearch {
-    companyRef: CompanyRef;
+    companyRef:CompanyRef;
 }
 
 // TODO: PosWithClient ala PicturedItem
 
 export class PosFactory {
-    static fromJSONPosReviver = (key, value)=>{
-    if (key == 'description') {
-        return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
+    static fromJSONPosReviver = (key, value)=> {
+        if (key == 'description') {
+            return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
+        }
+        return value;
     }
-    return value;
-}
 
 }

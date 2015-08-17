@@ -1,10 +1,16 @@
-<div class="">
-    <form id="posSelectForm" *ng-if="allPosList != null && allPosList.length > 0">
-        <select [(value)]="pos">
-            <option *ng-for="#posOption of allPosList">
-                {{ pos.description[language] }}
+<div class="header">
+    <form id="posSelectForm" *ng-if="allPosList != null">
+        Point de vente :
+        <select [value]="posId" [hidden]="allPosList.length <= 1"
+                (change)="onPosChanged($event)">
+            <option *ng-for="#posOption of allPosList"
+                    [value]="posOption.id">
+                {{ posOption.description[language] }}
             </option>
         </select>
+        <div *ng-if="allPosList.length <=1 && pos != null">
+            <strong>{{ pos.description[language] }}</strong>
+        </div>
     </form>
 </div>
 <div class="wrapper" >
@@ -24,6 +30,7 @@
         <div class="payView">
             <div>
                 <payView #payview (paid)="onCommandPaid()"
+                         [pos]="pos"
                          [(sale)]="aSale"></payView>
             </div>
         </div>

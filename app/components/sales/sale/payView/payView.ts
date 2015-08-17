@@ -7,6 +7,7 @@ import {Component, View, EventEmitter, NgFor, NgIf} from 'angular2/angular2';
 import {Sale} from 'client/domain/sale';
 import {Account, AccountRef,AccountSearch} from 'client/domain/account';
 import {Balance, BalanceRef, BalanceSearch} from 'client/domain/balance'
+import {Pos, PosRef} from 'client/domain/pos';
 import {ASale} from 'client/utils/aSale';
 import {SearchResult} from 'client/utils/search';
 
@@ -26,7 +27,7 @@ class Pay {
 @Component({
     selector: "payView",
     events: ['paid'],
-    properties: ['aSale: sale']
+    properties: ['aSale: sale', 'pos']
 })
 @View({
     templateUrl: './components/sales/sale/payView/payView.html',
@@ -40,6 +41,7 @@ export class PayView {
     language:string;
 
     aSale:ASale;
+    pos: Pos;
     remainingAmount:number;
     paidAmount:number;
     paid = new EventEmitter();
@@ -62,7 +64,10 @@ export class PayView {
 
     searchAccounts() {
         var accountSearch = new AccountSearch();
-        // TODO: posRef
+        if (this.pos != null) {
+            var posRef = new PosRef(this.pos.id);
+            accountSearch.posRef = posRef;
+        }
         var thisView = this;
         this.accountService.searchAccounts(accountSearch, null)
             .then((result:SearchResult<Account>)=> {

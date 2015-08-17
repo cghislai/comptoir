@@ -6,6 +6,20 @@
   transition: $args;
 }
 
+.header {
+  form {
+    margin: .1em;
+
+    >*:not([hidden]) {
+      display: inline;
+    }
+
+    select {
+      font-size: 1em;
+    }
+  }
+}
+
 .wrapper {
   overflow-x: hidden;
 }

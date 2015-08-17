@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 29/07/15.
  */
-import {Component, View, NgIf} from 'angular2/angular2';
+import {Component, View, NgIf, NgFor} from 'angular2/angular2';
 import {Router, RouteParams, Location} from 'angular2/router';
 
 import {Sale, SaleRef} from 'client/domain/sale';
@@ -28,13 +28,14 @@ import {PayView} from 'components/sales/sale/payView/payView'
 @View({
     templateUrl: "./components/sales/sale/sellView.html",
     styleUrls: ["./components/sales/sale/sellView.css"],
-    directives: [ItemListView, CommandView, PayView, NgIf]
+    directives: [ItemListView, CommandView, PayView, NgIf, NgFor]
 })
 export class SellView {
     saleService:SaleService;
     posService:PosService;
     allPosList:Pos[];
     pos:Pos;
+    posId: number;
 
     aSale:ASale;
     payStep:boolean;
@@ -60,11 +61,31 @@ export class SellView {
 
     searchPos() {
         var posSearch = new PosSearch();
+        var lastUsedPos = this.posService.lastUsedPos;
+        if (lastUsedPos != null) {
+            this.pos = lastUsedPos;
+            this.posId = lastUsedPos.id;
+        }
         this.posService.searchPos(posSearch, null)
             .then((result:SearchResult<Pos>)=> {
                 this.allPosList = result.list;
-                var pos:Pos;
+                if (result.list.length > 0 && this.pos == null) {
+                    this.pos = result.list[0];
+                    this.posId = this.pos.id;
+                }
             });
+    }
+
+    onPosChanged(event) {
+        this.pos = null;
+        this.posId = event.target.value;
+        for (var posItem of this.allPosList) {
+            if (posItem.id == this.posId) {
+                this.pos = posItem;
+                break;
+            }
+        }
+        this.posService.lastUsedPos = this.pos;
     }
 
 
@@ -139,6 +160,7 @@ export class SellView {
     onCommandValidated(validated:boolean, payView:PayView) {
         this.payStep = validated;
         if (validated) {
+            payView.searchAccounts();
             payView.calcRemaining();
         }
     }
