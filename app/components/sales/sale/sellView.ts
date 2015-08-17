@@ -7,12 +7,15 @@ import {Router, RouteParams, Location} from 'angular2/router';
 import {Sale, SaleRef} from 'client/domain/sale';
 import {Item, ItemRef} from 'client/domain/item';
 import {ItemSale, ItemSaleSearch} from 'client/domain/itemSale';
+import {Pos, PosRef, PosSearch} from 'client/domain/pos';
 
 import {LocaleTexts} from 'client/utils/lang';
 import {SearchResult} from 'client/utils/search';
 import {ASale, ASaleItem} from 'client/utils/aSale';
 
+import {ApplicationService} from 'services/application';
 import {SaleService} from 'services/sale';
+import {PosService} from 'services/pos';
 
 import {ItemListView} from 'components/sales/sale/itemList/listView';
 import {CommandView} from 'components/sales/sale/commandView/commandView';
@@ -29,22 +32,39 @@ import {PayView} from 'components/sales/sale/payView/payView'
 })
 export class SellView {
     saleService:SaleService;
+    posService:PosService;
+    allPosList:Pos[];
+    pos:Pos;
 
     aSale:ASale;
     payStep:boolean;
 
     router:Router;
     location:Location;
+    language: string;
 
-    constructor(saleService:SaleService,
+    constructor(saleService:SaleService, posService:PosService, appService: ApplicationService,
                 router:Router, routeParams:RouteParams, location:Location) {
         this.saleService = saleService;
+        this.posService = posService;
         this.router = router;
         this.location = location;
+        this.language = appService.language.locale;
+
+        this.searchPos();
 
 
         var idValue = routeParams.get('id');
         this.findSale(idValue);
+    }
+
+    searchPos() {
+        var posSearch = new PosSearch();
+        this.posService.searchPos(posSearch, null)
+            .then((result:SearchResult<Pos>)=> {
+                this.allPosList = result.list;
+                var pos:Pos;
+            });
     }
 
 
@@ -124,8 +144,11 @@ export class SellView {
     }
 
     onCommandPaid() {
-        this.router.navigate('/sales/sale/new');
-        this.saleService.activeSale = null;
+        this.saleService.closeASale(this.aSale)
+            .then((aSale)=> {
+                this.saleService.activeSale = null;
+                this.router.navigate('/sales/sale/new');
+            });
     }
 
     getActiveSaleRef():SaleRef {

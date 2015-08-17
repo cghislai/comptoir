@@ -5,7 +5,7 @@ import {Inject} from 'angular2/angular2';
 
 import {CompanyRef} from 'client/domain/company';
 import {EmployeeRef, Employee, EmployeeFactory} from 'client/domain/employee';
-import {LoginResponse, Registration} from 'client/domain/auth';
+import {Auth, Registration} from 'client/domain/auth';
 import {Language} from 'client/utils/lang';
 import {JSONFactory} from 'client/utils/factory';
 
@@ -50,11 +50,10 @@ export class AuthService {
     login(login:string, password:string):Promise<Employee> {
         var thisService = this;
         return this.client.login(login, password)
-            .then((response:LoginResponse) => {
-                var authToken = response.authToken;
+            .then((response:Auth) => {
+                var authToken = response.token;
                 // FIXME: false expire date
-                var expireDate = new Date();
-                expireDate.setHours(expireDate.getHours() + 1);
+                var expireDate = response.expirationDateTime;
                 thisService.saveAuthToken(authToken, expireDate);
                 var employeeId = response.employeeRef.id;
                 thisService.saveLoggedEmployeeId(employeeId);

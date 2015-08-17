@@ -26,10 +26,10 @@
                 </td>
             </tr>
         </table>
-        <div [hidden]="!error" class="error">
+        <button type="submit" [disabled]="!form.form.valid">Se connecter</button>
+        <div [hidden]="error != true" class="error">
             Impossible de se logger: {{ errorReason }}
         </div>
-        <button type="submit" [disabled]="!form.form.valid">Se connecter</button>
     </form>
     <div>
     <a [router-link]="['/register']"

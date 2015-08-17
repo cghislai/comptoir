@@ -26,6 +26,9 @@ export class Account {
 export class AccountRef {
     id: number;
     link: string;
+    constructor(id?:number) {
+        this.id = id;
+    }
 }
 
 export class AccountSearch {

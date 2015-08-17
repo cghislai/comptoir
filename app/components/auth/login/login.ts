@@ -37,13 +37,23 @@ export class LoginView {
 
     onSubmit() {
         var thisView = this;
+        this.error = false;
+        this.errorReason = null;
 
         var hashedPassword = MD5.encode(this.password);
         this.authService.login(this.login, hashedPassword)
             .then(function (employee) {
                 thisView.router.navigate('/sales/sale/new');
             }).catch(function (error) {
-                thisView.appService.showError(error);
+                if(error.code == 401) {
+                    thisView.error = true;
+                    thisView.errorReason = "Login / mot de passe incorrects";
+                    return;
+                }
+                var appError = new Error();
+                appError.name = "Impossible de satisfaire la requete";
+                appError.message = error.text;
+                thisView.appService.showError(appError);
             });
     }
 

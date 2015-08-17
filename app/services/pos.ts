@@ -17,6 +17,8 @@ export class PosService {
     client:PosClient;
     authService:AuthService;
 
+    lastUsedPos: Pos;
+
     constructor(@Inject authService:AuthService) {
         this.client = new PosClient();
         this.authService = authService;

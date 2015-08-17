@@ -2,6 +2,8 @@
  * Created by cghislai on 16/08/15.
  */
 
+import {Inject} from 'angular2/angular2';
+
 import {BalanceClient} from 'client/balance';
 import {MoneyPileClient} from 'client/moneyPile';
 
@@ -17,7 +19,7 @@ export class PaymentService {
     balanceClient:BalanceClient;
     moneyPileClient:MoneyPileClient;
 
-    constructor(authService:AuthService) {
+    constructor(@Inject authService:AuthService) {
         this.authService = authService;
         this.balanceClient = new BalanceClient();
         this.moneyPileClient = new MoneyPileClient();
@@ -52,5 +54,10 @@ export class PaymentService {
         var authToken = this.authService.authToken;
 
         return this.balanceClient.closeBalance(balance.id, authToken);
+    }
+
+    removePayment(balance: Balance):Promise<any> {
+        var authToken = this.authService.authToken;
+        return this.balanceClient.deleteBalance(balance.id, authToken);
     }
 }

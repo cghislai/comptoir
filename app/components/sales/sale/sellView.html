@@ -1,5 +1,13 @@
+<div class="">
+    <form id="posSelectForm" *ng-if="allPosList != null && allPosList.length > 0">
+        <select [(value)]="pos">
+            <option *ng-for="#posOption of allPosList">
+                {{ pos.description[language] }}
+            </option>
+        </select>
+    </form>
+</div>
 <div class="wrapper" >
-
     <div class="sellView" [class.slide-left]="payStep">
         <div class="itemList" >
             <div>
@@ -10,16 +18,14 @@
             <div>
                 <commandView #commandview
                              (validate)="onCommandValidated($event, payview)"
-                             [sale]="aSale" [validated]="commandValidated"></commandView>
+                             [(sale)]="aSale" [validated]="commandValidated"></commandView>
             </div>
         </div>
         <div class="payView">
             <div>
                 <payView #payview (paid)="onCommandPaid()"
-                         [sale]="aSale.sale"></payView>
+                         [(sale)]="aSale"></payView>
             </div>
         </div>
-
-
     </div>
 </div>

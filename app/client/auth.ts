@@ -2,7 +2,7 @@
  * Created by cghislai on 07/08/15.
  */
 
-import {Registration, LoginResponse, AuthFactory} from 'client/domain/auth';
+import {Registration, Auth, AuthFactory} from 'client/domain/auth';
 import {CompanyRef} from 'client/domain/company';
 import {ComptoirRequest} from 'client/utils/request';
 import {ServiceConfig} from 'client/utils/service';
@@ -10,14 +10,14 @@ import {ServiceConfig} from 'client/utils/service';
 export class AuthClient {
 
     private getLoginUrl():string {
-        return ServiceConfig.URL + "/login";
+        return ServiceConfig.URL + "/auth";
     }
 
     private getRegisterUrl():string {
         return ServiceConfig.URL + "/registration";
     }
 
-    login(login:string, password:string):Promise<LoginResponse> {
+    login(login:string, password:string):Promise<Auth> {
         var request = new ComptoirRequest();
         var body = {
             'login': login,
@@ -27,8 +27,8 @@ export class AuthClient {
         return request
             .post(body, this.getLoginUrl(), null)
             .then(function (response) {
-                var loginResponse:LoginResponse = JSON.parse(response.text, AuthFactory.fromJSONLoginResponseReviver);
-                return loginResponse;
+                var auth:Auth = JSON.parse(response.text, AuthFactory.fromJSONAuthReviver);
+                return auth;
             });
     }
 

@@ -11,13 +11,19 @@ export class Registration {
     employeePassword:string;
 }
 
-export class LoginResponse {
+export class Auth {
+    id: number
     employeeRef:EmployeeRef;
-    authToken:string;
+    token:string;
+    refreshToken: string;
+    expirationDateTime: Date;
 }
 
 export class AuthFactory {
-    static fromJSONLoginResponseReviver = (key, value)=> {
+    static fromJSONAuthReviver = (key, value)=> {
+        if (key == 'expirationDateTime') {
+            return new Date(value);
+        }
         return value;
     };
 }

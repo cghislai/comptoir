@@ -4,22 +4,27 @@
 import {JSONFactory} from 'client/utils/factory';
 
 export class ComptoirResponse {
-    text: string;
-    code: number;
-    listTotalCountHeader: string;
+    text:string;
+    code:number;
+    listTotalCountHeader:string;
+}
+export class ComptoirError {
+    text:string;
+    code:number;
+    response:string;
 }
 
 export class ComptoirRequest {
 
     static JSON_MIME:string = "application/json";
     static UTF8_CHARSET:string = "UTF-8";
-    static HEADER_OAUTH_TOKEN= "Authorisation";
-    static HEADER_TOTAL_COUNT='X-Comptoir-ListTotalCount';
+    static HEADER_OAUTH_TOKEN = "Authorisation";
+    static HEADER_TOTAL_COUNT = 'X-Comptoir-ListTotalCount';
 
     request:XMLHttpRequest;
     method:string;
     url:string;
-    authToken: string;
+    authToken:string;
     objectToSend:any;
     contentType:string;
     acceptContentType:string;
@@ -28,34 +33,34 @@ export class ComptoirRequest {
 
     constructor() {
         this.request = new XMLHttpRequest();
-        this.acceptContentType = ComptoirRequest.JSON_MIME+','+'text/*';
+        this.acceptContentType = ComptoirRequest.JSON_MIME + ',' + 'text/*';
         this.charset = ComptoirRequest.UTF8_CHARSET;
         this.contentType = ComptoirRequest.JSON_MIME;
     }
 
-    get(url:string, authToken: string):Promise<any> {
+    get(url:string, authToken:string):Promise<any> {
         this.setup('GET', url, authToken);
         return this.run();
     }
 
-    put(jsonObject:any, url:string, authToken: string):Promise<ComptoirResponse> {
+    put(jsonObject:any, url:string, authToken:string):Promise<ComptoirResponse> {
         this.setup('PUT', url, authToken);
         this.setupData(jsonObject);
         return this.run();
     }
 
-    post(jsoObject:any, url:string, authToken: string):Promise<ComptoirResponse> {
+    post(jsoObject:any, url:string, authToken:string):Promise<ComptoirResponse> {
         this.setup('POST', url, authToken);
         this.setupData(jsoObject);
         return this.run();
     }
 
-    delete(url:string, authToken: string):Promise<ComptoirResponse> {
+    delete(url:string, authToken:string):Promise<ComptoirResponse> {
         this.setup('DELETE', url, authToken);
         return this.run();
     }
 
-    private setup(method:string, url:string, authToken: string) {
+    private setup(method:string, url:string, authToken:string) {
         this.method = method;
         this.url = url;
         this.authToken = authToken;
@@ -74,23 +79,36 @@ export class ComptoirRequest {
                     return;
                 }
                 if (xmlRequest.status != 200 && xmlRequest.status != 204) {
-                    reject(new Error('XMLHttpRequest Error: ' + xmlRequest.status+" : " + xmlRequest.statusText));
+                    var error = new ComptoirError();
+                    error.code = xmlRequest.status;
+                    error.text = xmlRequest.statusText;
+                    if (xmlRequest.response != null) {
+                        error.response = xmlRequest.response.text;
+                    }
+                    reject(error);
                     return;
                 }
                 var response = new ComptoirResponse();
                 response.code = xmlRequest.status;
                 response.listTotalCountHeader = xmlRequest.getResponseHeader(ComptoirRequest.HEADER_TOTAL_COUNT);
-                response.text = xmlRequest.responseText;
+                response.text = new String(xmlRequest.responseText).toString();
                 resolve(response);
             }
             xmlRequest.onerror = function () {
-                reject(new Error('XMLHttpRequest Error: ' + xmlRequest.statusText));
+                var error = new ComptoirError();
+                error.code = xmlRequest.status;
+                error.text = xmlRequest.statusText;
+                if (xmlRequest.response != null) {
+                    error.response = xmlRequest.response.text;
+                }
+                reject(error);
+                return;
             };
             xmlRequest.open(thisRequest.method, thisRequest.url);
             xmlRequest.setRequestHeader('Accept', thisRequest.acceptContentType);
             xmlRequest.setRequestHeader('Content-Type', thisRequest.contentType + '; charset=' + thisRequest.charset);
             if (this.authToken != null) {
-                xmlRequest.setRequestHeader(ComptoirRequest.HEADER_OAUTH_TOKEN, 'Bearer '+this.authToken);
+                xmlRequest.setRequestHeader(ComptoirRequest.HEADER_OAUTH_TOKEN, 'Bearer ' + this.authToken);
             }
 
             if (thisRequest.objectToSend != null) {
