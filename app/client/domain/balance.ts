@@ -36,11 +36,13 @@ export class BalanceFactory {
             var date = new Date(value);
             return date;
         }
+        return value;
     };
     static fromJSONBalanceSearchReviver=(key,value)=>{
         if (key == 'fromDateTime' || key == 'toDateTime') {
             var date = new Date(value);
             return date;
         }
+        return value;
     };
 }

@@ -32,5 +32,6 @@ export class MoneyPileFactory {
             var date = new Date(value);
             return date;
         }
+        return value;
     };
 }
