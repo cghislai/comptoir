@@ -20,21 +20,21 @@ as components, but hey don't have templates.
 * __ styles/__: SASS format, compiled at build time
 * __typings/__: type inforamtion for typescript compiler
 * __app.ts/__: The entry point
-** Defines all the routes (@RouteConfig)
- *** map a path to a component and an alias
-** Bootstrap all the services
- *** When a service is added, in order for to inject it it must be added to the bootstrap statement.
+ * Defines all the routes (@RouteConfig)
+  * map a path to a component and an alias
+* Bootstrap all the services
+ * When a service is added, in order for to inject it it must be added to the bootstrap statement.
 
 ## To create a new screen
 
 * create a folder under 'components'
 * create the (usually) 3 files
-** mycomponent.ts
-** mycomponent.scss: The styles
-** mycomopnents.html: The template
+ * mycomponent.ts
+ * mycomponent.scss: The styles
+ * mycomopnents.html: The template
 
 * Typical mycomponent.ts:
-```
+```javascript
 import {Component, View,                      // Required base
         NgFor, NgIf,                          // To allow *ng-if and *ng-for statements in template
         formDirectives                        // To use angular-enhanced forms
@@ -85,7 +85,7 @@ export class MyComponent {
 }
 ```
 * A template examlpe for this comopnent:
-```
+```html
 <div class="myComponent">
     <div  [hidden]="myComponent.myValue == null">  <!-- Bind the 'hidden' attribute  -->
       <!-- This will be evaluated at render time, but only hidden by browser, so this will trigger a NPE when myValue is null -->
@@ -120,7 +120,7 @@ export class MyComponent {
 ```
 
 * Concerning the SASS style file:
-```
+```css
 import '../../../../_main'   /* Import the main style file */
 
 .myComponent {  /* style definition may have childeren to match the DOM tree */
@@ -142,6 +142,8 @@ Some lists are as well (items/itemList and sale/saleList).
 
 edit views (items/edit) use forms and map HTML fields value to a model.
 
+
+#### React on attribute change
 In order to listen to attributes change, I used a workaround using setters. I declare the property as
 ```
 properties: ['myPropery: property']
@@ -162,13 +164,14 @@ set myProperty(value: string) {
 This could also be used for value transformation I guess.
 
 
+#### Router links
 I will also mention the router link, mostyl used in navMenu:
-```
+```html
 <a [router-link]="['/saleEditSale', {id: sale.id}]">edit sale {{ sale.id }}</a>
 ```
 This will create a link to the route with the 'saleEditSale' alias, passing parameter sale.id as id.
-The route is defined as {path: '/sale/edit/id', component: '...', alias: 'saleEditSale'}
+The route is defined as `{path: '/sale/edit/:id', component: '...', alias: 'saleEditSale'}`
 
-
+#### Validation
 Validation is (will) be possible using angular2, they will probably still work on that. I haven't implemented any yet.
 Just using HTML5 input validation for now (required, min, max, step, ...)
