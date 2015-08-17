@@ -169,3 +169,6 @@ I will also mention the router link, mostyl used in navMenu:
 This will create a link to the route with the 'saleEditSale' alias, passing parameter sale.id as id.
 The route is defined as {path: '/sale/edit/id', component: '...', alias: 'saleEditSale'}
 
+
+Validation is (will) be possible using angular2, they will probably still work on that. I haven't implemented any yet.
+Just using HTML5 input validation for now (required, min, max, step, ...)
