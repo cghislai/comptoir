@@ -35,16 +35,16 @@ export class SellView {
     posService:PosService;
     allPosList:Pos[];
     pos:Pos;
-    posId: number;
+    posId:number;
 
     aSale:ASale;
     payStep:boolean;
 
     router:Router;
     location:Location;
-    language: string;
+    language:string;
 
-    constructor(saleService:SaleService, posService:PosService, appService: ApplicationService,
+    constructor(saleService:SaleService, posService:PosService, appService:ApplicationService,
                 router:Router, routeParams:RouteParams, location:Location) {
         this.saleService = saleService;
         this.posService = posService;
@@ -103,7 +103,9 @@ export class SellView {
             }
         }
         if (idValue == 'new') {
-            this.aSale = new ASale();
+            this.saleService.createASale().then((aSale)=> {
+                this.aSale = aSale;
+            });
             this.saleService.activeSale = null;
             return;
         }
@@ -133,6 +135,16 @@ export class SellView {
             });
     }
 
+    onSaleInvalidated() {
+        this.saleService.removeSale(this.aSale.saleId).then(()=> {
+            this.aSale = null;
+            return this.saleService.createASale();
+        }).then((aSale:ASale)=> {
+            this.aSale = aSale;
+            this.location.go('/sales/sale/new');
+        });
+    }
+
     onItemClicked(item:Item, commandView:CommandView, itemList:ItemListView) {
         itemList.focus();
 
@@ -141,18 +153,18 @@ export class SellView {
         if (this.aSale.sale == null) {
             return this.saleService
                 .openASale(this.aSale)
-                .then(()=> {
+                .then((aSale)=> {
                     return this.saleService
-                        .addItemToASale(this.aSale, item);
-                }).then(()=> {
-                    var activeSaleId = this.aSale.sale.id;
-                    this.router.navigate('/sales/sale/' + activeSaleId);
+                        .addItemToASale(aSale, item);
+                }).then((aSale:ASale)=> {
+                    var activeSaleId = aSale.saleId;
+                    this.location.go('/sales/sale/' + activeSaleId);
                 });
         }
 
         return this.saleService.addItemToASale(this.aSale, item)
             .then((aSale)=> {
-                this.aSale = aSale;
+
             });
     }
 

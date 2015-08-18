@@ -29,7 +29,7 @@ class ToAddItem {
 // The component
 @Component({
     selector: 'commandView',
-    events: ['validate'],
+    events: ['validate', 'saleInvalidated'],
     properties: ['aSale: sale', 'validated']
 })
 
@@ -51,6 +51,7 @@ export class CommandView {
     editingSaleDiscount:boolean = false;
     validate = new EventEmitter();
     validated:boolean = false;
+    saleInvalidated = new EventEmitter();
 
     constructor(saleService:SaleService,
                 applicationService:ApplicationService) {
@@ -65,11 +66,15 @@ export class CommandView {
 
 
     doRemoveItem(saleItem:ASaleItem) {
+        var aSale = saleItem.aSale;
+        var saleToBeremoved = aSale.items.length == 1;
+
         this.saleService.removeASaleItem(saleItem)
             .then(()=> {
-                // all good;
+                if (saleToBeremoved) {
+                    this.saleInvalidated.next(null);
+                }
             });
-        // TODO: remove items
     }
 
     doAddCustomItem() {
@@ -90,27 +95,46 @@ export class CommandView {
 
     onItemDiscountKeyEvent(event) {
         if (event.which == 13) { // Enter
-            var discount:number = event.target.value;
-            discount /= 100;
-            this.applyItemDiscount(discount);
-            return;
+            this.onItemDiscountPercentageChanged(event);
+            this.applyItemDicountPercentage();
+            return false;
         }
         if (event.which == 27) { // Escape
-            this.doCancelItemDiscount();
-            return;
+            this.cancelItemDiscount();
+            return false;
         }
+        return false;
     }
 
-    private applyItemDiscount(discountRatio:number) {
+    onItemDiscountPercentageChanged(event) {
+        var discountString:string = event.target.value;
+        var discountPercentage = parseFloat(discountString);
+        if (isNaN(discountPercentage)) {
+            this.editingDiscountSaleItem.discountPercentage = null;
+            return false;
+        }
+        this.editingDiscountSaleItem.discountPercentage = discountPercentage;
+    }
+
+    applyItemDicountPercentage() {
+        var discountRatio = null;
+        if (this.editingDiscountSaleItem.discountPercentage != null) {
+            discountRatio =  this.editingDiscountSaleItem.discountPercentage / 100;
+        }
+        this.editingDiscountSaleItem.discountRate = discountRatio;
+        this.editingDiscountSaleItem.itemSale.discountRatio = discountRatio;
         this.saleService
-            .setASaleItemDiscount(this.editingDiscountSaleItem, discountRatio)
-            .then(()=>{});
+            .updateASaleItem( this.editingDiscountSaleItem)
+            .then((aSale)=> {
+                // this.aSale == aSale
+            });
         this.editingDiscountSaleItem = null;
     }
 
-    doCancelItemDiscount() {
+    cancelItemDiscount() {
         this.editingDiscountSaleItem = null;
     }
+
 
     doEditItemAmount(activeItem:ASaleItem) {
         this.editingAmountItem = activeItem;
@@ -134,6 +158,7 @@ export class CommandView {
     }
 
     applyItemAmount(amount:number) {
+        this.editingAmountItem.quantity = amount;
         var itemSale = this.editingAmountItem.itemSale;
         itemSale.quantity = amount;
 
@@ -152,13 +177,8 @@ export class CommandView {
 
     onSaleDiscountKeyEvent(event) {
         if (event.which == 13) { // Enter
-            var discountString:string = event.target.value;
-            var discountRatio = parseFloat(discountString);
-            if (isNaN(discountRatio)) {
-                return false;
-            }
-            discountRatio /= 100;
-            this.applySaleDiscount(discountRatio);
+            this.onSalePercentageChanged(event);
+            this.applySaleDicountPercentage();
             return false;
         }
         if (event.which == 27) { // Escape
@@ -168,7 +188,18 @@ export class CommandView {
         return false;
     }
 
-    private applySaleDiscount(discountRatio:number) {
+    onSalePercentageChanged(event) {
+        var discountString:string = event.target.value;
+        var discountPercentage = parseFloat(discountString);
+        if (isNaN(discountPercentage)) {
+            this.aSale.discountPercentage = null;
+            return false;
+        }
+        this.aSale.discountPercentage = discountPercentage;
+    }
+
+    applySaleDicountPercentage() {
+        var discountRatio = this.aSale.discountPercentage / 100;
         this.saleService
             .setASaleDiscount(this.aSale, discountRatio)
             .then((aSale)=> {

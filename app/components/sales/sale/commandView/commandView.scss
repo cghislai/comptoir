@@ -36,6 +36,13 @@ header {
 
 table {
 
+  &.dirty {
+    background-color: lightgray;
+  }
+
+  .dirty {
+    background-color: lightgray;
+  }
 
   td > *:not([hidden]) {
     display: inline-block;

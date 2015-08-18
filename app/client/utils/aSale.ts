@@ -9,9 +9,30 @@ export class ASaleItem {
     aSale:ASale;
     item:Item;
     itemSale:ItemSale;
+
+    // local fields
+    itemId: number;
+    itemSaleId: number;
+    quantity: number;
+    vatExclusive: number;
+    vatRate: number;
+    discountRate: number;
+    discountPercentage: number;
+    dirty: boolean;
 }
+
+
 export class ASale {
     sale:Sale;
     items: ASaleItem[] = [];
-    itemsMap:any = {};
+    itemsMap:any = {}; // [itemId]=item
+
+    // local fields
+    saleId: number;
+    vatExclusive: number;
+    vatAmount: number;
+    discountRate: number;
+    discountPercentage: number;
+    discountAmount: number;
+    dirty: boolean;
 }

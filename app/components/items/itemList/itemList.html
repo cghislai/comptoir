@@ -13,11 +13,24 @@
             </span>
             </div>
         </div>
-        <div class="dataTableBody" *ng-if="items != undefined">
+        <div class="dataTableBody" *ng-if="items != undefined && selectable">
             <div *ng-for="#itempic of items"
-                 class="dataTableRow item"
-                 [class.selectable]="selectable"
-                 [attr.focusable]="selectable">
+                 class="dataTableRow item selectable"
+                 (click)="onItemClick(itempic.item, col)"
+                 focusable>
+                <itemColumn *ng-for="#col of columns"
+                            class="dataTableCell"
+                            (action)="onColumnAction($event)"
+                            (^click)="onItemClick(itempic.item, col)"
+                            [class.right]="col.alignRight"
+                            [item]="itempic"
+                            [column]="col"
+                            [lang]="language"></itemColumn>
+            </div>
+        </div>
+        <div class="dataTableBody" *ng-if="items != undefined && !selectable">
+            <div *ng-for="#itempic of items"
+                 class="dataTableRow item">
                 <itemColumn *ng-for="#col of columns"
                             class="dataTableCell"
                             (action)="onColumnAction($event)"

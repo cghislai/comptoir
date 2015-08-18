@@ -26,7 +26,7 @@ import {FocusableDirective} from 'directives/focusable';
 @View({
     templateUrl: './components/items/itemList/itemColumn.html',
     styleUrls: ['./components/items/itemList/itemList.css'],
-    directives: [NgIf],
+    directives: [NgIf, FocusableDirective],
     // eases styling
     encapsulation: ViewEncapsulation.NONE
 })
