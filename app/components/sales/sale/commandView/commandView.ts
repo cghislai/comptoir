@@ -132,6 +132,11 @@ export class CommandView {
     }
 
     cancelItemDiscount() {
+        var oldDiscuont = this.editingDiscountSaleItem.itemSale.discountRatio;
+        if (oldDiscuont == null) {
+            this.editingDiscountSaleItem.discountPercentage = null;
+        }
+        this.editingDiscountSaleItem.discountPercentage = oldDiscuont * 100;
         this.editingDiscountSaleItem = null;
     }
 
@@ -142,12 +147,8 @@ export class CommandView {
 
     onItemAmountKeyEvent(event) {
         if (event.which == 13) { // Enter
-            var amount:string = event.target.value;
-            var amountVal = parseInt(amount);
-            if (isNaN(amountVal)) {
-                return false;
-            }
-            this.applyItemAmount(amountVal);
+            this.onItemAmountChanged(event);
+            this.applyItemAmount();
             return false;
         }
         if (event.which == 27) { // Escape
@@ -157,10 +158,19 @@ export class CommandView {
         return false;
     }
 
-    applyItemAmount(amount:number) {
-        this.editingAmountItem.quantity = amount;
+    onItemAmountChanged(event) {
+        var amount:string = event.target.value;
+        var amountVal = parseInt(amount);
+        if (isNaN(amountVal)) {
+            return;
+        }
+        this.editingAmountItem.quantity = amountVal;
+    }
+
+    applyItemAmount() {
+        var quantity = this.editingAmountItem.quantity;
         var itemSale = this.editingAmountItem.itemSale;
-        itemSale.quantity = amount;
+        itemSale.quantity = quantity;
 
         this.saleService.updateASaleItem(this.editingAmountItem)
             .then(()=> {
@@ -172,6 +182,8 @@ export class CommandView {
 
 
     cancelItemAmount() {
+        var oldAmount = this.editingAmountItem.itemSale.quantity;
+        this.editingAmountItem.quantity = oldAmount;
         this.editingAmountItem = null;
     }
 
@@ -209,6 +221,17 @@ export class CommandView {
     }
 
     cancelSaleDiscount() {
+        var sale = this.aSale.sale;
+        if (sale == null) {
+            this.aSale.discountPercentage = null;
+        } else {
+            var oldDiscount = sale.discountRatio;
+            if (oldDiscount == null) {
+                this.aSale.discountPercentage = null;
+            } else {
+                this.aSale.discountPercentage = oldDiscount * 100;
+            }
+        }
         this.editingSaleDiscount = false;
     }
 

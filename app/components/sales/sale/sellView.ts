@@ -43,6 +43,7 @@ export class SellView {
     router:Router;
     location:Location;
     language:string;
+    routeParams:RouteParams;
 
     constructor(saleService:SaleService, posService:PosService, appService:ApplicationService,
                 router:Router, routeParams:RouteParams, location:Location) {
@@ -52,11 +53,15 @@ export class SellView {
         this.location = location;
         this.language = appService.language.locale;
 
-        this.searchPos();
-
 
         var idValue = routeParams.get('id');
+
+        this.searchPos();
         this.findSale(idValue);
+
+        location.subscribe((val)=>{
+            console.log(val);
+        });
     }
 
     searchPos() {
@@ -89,42 +94,29 @@ export class SellView {
     }
 
 
+    // TODO: when passing custom data through route is accepted, navigate
+    // using router.navigate and passing aSale
     findSale(idValue:string) {
         var idNumber = parseInt(idValue);
         if (this.aSale != null) {
-            var saleExists = this.aSale.sale != null;
-            if (!saleExists && idValue == 'new') {
-                return;
-            }
-            if (saleExists) {
-                if (this.aSale.sale.id == idNumber) {
-                    return;
-                }
-            }
+            console.log("I got sale "+this.aSale.saleId+ ' and asked for '+idNumber);
+            return;
         }
         if (idValue == 'new') {
-            this.saleService.createASale().then((aSale)=> {
-                this.aSale = aSale;
-            });
-            this.saleService.activeSale = null;
+            this.createSale();
             return;
         }
         if (isNaN(idNumber)) {
-            // prevent 'NPE'
-            this.aSale = new ASale();
-            if (this.saleService.activeSale != null) {
-                var activeSale = this.saleService.activeSale;
+            var activeSale = this.saleService.activeSale;
+            if (activeSale != null) {
                 idNumber = activeSale.id;
-                this.router.navigate('/sales/sale/' + idNumber);
-                return;
+                this.getSale(idNumber);
             } else {
-                this.saleService.activeSale = null;
-                this.router.navigate('/sales/sale/new');
-                return;
+                this.createSale();
             }
+            return;
         }
         this.getSale(idNumber);
-
     }
 
     getSale(idNumber:number) {
@@ -132,7 +124,17 @@ export class SellView {
         this.saleService.getASale(idNumber)
             .then((aSale)=> {
                 this.aSale = aSale;
+                this.saleService.activeSale = aSale.sale;
             });
+        this.location.go('/sales/sale/'+idNumber);
+    }
+
+    createSale() {
+        this.saleService.createASale().then((aSale)=> {
+            this.aSale = aSale;
+        });
+        this.saleService.activeSale = null;
+        this.location.go('/sales/sale/new');
     }
 
     onSaleInvalidated() {

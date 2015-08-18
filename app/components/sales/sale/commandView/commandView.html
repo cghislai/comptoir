@@ -81,7 +81,8 @@
                 <span class="editAmount" *ng-if="editingAmountItem == saleItem">
                     <input #amount [value]="saleItem.quantity"
                            (keyup)="onItemAmountKeyEvent($event)"
-                           (blur)="cancelItemAmount()"
+                           (input)="onItemAmountChanged($event)"
+                           (blur)="applyItemAmount()"
                            type="number" min="1"
                            size="4" autofocusselect/>
                 </span>

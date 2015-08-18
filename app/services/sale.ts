@@ -163,6 +163,7 @@ export class SaleService {
 
                 aSaleItem.vatExclusive = itemVatExclusive;
                 aSaleItem.vatRate = itemVatRate;
+                var itemVatAmount = itemVatRate * itemVatExclusive;
                 vatExlusive += itemVatExclusive;
                 vatAmount += itemVatAmount;
                 continue;
@@ -278,14 +279,14 @@ export class SaleService {
         for (idKey in newItemsMap) {
             var itemId:number = parseInt(idKey);
             var saleItem:ASaleItem = newItemsMap[itemId];
-            oldItemsMap[itemId] = null;
+            delete oldItemsMap[itemId];
             newItems.push(saleItem);
         }
         for (idKey in oldItemsMap) {
             var itemId:number = parseInt(idKey);
             var saleItem:ASaleItem = oldItemsMap[itemId];
             if (saleItem != null) {
-                console.log("WARNING: A sale item is missing from the fetched list, is it to be removed? itemId:" + idKey);
+                console.log("WARNING: A sale item is missing from the fetched list, is it to be removed? itemId:" + itemId);
             }
         }
         aSale.items = newItems;
@@ -353,6 +354,7 @@ export class SaleService {
             aSaleItem = new ASaleItem();
             aSaleItem.aSale = aSale;
             aSaleItem.item = item;
+            aSaleItem.itemId = item.id;
             aSaleItem.quantity = 1;
             aSaleItem.dirty = true;
             aSale.itemsMap[item.id] = aSaleItem;
@@ -448,13 +450,12 @@ export class SaleService {
 
     removeASaleItem(aSaleItem:ASaleItem):Promise<ASale> {
         var saleItemId = aSaleItem.itemSaleId;
+        var itemId = aSaleItem.itemId;
         var aSale = aSaleItem.aSale;
         var saleId = aSale.sale.id;
         var authToken = this.authService.authToken;
 
         // Remove it locally
-        var itemId = aSaleItem.itemId;
-        aSale.itemsMap[itemId] = null;
         var newitems = [];
         for (var item of aSale.items) {
             if (item == aSaleItem) {
@@ -463,6 +464,7 @@ export class SaleService {
             newitems.push(item);
         }
         aSale.items = newitems;
+        delete aSale.itemsMap[itemId];
         aSale.dirty = true;
         this.calcASale(aSale);
 
