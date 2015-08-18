@@ -148,25 +148,23 @@
 
         <form (ng-submit)="doAddCustomItem()">
             <input #name placeholder="Nom" class="name"
-                   [value]="toAddItem.name" (keyup)="toAddItem.name = name.value">
+                   [value]="toAddItem.name"
+                   (input)="toAddItem.name = name.value">
             <input #amount placeholder="Quantité" class="amount"
                    type="number" min="1" step="1"
                    [value]="toAddItem.amount"
-                   (keyup)="setToAddItemAmount(amount.value)"
-                   (change)="setToAddItemAmount(amount.value)">
+                   (input)="setToAddItemAmount(amount.value)">
             <span>
             <input #price placeholder="Prix unitaire" class="price number"
                    type="number" min="0.01" step="0.01"
                    [value]="toAddItem.price | number:'.2-2'"
-                   (keyup)="handleToAddItemPriceKeyUp($event)"
-                   (change)="setToAddItemPrice($event)">€
+                   (input)="setToAddItemPrice($event)">€
             </span>
             <span>
             <input #vat placeholder="TVA" class="vat number"
                    type="number" min="0.01" step="0.01"
                    [value]="toAddItem.vat | number:'.2-2'"
-                   (keyup)="handleToAddItemVatKeyUp($event)"
-                   (change)="setToAddItemVat($event)">%
+                   (input)="setToAddItemVat($event)">%
             </span>
             <button type='submit' [disabled]="!isItemToAddValid()">Ajouter</button>
         </form>

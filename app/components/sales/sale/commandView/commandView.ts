@@ -84,8 +84,10 @@ export class CommandView {
         item.vatRate = this.toAddItem.vat * 0.01;
         item.name = new LocaleTexts();
         item.name[this.language] = this.toAddItem.name;
-        item.reference = null;
-        // TODO: mark item as custom, save, create itemSale, save, add to ActiveSale
+        item.description = new LocaleTexts();
+        item.reference = "CUSTOM";
+
+        this.saleService.addItemToASale(this.aSale, item);
         this.renewToAddCustomItem();
     }
 
@@ -249,15 +251,6 @@ export class CommandView {
         this.toAddItem.amount = parseInt(amount);
     }
 
-    handleToAddItemPriceKeyUp(event) {
-        if (event.which == 13) { // Enter
-            this.setToAddItemPrice(event);
-            return;
-        }
-        if (event.which == 27) { // Escape
-            return;
-        }
-    }
 
     setToAddItemPrice(event) {
         var price = parseFloat(event.target.value);
@@ -265,16 +258,6 @@ export class CommandView {
             return;
         }
         this.toAddItem.price = price;
-    }
-
-    handleToAddItemVatKeyUp(event) {
-        if (event.which == 13) { // Enter
-            this.setToAddItemVat(event);
-            return;
-        }
-        if (event.which == 27) { // Escape
-            return;
-        }
     }
 
     setToAddItemVat(event) {

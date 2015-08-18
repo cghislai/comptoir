@@ -347,6 +347,17 @@ export class SaleService {
             throw 'sale closed';
         }
         var authToken = this.authService.authToken;
+
+        if (item.id == null) {
+            // new item
+            var companyRef = this.authService.loggedEmployee.companyRef;
+            item.companyRef = companyRef;
+            return this.itemClient.createIem(item, authToken)
+                .then((itemRef)=> {
+                    item.id = itemRef.id;
+                    return this.addItemToASale(aSale, item);
+                });
+        }
         aSale.dirty = true;
 
         var aSaleItem:ASaleItem = aSale.itemsMap[item.id];
