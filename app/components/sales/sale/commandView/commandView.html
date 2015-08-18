@@ -1,12 +1,17 @@
 <div class="commandView" *ng-if="aSale != null">
 
     <header class="coloredHeader">
-        <h1>
+        <h1 [class.dirty]="aSale.dirty">
             <span>Vente</span>
             <span class="saleRef" [hidden]="aSale.saleId == null">
                 #{{ aSale.saleId }}
             </span>
         </h1>
+        <span class="busy">
+            <span class="valignAnchor"></span>
+            <img src="res/img/spinner-2-white.gif"
+                 [hidden]="!aSale.dirty"/>
+        </span>
 
         <div class="actions" *ng-if="aSale.sale != null"
              [hidden]="aSale.items.length <= 0">
@@ -36,8 +41,7 @@
         </div>
     </header>
 
-    <table class="dataTable" [hidden]="aSale.items ==  null"
-           [class.dirty]="aSale.dirty">
+    <table class="dataTable" [hidden]="aSale.items ==  null">
         <thead>
         <tr>
             <th>Ref</th>

@@ -47,8 +47,13 @@ $focusColor: $onWhiteHoverColor;
   }
 
   .busy {
-    float: right;
     height: 100%;
+
+    img:not([hidden]) {
+      position: relative;
+      display: inline-block;
+      vertical-align: middle;
+    }
   }
 }
 

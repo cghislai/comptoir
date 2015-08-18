@@ -1,19 +1,24 @@
 <div class="itemList" (show)="searchItems()">
     <header class="coloredHeader">
         <div class="filter">
-        <input #filter id="itemListFilterInput"
-               (keyup)="onFilterKeyUp($event)"
-               (change)="onFilterChange($event)"
-               [value]="itemSearch.multiSearch"
-               placeholder="Filtrer les produits" autofocusselect/>
-        </div>
+            <input #filter id="itemListFilterInput"
+                   (keyup)="onFilterKeyUp($event)"
+                   (change)="onFilterChange($event)"
+                   [value]="itemSearch.multiSearch"
+                   placeholder="Filtrer les produits" autofocusselect/>
 
+            <div class="busy">
+                <span class="valignAnchor"></span>
+                <img src="res/img/spinner-2-white.gif"
+                     [hidden]="!loading"/>
+            </div>
+        </div>
     </header>
     <div class="scrollPane" *ng-if="itemSearchResult != undefined">
-       <itemList [columns]="columns" #itemlistcomp
-                 [items]="itemSearchResult.list"
-                 selectable="true" headers="false"
-               (item-clicked)="onItemClicked($event)"></itemList>
+        <itemList [columns]="columns" #itemlistcomp
+                  [items]="itemSearchResult.list"
+                  selectable="true" headers="false"
+                  (item-clicked)="onItemClicked($event)"></itemList>
 
     </div>
 </div>

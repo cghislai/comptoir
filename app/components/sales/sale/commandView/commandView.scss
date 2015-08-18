@@ -2,6 +2,7 @@
 
 header {
 
+
   .commandNav {
     height: 100%;
   }
@@ -40,9 +41,6 @@ table {
     background-color: lightgray;
   }
 
-  .dirty {
-    background-color: lightgray;
-  }
 
   td > *:not([hidden]) {
     display: inline-block;

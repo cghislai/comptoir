@@ -39,6 +39,7 @@ export class ItemListView {
     itemService: ItemService;
     itemSearch:ItemSearch;
     pagination: Pagination;
+    loading:boolean = false;
     itemSearchResult: SearchResult<PicturedItem>;
 
     constructor(applicationService:ApplicationService, itemService:ItemService) {
@@ -60,9 +61,11 @@ export class ItemListView {
 
     searchItems() {
         var thisView = this;
+        this.loading = true;
         this.itemService.searchPicturedItems(this.itemSearch, this.pagination)
             .then((result:SearchResult<PicturedItem>)=> {
                 thisView.itemSearchResult = result;
+                thisView.loading = false;
             });
     }
 

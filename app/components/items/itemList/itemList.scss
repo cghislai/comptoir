@@ -3,21 +3,6 @@
 .itemList {
   position: relative;
 
-  .busy:not([hidden]) {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, .7);
-    text-align: center;
-
-    img {
-      position: relative;
-      display: inline-block;
-      vertical-align: middle;
-      height: 2em;
-    }
-  }
-
   .dataTable {
 
     .dataTableHead .dataTableCell {

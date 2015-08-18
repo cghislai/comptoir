@@ -91,7 +91,7 @@ export class SaleService {
         aSale.discountRate = null;
         aSale.vatExclusive = null;
         aSale.vatAmount = null;
-        aSale.dirty = true;
+        aSale.dirty = false;
         return new Promise<ASale>((resolve, reject)=> {
             resolve(aSale);
         });
