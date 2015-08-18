@@ -174,17 +174,17 @@ export class SellView {
     onCommandValidated(validated:boolean, payView:PayView) {
         this.payStep = validated;
         if (validated) {
-            payView.searchAccounts();
-            payView.calcRemaining();
+            payView.start();
+            //payView.calcRemaining();
         }
     }
 
     onCommandPaid() {
         this.saleService.closeASale(this.aSale)
             .then((aSale)=> {
-                this.saleService.activeSale = null;
-                this.router.navigate('/sales/sale/new');
             });
+        this.saleService.activeSale = null;
+        this.router.navigate('/sales/sale/new');
     }
 
     getActiveSaleRef():SaleRef {

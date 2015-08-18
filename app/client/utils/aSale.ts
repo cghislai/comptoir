@@ -1,8 +1,11 @@
 /**
  * Created by cghislai on 15/08/15.
  */
+import {Account} from 'client/domain/account';
+import {AccountingEntry} from 'client/domain/accountingEntry';
 import {Item} from 'client/domain/item';
 import {Sale} from 'client/domain/sale';
+import {Pos} from 'client/domain/pos';
 import {ItemSale} from 'client/domain/itemSale';
 
 export class ASaleItem {
@@ -10,7 +13,6 @@ export class ASaleItem {
     item:Item;
     itemSale:ItemSale;
 
-    // local fields
     itemId: number;
     itemSaleId: number;
     quantity: number;
@@ -21,13 +23,11 @@ export class ASaleItem {
     dirty: boolean;
 }
 
-
 export class ASale {
     sale:Sale;
     items: ASaleItem[] = [];
     itemsMap:any = {}; // [itemId]=item
-
-    // local fields
+    payList: ASalePay[];
     saleId: number;
     vatExclusive: number;
     vatAmount: number;
@@ -36,3 +36,25 @@ export class ASale {
     discountAmount: number;
     dirty: boolean;
 }
+
+export class ASalePayItem {
+    aSalePay: ASalePay;
+    account: Account;
+    accountingEntry: AccountingEntry;
+
+    amount: number;
+    dirty: boolean;
+    addedToPay: boolean = false;
+}
+
+export class ASalePay {
+    aSale: ASale;
+    pos: Pos;
+    payItems: ASalePayItem[] = [];
+
+    amount: number = 0;
+    missingAmount: number = 0;
+    dirty: boolean = false;
+}
+
+

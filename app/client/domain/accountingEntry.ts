@@ -3,7 +3,7 @@
  */
 
 import {CompanyRef} from 'client/domain/company';
-import {AccountRef} from 'client/domain/account';
+import {AccountRef, AccountSearch} from 'client/domain/account';
 import {AccountingTransactionRef} from 'client/domain/accountingTransaction';
 import {CustomerRef} from 'client/domain/customer';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
@@ -12,10 +12,10 @@ export class AccountingEntry {
     id: number;
     companyRef: CompanyRef;
     accountRef: AccountRef;
-    amount: number;
-    vatRate: number;
+    amount: number = 0;
+    vatRate: number = 0;
     dateTime: Date;
-    description: LocaleTexts;
+    description: LocaleTexts = new LocaleTexts();
     accountingTransactionRef: AccountingTransactionRef;
     vatAccountingEntryRef: AccountingEntryRef;
     customerRef: CustomerRef;
@@ -24,6 +24,15 @@ export class AccountingEntry {
 export class AccountingEntryRef {
     id: number;
     link: string;
+}
+
+
+export class AccountingEntrySearch {
+    companyRef : CompanyRef;
+    accountingTransactionRef : AccountingTransactionRef;
+    accountSearch: AccountSearch;
+    fromDateTime : Date;
+    toDateTime : Date;
 }
 
 export class AccountingEntryFactory {

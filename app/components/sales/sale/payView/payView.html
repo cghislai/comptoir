@@ -1,19 +1,21 @@
 <div>
     <div class="toPayHeader coloredHeader"
-         [hidden]="remainingAmount <= 0">
+         [hidden]="aSalePay.missingAmount <= 0">
         <h1>À payer</h1>
          <span class="actions">
-        <span class="total single" [class.negative]="remainingAmount < 0" [class.exact]="remainingAmount == 0">
-            {{ remainingAmount | currency:'EUR':true:'.2-2' }}
+        <span class="total single">
+            {{ aSalePay.missingAmount | currency:'EUR':true:'.2-2' }}
         </span>
         </span>
     </div>
     <div class="toPayHeader coloredHeader"
-        [hidden]="remainingAmount > 0">
+        [hidden]="aSalePay.missingAmount > 0">
         <h1>À rendre</h1>
         <span class="actions">
-            <span class="total negative">
-                {{ -remainingAmount | currency:'EUR':true:'.2-2'}}
+            <span class="total"
+                  [class.negative]="aSalePay.missingAmount < 0"
+                  [class.exact]="aSalePay.missingAmount == 0">
+                {{ -aSalePay.missingAmount | currency:'EUR':true:'.2-2'}}
             </span>
             <span class="action validateLink" (click)="onValidateClicked()">
                 Valider
@@ -22,7 +24,7 @@
     </div>
 </div>
 
-<table class="usedMethod dataTable" [hidden]="payList.length == 0">
+<table class="usedMethod dataTable" [hidden]="aSalePay.payItems.length == 0">
     <thead>
     <tr>
         <th>Compte</th>
@@ -31,16 +33,16 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ng-for="#pay of payList">
+    <tr *ng-for="#pay of aSalePay.payItems">
         <td>{{ pay.account.description[language] }}</td>
         <td class="number">
-            <a class="edit actionlink" (^click)="startEditPay(pay.method)">
+            <a class="edit actionlink" (^click)="startEditPayItem(pay)">
                 {{ pay.amount | currency:'EUR':true:'.2-2' }}
             </a>
         </td>
 
         <td class="actions">
-            <a class="actionIcon remove" (^click)="removePay(pay)">
+            <a class="actionIcon remove" (^click)="removePayItem(pay)">
                 <i class="fi-x red"></i>
             </a>
         </td>
@@ -50,19 +52,22 @@
     <tr>
         <th class="total">Total:</th>
         <th class="total">
-            {{ paidAmount | currency:'EUR':true:'.2-2' }}
+            {{ aSalePay.amount | currency:'EUR':true:'.2-2' }}
         </th>
     </tr>
 
     </tfoot>
 </table>
 
-<div class="editMethod" *ng-if="editingPay != null">
-    <span class="method">{{ editingPay.account.description[language] }}</span>
+<div class="editMethod" *ng-if="editingPayItem != null">
+    <span class="method">{{ editingPayItem.account.description[language] }}</span>
     <span class="amount">
-        Montant: <input #amount [value]="editingPay.amount"
+        Montant: <input #amount [value]="editingPayItem.amount"
                         type="number" min="0.01" step="0.01"
-                        (keyUp)="onPayAmountKeyUp(amount.value, $event)" autofocusselect> €
+                        (keyUp)="onPayItemKeyUp(amount.value, $event)"
+                        (input)="onPayItemChange($event)"
+                        (blur)="savePayItem"
+                        autofocusselect> €
     </span>
 </div>
 
