@@ -5,7 +5,7 @@ import {Inject} from 'angular2/angular2';
 
 import {CompanyRef} from 'client/domain/company';
 import {EmployeeRef, Employee, EmployeeFactory} from 'client/domain/employee';
-import {Auth, Registration} from 'client/domain/auth';
+import {Auth, Registration, AuthFactory} from 'client/domain/auth';
 import {Language} from 'client/utils/lang';
 import {JSONFactory} from 'client/utils/factory';
 
@@ -20,9 +20,7 @@ export enum LoginRequiredReason {
 }
 
 export class AuthService {
-    static STORAGE_TOKEN_KEY = "AuthToken";
-    static STORAGE_TOKEN_EXPIRE_DATE_KEY = "AuthTokenExpireDate";
-    static STORAGE_EMPLOYEE_ID_KEY = "EmployeeId";
+    static STORAGE_AUTH_KEY = "Auth";
     static STORAGE_EMPLOYEE_KEY = "Employee";
 
     client:AuthClient;
@@ -30,10 +28,8 @@ export class AuthService {
     applicationService:ApplicationService;
 
     authToken:string;
-    loggedEmployeeId:number;
+    auth:Auth;
     loggedEmployee:Employee;
-    // TODO
-    authTokenExpireDate:Date;
 
     loginRequired:boolean;
     loginRequiredReason:LoginRequiredReason;
@@ -44,22 +40,17 @@ export class AuthService {
         this.applicationService = appService;
 
         this.loadFromStorage();
-
     }
 
     login(login:string, password:string):Promise<Employee> {
         var thisService = this;
         return this.client.login(login, password)
             .then((response:Auth) => {
-                var authToken = response.token;
-                // FIXME: false expire date
-                var expireDate = response.expirationDateTime;
-                thisService.saveAuthToken(authToken, expireDate);
+                this.saveAuth(response);
                 var employeeId = response.employeeRef.id;
-                thisService.saveLoggedEmployeeId(employeeId);
-                return thisService.employeeClient.getEmployee(employeeId, authToken);
+                return this.employeeClient.getEmployee(employeeId, this.authToken);
             }).then((employee:Employee) => {
-                thisService.saveLoggedEmployee(employee);
+                this.saveLoggedEmployee(employee);
                 return employee;
             });
     }
@@ -76,22 +67,17 @@ export class AuthService {
             });
     }
 
-    private saveAuthToken(token:string, expireDate:Date) {
-        this.authToken = token;
-        localStorage.setItem(AuthService.STORAGE_TOKEN_KEY, token);
-
-        this.authTokenExpireDate = expireDate;
-        if (expireDate != undefined) {
-            var dateJSON = expireDate.toJSON();
-            localStorage.setItem(AuthService.STORAGE_TOKEN_EXPIRE_DATE_KEY, dateJSON);
+    private saveAuth(auth:Auth) {
+        this.auth = auth;
+        if (auth != null) {
+            this.authToken = auth.token;
+            var jsonString = JSON.stringify(auth, JSONFactory.toJSONReplacer);
+            localStorage.setItem(AuthService.STORAGE_AUTH_KEY, jsonString);
         } else {
-            localStorage.setItem(AuthService.STORAGE_TOKEN_EXPIRE_DATE_KEY, undefined);
+            this.authToken = null;
+            localStorage.setItem(AuthService.STORAGE_AUTH_KEY, null);
+            localStorage.setItem(AuthService.STORAGE_EMPLOYEE_KEY, null);
         }
-    }
-
-    private saveLoggedEmployeeId(id:number) {
-        this.loggedEmployeeId = id;
-        localStorage.setItem(AuthService.STORAGE_EMPLOYEE_ID_KEY, id + '');
     }
 
     private saveLoggedEmployee(employee:Employee) {
@@ -101,34 +87,51 @@ export class AuthService {
     }
 
     private loadFromStorage() {
-        this.authToken = undefined;
-        this.authTokenExpireDate = undefined;
-        this.loggedEmployeeId = undefined;
-        this.loggedEmployee = undefined;
+        this.auth = null;
+        this.authToken = null;
+        this.loggedEmployee = null;
 
-        this.authToken = localStorage.getItem(AuthService.STORAGE_TOKEN_KEY);
-        var authTokenExpireDateJSON = localStorage.getItem(AuthService.STORAGE_TOKEN_EXPIRE_DATE_KEY);
-        this.authTokenExpireDate = new Date(authTokenExpireDateJSON);
+        var authJSON = localStorage.getItem(AuthService.STORAGE_AUTH_KEY);
+        if (authJSON == null) {
+            return;
+        }
+        var auth:Auth = JSON.parse(authJSON, AuthFactory.fromJSONAuthReviver);
 
-        if (this.authToken != null) {
-            if (!this.isExpireDateValid(this.authTokenExpireDate)) {
-                this.saveAuthToken(undefined, undefined);
-                return;
-            }
-            // Load data
-            var idString = localStorage.getItem(AuthService.STORAGE_EMPLOYEE_ID_KEY);
-            this.loggedEmployeeId = parseInt(idString);
-            var employeeJSON = localStorage.getItem(AuthService.STORAGE_EMPLOYEE_KEY);
-            this.loggedEmployee = JSON.parse(employeeJSON, EmployeeFactory.fromJSONEmployeeReviver);
+        if (auth == null) {
+            this.saveAuth(null);
+            return;
+        }
+        var expireDate = auth.expirationDateTime;
+        if (!this.isExpireDateValid(expireDate)) {
+            this.saveAuth(null);
+            return;
+        }
+        this.auth = auth;
+        this.authToken = auth.token;
 
-            if (this.loggedEmployeeId != null && this.loggedEmployee == null) {
-                var thisService = this;
-                this.employeeClient.getEmployee(this.loggedEmployeeId, this.authToken)
-                    .then((employee)=> {
-                        thisService.saveLoggedEmployee(employee);
-                    });
+        var employeeId = this.auth.employeeRef.id;
+        var employeeJSON = localStorage.getItem(AuthService.STORAGE_EMPLOYEE_KEY);
+        if (employeeJSON == null) {
+            this.fetchEmployee();
+        } else {
+            var employee = JSON.parse(employeeJSON, EmployeeFactory.fromJSONEmployeeReviver);
+            if (employee.id == employeeId) {
+                this.loggedEmployee = employee;
+            } else {
+                this.fetchEmployee();
             }
         }
+
+        this.checkRefreshToken();
+    }
+
+    fetchEmployee() {
+        var employeeId = this.auth.employeeRef.id;
+        var authToken = this.authToken;
+        return this.employeeClient.getEmployee(employeeId, authToken)
+            .then((employee)=> {
+                this.saveLoggedEmployee(employee);
+            });
     }
 
     isExpireDateValid(date:Date) {
@@ -140,13 +143,39 @@ export class AuthService {
         return nowDate < date.getTime();
     }
 
+    isExpireDateGettingClose(date:Date) {
+        if (date == null) {
+            return false;
+        }
+        var nowTime = Date.now();
+        var expireTime = date.getTime();
+        var remainigMs = expireTime - nowTime;
+        var tenMinutesMs = 10 * 60 * 1000;
+        return remainigMs < tenMinutesMs;
+    }
+
+    checkRefreshToken() {
+        if (this.auth == null) {
+            return;
+        }
+        var expireDate = this.auth.expirationDateTime;
+        if (!this.isExpireDateGettingClose(expireDate)) {
+            return;
+        }
+        var refreshToken = this.auth.refreshToken;
+        this.client.refreshToken(refreshToken)
+            .then((auth)=> {
+                this.saveAuth(auth);
+            });
+    }
+
     checkLoginRequired() {
-        if (this.authToken == undefined) {
+        if (this.auth == null) {
             this.loginRequired = true;
             this.loginRequiredReason = LoginRequiredReason.NO_SESSION;
             return true;
         }
-        var expireDate = this.authTokenExpireDate;
+        var expireDate = this.auth.expirationDateTime;
         if (!this.isExpireDateValid(expireDate)) {
             this.loginRequired = true;
             this.loginRequiredReason = LoginRequiredReason.SESSION_EXPIRED;
@@ -159,6 +188,8 @@ export class AuthService {
         }
         this.loginRequired = false;
         this.loginRequiredReason = null;
+
+        this.checkRefreshToken();
         return false;
     }
 

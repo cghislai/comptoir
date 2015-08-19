@@ -17,6 +17,10 @@ export class AuthClient {
         return ServiceConfig.URL + "/registration";
     }
 
+    private getRefreshUrl():string {
+        return ServiceConfig.URL + "/refresh";
+    }
+
     login(login:string, password:string):Promise<Auth> {
         var request = new ComptoirRequest();
         var body = {
@@ -39,6 +43,18 @@ export class AuthClient {
             .then((response)=> {
                 var companyRef: CompanyRef = JSON.parse(response.text);
                 return companyRef;
+            });
+    }
+
+    refreshToken(refreshToken: string) {
+        var request = new ComptoirRequest();
+        var url = this.getRefreshUrl();
+        url += "/"+refreshToken;
+        return request
+            .post(null, url, null)
+            .then((response)=> {
+                var auth:Auth = JSON.parse(response.text, AuthFactory.fromJSONAuthReviver);
+                return auth;
             });
     }
 }
