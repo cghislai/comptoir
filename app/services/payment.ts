@@ -141,7 +141,8 @@ export class PaymentService {
             }
             totalPaid += payItem.amount;
         }
-        var toPay = aSalePay.aSale.vatExclusive;
+        var aSale = aSalePay.aSale;
+        var toPay = aSale.vatExclusive + aSale.vatAmount;
 
         var totalPaidRounded = totalPaid.toFixed(2);
         totalPaid = parseFloat(totalPaidRounded);
