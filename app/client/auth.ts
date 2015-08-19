@@ -18,7 +18,7 @@ export class AuthClient {
     }
 
     private getRefreshUrl():string {
-        return ServiceConfig.URL + "/refresh";
+        return ServiceConfig.URL + "/auth/refresh";
     }
 
     login(login:string, password:string):Promise<Auth> {

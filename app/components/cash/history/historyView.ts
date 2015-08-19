@@ -2,9 +2,14 @@
  * Created by cghislai on 02/08/15.
  */
 
-import {Component, View, NgFor} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf} from 'angular2/angular2';
+
+import {Balance, BalanceSearch} from 'client/domain/balance';
 import {Pagination} from 'client/utils/pagination';
-import {CashState, CashStateSearch, CashService} from 'services/cashService';
+import {SearchResult} from 'client/utils/search';
+
+import {BalanceService} from 'services/balance';
+
 import {Paginator} from 'components/utils/paginator/paginator';
 
 @Component({
@@ -13,26 +18,32 @@ import {Paginator} from 'components/utils/paginator/paginator';
 @View({
     templateUrl: './components/cash/history/historyView.html',
     styleUrls: ['./components/cash/history/historyView.css'],
-    directives: [Paginator, NgFor]
+    directives: [Paginator, NgFor, NgIf]
 })
 export class CashHistoryView {
+    balanceService:BalanceService;
 
-    cashService:CashService;
-    cashSearch:CashStateSearch;
+    balanceSearch:BalanceSearch;
+    pagination:Pagination;
     itemsPerPage:number = 25;
+    result:SearchResult<Balance>;
 
-    constructor(cashService:CashService) {
-        this.cashService = cashService;
-        this.cashSearch = new CashStateSearch();
-        this.cashSearch.pagination = new Pagination(0, this.itemsPerPage);
-        this.searchCash();
+    constructor(balanceService:BalanceService) {
+        this.balanceService = balanceService;
+        this.balanceSearch = new BalanceSearch();
+        this.pagination = new Pagination(0, this.itemsPerPage);
+        this.searchBalances();
     }
 
-    searchCash() {
-        this.cashService.findCashStates(this.cashSearch);
+    searchBalances() {
+        this.balanceService.searchBalances(this.balanceSearch, this.pagination)
+            .then((result)=> {
+                this.result = result;
+            });
     }
 
     onPageChanged(pagination:Pagination) {
-        this.cashSearch.pagination = pagination;
+        this.pagination = pagination;
+        this.searchBalances();
     }
 }

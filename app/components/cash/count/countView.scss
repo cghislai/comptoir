@@ -79,11 +79,11 @@ div.mainPane {
 .rightPane {
   padding: 0;
 
-  .cashTypes {
+  .moneyPiles:not([hidden]) {
     margin: 1em;
     display: table;
   }
-  .cashType {
+  .moneyPile {
     display: table-row;
 
     > span {
@@ -95,13 +95,12 @@ div.mainPane {
       border-bottom: .1em solid lightgray;
     }
     .name {
-      font-size: .9em;
       font-weight: bolder;
       width: 5em;
       text-align: right;
     }
-    .amount {
 
+    .amount {
       input {
         text-align: right;
         width: 5em;
@@ -111,7 +110,6 @@ div.mainPane {
     .total {
       min-width: 6.5em;
       text-align: right;
-      font-size: .8em;
     }
   }
 

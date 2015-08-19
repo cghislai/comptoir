@@ -184,6 +184,8 @@ export class SellView {
             .then((aSale)=> {
             });
         this.saleService.activeSale = null;
+        this.payStep = false;
+        this.createSale();
         this.router.navigate('/sales/sale/new');
     }
 

@@ -61,4 +61,17 @@ export class MoneyPileClient {
             });
     }
 
+
+    getMoneyPile(id:number, authToken:string):Promise<MoneyPile> {
+        var request = new ComptoirRequest();
+        var url = this.getMoneyPileUrl(id);
+
+        return request
+            .get(url, authToken)
+            .then(function (response) {
+                var moneyPile= JSON.parse(response.text, MoneyPileFactory.fromJSONMoneyPileReviver);
+                return moneyPile;
+            });
+    }
+
 }

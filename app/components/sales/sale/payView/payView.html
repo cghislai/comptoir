@@ -2,6 +2,11 @@
     <div class="toPayHeader coloredHeader"
          [hidden]="aSalePay.missingAmount <= 0">
         <h1>À payer</h1>
+        <span class="busy">
+            <span class="valignAnchor"></span>
+            <img src="res/img/spinner-2-white.gif"
+                 [hidden]="!aSalePay.dirty"/>
+        </span>
          <span class="actions">
         <span class="total single">
             {{ aSalePay.missingAmount | currency:'EUR':true:'.2-2' }}
@@ -9,7 +14,13 @@
         </span>
     </div>
     <div class="toPayHeader coloredHeader"
-        [hidden]="aSalePay.missingAmount > 0">
+         [hidden]="aSalePay.missingAmount > 0">
+        <span class="busy">
+            <span class="valignAnchor"></span>
+            <img src="res/img/spinner-2-white.gif"
+                 [hidden]="!aSalePay.dirty"/>
+        </span>
+
         <h1>À rendre</h1>
         <span class="actions">
             <span class="total"

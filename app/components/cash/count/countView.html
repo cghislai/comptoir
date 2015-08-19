@@ -4,54 +4,72 @@
     <div class="mainPane leftPane">
         <div class="info">
             <div class="title">
+                Point de vente
+            </div>
+            <div class="value pos">
+                <div *ng-if="posList != null" [hidden]="posList.length < 2">
+                    <select (input)="onPosChanged($event)" [value]="posId">
+                        <option [value]="null" [hidden]="pos != null">Choisissez un point de vente</option>
+                        <option *ng-for="#posOption of posList" [value]="posOption.id">
+                            {{ posOption.description[language] }}
+                        </option>
+                    </select>
+                </div>
+                <div *ng-if="pos != null && posList != null" [hidden]="posList.length > 1">
+                    {{ pos.description[language] }}
+                </div>
+            </div>
+
+            <div class="title">
+                Compte
+            </div>
+            <div class="value">
+                <div *ng-if="accountList != null" [hidden]="accountList.length < 2">
+                    <select (input)="onAccountChanged($event)" [value]="accountId">
+                        <option [value]="null" [hidden]="account != null">Choisissez un compte</option>
+                        <option *ng-for="#accountOption of accountList" [value]="accountOption.id">
+                            {{ accountOption.description[language] }}
+                        </option>
+                    </select>
+                </div>
+                <div *ng-if="account != null && accountList != null" [hidden]="accountList.length > 1">
+                    {{ account.description[language] }}
+                </div>
+            </div>
+
+            <div class="title" [hidden]="lastBalance == null">
                 Dernière validation
             </div>
-            <div class="value">
+            <div class="value" *ng-if="lastBalance != null">
                 <span class="title light">
-                    {{ cashService.state.date | date:'dd/MM/yyyy HH:mm' }}
+                    {{ lastBalance.dateTime | date:'dd/MM/yyyy HH:mm' }}
                 </span>
                 <span>
-                {{ cashService.state.amount | currency:'EUR':true:'.2-2' }}
-                    </span>
-            </div>
-            <div class="title">
-                Attendu dans la caisse
-            </div>
-            <div class="value">
-                {{ expectedState.amount | currency:'EUR':true:'.2-2' }}
-            </div>
-            <div class="value">
-                <span class="title light" [hidden]=" expectedState.amount <= stateModel.total ">
-                    Manquant:
-                </span>
-                <span class="title light" [hidden]=" expectedState.amount > stateModel.total ">
-                    Excédent:
-                </span>
-                <span class="toMatch" [class.match]="expectedState.amount <= stateModel.total ">
-                    {{ getDiffAbsValue() | currency:'EUR':true:'.2-2' }}
+                    {{ lastBalance.balance | currency:'EUR':true:'.2-2' }}
                 </span>
             </div>
         </div>
 
-        <div class="actions">
-            <a (click)="saveState()">Valider la caisse</a>
+        <div class="actions" [hidden]="account == null">
+            <a (click)="closeBalance()">Valider la caisse</a>
         </div>
     </div>
 
     <div class="mainPane rightPane">
-        <div class="cashTypes">
-            <div *ng-for="#cashType of stateModel.statePerType; #index=index"
-                 class="cashType">
-                <span class="name">{{ cashType.name }}</span>
+        <div class="moneyPiles" [hidden]="account == null">
+            <div *ng-for="#aMoneyPile of aBalance.moneyPiles; #index=index"
+                 class="moneyPile">
+                <span class="name">{{ aMoneyPile.label[language] }}</span>
                 <span class="amount">
-                    <input #cash-input type="number"
-                           [value]="cashType.amount"
-                           (keyup)="onCashInputChange(cashType, cashInput.value)"
-                           (change)="onCashInputChange(cashType, cashInput.value)"
+                    <input type="number" min="0" step="1"
+                           [value]="aMoneyPile.moneyPile.count"
+                           (keyup)="onCashInputKeyUp(aMoneyPile, $event)"
+                           (input)="onCashInputChanged(aMoneyPile, $event)"
+                           (blur)="applyCashInput(aMoneyPile)"
                            size="5">
                 </span>
                 <span class="total">
-                    {{ cashType.amount * cashType.value | currency:'EUR':true:'.2-2'}}
+                    {{ aMoneyPile.total | currency:'EUR':true:'.2-2'}}
                 </span>
             </div>
             <div class="totalRow">
@@ -61,20 +79,20 @@
                 </span>
                 <span class="total value">
                     <div class="value">
-                        <a (click)="editAmount()" [hidden]="editingAmount"
-                              class="amountLink actionlink">
-                            {{ stateModel.total | currency:'EUR':true:'.2-2' }}
+                        <a (click)="startEditTotal()" [hidden]="editingTotal"
+                           class="amountLink actionlink">
+                            {{ aBalance.total | currency:'EUR':true:'.2-2' }}
                         </a>
                     </div>
                     <div class="editAmount">
                         <input type="number" min="0.01" step="0.01"
-                               #totalInput *ng-if="editingAmount"
-                               [value]="stateModel.total | number:'.2-2'"
-                               (change)="setAmount(totalInput.value)"
-                               (keyup)="onAmountKeyUp($event)"
-                               (blur)="editingAmount = false"
+                               #totalInput *ng-if="editingTotal"
+                               [value]="aBalance.total | number:'.2-2'"
+                               (keyup)="onTotalKeyup($event)"
+                               (input)="onTotalChanged($event)"
+                               (blur)="applyTotal()"
                                class="number"
-                               autoFocus >
+                               autoFocus>
                     </div>
                 </span>
             </div>

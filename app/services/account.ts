@@ -16,6 +16,8 @@ export class AccountService {
     client:AccountClient;
     authService:AuthService;
 
+    lastUsedBalanceAccount: Account;
+
     constructor(@Inject authService:AuthService) {
         this.client = new AccountClient();
         this.authService = authService;

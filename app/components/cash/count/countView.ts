@@ -3,78 +3,21 @@
  */
 import {Component, View, FormBuilder, formDirectives, NgFor, NgIf} from 'angular2/angular2';
 
+import {Account,AccountType, AccountSearch} from 'client/domain/account';
+import {Balance, BalanceSearch} from 'client/domain/balance';
+import {MoneyPile} from 'client/domain/moneyPile';
+import {Pos, PosRef, PosSearch} from 'client/domain/pos';
+
+import {ABalance, AMoneyPile, CashType} from 'client/utils/aBalance';
 import {Pagination} from 'client/utils/pagination';
-import {CashService, CashState, CashTransaction} from 'services/cashService';
+
+import {BalanceService} from 'services/balance';
+import {PosService} from 'services/pos';
+import {AccountService} from 'services/account';
+import {ApplicationService} from 'services/application';
+
 import {Paginator} from 'components/utils/paginator/paginator';
 import {AutoFocusDirective} from 'directives/autoFocus'
-
-enum CashType {
-    ONE_CENT,
-    TWO_CENT,
-    FIVE_CENT,
-    TEN_CENT,
-    TWENTY_CENT,
-    FIFTY_CENT,
-    ONE_EURO,
-    TWO_EURO,
-    FIVE_EURO,
-    TEN_EURO,
-    TWENTY_EURO,
-    FIFTY_EURO,
-    ONE_HUNDRED_EURO,
-    TWO_HUNDRED_EURO,
-    FIVE_HUNDRED_EURO
-}
-class CashAmount {
-    type: CashType;
-    name: string;
-    value: number;
-    amount: number;
-    constructor(type: CashType, name: string, value: number, amount: number) {
-        this.type = type;
-        this.name = name;
-        this.value = value;
-        this.amount = amount;
-    }
-}
-class CashStateModel {
-    static EMPTY_STATE: CashAmount[] = [
-        new CashAmount(CashType.FIVE_HUNDRED_EURO, "500 euro", 500, 0),
-        new CashAmount(CashType.TWO_HUNDRED_EURO, "200 euro", 200, 0),
-        new CashAmount(CashType.ONE_HUNDRED_EURO, "100 euro", 100, 0),
-        new CashAmount(CashType.FIFTY_EURO, "50 euro", 50, 0),
-        new CashAmount(CashType.TWENTY_EURO, "20 euro", 20, 0),
-        new CashAmount(CashType.TEN_EURO, "10 euro", 10, 0),
-        new CashAmount(CashType.FIVE_EURO, "5 euro", 5, 0),
-        new CashAmount(CashType.TWO_EURO, "2 euro", 2, 0),
-        new CashAmount(CashType.ONE_EURO, "1 euro", 1, 0),
-        new CashAmount(CashType.FIFTY_CENT, "50 cent", 0.5, 0),
-        new CashAmount(CashType.TWENTY_CENT, "20 cent", 0.2, 0),
-        new CashAmount(CashType.TEN_CENT, "10 cent", 0.1, 0),
-        new CashAmount(CashType.FIVE_CENT, "5 cent", 0.05, 0),
-        new CashAmount(CashType.TWO_CENT, "2 cent", 0.02, 0),
-        new CashAmount(CashType.ONE_CENT, "1 cent", 0.01, 0),
-    ];
-
-    statePerType: CashAmount[];
-    total: number;
-
-    constructor() {
-        var states = [];
-        CashStateModel.EMPTY_STATE.forEach(function(state) {
-            states.push(state);
-        });
-        this.statePerType = states;
-    }
-    calcTotal() {
-        var total = 0;
-        this.statePerType.forEach(function(cashAmount:CashAmount) {
-            total += cashAmount.amount * cashAmount.value;
-        });
-        this.total = total;
-    }
-}
-
 
 @Component({
     selector: 'editCashView'
@@ -82,71 +25,208 @@ class CashStateModel {
 @View({
     templateUrl: './components/cash/count/countView.html',
     styleUrls: ['./components/cash/count/countView.css'],
-    directives: [NgFor,NgIf, AutoFocusDirective]
+    directives: [NgFor, NgIf, AutoFocusDirective]
 })
 
 export class CountCashView {
-    cashService: CashService;
-    stateModel: CashStateModel;
-    expectedState: CashState;
-    editingAmount: boolean;
+    balanceService:BalanceService;
+    posService:PosService;
+    accountService:AccountService;
 
-    constructor(cashService: CashService) {
-        this.cashService = cashService;
-        this.stateModel = new CashStateModel();
-        this.calcDiff();
-        this.expectedState = this.cashService.applyTransactions(this.cashService.state);
+    aBalance:ABalance;
+    editingTotal:boolean;
+
+    posList:Pos[];
+    pos:Pos;
+    posId: number = -1;
+    accountSearch:AccountSearch;
+    accountList:Account[];
+    account:Account;
+    accountId: number = -1;
+    lastBalance:Balance;
+    language: string;
+
+    constructor(applicationService: ApplicationService, balanceService:BalanceService,
+                posService:PosService, accountService:AccountService) {
+        this.balanceService = balanceService;
+        this.posService = posService;
+        this.accountService = accountService;
+        this.aBalance = new ABalance();
+        this.language = applicationService.language.locale;
+
+        this.searchPosList();
+        this.searchPaymentAccounts();
+        this.searchLastBalance();
     }
 
-    calcDiff() {
-        this.stateModel.calcTotal();
+
+    searchPosList() {
+        this.setPos(this.posService.lastUsedPos);
+
+        var posSearch = new PosSearch();
+        this.posService.searchPos(posSearch, null)
+            .then((result)=> {
+                this.posList = result.list;
+                if (this.pos == null && this.posList.length == 1) {
+                    this.setPos(this.posList[0]);
+                }
+            });
     }
 
-    onCashInputChange(cashType: CashAmount, value) {
-        if (cashType.amount == value) {
+    setPos(pos: Pos) {
+        if (this.pos == pos) {
             return;
         }
-        cashType.amount = value;
-        this.calcDiff();
-    }
-
-    getDiffAbsValue():number {
-        var diff = this.expectedState.amount - this.stateModel.total;
-        return Math.abs(diff);
-    }
-
-    saveState() {
-       this.expectedState.amount = this.stateModel.total;
-        this.expectedState.date = new Date();
-        this.cashService.saveCashState(this.expectedState);
-    }
-    editAmount() {
-        this.editingAmount = true;
-        if (this.stateModel.total == 0) {
-            this.stateModel.total = null;
-        }
-    }
-    setAmount(amountStr: string) {
-        var amount: number = parseFloat(amountStr);
-        if (amount == this.stateModel.total
-        || isNaN(amount)) {
-            this.editingAmount = false;
+        this.pos = pos;
+        this.posService.lastUsedPos = this.pos;
+        if (pos == null) {
+            this.posId = null;
             return;
         }
-        amount = Number((amount).toFixed(2));
-        this.stateModel.total = amount;
-        this.editingAmount = false;
+        this.posId = pos.id;
+        this.searchLastBalance();
     }
-    onAmountKeyUp(event) {
+
+    onPosChanged(event) {
+        var pos = null;
+        var posId = event.target.value;
+        for (var posItem of this.posList) {
+            if (posItem.id == posId) {
+                pos = posItem;
+                break;
+            }
+        }
+        this.setPos(pos);
+    }
+
+    searchPaymentAccounts() {
+        this.setAccount(this.accountService.lastUsedBalanceAccount);
+
+        this.accountSearch = new AccountSearch();
+        this.accountSearch.type = AccountType[AccountType.PAYMENT];
+        if (this.pos != null) {
+            this.accountSearch.posRef = new PosRef(this.pos.id);
+        }
+        this.accountService.searchAccounts(this.accountSearch, null)
+            .then((result)=> {
+                this.accountList = result.list;
+                if (this.account == null && this.accountList.length == 1) {
+                    this.setAccount(this.accountList[0]);
+                }
+            });
+    }
+
+    setAccount(account: Account) {
+        if (this.account == account) {
+            return;
+        }
+        this.account = account;
+        this.accountService.lastUsedBalanceAccount = account;
+        this.aBalance.account = account;
+        if (account == null) {
+            this.accountId = null;
+            return;
+        }
+        this.accountId = account.id;
+        this.searchLastBalance();
+    }
+
+
+    onAccountChanged(event) {
+        var account = null;
+        var accountId = event.target.value;
+        for (var accountItem of this.accountList) {
+            if (accountItem.id == accountId) {
+                account = accountItem;
+                break;
+            }
+        }
+        this.setAccount(account);
+    }
+
+
+    searchLastBalance() {
+        if (this.account == null) {
+            return;
+        }
+        var balanceSearch = new BalanceSearch();
+        balanceSearch.accountSearch = this.accountSearch
+        var pagination = new Pagination();
+        pagination.firstIndex = 0;
+        pagination.pageSize = 1;
+        pagination.sorts = {
+            'DATETIME': 'desc'
+        };
+        this.balanceService.searchBalances(balanceSearch, pagination)
+            .then((result)=> {
+                this.lastBalance = result[0];
+            });
+    }
+
+
+
+
+    onCashInputKeyUp(aMoneyPile: AMoneyPile, event) {
         if (event.which == 13) { // Enter
-            var amount: string = event.target.value;
-            this.setAmount(amount);
-            return;
+            this.onCashInputChanged(aMoneyPile, event);
+            this.applyCashInput(aMoneyPile);
+            return false;
         }
         if (event.which == 27) { // Escape
-            this.editingAmount = false;
-            return;
+            return false;
         }
+        return false;
     }
 
+    onCashInputChanged(aMoneyPile: AMoneyPile, event) {
+        var valueString = event.target.value;
+        var count = parseInt(valueString);
+        if (isNaN(count)) {
+            count = 0;
+        }
+        aMoneyPile.moneyPile.count = count;
+        event.target.value = count;
+    }
+
+    applyCashInput(aMoneyPile: AMoneyPile) {
+        this.balanceService.updateAMoneyPile(aMoneyPile);
+    }
+
+    startEditTotal() {
+        this.editingTotal = true;
+    }
+
+    onTotalKeyup(event) {
+        if (event.which == 13) { // Enter
+            this.onTotalChanged(event);
+            this.applyTotal();
+            return false;
+        }
+        if (event.which == 27) { // Escape
+            this.cancelTotal();
+            return false;
+        }
+        return false;
+    }
+
+    onTotalChanged(event) {
+        var valueString = event.target.value;
+        var total = parseFloat(valueString);
+        var totalFixedString = total.toFixed(2);
+        var total = parseFloat(totalFixedString);
+        this.aBalance.total = total;
+    }
+
+    applyTotal() {
+        this.balanceService.updateABalance(this.aBalance);
+    }
+
+    cancelTotal() {
+        var oldTotal = this.aBalance.balance.balance;
+        this.aBalance.total = oldTotal;
+    }
+
+    closeBalance() {
+        this.balanceService.closeABalance(this.aBalance);
+    }
 }

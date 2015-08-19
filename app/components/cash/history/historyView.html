@@ -3,23 +3,27 @@
     <div class="search">
 
     </div>
-    <paginator [total-count]="cashService.cashStateCount"
+    <div class="result" *ng-if="result != null">
+
+    <paginator [total-count]="result.count"
                [page-size]="itemsPerPage"
                show-prev-next="true" show-first-last="true"
-               (pagechange)="onPageChanged($event)"
-            [hidden]="cashService.cashStateCount==0"></paginator>
-    <table class="dataTable" [hidden]="cashService.cashStateCount==0">
+               (page-change)="onPageChanged($event)"></paginator>
+    <table class="dataTable" [hidden]="result.count == 0">
         <thead>
             <tr>
                 <th>Date</th>
+                <th>Commentaire</th>
                 <th class="number">Montant</th>
             </tr>
         </thead>
         <tbody>
-            <tr *ng-for="#state of cashService.cashStates" class="command">
-                <td class="date">{{ state.sate | date:'ddMMyyyy HHmm' }}</td>
-                <td class="number">{{ state.amount | currency:'EUR':true:'.2-2' }}</td>
+            <tr *ng-for="#balance of result.list" class="command">
+                <td class="date">{{ balance.dateTime| date:'ddMMyyyy HHmm' }}</td>
+                <td class="comment">{{ balance.comment }}</td>
+                <td class="number">{{ balance.balance | currency:'EUR':true:'.2-2' }}</td>
             </tr>
         </tbody>
     </table>
+    </div>
 </div>
