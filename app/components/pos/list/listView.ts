@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 06/08/15.
  */
-import {Component, View, NgFor, NgIf, formDirectives} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
 
@@ -25,7 +25,7 @@ import {FocusableDirective} from 'directives/focusable'
 @View({
     templateUrl: './components/pos/list/listView.html',
     styleUrls: ['./components/pos/list/listView.css'],
-    directives: [NgFor, NgIf, Paginator, formDirectives]
+    directives: [NgFor, NgIf, Paginator, FORM_DIRECTIVES]
 })
 
 export class PosListView {

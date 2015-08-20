@@ -30,11 +30,11 @@ export class RequiresLogin {
     }
 
     checkNewPath(path:string) {
-        if (path.indexOf('/login') >= 0) {
+        if (path.indexOf('login') >= 0) {
             this.requiresLogin.next(false);
             return;
         }
-        if (path.indexOf('/register') >= 0) {
+        if (path.indexOf('register') >= 0) {
             this.requiresLogin.next(false);
             return;
         }

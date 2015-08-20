@@ -2,7 +2,7 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, NgIf, EventEmitter, formDirectives} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, EventEmitter, FORM_DIRECTIVES} from 'angular2/angular2';
 
 import {Item} from 'client/domain/item';
 import {Sale, SaleRef} from 'client/domain/sale';
@@ -36,7 +36,7 @@ class ToAddItem {
 @View({
     templateUrl: './components/sales/sale/commandView/commandView.html',
     styleUrls: ['./components/sales/sale/commandView/commandView.css'],
-    directives: [AutoFocusDirective, NgFor, NgIf, formDirectives]
+    directives: [AutoFocusDirective, NgFor, NgIf, FORM_DIRECTIVES]
 })
 
 export class CommandView {

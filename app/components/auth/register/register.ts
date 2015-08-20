@@ -2,7 +2,7 @@
  * Created by cghislai on 07/08/15.
  */
 
-import {Component, View, NgFor, formDirectives} from 'angular2/angular2';
+import {Component, View, NgFor, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
 import {Company} from 'client/domain/company';
@@ -20,7 +20,7 @@ import {ApplicationService} from 'services/application';
 @View({
     templateUrl: './components/auth/register/register.html',
     styleUrls: ['./components/auth/register/register.css'],
-    directives: [formDirectives, NgFor]
+    directives: [FORM_DIRECTIVES, NgFor]
 })
 export class RegisterView {
     authService:AuthService;

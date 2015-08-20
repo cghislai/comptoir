@@ -32,13 +32,13 @@
     "semver": "^4.3.6",
     "serve-static": "^1.9.2",
     "stream-series": "^0.1.1",
-    "systemjs-builder": "^0.10.6",
+    "systemjs-builder": "^0.13",
     "typescript": "~1.5.3"
   },
   "dependencies": {
-    "angular2": ">=2.0.0-alpha.33",
+    "angular2": "=2.0.0-alpha.35",
     "es6-module-loader": "^0.16.6",
-    "systemjs": "^0.18.4",
+    "systemjs": "^0.18.10",
     "zone.js": "^0.4.1",
     "reflect-metadata": "0.1.0"
   }

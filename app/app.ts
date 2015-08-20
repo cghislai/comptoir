@@ -64,7 +64,7 @@ import {ApplicationSettingsView} from 'components/settings/application/appSettin
     {path: '/sales/history', component: SaleHistoryView, as: 'salesHistory'},
 
     {path: '/items/list', component: ProductsListView, as: 'itemsList'},
-    {path: '/items/edit', component: EditProductView, as: 'itemsEditNew'},
+    {path: '/items/edit/', component: EditProductView, as: 'itemsEditNew'},
     {path: '/items/edit/:id', component: EditProductView, as: 'itemsEdit'},
     {path: '/items/import', component: ImportProductView, as: 'itemsImport'},
 

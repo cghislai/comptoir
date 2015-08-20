@@ -11,8 +11,7 @@
                     <img [src]="itemModel.pictureDataURI" class="itemPicture medium"
                          *ng-if="itemModel.pictureDataURI != undefined">
                     <input type="file" id="picture" accept="image/*"
-                           (change)="onFileSelected(f, $event)"
-                           (fileread)>
+                           (change)="onFileSelected(f, $event)">
                 </td>
             </tr>
             <tr>

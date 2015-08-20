@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 05/08/15.
  */
-import {Component, View, NgFor, NgIf, formDirectives} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
 import {Pos, PosRef} from 'client/domain/pos';
@@ -46,7 +46,7 @@ class PosFormModel {
 @View({
     templateUrl: './components/pos/edit/editView.html',
     styleUrls: ['./components/pos/edit/editView.css'],
-    directives: [NgFor, NgIf, formDirectives, RouterLink, LocalizedDirective, LangSelect]
+    directives: [NgFor, NgIf, FORM_DIRECTIVES, RouterLink, LocalizedDirective, LangSelect]
 })
 export class EditPosView {
     posId:number;

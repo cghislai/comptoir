@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 05/08/15.
  */
-import {Component, View, NgFor, NgIf, formDirectives} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
 import {Item} from 'client/domain/item';
@@ -16,8 +16,8 @@ import {LangSelect, LocalizedDirective} from 'components/utils/langSelect/langSe
 
 class ItemFormModel {
     language:Language;
-    names: LocaleTexts;
-    descriptions: LocaleTexts;
+    names:LocaleTexts;
+    descriptions:LocaleTexts;
 
     reference:string;
     model:string;
@@ -61,7 +61,7 @@ class ItemFormModel {
 @View({
     templateUrl: './components/items/edit/editView.html',
     styleUrls: ['./components/items/edit/editView.css'],
-    directives: [NgFor, NgIf, formDirectives, RouterLink, LangSelect, LocalizedDirective]
+    directives: [NgFor, NgIf, FORM_DIRECTIVES, RouterLink, LangSelect, LocalizedDirective]
 })
 export class EditProductView {
     itemId:number;
@@ -74,7 +74,10 @@ export class EditProductView {
 
     constructor(itemService:ItemService, appService:ApplicationService,
                 routeParams:RouteParams, router:Router) {
-        var itemIdParam = routeParams.get('id');
+        var itemIdParam;
+        if (routeParams != null) {
+            itemIdParam = routeParams.get('id');
+        }
         this.itemId = parseInt(itemIdParam);
         if (isNaN(this.itemId)) {
             this.itemId = null;
@@ -90,14 +93,14 @@ export class EditProductView {
         var lastEditLanguage = this.applicationService.laseUsedEditLanguage;
         if (this.itemId == null) {
             this.itemModel = new ItemFormModel();
-            this.itemModel.language =lastEditLanguage;
+            this.itemModel.language = lastEditLanguage;
             return;
         }
         var thisView = this;
         this.itemService.getPicturedItemSync(this.itemId)
             .then((picItem:PicturedItem)=> {
                 thisView.itemModel = new ItemFormModel(picItem);
-                thisView.itemModel.language =lastEditLanguage;
+                thisView.itemModel.language = lastEditLanguage;
             });
     }
 
@@ -110,13 +113,16 @@ export class EditProductView {
         var file = files[0];
         var reader = new FileReader();
         var thisView = this;
-        reader.onload = function () {
-            var data = reader.result;
-            thisView.itemModel.pictureDataURI = data;
-            // Triggering an event for refresh
-            event.target.dispatchEvent(new Event('fileread'));
-        };
-        reader.readAsDataURL(file);
+
+        new Promise<string>((resolve, reject)=> {
+            reader.onload = function () {
+                var data = reader.result;
+                resolve(data);
+            }
+            reader.readAsDataURL(file);
+        }).then((data)=> {
+                thisView.itemModel.pictureDataURI = data;
+            });
     }
 
     onCurrentPriceChanged(event) {
