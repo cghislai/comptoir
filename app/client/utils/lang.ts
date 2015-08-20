@@ -9,38 +9,6 @@ export class LocaleTexts {
 }
 
 export class LocaleTextsFactory {
-    static toJSONLocaleTextsReplacer = (value:LocaleTexts)=> {
-        if (value == undefined) {
-            return undefined;
-        }
-        var texts = [];
-        for (var lang in value) {
-            var text = value[lang];
-            var localeText = new LocaleText();
-            localeText.locale = lang;
-            localeText.text = text;
-
-        }
-        return texts;
-    }
-
-    // json = [{locale:string,text:string},{}]
-    static fromJSONLocaleTextsReviver = (key, value)=> {
-        if (key != '') {
-            // an array entry
-            return JSON.parse(value, LocaleTextFactory.fromJSONLocaleTextReviver);
-        }
-        // The main object
-        // Convert the array to a LocaleTexts;
-        var localeTexts = new LocaleTexts();
-        for (var localeText of value) {
-            var lang = localeText.locale;
-            var text = localeText.text;
-            localeTexts[lang] = text;
-        }
-        return localeTexts;
-    }
-
     static fromLocaleTextArrayReviver = (jsonArray)=> {
         var localeTexts = new LocaleTexts();
         for (var localeText of jsonArray) {
@@ -55,6 +23,10 @@ export class LocaleTextsFactory {
         var textArray = [];
         for (var lang in texts) {
             var text = texts[lang];
+            // Skip null texts, but not empty string
+            if (text == null) {
+                continue;
+            }
             var localeText = new LocaleText();
             localeText.locale = lang;
             localeText.text = text;

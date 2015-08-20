@@ -4,17 +4,21 @@
 import {Component, View, NgFor, NgIf, formDirectives} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
-import {Language, LocaleTexts} from 'client/utils/lang';
-import {LocaleText} from 'client/domain/lang';
 import {Account, AccountType} from 'client/domain/account';
+import {LocaleText} from 'client/domain/lang';
+
+import {Language, LocaleTexts} from 'client/utils/lang';
 import {NamedAccountType} from 'client/utils/account';
+
+import {AuthService} from 'services/auth';
 import {AccountService} from 'services/account';
 import {ApplicationService} from 'services/application';
-import {AuthService} from 'services/auth';
+
+import {LangSelect, LocalizedDirective} from 'components/utils/langSelect/langSelect';
 
 
 class AccountFormModel {
-    language:string;
+    language:Language;
     accountingNumber:string;
     iban:string;
     bic:string;
@@ -32,7 +36,7 @@ class AccountFormModel {
             this.description = new LocaleTexts();
             return;
         }
-        this.language = lang.locale;
+        this.language = lang;
         this.account = account;
         this.accountingNumber = account.accountingNumber;
         this.iban = account.iban;
@@ -50,7 +54,7 @@ class AccountFormModel {
 @View({
     templateUrl: './components/accounts/edit/editView.html',
     styleUrls: ['./components/accounts/edit/editView.css'],
-    directives: [NgFor, NgIf, formDirectives, RouterLink]
+    directives: [NgFor, NgIf, formDirectives, RouterLink, LangSelect, LocalizedDirective]
 })
 export class EditAccountView {
     accountId:number;
@@ -60,8 +64,6 @@ export class EditAccountView {
     router:Router;
 
     language:Language;
-    allLanguages:Language[] = Language.ALL_LANGUAGES;
-    lastUsedLang:Language;
     accountModel:AccountFormModel;
     allAccountTypes:any[];
 
@@ -77,29 +79,25 @@ export class EditAccountView {
         this.authService = authService;
         this.applicationService = appService;
         this.language = appService.language;
-        this.lastUsedLang = appService.language;
 
         this.allAccountTypes = NamedAccountType.ALL_TYPES;
         this.buildFormModel();
     }
 
     buildFormModel() {
+        var lastEditLanguage = this.applicationService.laseUsedEditLanguage;
         if (this.accountId == null) {
             this.accountModel = new AccountFormModel();
-            this.accountModel.language = this.language.locale;
+            this.accountModel.language = lastEditLanguage;
             return;
         }
         var thisView = this;
         this.accountService.getAccount(this.accountId)
             .then(function (account:Account) {
-                thisView.accountModel = new AccountFormModel(account, thisView.lastUsedLang);
+                thisView.accountModel = new AccountFormModel(account, lastEditLanguage);
             });
     }
 
-    onLanguageSelected(lang:Language) {
-        this.lastUsedLang = lang;
-        this.accountModel.language = lang.locale;
-    }
 
     doSaveEdit() {
         var account = this.accountModel.account;

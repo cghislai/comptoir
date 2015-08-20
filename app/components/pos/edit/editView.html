@@ -7,15 +7,9 @@
             <tr>
                 <td><label>Langue:</label></td>
                 <td>
-                        <span *ng-for="#lang of allLanguages">
-                            <input type="radio" name="lang"
-                                   [checked]="lang.locale == posModel.language"
-                                   (change)="onLanguageSelected(lang)"
-                                   [attr.id]="lang.locale">
-                            <label [attr.for]="lang.locale">
-                                {{ lang.label[language.locale] }}
-                            </label>
-                        </span>
+                    <langSelect [display-locale]="language.locale"
+                                [selected-language]="posModel.language"
+                                (language-changed)="posModel.language = $event"></langSelect>
                 </td>
             </tr>
             <tr>
@@ -29,7 +23,8 @@
                 <td><label for="description">Description:</label></td>
                 <td>
                     <textarea type="text" id="description" rows="3"
-                              [(ng-model)]="posModel.description[posModel.language]">s</textarea>
+                              localized [language]="posModel.language"
+                              [locale-texts]="posModel.description"></textarea>
                 </td>
             </tr>
 

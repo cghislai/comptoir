@@ -5,16 +5,19 @@ import {Component, View, NgFor, NgIf, formDirectives} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
 import {Pos, PosRef} from 'client/domain/pos';
-import {Customer, CustomerRef} from 'client/domain/customer';
 import {LocaleText} from 'client/domain/lang';
+import {Customer, CustomerRef} from 'client/domain/customer';
 import {Language, LocaleTexts} from 'client/utils/lang';
+
+import {AuthService} from 'services/auth';
 import {PosService} from 'services/pos';
 import {ApplicationService} from 'services/application';
-import {AuthService} from 'services/auth';
+
+import {LangSelect, LocalizedDirective} from 'components/utils/langSelect/langSelect';
 
 
 class PosFormModel {
-    language:string;
+    language:Language;
     name:string;
     description:LocaleTexts;
     defaultCustomer: Customer;
@@ -28,7 +31,7 @@ class PosFormModel {
             this.description = new LocaleTexts();
             return;
         }
-        this.language = lang.locale;
+        this.language = lang;
         this.pos = pos;
         this.name = pos.name;
         this.description = pos.description;
@@ -43,7 +46,7 @@ class PosFormModel {
 @View({
     templateUrl: './components/pos/edit/editView.html',
     styleUrls: ['./components/pos/edit/editView.css'],
-    directives: [NgFor, NgIf, formDirectives, RouterLink]
+    directives: [NgFor, NgIf, formDirectives, RouterLink, LocalizedDirective, LangSelect]
 })
 export class EditPosView {
     posId:number;
@@ -53,8 +56,6 @@ export class EditPosView {
     router:Router;
 
     language:Language;
-    allLanguages:Language[] = Language.ALL_LANGUAGES;
-    lastUsedLang:Language;
     posModel:PosFormModel;
 
     constructor(posService:PosService, authService:AuthService, appService:ApplicationService,
@@ -69,26 +70,21 @@ export class EditPosView {
         this.authService = authService;
         this.applicationService = appService;
         this.language = appService.language;
-        this.lastUsedLang = appService.language;
         this.buildFormModel();
     }
 
     buildFormModel() {
+        var lastEditLanguage = this.applicationService.laseUsedEditLanguage;
         if (this.posId == null) {
             this.posModel = new PosFormModel();
-            this.posModel.language = this.language.locale;
+            this.posModel.language = lastEditLanguage;
             return;
         }
         var thisView = this;
         this.posService.getPos(this.posId)
             .then(function (pos:Pos) {
-                thisView.posModel = new PosFormModel(pos, thisView.lastUsedLang);
+                thisView.posModel = new PosFormModel(pos, lastEditLanguage);
             });
-    }
-
-    onLanguageSelected(lang:Language) {
-        this.lastUsedLang = lang;
-        this.posModel.language = lang.locale;
     }
 
     doSaveEdit() {

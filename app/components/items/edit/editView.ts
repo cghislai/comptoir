@@ -12,11 +12,14 @@ import {Language, LocaleTexts} from 'client/utils/lang';
 import {ItemService} from 'services/itemService';
 import {ApplicationService} from 'services/application';
 
+import {LangSelect, LocalizedDirective} from 'components/utils/langSelect/langSelect';
+
 class ItemFormModel {
-    language:string;
+    language:Language;
+    names: LocaleTexts;
+    descriptions: LocaleTexts;
+
     reference:string;
-    name:LocaleTexts;
-    description:LocaleTexts;
     model:string;
     price:number;
     vat:number = 21.0;
@@ -24,25 +27,24 @@ class ItemFormModel {
     item:PicturedItem;
 
     constructor();
-    constructor(item:PicturedItem, lang:Language);
-    constructor(item?:PicturedItem, lang?:Language) {
+    constructor(item:PicturedItem);
+    constructor(item?:PicturedItem) {
         if (item == undefined) {
             this.item = new PicturedItem();
             this.item.item = new Item();
             this.item.picture = new ItemPicture();
-            this.name = new LocaleTexts();
-            this.description = new LocaleTexts();
+            this.names = new LocaleTexts();
+            this.descriptions = new LocaleTexts();
             return;
         }
-        this.language = lang.locale;
         this.reference = item.item.reference;
-        this.name = item.item.name;
-        if (this.name == undefined) {
-            this.name = new LocaleTexts();
+        this.names = item.item.name;
+        if (this.names == undefined) {
+            this.names = new LocaleTexts();
         }
-        this.description = item.item.description;
-        if (this.description == undefined) {
-            this.description = new LocaleTexts();
+        this.descriptions = item.item.description;
+        if (this.descriptions == undefined) {
+            this.descriptions = new LocaleTexts();
         }
         this.model = item.item.model;
         this.price = item.item.vatExclusive;
@@ -59,7 +61,7 @@ class ItemFormModel {
 @View({
     templateUrl: './components/items/edit/editView.html',
     styleUrls: ['./components/items/edit/editView.css'],
-    directives: [NgFor, NgIf, formDirectives, RouterLink]
+    directives: [NgFor, NgIf, formDirectives, RouterLink, LangSelect, LocalizedDirective]
 })
 export class EditProductView {
     itemId:number;
@@ -68,9 +70,7 @@ export class EditProductView {
     router:Router;
 
     language:Language;
-    allLanguages:Language[] = Language.ALL_LANGUAGES;
     itemModel:ItemFormModel;
-    lastUsedLang:Language;
 
     constructor(itemService:ItemService, appService:ApplicationService,
                 routeParams:RouteParams, router:Router) {
@@ -83,28 +83,24 @@ export class EditProductView {
         this.itemService = itemService;
         this.applicationService = appService;
         this.language = appService.language;
-        this.lastUsedLang = this.language;
         this.buildFormModel();
     }
 
     buildFormModel() {
+        var lastEditLanguage = this.applicationService.laseUsedEditLanguage;
         if (this.itemId == null) {
             this.itemModel = new ItemFormModel();
-            this.itemModel.language = this.language.locale;
+            this.itemModel.language =lastEditLanguage;
             return;
         }
         var thisView = this;
-
         this.itemService.getPicturedItemSync(this.itemId)
             .then((picItem:PicturedItem)=> {
-                thisView.itemModel = new ItemFormModel(picItem, thisView.language);
+                thisView.itemModel = new ItemFormModel(picItem);
+                thisView.itemModel.language =lastEditLanguage;
             });
     }
 
-    onLanguageSelected(lang:Language) {
-        this.lastUsedLang = lang;
-        this.itemModel.language = lang.locale;
-    }
 
     onFileSelected(form, event) {
         var files = event.target.files;
@@ -138,8 +134,8 @@ export class EditProductView {
         item.vatExclusive = this.itemModel.price;
         item.vatRate = Number((this.itemModel.vat * 0.01).toFixed(2));
 
-        item.description = this.itemModel.description;
-        item.name = this.itemModel.name;
+        item.description = this.itemModel.descriptions;
+        item.name = this.itemModel.names;
         item.model = this.itemModel.model;
         item.reference = this.itemModel.reference;
 

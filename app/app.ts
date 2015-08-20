@@ -43,7 +43,6 @@ import {EditPosView} from 'components/pos/edit/editView';
 
 import {ApplicationSettingsView} from 'components/settings/application/appSettings';
 
-import {Parent} from 'components/test/test';
 
 @Component({
     selector: 'app'

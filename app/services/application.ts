@@ -12,9 +12,12 @@ export class ApplicationService {
     hasError:boolean = false;
     errorContent:string;
 
+    laseUsedEditLanguage: Language;
+
 
     constructor() {
         this.language = Language.DEFAULT_LANGUAGE;
+        this.laseUsedEditLanguage = this.language;
     }
 
     showError(error: Error) {

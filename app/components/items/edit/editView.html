@@ -18,15 +18,9 @@
             <tr>
                 <td><label>Langue:</label></td>
                 <td>
-                        <span *ng-for="#lang of allLanguages">
-                            <input type="radio" name="lang"
-                                   [checked]="lang.locale == itemModel.language"
-                                   (change)="onLanguageSelected(lang)"
-                                   [attr.id]="lang.locale">
-                            <label [attr.for]="lang.locale">
-                                {{ lang.label[language.locale] }}
-                            </label>
-                        </span>
+                        <langSelect [display-locale]="language.locale"
+                                   [selected-language]="itemModel.language"
+                                   (language-changed)="itemModel.language = $event"></langSelect>
                 </td>
             </tr>
             <tr>
@@ -40,14 +34,16 @@
                 <td><label for="name">Nom:</label></td>
                 <td>
                     <input type="text" id="name" required
-                           [(ng-model)]="itemModel.name[itemModel.language]">
+                           localized [language]="itemModel.language"
+                           [locale-texts]="itemModel.names">
                 </td>
             </tr>
             <tr>
                 <td><label for="description">Description:</label></td>
                 <td>
                         <textarea type="text" id="description" rows="3"
-                                  [(ng-model)]="itemModel.description[itemModel.language]"></textarea>
+                                  localized [language]="itemModel.language"
+                                  [locale-texts]="itemModel.descriptions"></textarea>
                 </td>
             </tr>
             <tr>
