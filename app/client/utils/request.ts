@@ -20,6 +20,7 @@ export class ComptoirRequest {
     static UTF8_CHARSET:string = "UTF-8";
     static HEADER_OAUTH_TOKEN = "Authorisation";
     static HEADER_TOTAL_COUNT = 'X-Comptoir-ListTotalCount';
+    static DISCARDED_ERROR = new Error("Request discarded");
 
     request:XMLHttpRequest;
     method:string;
@@ -30,6 +31,7 @@ export class ComptoirRequest {
     acceptContentType:string;
     charset:string;
     failed:boolean;
+    discarded: boolean;
 
     constructor() {
         this.request = new XMLHttpRequest();
@@ -60,6 +62,10 @@ export class ComptoirRequest {
         return this.run();
     }
 
+    discardRequest() {
+        this.discarded = true;
+    }
+
     private setup(method:string, url:string, authToken:string) {
         this.method = method;
         this.url = url;
@@ -75,6 +81,10 @@ export class ComptoirRequest {
         var thisRequest = this;
         return new Promise((resolve, reject)=> {
             xmlRequest.onreadystatechange = function () {
+                if (thisRequest.discarded) {
+                    reject(ComptoirRequest.DISCARDED_ERROR);
+                    return;
+                }
                 if (xmlRequest.readyState != 4) {
                     return;
                 }
@@ -95,6 +105,10 @@ export class ComptoirRequest {
                 resolve(response);
             }
             xmlRequest.onerror = function () {
+                if (thisRequest.discarded) {
+                    reject(ComptoirRequest.DISCARDED_ERROR);
+                    return;
+                }
                 var error = new ComptoirError();
                 error.code = xmlRequest.status;
                 error.text = xmlRequest.statusText;
