@@ -10,20 +10,12 @@ import {ItemSale, ItemSaleSearch} from 'client/domain/itemSale';
 
 import {LocaleTexts} from 'client/utils/lang';
 import {ASale, ASaleItem} from 'client/utils/aSale';
+import {NumberUtils} from 'client/utils/number';
 
 import {SaleService} from 'services/sale';
 
 import {AutoFocusDirective} from 'directives/autoFocus';
 import {ApplicationService} from 'services/application';
-
-
-// TODO: use angular2 form validators
-class ToAddItem {
-    name:string = null;
-    amount:number = 1;
-    price:number = null;
-    vat:number = 21.0;
-}
 
 
 // The component
@@ -45,9 +37,12 @@ export class CommandView {
     aSale:ASale;
     language:string;
 
-    toAddItem:ToAddItem;
-    editingDiscountSaleItem:ASaleItem = null;
-    editingAmountItem:ASaleItem = null;
+    editingItem:ASaleItem = null;
+    editingItemQuantity:boolean;
+    editingItemPrice:boolean;
+    editingItemComment:boolean;
+    editingItemDiscount:boolean;
+
     editingSaleDiscount:boolean = false;
     validate = new EventEmitter();
     validated:boolean = false;
@@ -57,48 +52,99 @@ export class CommandView {
                 applicationService:ApplicationService) {
         this.saleService = saleService;
         this.language = applicationService.language.locale;
-        this.renewToAddCustomItem();
     }
-
-    renewToAddCustomItem() {
-        this.toAddItem = new ToAddItem();
-    }
-
 
     doRemoveItem(saleItem:ASaleItem) {
         var aSale = saleItem.aSale;
-        var saleToBeremoved = aSale.items.length == 1;
+        var saleToBeRemoved = aSale.items.length == 1;
 
         this.saleService.removeASaleItem(saleItem)
             .then(()=> {
-                if (saleToBeremoved) {
+                if (saleToBeRemoved) {
                     this.saleInvalidated.next(null);
                 }
             });
     }
 
-    doAddCustomItem() {
-        // TODO: create custom
-        var item = new Item();
-        item.vatExclusive = this.toAddItem.price;
-        item.vatRate = this.toAddItem.vat * 0.01;
-        item.name = new LocaleTexts();
-        item.name[this.language] = this.toAddItem.name;
-        item.description = new LocaleTexts();
-        item.reference = "CUSTOM";
+    // Item edit
 
-        this.saleService.addItemToASale(this.aSale, item);
-        this.renewToAddCustomItem();
+    canceEdits() {
+        this.editingItem = null;
+        this.editingItemQuantity = false;
+        this.editingItemComment = false;
+        this.editingItemDiscount = false;
+        this.editingItemPrice = false;
+        this.editingItemQuantity = false;
+        this.editingSaleDiscount = false
     }
 
+
+    // Item comment
+
+    doEditItemComment(aSaleItem:ASaleItem) {
+        this.canceEdits();
+        this.editingItem = aSaleItem;
+        this.editingItemComment = true;
+    }
+
+    onItemCommentKeyEvent(event) {
+        if (event.which == 13) { // Enter
+            this.onItemCommentChanged(event);
+            this.applyItemComment();
+            return false;
+        }
+        if (event.which == 27) { // Escape
+            this.cancelItemComment();
+            return false;
+        }
+        return false;
+    }
+
+    onItemCommentChanged(event) {
+        var commentString:string = event.target.value;
+        this.editingItem.comment = new LocaleTexts();
+        this.editingItem.comment[this.language] = commentString;
+    }
+
+    applyItemComment() {
+        this.saleService.setASaleItemComment(
+            this.editingItem,
+            this.editingItem.comment);
+        this.canceEdits();
+    }
+
+    cancelItemComment() {
+        var oldComment = this.editingItem.itemSale.comment;
+        if (oldComment == null) {
+            this.editingItem.comment = oldComment;
+        }
+        this.editingItem.comment = new LocaleTexts();
+        this.canceEdits();
+    }
+
+    hasComment(saleItem:ASaleItem) {
+        if (saleItem.comment == null) {
+            return false;
+        }
+        var text = saleItem.comment[this.language];
+        if (text != null && text.length > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    // Item discount
+
     doEditItemDiscount(aSaleItem:ASaleItem) {
-        this.editingDiscountSaleItem = aSaleItem;
+        this.canceEdits();
+        this.editingItem = aSaleItem;
+        this.editingItemDiscount = true;
     }
 
     onItemDiscountKeyEvent(event) {
         if (event.which == 13) { // Enter
-            this.onItemDiscountPercentageChanged(event);
-            this.applyItemDicountPercentage();
+            this.onItemDiscountChanged(event);
+            this.applyItemDiscount();
             return false;
         }
         if (event.which == 27) { // Escape
@@ -108,91 +154,140 @@ export class CommandView {
         return false;
     }
 
-    onItemDiscountPercentageChanged(event) {
+    onItemDiscountChanged(event) {
         var discountString:string = event.target.value;
-        var discountPercentage = parseFloat(discountString);
+        var discountPercentage = parseInt(discountString);
         if (isNaN(discountPercentage)) {
-            this.editingDiscountSaleItem.discountPercentage = null;
+            this.editingItem.discountPercentage = null;
             return false;
         }
-        this.editingDiscountSaleItem.discountPercentage = discountPercentage;
+        this.editingItem.discountPercentage = discountPercentage;
     }
 
-    applyItemDicountPercentage() {
-        var discountRatio = null;
-        if (this.editingDiscountSaleItem.discountPercentage != null) {
-            discountRatio =  this.editingDiscountSaleItem.discountPercentage / 100;
-        }
-        this.editingDiscountSaleItem.discountRate = discountRatio;
-        this.editingDiscountSaleItem.itemSale.discountRatio = discountRatio;
-        this.saleService
-            .updateASaleItem( this.editingDiscountSaleItem)
-            .then((aSale)=> {
-                // this.aSale == aSale
-            });
-        this.editingDiscountSaleItem = null;
+    applyItemDiscount() {
+        this.saleService.setASaleItemDiscountPercentage(
+            this.editingItem,
+            this.editingItem.discountPercentage);
+        this.canceEdits();
     }
 
     cancelItemDiscount() {
-        var oldDiscuont = this.editingDiscountSaleItem.itemSale.discountRatio;
-        if (oldDiscuont == null) {
-            this.editingDiscountSaleItem.discountPercentage = null;
+        var oldDiscount = this.editingItem.itemSale.discountRatio;
+        if (oldDiscount == null) {
+            this.editingItem.discountPercentage = null;
         }
-        this.editingDiscountSaleItem.discountPercentage = oldDiscuont * 100;
-        this.editingDiscountSaleItem = null;
+        this.editingItem.discountPercentage = oldDiscount * 100;
+        this.canceEdits();
     }
 
 
-    doEditItemAmount(activeItem:ASaleItem) {
-        this.editingAmountItem = activeItem;
+    // Item quantity
+
+    doEditItemQuantity(aSaleItem:ASaleItem) {
+        this.canceEdits();
+        this.editingItem = aSaleItem;
+        this.editingItemQuantity = true;
     }
 
-    onItemAmountKeyEvent(event) {
+    onItemQuantityKeyEvent(event) {
         if (event.which == 13) { // Enter
-            this.onItemAmountChanged(event);
-            this.applyItemAmount();
+            this.onItemQuantityChanged(event);
+            this.applyItemQuantity();
             return false;
         }
         if (event.which == 27) { // Escape
-            this.cancelItemAmount();
+            this.cancelItemQuantity();
             return false;
         }
         return false;
     }
 
-    onItemAmountChanged(event) {
-        var amount:string = event.target.value;
-        var amountVal = parseInt(amount);
-        if (isNaN(amountVal)) {
-            return;
+    onItemQuantityChanged(event) {
+        var quantityString:string = event.target.value;
+        var quantity = parseInt(quantityString);
+        if (isNaN(quantity)) {
+            this.editingItem.quantity = null;
+            return false;
         }
-        this.editingAmountItem.quantity = amountVal;
+        this.editingItem.quantity = quantity;
     }
 
-    applyItemAmount() {
-        var quantity = this.editingAmountItem.quantity;
-        var itemSale = this.editingAmountItem.itemSale;
-        itemSale.quantity = quantity;
+    applyItemQuantity() {
+        this.saleService.setASaleItemQuantity(
+            this.editingItem,
+            this.editingItem.quantity);
+        this.canceEdits();
+    }
 
-        this.saleService.updateASaleItem(this.editingAmountItem)
-            .then(()=> {
-                // all good
-            });
-        this.editingAmountItem = null;
+    cancelItemQuantity() {
+        var oldQuantity = this.editingItem.itemSale.quantity;
+        if (oldQuantity == null) {
+            this.editingItem.quantity = null;
+        }
+        this.editingItem.quantity = oldQuantity;
+        this.canceEdits();
+    }
+
+    // Item price
+
+    doEditItemPrice(aSaleItem:ASaleItem) {
+        this.canceEdits();
+        this.editingItem = aSaleItem;
+        this.editingItemPrice = true;
+    }
+
+    onItemPriceKeyEvent(event) {
+        if (event.which == 13) { // Enter
+            this.onItemPriceChanged(event);
+            this.applyItemPrice();
+            return false;
+        }
+        if (event.which == 27) { // Escape
+            this.cancelItemPrice();
+            return false;
+        }
         return false;
     }
 
+    onItemPriceChanged(event) {
+        var priceString:string = event.target.value;
+        var price = parseFloat(priceString);
+        if (isNaN(price)) {
+            this.editingItem.vatExclusive = null;
+            return false;
+        }
+        var vatExclusive = NumberUtils.toFixedDecimals(price, 2);
+        this.editingItem.vatExclusive = vatExclusive;
+    }
 
-    cancelItemAmount() {
-        var oldAmount = this.editingAmountItem.itemSale.quantity;
-        this.editingAmountItem.quantity = oldAmount;
-        this.editingAmountItem = null;
+    applyItemPrice() {
+        this.saleService.setASaleItemVatExclusive(
+            this.editingItem,
+            this.editingItem.vatExclusive);
+        this.canceEdits();
+    }
+
+    cancelItemPrice() {
+        var oldPrice = this.editingItem.itemSale.vatExclusive;
+        if (oldPrice == null) {
+            this.editingItem.vatExclusive = null;
+        }
+        this.editingItem.vatExclusive = oldPrice;
+        this.canceEdits();
+    }
+
+
+    // Item discount
+
+    doEditSaleDiscount() {
+        this.canceEdits();
+        this.editingSaleDiscount = true;
     }
 
     onSaleDiscountKeyEvent(event) {
         if (event.which == 13) { // Enter
-            this.onSalePercentageChanged(event);
-            this.applySaleDicountPercentage();
+            this.onSaleDiscountChanged(event);
+            this.applySaleDiscount();
             return false;
         }
         if (event.which == 27) { // Escape
@@ -202,9 +297,9 @@ export class CommandView {
         return false;
     }
 
-    onSalePercentageChanged(event) {
+    onSaleDiscountChanged(event) {
         var discountString:string = event.target.value;
-        var discountPercentage = parseFloat(discountString);
+        var discountPercentage = parseInt(discountString);
         if (isNaN(discountPercentage)) {
             this.aSale.discountPercentage = null;
             return false;
@@ -212,30 +307,37 @@ export class CommandView {
         this.aSale.discountPercentage = discountPercentage;
     }
 
-    applySaleDicountPercentage() {
-        var discountRatio = this.aSale.discountPercentage / 100;
-        this.saleService
-            .setASaleDiscount(this.aSale, discountRatio)
-            .then((aSale)=> {
-                // this.aSale == aSale
-            });
-        this.editingSaleDiscount = false;
+    applySaleDiscount() {
+        this.saleService.setASaleDiscountPercentage(
+            this.aSale,
+            this.aSale.discountPercentage);
+        this.canceEdits();
     }
 
     cancelSaleDiscount() {
-        var sale = this.aSale.sale;
-        if (sale == null) {
+        var oldDiscount = this.aSale.sale.discountRatio;
+        if (oldDiscount == null) {
             this.aSale.discountPercentage = null;
-        } else {
-            var oldDiscount = sale.discountRatio;
-            if (oldDiscount == null) {
-                this.aSale.discountPercentage = null;
-            } else {
-                this.aSale.discountPercentage = oldDiscount * 100;
-            }
         }
-        this.editingSaleDiscount = false;
+        this.aSale.discountPercentage = oldDiscount * 100;
+        this.canceEdits();
     }
+
+    doValidateItemEdit() {
+        if (this.editingItemComment) {
+            this.applyItemComment();
+        }
+        if (this.editingItemDiscount) {
+            this.applyItemDiscount();
+        }
+        if (this.editingItemPrice) {
+            this.applyItemPrice();
+        }
+        if (this.editingItemQuantity) {
+            this.applyItemQuantity();
+        }
+    }
+
 
     doValidate() {
         this.validated = true;
@@ -245,50 +347,6 @@ export class CommandView {
     doUnvalidate() {
         this.validated = false;
         this.validate.next(this.validated);
-    }
-
-    setToAddItemAmount(amount:string) {
-        this.toAddItem.amount = parseInt(amount);
-    }
-
-
-    setToAddItemPrice(event) {
-        var price = parseFloat(event.target.value);
-        if (this.toAddItem.price == price) {
-            return;
-        }
-        this.toAddItem.price = price;
-    }
-
-    setToAddItemVat(event) {
-        var vat = parseFloat(event.target.value);
-        if (this.toAddItem.vat == vat) {
-            return;
-        }
-        this.toAddItem.vat = vat;
-    }
-
-    isItemToAddValid() {
-        if (this.toAddItem.name == null
-            || this.toAddItem.name.length <= 0) {
-            return false;
-        }
-        if (this.toAddItem.amount == null
-            || isNaN(this.toAddItem.amount)
-            || this.toAddItem.amount <= 0) {
-            return false;
-        }
-        if (this.toAddItem.price == null
-            || isNaN(this.toAddItem.price)
-            || this.toAddItem.price < 0.01) {
-            return false
-        }
-        if (this.toAddItem.vat == null
-            || isNaN(this.toAddItem.vat)
-            || this.toAddItem.vat < 0.01) {
-            return false
-        }
-        return true;
     }
 
 }

@@ -17,7 +17,7 @@
              [hidden]="aSale.items.length <= 0">
             <div class="action reduction"
                  [hidden]="validated"
-                 (^click)="editingSaleDiscount = true"
+                 (^click)="doEditSaleDiscount()"
                  [class.editing]="editingSaleDiscount"
                  [class.has-reduction]="aSale.discountPercentage > 0">
                 <span [hidden]="editingSaleDiscount || aSale.discountPercentage > 0">
@@ -27,11 +27,12 @@
                     -{{ aSale.discountPercentage | number:'.0' }} %
                 </span>
                 <span *ng-if="editingSaleDiscount">
-                    <input #reduction [(value)]="aSale.discountPercentage"
+                    <input #reduction
+                           [value]="aSale.discountPercentage"
                            (keyup)="onSaleDiscountKeyEvent($event)"
-                           (blur)="applySaleDicountPercentage()"
-                           (input)="onSalePercentageChanged($event)"
-                           type="number" min="0.01" step="0.01"
+                           (input)="onSaleDiscountChanged($event)"
+                           (blur)="applySaleDiscount()"
+                           type="number" min="0" max="100" step="1"
                            size="2" autofocusselect/>
                     %
                 </span>
@@ -46,7 +47,7 @@
         <tr>
             <th>Ref</th>
             <th>Nom</th>
-            <th class="amount number">Quantité</th>
+            <th class="quantity number">Quantité</th>
             <th class="price number">Prix</th>
             <th class="actions" [hidden]="validated"></th>
         </tr>
@@ -57,118 +58,148 @@
             class="saleItem" [class.dirty]="saleItem.dirty">
 
             <td class="ref">
-                <span *ng-if="saleItem.item != null" [hidden]="saleItem.item == null">
+                <span *ng-if="saleItem.item != null">
                     {{ saleItem.item.reference }}
                 </span>
             </td>
-            <td class="name" *ng-if="saleItem.item != null" >
-                {{ saleItem.item.name[language] }}
+            <td class="name" *ng-if="saleItem.item != null">
+                <div class="name">
+                    {{ saleItem.item.name[language] }}
+                </div>
+                <div class="comment">
+                    <a class="commentLink"
+                       (^click)="doEditItemComment(saleItem)"
+                       [class.actionLink]="!validated"
+                       [class.editing]="editingItem == saleItem && editingItemComment"
+                       [class.unneeded]="!hasComment(saleItem)"
+                       [class.nolink]="validated">
+                        {{ saleItem.comment[language] }}
+                    </a>
+                    <span *ng-if="editingItem == saleItem && editingItemComment">
+                        <input #comment
+                               [value]="saleItem.comment[language]"
+                               (keyup)="onItemCommentKeyEvent($event)"
+                               (input)="onItemCommentChanged($event)"
+                               (blur)="applyItemComment()"
+                               type="text"
+                               size="14" autofocusselect/>
+                    </span>
+                </div>
             </td>
-            <td class="amount number">
-                <a class="quantityLink" (^click)="doEditItemAmount(saleItem)"
-                   *ng-if="saleItem.item != null"
-                   [class.editing]="editingAmountItem == saleItem"
-                   [class.unneeded]="saleItem.quantity <= 1 || editingAmountItem == saleItem"
-                   [class.nolink]="validated"
-                   [class.actionLink]="!validated">
-                        <span class="count">
-                            {{ saleItem.quantity}} x
-                        </span>
-                        <span class="price" >
-                            {{ saleItem.item.vatExclusive | currency:'EUR':true:'.2-2'  }}
-                        </span>
-                </a>
-                <span class="editAmount" *ng-if="editingAmountItem == saleItem">
-                    <input #amount [value]="saleItem.quantity"
-                           (keyup)="onItemAmountKeyEvent($event)"
-                           (input)="onItemAmountChanged($event)"
-                           (blur)="applyItemAmount()"
-                           type="number" min="1"
+            <td class="quantity number">
+                <span class="quantityAmountLinks"
+                      [class.editing]="(editingItemQuantity || editingItemPrice) && (editingItem == saleItem)"
+                      [class.unneeded]="saleItem.quantity <= 1"
+                      [class.nolink]="validated">
+                    <a class="quantityLink"
+                       (^click)="doEditItemQuantity(saleItem)"
+                       [class.actionLink]="!validated">
+                            <span class="count">
+                                {{ saleItem.quantity}} x
+                            </span>
+                    </a>
+                    <a class="priceLink"
+                       (^click)="doEditItemPrice(saleItem)"
+                       [class.actionLink]="!validated">
+                            <span class="price">
+                                {{ saleItem.vatExclusive | currency:'EUR':true:'.2-2'  }}
+                            </span>
+                    </a>
+                </span>
+                <span class="editQuantity"
+                      *ng-if="editingItemQuantity && editingItem == saleItem">
+                    <input #amount
+                           [value]="saleItem.quantity"
+                           (keyup)="onItemQuantityKeyEvent($event)"
+                           (input)="onItemQuantityChanged($event)"
+                           (blur)="applyItemQuantity()"
+                           type="number" min="1" step="1"
                            size="4" autofocusselect/>
+                </span>
+                <span class="editPrice"
+                      *ng-if="editingItemPrice && editingItem == saleItem">
+                    <input #price
+                           [value]="saleItem.vatExclusive"
+                           (keyup)="onItemPriceKeyEvent($event)"
+                           (input)="onItemPriceChanged($event)"
+                           (blur)="applyItemPrice()"
+                           type="number" min="0.01" step="0.01"
+                           size="6" autofocusselect/> €
                 </span>
             </td>
             <td class="price number">
                 <a class="reduction green"
-                   [class.unneeded]="saleItem.discountPercentage == null || saleItem.discountPercentage <= 0 || editingDiscountSaleItem == saleItem"
+                   [class.unneeded]="saleItem.discountPercentage == null || saleItem.discountPercentage <= 0 || (editingItem == saleItem && editingItemDiscount)"
                    [class.nolink]="validated"
                    [class.actionLink]="!validated"
                    (^click)="doEditItemDiscount(saleItem)">
-                    -{{ ( saleItem.discountPercentage) | number:'.0-0' }}%
+                    -{{ ( saleItem.discountPercentage) | number:'.0' }}%
                 </a>
-                <span class="setReduction" *ng-if="editingDiscountSaleItem == saleItem">
-                    <input #reduction [(value)]="saleItem.discountPercentage"
+                <span class="setReduction"
+                      *ng-if="editingItem == saleItem && editingItemDiscount">
+                    <input #reduction
+                           [value]="saleItem.discountPercentage"
                            (keyup)="onItemDiscountKeyEvent($event)"
-                           (input)="onItemDiscountPercentageChanged($event)"
-                           (blur)="applyItemDicountPercentage()"
-                           type="number" min="0.1" step="0.1"
+                           (input)="onItemDiscountChanged($event)"
+                           (blur)="applyItemDiscount()"
+                           type="number" min="1" max="100" step="1"
                            size="2" autofocusselect/>
                     %
                 </span>
-                <span>{{  saleItem.vatExclusive | currency:'EUR':true:'.2-2' }}</span>
+                <span>{{  (saleItem.vatExclusive * saleItem.quantity) | currency:'EUR':true:'.2-2' }}</span>
             </td>
             <td class="actions" [hidden]="validated">
-                <a class="actionIcon remove" (^click)="doRemoveItem(saleItem)">
+                <a class="actionIcon noBlur validate"
+                   [hidden]="editingItem != saleItem"
+                   (^click)="doValidateItemEdit()">
+                    <i class="fi-check green"></i>
+                </a>
+                <a class="actionIcon remove"
+                   [hidden]="editingItem == saleItem"
+                   (^click)="doRemoveItem(saleItem)">
                     <i class="fi-x red"></i>
                 </a>
-                <a class="actionIcon setReductionLink" (^click)="doEditItemDiscount(saleItem)"
-                   [hidden]="saleItem.discountPercentage > 0 || editingDiscountSaleItem == saleItem">
+                <a class="actionIcon setReductionLink"
+                   (^click)="doEditItemDiscount(saleItem)"
+                   [hidden]="saleItem.discountPercentage > 0 || (editingItem == saleItem)">
                     <span class="green" style="font-weight: bold;">%</span>
+                </a>
+                <a class="actionIcon commentLink"
+                   (^click)="doEditItemComment(saleItem)"
+                   [hidden]="hasComment(saleItem) || (editingItem == saleItem)">
+                    <i class="fi-comment"></i>
                 </a>
             </td>
         </tr>
 
         </tbody>
         <tfoot *ng-if="aSale.sale != null" [hidden]="aSale.items.length <= 0">
-        <tr [hidden]="aSale.discountRate == null || aSale.discountRate <= 0"
+        <tr [hidden]="aSale.discountPercentage == null || aSale.discountPercentage <= 0"
             class="details">
-            <th colspan="3" class="reduction">
-                Réduction {{ (aSale.discountRate * 100) | number:'.0-0' }}%
+            <th colspan="3" class="saleFooter reduction">
+                Réduction {{ (aSale.discountPercentage) | number:'.0' }}%
             </th>
-            <th class="reduction number">-{{ aSale.discountAmount | currency:'EUR':true:'.2-2'}}</th>
+            <th class="saleFooter reduction number">
+                -{{ aSale.discountAmount | currency:'EUR':true:'.2-2'}}
+            </th>
         </tr>
         <tr class="details">
-            <th colspan="3">Total HTVA</th>
-            <th class="number">{{ aSale.vatExclusive | currency:'EUR':true:'.2-2'}}</th>
+            <th colspan="3" class="saleFooter">Total HTVA</th>
+            <th class="saleFooter number">{{ aSale.vatExclusive | currency:'EUR':true:'.2-2'}}</th>
         </tr>
         <tr class="details">
-            <th colspan="3">TVA</th>
-            <th class="number">{{ aSale.vatAmount | currency:'EUR':true:'.2-2'}}</th>
+            <th colspan="3" class="saleFooter">TVA</th>
+            <th class="number saleFooter">{{ aSale.vatAmount | currency:'EUR':true:'.2-2'}}</th>
         </tr>
 
         <tr>
-            <th colspan="3" class="total">Total</th>
-            <th class="total price number">
+            <th colspan="3" class="total saleFooter">Total</th>
+            <th class="total price number saleFooter">
                 {{ (aSale.vatExclusive + aSale.sale.vatAmount) | currency:'EUR':true:'.2-2' }}
             </th>
         </tr>
         </tfoot>
     </table>
-    <div class="newItem" [hidden]="validated">
-        <h2>Ajouter un produit</h2>
-
-        <form (ng-submit)="doAddCustomItem()">
-            <input #name placeholder="Nom" class="name"
-                   [value]="toAddItem.name"
-                   (input)="toAddItem.name = name.value">
-            <input #amount placeholder="Quantité" class="amount"
-                   type="number" min="1" step="1"
-                   [value]="toAddItem.amount"
-                   (input)="setToAddItemAmount(amount.value)">
-            <span>
-            <input #price placeholder="Prix unitaire" class="price number"
-                   type="number" min="0.01" step="0.01"
-                   [value]="toAddItem.price | number:'.2-2'"
-                   (input)="setToAddItemPrice($event)">€
-            </span>
-            <span>
-            <input #vat placeholder="TVA" class="vat number"
-                   type="number" min="0.01" step="0.01"
-                   [value]="toAddItem.vat | number:'.2-2'"
-                   (input)="setToAddItemVat($event)">%
-            </span>
-            <button type='submit' [disabled]="!isItemToAddValid()">Ajouter</button>
-        </form>
-    </div>
 
 
 </div>

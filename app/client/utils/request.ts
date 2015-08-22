@@ -22,16 +22,16 @@ export class ComptoirRequest {
     static HEADER_TOTAL_COUNT = 'X-Comptoir-ListTotalCount';
     static DISCARDED_ERROR = new Error("Request discarded");
 
-    request:XMLHttpRequest;
-    method:string;
-    url:string;
-    authToken:string;
-    objectToSend:any;
-    contentType:string;
-    acceptContentType:string;
-    charset:string;
-    failed:boolean;
-    discarded: boolean;
+    private request:XMLHttpRequest;
+    private method:string;
+    private url:string;
+    private authToken:string;
+    private objectToSend:any;
+    private contentType:string;
+    private acceptContentType:string;
+    private charset:string;
+    private failed:boolean;
+    private discarded: boolean;
 
     constructor() {
         this.request = new XMLHttpRequest();
@@ -66,13 +66,13 @@ export class ComptoirRequest {
         this.discarded = true;
     }
 
-    private setup(method:string, url:string, authToken:string) {
+    setup(method:string, url:string, authToken:string) {
         this.method = method;
         this.url = url;
         this.authToken = authToken;
     }
 
-    private setupData(obj:any) {
+    setupData(obj:any) {
         this.objectToSend = obj;
     }
 

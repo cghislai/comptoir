@@ -44,6 +44,15 @@ export class ItemSaleClient {
             });
     }
 
+
+    getCreateItemSaleRequest(itemSale:ItemSale, authToken:string):ComptoirRequest{
+        var url = this.getResourceUrl();
+        var request = new ComptoirRequest();
+        request.setup('POST', url, authToken);
+        request.setupData(itemSale);
+        return request;
+    }
+
     updateItemSale(itemSale:ItemSale, authToken:string):Promise<ItemSaleRef> {
         var url = this.getItemSaleUrl(itemSale.id);
         var request = new ComptoirRequest();
@@ -52,6 +61,14 @@ export class ItemSaleClient {
                 var itemSaleRef = JSON.parse(response.text);
                 return itemSaleRef;
             });
+    }
+
+    getUpdateItemSaleRequest(itemSale:ItemSale, authToken:string):ComptoirRequest{
+        var url = this.getResourceUrl();
+        var request = new ComptoirRequest();
+        request.setup('POST', url, authToken);
+        request.setupData(itemSale);
+        return request;
     }
 
     getItemSale(id:number, authToken:string):Promise<ItemSale> {
@@ -63,6 +80,13 @@ export class ItemSaleClient {
                 return itemSale;
             });
     }
+    getGetItemSaleRequest(id:number, authToken:string):ComptoirRequest {
+        var url = this.getItemSaleUrl(id);
+        var request = new ComptoirRequest();
+        request.setup('GET', url, authToken);
+        return request;
+    }
+
 
 
     searchItemSales(search:ItemSaleSearch, pagination:Pagination, authToken:string):Promise<SearchResult<ItemSale>> {
@@ -75,10 +99,19 @@ export class ItemSaleClient {
             });
     }
 
-    removeItemSale(id: number, authToken:string) : Promise<any>{
+    getSearchItemSalesRequest(search:ItemSaleSearch, pagination:Pagination, authToken:string):ComptoirRequest {
+        var url = this.getSearchUrl(pagination);
+        var request = new ComptoirRequest();
+        request.setup('POST', url, authToken);
+        request.setupData(search);
+        return request;
+    }
+
+    removeItemSale(id:number, authToken:string):Promise<any> {
         var url = this.getItemSaleUrl(id);
         var request = new ComptoirRequest();
         return request.delete(url, authToken);
     }
+
 
 }

@@ -64,6 +64,13 @@ export class ItemClient {
             });
     }
 
+    getGetItemRequest(id:number, authToken:string):ComptoirRequest {
+        var url = this.getItemUrl(id);
+        var request = new ComptoirRequest();
+        request.setup('GET', url, authToken);
+        return request;
+    }
+
     searchItems(search:ItemSearch, pagination:Pagination, authToken:string):Promise<SearchResult<Item>> {
         var url = this.getSearchUrl(pagination);
         var request = new ComptoirRequest();

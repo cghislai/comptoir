@@ -54,6 +54,16 @@ export class SaleClient {
             })
     }
 
+    getCreateSaleRequest(sale:Sale, authToken:string):ComptoirRequest {
+        var request = new ComptoirRequest();
+        var url = this.getSaleUrl();
+
+        request.setup('POST', url, authToken);
+        request.setupData(sale);
+        return request;
+    }
+
+
     updateSale(sale:Sale, authToken:string):Promise<SaleRef> {
         var request = new ComptoirRequest();
         var url = this.getSaleUrl(sale.id);
@@ -66,6 +76,15 @@ export class SaleClient {
             });
     }
 
+    getUpdateSaleRequest(sale:Sale, authToken:string):ComptoirRequest {
+        var request = new ComptoirRequest();
+        var url = this.getSaleUrl(sale.id);
+
+        request.setup('PUT', url, authToken);
+        request.setupData(sale);
+        return request;
+    }
+
     getSale(id:number, authToken:string):Promise<Sale> {
         var request = new ComptoirRequest();
         var url = this.getSaleUrl(id);
@@ -76,6 +95,14 @@ export class SaleClient {
                 var sale = JSON.parse(response.text, SaleFactory.fromJSONSaleReviver);
                 return sale;
             });
+    }
+
+    getGetSaleRequest(id:number, authToken:string):ComptoirRequest {
+        var request = new ComptoirRequest();
+        var url = this.getSaleUrl(id);
+
+        request.setup('GET', url, authToken);
+        return request;
     }
 
     searchSales(search:SaleSearch, pagination:Pagination, authToken:string):Promise<SearchResult<Sale>> {

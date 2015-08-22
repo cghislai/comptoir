@@ -2,115 +2,137 @@
 
 header {
 
+  .actions {
+    .reduction {
 
-  .commandNav {
-    height: 100%;
-  }
-  .commandNav > *:not(.commandsMenu) {
-    display: inline-block;
-    vertical-align: middle;
-  }
-  .commandNav:not(.disabled):hover {
-    color: $onBlueHoverColor;
-    cursor: pointer;
-  }
+      &.editing {
+        padding: .1em;
+        border: none !important;
+        color: white !important;
+      }
+      &.has-reduction {
+        color: green;
+      }
 
-  .actions > .reduction > span:not([hidden]) {
-    display: block;
-    height: 100%;
-  }
-  .actions > .reduction input {
-    font-size: 1em;
-    width: 3em;
-    display: inline-block;
-    vertical-align: middle;
-  }
-  .actions > .reduction.has-reduction {
-    color: darkgreen;
-  }
-  .actions > .reduction.editing {
-    padding: .1em;
-    border: none !important;
-    color: white !important;
+      > span:not([hidden]) {
+        display: block;
+        height: 100%;
+      }
+
+      input {
+        font-size: 1em;
+        width: 3em;
+        display: inline-block;
+        vertical-align: middle;
+      }
+    }
   }
 }
 
 table {
-
-  &.dirty {
-    background-color: lightgray;
-  }
-
-
-  td > *:not([hidden]) {
-    display: inline-block;
-    vertical-align: middle;
-  }
-
-  td {
-    .unneeded {
-      display: none;
+  td, th {
+    > *:not([hidden]) {
+      //display: inline-block;
+      //vertical-align: middle;
+    }
+    &.quantity {
+      padding-right: 1em;
     }
     .nolink {
       pointer-events: none;
-         }
-  }
-
-  td.amount, th.amount {
-    padding-right: 1em;
-
-
-  }
-
-  td.amount {
-    font-size: .8em;
-
-    input {
-      font-size: .9em;
-      width: 2.5em;
+    }
+    .unneeded {
+      display: none;
     }
   }
 
-  tr:hover .quantityLink.actionlink:not(.editing) {
-    display: inline-block;
-  }
+  tr.saleItem {
+    &.dirty {
+      background-color: #F2F5F7;
+    }
 
-
-  td.price {
-    min-width: 4em;
-    .setReduction {
-      font-size: .8em;
-
-      input {
-        font-size: .8em;
-        width: 2.5em;
+    &:hover {
+      .quantityAmountLinks {
+        &:not(.editing):not(.nolink) {
+          display: inline-block !important;
+        }
       }
     }
-  }
 
-  td.actions {
-    width: 3em;
+    td {
+      &.name {
+        .commentLink {
+          &.editing {
+            display: none;
+          }
+          &.unneeded {
+            display: none;
+          }
+        }
+        .comment {
+          font-size: .8em;
+          font-weight: normal;
+          color: gray;
+        }
+      }
+      &.quantity {
+        .quantityAmountLinks {
+          font-size: .8em;
+          &.editing {
+            display: none;
+          }
+          &.unneeded {
+            display: none;
+          }
+        }
+        .editPrice {
+          input {
+            font-size: .8em;
+            width: 4em;
+          }
+        }
+        .editQuantity {
+          input {
+            font-size: .8em;
+            width: 3em;
+          }
+        }
 
-  }
-  .reduction {
-    font-size: .8em;
-  }
-  .reduction.green:not(.actionlink) {
-    color: darkgreen;
-  }
+      }
+      &.price {
+        min-width: 3em;
+        font-size: .9em;
 
-  tfoot {
-    border-top: 1px solid black;
+        .reduction {
+          font-size: .8em;
+        }
+        input {
+          font-size: .8em;
+          width: 2.5em;
+        }
+      }
 
-    tr.details {
-      font-size: .8em;
-      color: gray;
+      &.actions {
+        width: 4em;
+      }
+
     }
+  }
+}
 
+
+tfoot {
+  border-top: 1px solid black;
+  font-size: 1em;
+
+  tr {
     th {
       text-align: right;
-      font-size: .9em;
       font-weight: normal;
+    }
+    &.details {
+      font-size: .8em;
+      color: gray;
     }
     .total {
       font-size: 1.1em;
@@ -120,34 +142,3 @@ table {
 
 }
 
-.newItem {
-  font-size: 1em;
-  padding: .5em;
-  border: 1px solid lightsteelblue;
-
-  h2 {
-    font-size: 1em;
-    font-weight: bolder;
-    margin: 0;
-  }
-
-  input, button {
-    font-size: .9em;
-  }
-
-  .ref {
-    width: 10%;
-  }
-  .name {
-    width: 45%;
-  }
-  .amount {
-    width: 7%;
-  }
-  .price {
-    width: 15%;
-  }
-  .vat {
-    width: 10%;
-  }
-}

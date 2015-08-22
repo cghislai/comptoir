@@ -147,11 +147,14 @@ table.dataTable, div.dataTable {
 
   td, .dataTableCell {
     a.actionIcon:not([hidden]) {
-      color: rgb(220, 220, 220);
       font-size: 1em;
-      -webkit-filter: blur(.1em);
       display: inline-block;
       vertical-align: middle;
+
+      &:not(.noBlur) {
+        color: rgb(220, 220, 220);
+        -webkit-filter: blur(.1em);
+      }
     }
 
     .actionIcon {

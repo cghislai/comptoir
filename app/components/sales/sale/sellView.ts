@@ -59,7 +59,7 @@ export class SellView {
         this.searchPos();
         this.findSale(idValue);
 
-        location.subscribe((val)=>{
+        location.subscribe((val)=> {
             console.log(val);
         });
     }
@@ -99,7 +99,7 @@ export class SellView {
     findSale(idValue:string) {
         var idNumber = parseInt(idValue);
         if (this.aSale != null) {
-            console.log("I got sale "+this.aSale.saleId+ ' and asked for '+idNumber);
+            console.log("I got sale " + this.aSale.saleId + ' and asked for ' + idNumber);
             return;
         }
         if (idValue == 'new') {
@@ -126,7 +126,7 @@ export class SellView {
                 this.aSale = aSale;
                 this.saleService.activeSale = aSale.sale;
             });
-        this.location.go('/sales/sale/'+idNumber);
+        this.location.go('/sales/sale/' + idNumber);
     }
 
     createSale() {
@@ -138,7 +138,7 @@ export class SellView {
     }
 
     onSaleInvalidated() {
-        this.saleService.removeSale(this.aSale.saleId).then(()=> {
+        this.saleService.removeASale(this.aSale).then(()=> {
             this.aSale = null;
             return this.saleService.createASale();
         }).then((aSale:ASale)=> {
@@ -153,21 +153,18 @@ export class SellView {
 
         // Open sale if required
         if (this.aSale.sale == null) {
-            return this.saleService
-                .openASale(this.aSale)
+            this.saleService
+                .openASaleAsync(this.aSale)
                 .then((aSale)=> {
-                    return this.saleService
-                        .addItemToASale(aSale, item);
-                }).then((aSale:ASale)=> {
                     var activeSaleId = aSale.saleId;
                     this.location.go('/sales/sale/' + activeSaleId);
+                    return this.saleService
+                        .addItemToASale(aSale, item);
                 });
+            return;
         }
 
-        return this.saleService.addItemToASale(this.aSale, item)
-            .then((aSale)=> {
-
-            });
+        return this.saleService.addItemToASale(this.aSale, item);
     }
 
 
@@ -180,9 +177,8 @@ export class SellView {
     }
 
     onCommandPaid() {
-        this.saleService.closeASale(this.aSale)
-            .then((aSale)=> {
-            });
+        this.saleService.closeASale(this.aSale);
+
         this.saleService.activeSale = null;
         this.payStep = false;
         this.createSale();
