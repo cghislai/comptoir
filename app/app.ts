@@ -54,7 +54,7 @@ import {ApplicationSettingsView} from 'components/settings/application/appSettin
 })
 
 @RouteConfig([
-    {path: '/', redirectTo:'/login'},
+    {path: '/', redirectTo:'/sales/sale/new'},
     {path: '/login', component: LoginView, as:'login'},
     {path: '/register', component: RegisterView, as:'register'},
 

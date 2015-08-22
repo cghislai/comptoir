@@ -1,8 +1,8 @@
 /**
  * Created by cghislai on 29/07/15.
  */
-import {Component, View, NgIf, NgFor} from 'angular2/angular2';
-import {Router, RouteParams, Location} from 'angular2/router';
+import {Component, View, NgIf, NgFor, Inject} from 'angular2/angular2';
+import {Router, RouteParams, ROUTE_DATA, Location} from 'angular2/router';
 
 import {Sale, SaleRef} from 'client/domain/sale';
 import {Item, ItemRef} from 'client/domain/item';
@@ -46,7 +46,7 @@ export class SellView {
     routeParams:RouteParams;
 
     constructor(saleService:SaleService, posService:PosService, appService:ApplicationService,
-                router:Router, routeParams:RouteParams, location:Location) {
+                router:Router, routeParams:RouteParams, @Inject(ROUTE_DATA)routeData: any, location:Location) {
         this.saleService = saleService;
         this.posService = posService;
         this.router = router;
@@ -60,6 +60,9 @@ export class SellView {
         this.findSale(idValue);
 
         location.subscribe((val)=>{
+            console.log(val);
+        });
+        router.subscribe((val)=>{
             console.log(val);
         });
     }
@@ -126,7 +129,8 @@ export class SellView {
                 this.aSale = aSale;
                 this.saleService.activeSale = aSale.sale;
             });
-        this.location.go('/sales/sale/'+idNumber);
+        //this.location.go('/sales/sale/'+idNumber);
+        this.router.navigate('/sales/sale/'+idNumber);
     }
 
     createSale() {
@@ -134,7 +138,8 @@ export class SellView {
             this.aSale = aSale;
         });
         this.saleService.activeSale = null;
-        this.location.go('/sales/sale/new');
+        //this.location.go('/sales/sale/new');
+        this.router.navigate('/sales/sale/new');
     }
 
     onSaleInvalidated() {
@@ -143,7 +148,8 @@ export class SellView {
             return this.saleService.createASale();
         }).then((aSale:ASale)=> {
             this.aSale = aSale;
-            this.location.go('/sales/sale/new');
+            //this.location.go('/sales/sale/new');
+            this.router.navigate('/sales/sale/new')
         });
     }
 
@@ -160,7 +166,8 @@ export class SellView {
                         .addItemToASale(aSale, item);
                 }).then((aSale:ASale)=> {
                     var activeSaleId = aSale.saleId;
-                    this.location.go('/sales/sale/' + activeSaleId);
+                    this.router.navigate('/sales/sale/'+activeSaleId);
+                    //this.location.go('/sales/sale/' + activeSaleId);
                 });
         }
 
