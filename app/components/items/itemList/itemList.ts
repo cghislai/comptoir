@@ -112,6 +112,7 @@ export class ItemColumn {
     title:LocaleTexts;
     name:string;
     alignRight:boolean;
+    alignCenter:boolean;
 
     static init() {
         ItemColumn.REFERENCE = new ItemColumn();
@@ -160,6 +161,7 @@ export class ItemColumn {
 
         ItemColumn.PICTURE = new ItemColumn();
         ItemColumn.PICTURE.name = 'picture';
+        ItemColumn.PICTURE.alignCenter = true;
         ItemColumn.PICTURE.title = {
             'fr': "Image"
         };

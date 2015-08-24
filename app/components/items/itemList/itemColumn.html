@@ -28,10 +28,13 @@
         {{ picItem.item.model }}
     </div>
 </span>
-<span class="picture"
+<div class="picture"
     *ng-if="column.name == 'picture' ">
     <img [src]="picItem.dataURI" *ng-if="picItem.dataURI != undefined">
-</span>
+    <div class="imagePlaceover" *ng-if="picItem.dataURI == undefined">
+        <i class="fi-book"></i>
+    </div>
+</div>
 <span class="tva_excl price"
         *ng-if="column.name == 'tva_excl'">
     {{ picItem.item.vatExclusive | currency:'EUR':true:'.2-2' }}

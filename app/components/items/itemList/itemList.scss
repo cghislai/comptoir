@@ -25,6 +25,9 @@
     .dataTableCell.right {
       text-align: right !important;
     }
+    .dataTableCell.center {
+      text-align: center !important;
+    }
   }
 }
 
@@ -59,7 +62,14 @@
   overflow: hidden;
 }
 
-.picture img {
-  max-height: 3em;
-  max-width: 3em;
+.picture {
+  height: 3em;
+  img {
+    max-height: 100%;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .imagePlaceover {
+    font-size: 3em;
+  }
 }

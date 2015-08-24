@@ -161,7 +161,7 @@ table.dataTable, div.dataTable {
   }
 
   td, .dataTableCell {
-    padding: .3em .3em 0;
+    padding: .3em .3em .3em;
     a.actionIcon:not([hidden]) {
       font-size: 1em;
       display: inline-block;
