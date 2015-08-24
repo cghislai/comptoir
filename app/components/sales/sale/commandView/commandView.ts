@@ -34,6 +34,7 @@ import {ApplicationService} from 'services/application';
 
 export class CommandView {
     saleService:SaleService;
+    appService:ApplicationService;
 
     aSale:ASale;
     language:string;
@@ -52,6 +53,7 @@ export class CommandView {
     constructor(saleService:SaleService,
                 applicationService:ApplicationService) {
         this.saleService = saleService;
+        this.appService = applicationService;
         this.language = applicationService.language.locale;
     }
 
@@ -59,11 +61,13 @@ export class CommandView {
         var aSale = saleItem.aSale;
         var saleToBeRemoved = aSale.items.length == 1;
 
-        this.saleService.removeASaleItem(saleItem)
+        this.saleService.removeASaleItemAsync(saleItem)
             .then(()=> {
                 if (saleToBeRemoved) {
                     this.saleInvalidated.next(null);
                 }
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
     }
 
@@ -140,9 +144,11 @@ export class CommandView {
     onItemCommentChange(event) {
         var commentTexts = this.editingItem.comment;
         commentTexts[this.language] = event;
-        this.saleService.setASaleItemComment(
-            this.editingItem, commentTexts
-        );
+        this.saleService.setASaleItemCommentAsync(
+            this.editingItem, commentTexts)
+            .catch((error)=> {
+                this.appService.handleRequestError(error);
+            });
         this.cancelEdits();
     }
 
@@ -169,12 +175,13 @@ export class CommandView {
     onItemDiscountChange(newValue) {
         var discountPercentage = parseInt(newValue);
         if (isNaN(discountPercentage)) {
-            this.saleService.setASaleItemDiscountPercentage(
-                this.editingItem, null);
-        } else {
-            this.saleService.setASaleItemDiscountPercentage(
-                this.editingItem, discountPercentage);
+            discountPercentage = 0;
         }
+        this.saleService.setASaleItemDiscountPercentageAsync(
+            this.editingItem, discountPercentage)
+            .catch((error)=> {
+                this.appService.handleRequestError(error);
+            });
         this.cancelEdits();
     }
 
@@ -190,15 +197,14 @@ export class CommandView {
     onItemQuantityChange(newValue) {
         var quantity = parseInt(newValue);
         if (isNaN(quantity)) {
-            this.saleService.setASaleItemQuantity(
-                this.editingItem, 1);
-        } else {
-            if (quantity == 0) {
-                quantity = 1;
-            }
-            this.saleService.setASaleItemQuantity(
-                this.editingItem, quantity);
+            quantity = 1;
+        } else if (quantity < 1) {
+            quantity = 1;
         }
+        this.saleService.setASaleItemQuantityAsync(
+            this.editingItem, quantity).catch((error)=> {
+                this.appService.handleRequestError(error);
+            });
         this.cancelEdits();
     }
 
@@ -214,13 +220,14 @@ export class CommandView {
     onItemPriceChange(newValue) {
         var price = parseFloat(newValue);
         if (isNaN(price)) {
-            this.saleService.setASaleItemVatExclusive(
-                this.editingItem, null);
-        } else {
-            var vatExclusive = NumberUtils.toFixedDecimals(price, 2);
-            this.saleService.setASaleItemVatExclusive(
-                this.editingItem, vatExclusive);
+            price = this.editingItem.item.vatExclusive;
         }
+        var vatExclusive = NumberUtils.toFixedDecimals(price, 2);
+        this.saleService.setASaleItemVatExclusiveAsync(
+            this.editingItem, vatExclusive)
+            .catch((error)=> {
+                this.appService.handleRequestError(error);
+            });
         this.cancelEdits();
     }
 
@@ -235,12 +242,12 @@ export class CommandView {
     onSaleDiscountChange(newValue:string) {
         var intValue = parseInt(newValue);
         if (isNaN(intValue)) {
-            this.saleService.setASaleDiscountPercentage(
-                this.aSale, null);
-        } else {
-            this.saleService.setASaleDiscountPercentage(
-                this.aSale, intValue);
+            intValue = 0;
         }
+        this.saleService.setASaleDiscountPercentage(
+            this.aSale, intValue).catch((error)=> {
+                this.appService.handleRequestError(error);
+            });
         this.cancelEdits();
     }
 

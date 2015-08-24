@@ -83,35 +83,25 @@ export class SaleService {
     }
 
     // ASale methods
-    // Public ones below run in background but resolve the returned
-    // promise directly.
 
-    public createASale():Promise<ASale> {
+    public createASale():ASale {
         var aSale = new ASale();
         aSale.items = [];
         aSale.itemsMap = {};
         aSale.saleId = null;
         aSale.sale = null;
-        aSale.discountRate = null;
-        aSale.vatExclusive = null;
-        aSale.vatAmount = null;
+        aSale.discountRate = 0;
+        aSale.vatExclusive = 0;
+        aSale.vatAmount = 0;
         aSale.dirty = false;
         this.calcASale(aSale);
-        return Promise.resolve(aSale);
+        return aSale;
     }
 
-    public getASale(saleId:number):Promise<ASale> {
-        var aSale = new ASale();
-        aSale.items = [];
-        aSale.itemsMap = {};
-        aSale.saleId = saleId;
-        aSale.sale = null;
-        aSale.discountRate = null;
-        aSale.vatExclusive = null;
-        aSale.vatAmount = null;
+    public fetchASaleAsync(aSale:ASale):Promise<ASale> {
         aSale.dirty = true;
-
-        this.fetchASaleSaleAsync(aSale)
+        this.calcASale(aSale);
+        return this.fetchASaleSaleAsync(aSale)
             .then(()=> {
                 aSale.dirty = false;
                 this.calcASale(aSale);
@@ -126,9 +116,8 @@ export class SaleService {
                 for (var item of aSale.items) {
                     item.dirty = false;
                 }
+                return aSale;
             });
-
-        return Promise.resolve(aSale);
     }
 
 
@@ -146,7 +135,7 @@ export class SaleService {
             });
     }
 
-    public closeASale(aSale:ASale):Promise<ASale> {
+    public closeASaleAsync(aSale:ASale):Promise<ASale> {
         if (aSale.sale == null) {
             throw 'sale not opened';
         }
@@ -154,24 +143,23 @@ export class SaleService {
             throw 'sale already closed';
         }
         aSale.dirty = true;
-        this.closeASaleAsync(aSale)
+        return this.closeASaleAsyncPrivate(aSale)
             .then(()=> {
                 aSale.dirty = false;
                 this.calcASale(aSale);
+                return aSale;
             });
-        return Promise.resolve(aSale);
     }
 
-    public removeASale(aSale:ASale):Promise<any> {
+    public removeASaleAsync(aSale:ASale):Promise<any> {
         if (aSale.sale == null) {
             return Promise.resolve();
         }
         var saleId = aSale.saleId;
-        this.removeSale(saleId);
-        return Promise.resolve();
+        return this.removeSale(saleId);
     }
 
-    public addItemToASale(aSale:ASale, item:Item):Promise<ASale> {
+    public addItemToASaleAsync(aSale:ASale, item:Item):Promise<ASale> {
         if (aSale.sale == null) {
             throw 'sale not opened';
         }
@@ -185,7 +173,7 @@ export class SaleService {
             aSaleItem.dirty = true;
             aSale.dirty = true;
             this.calcASale(aSale);
-            this.updateASaleItemAsync(aSaleItem)
+            return this.updateASaleItemAsync(aSaleItem)
                 .then(()=> {
                     aSaleItem.dirty = false;
                     this.calcASale(aSale);
@@ -193,8 +181,8 @@ export class SaleService {
                 }).then(()=> {
                     aSale.dirty = false;
                     this.calcASale(aSale);
+                    return aSale;
                 });
-            return Promise.resolve(aSale);
         }
         // Create a new one
         aSaleItem = new ASaleItem();
@@ -213,7 +201,8 @@ export class SaleService {
         aSaleItem.dirty = true;
         aSale.dirty = true;
 
-        this.createASaleItemAsync(aSaleItem)
+        this.calcASale(aSale);
+        return this.createASaleItemAsync(aSaleItem)
             .then(()=> {
                 aSaleItem.dirty = false;
                 this.calcASale(aSale);
@@ -222,27 +211,25 @@ export class SaleService {
             }).then(()=> {
                 aSale.dirty = false;
                 this.calcASale(aSale);
+                return aSale;
             });
-
-        this.calcASale(aSale);
-        return Promise.resolve(aSale);
     }
 
-    public removeASaleItem(aSaleItem:ASaleItem):Promise<ASale> {
+    public removeASaleItemAsync(aSaleItem:ASaleItem):Promise<ASale> {
         var aSale = aSaleItem.aSale;
 
         this.removeASaleItemFromASaleItems(aSaleItem);
         aSale.dirty = true;
         aSaleItem.dirty = true;
-        this.removeASaleItemAsync(aSaleItem)
+        return this.removeASaleItemAsyncPrivate(aSaleItem)
             .then(()=> {
                 // TODO: search items in //
                 return this.fetchASaleSaleAsync(aSale);
             }).then(()=> {
                 aSale.dirty = false;
                 this.calcASale(aSale);
+                return aSale;
             });
-        return Promise.resolve(aSale);
     }
 
     public setASaleDiscountPercentage(aSale:ASale, percentage:number):Promise<ASale> {
@@ -266,7 +253,7 @@ export class SaleService {
         return Promise.resolve(aSale);
     }
 
-    public setASaleItemDiscountPercentage(aSaleItem:ASaleItem, percentage:number):Promise<ASale> {
+    public setASaleItemDiscountPercentageAsync(aSaleItem:ASaleItem, percentage:number):Promise<ASale> {
         var percentageInt = NumberUtils.toInt(percentage);
         var ratio = NumberUtils.toFixedDecimals(percentage / 100, 2);
         var aSale = aSaleItem.aSale;
@@ -275,7 +262,8 @@ export class SaleService {
         aSaleItem.dirty = true;
         aSale.dirty = true;
 
-        this.updateASaleItemAsync(aSaleItem)
+        this.calcASale(aSale);
+        return this.updateASaleItemAsync(aSaleItem)
             .then(()=> {
                 aSaleItem.dirty = false;
                 this.calcASale(aSale);
@@ -283,20 +271,19 @@ export class SaleService {
             }).then(()=> {
                 aSale.dirty = false;
                 this.calcASale(aSale);
+                return aSale;
             });
-
-        this.calcASale(aSale);
-        return Promise.resolve(aSale);
     }
 
-    public setASaleItemQuantity(aSaleItem:ASaleItem, quantity:number):Promise<ASale> {
+    public setASaleItemQuantityAsync(aSaleItem:ASaleItem, quantity:number):Promise<ASale> {
         var quantityInt = NumberUtils.toInt(quantity);
         var aSale = aSaleItem.aSale;
         aSaleItem.quantity = quantityInt;
         aSaleItem.dirty = true;
         aSale.dirty = true;
 
-        this.updateASaleItemAsync(aSaleItem)
+        this.calcASale(aSale);
+        return this.updateASaleItemAsync(aSaleItem)
             .then(()=> {
                 aSaleItem.dirty = false;
                 this.calcASale(aSale);
@@ -304,20 +291,19 @@ export class SaleService {
             }).then(()=> {
                 aSale.dirty = false;
                 this.calcASale(aSale);
+                return aSale;
             });
-
-        this.calcASale(aSale);
-        return Promise.resolve(aSale);
     }
 
-    public setASaleItemVatExclusive(aSaleItem:ASaleItem, vatExclusive:number):Promise<ASale> {
+    public setASaleItemVatExclusiveAsync(aSaleItem:ASaleItem, vatExclusive:number):Promise<ASale> {
         var vatExclusiveFloat = NumberUtils.toFixedDecimals(vatExclusive, 2);
         var aSale = aSaleItem.aSale;
         aSaleItem.vatExclusive = vatExclusiveFloat;
         aSaleItem.dirty = true;
         aSale.dirty = true;
 
-        this.updateASaleItemAsync(aSaleItem)
+        this.calcASale(aSale);
+        return this.updateASaleItemAsync(aSaleItem)
             .then(()=> {
                 aSaleItem.dirty = false;
                 this.calcASale(aSale);
@@ -325,23 +311,20 @@ export class SaleService {
             }).then(()=> {
                 aSale.dirty = false;
                 this.calcASale(aSale);
+                return aSale;
             });
-
-        this.calcASale(aSale);
-        return Promise.resolve(aSale);
     }
 
-    public setASaleItemComment(aSaleItem:ASaleItem, comment:LocaleTexts):Promise<ASale> {
+    public setASaleItemCommentAsync(aSaleItem:ASaleItem, comment:LocaleTexts):Promise<ASale> {
         var aSale = aSaleItem.aSale;
         aSaleItem.comment = comment;
         aSaleItem.dirty = true;
 
-        this.updateASaleItemAsync(aSaleItem)
+        return this.updateASaleItemAsync(aSaleItem)
             .then(()=> {
                 aSaleItem.dirty = false;
+                return aSale;
             });
-
-        return Promise.resolve(aSale);
     }
 
 
@@ -654,7 +637,7 @@ export class SaleService {
     }
 
 
-    private removeASaleItemAsync(aSaleItem:ASaleItem):Promise<ASale> {
+    private removeASaleItemAsyncPrivate(aSaleItem:ASaleItem):Promise<ASale> {
         if (aSaleItem.itemSaleRequest != null) {
             aSaleItem.itemSaleRequest.discardRequest();
         }
@@ -687,7 +670,7 @@ export class SaleService {
         aSale.items = newItems;
     }
 
-    private closeASaleAsync(aSale:ASale):Promise<ASale> {
+    private closeASaleAsyncPrivate(aSale:ASale):Promise<ASale> {
         if (aSale.saleRequest != null) {
             aSale.saleRequest.discardRequest();
         }
@@ -751,14 +734,14 @@ export class SaleService {
             vatExlusive += itemTotal;
             vatAmount += itemVatAmount;
 
-            console.log("calc "+itemTotal+' for item');
+            console.log("calc " + itemTotal + ' for item');
         }
 
         if (!aSale.dirty && sale != null) {
             aSale.vatAmount = sale.vatAmount;
             aSale.vatExclusive = sale.vatExclusiveAmount;
             aSale.discountAmount = sale.discountAmount;
-            aSale.total = aSale.vatExclusive = aSale.vatAmount;
+            aSale.total = aSale.vatExclusive + aSale.vatAmount;
             return;
         }
 
@@ -770,11 +753,11 @@ export class SaleService {
             vatAmount -= tvaDiscount;
         }
 
-        console.log("calc "+vatAmount+" vat, "+vatExlusive+' total');
+        console.log("calc " + vatAmount + " vat, " + vatExlusive + ' total');
         aSale.discountAmount = discountAmount;
         aSale.vatAmount = vatAmount;
         aSale.vatExclusive = vatExlusive;
-        aSale.total = aSale.vatExclusive = aSale.vatAmount;
+        aSale.total = aSale.vatExclusive + aSale.vatAmount;
     }
 
 }

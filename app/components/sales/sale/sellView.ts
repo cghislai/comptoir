@@ -33,6 +33,7 @@ import {PayView} from 'components/sales/sale/payView/payView'
 export class SellView {
     saleService:SaleService;
     posService:PosService;
+    appService:ApplicationService;
     allPosList:Pos[];
     pos:Pos;
     posId:number;
@@ -49,8 +50,10 @@ export class SellView {
                 router:Router, routeParams:RouteParams, location:Location) {
         this.saleService = saleService;
         this.posService = posService;
+        this.appService = appService;
         this.router = router;
         this.location = location;
+
         this.language = appService.language.locale;
 
 
@@ -78,6 +81,8 @@ export class SellView {
                     this.pos = result.list[0];
                     this.posId = this.pos.id;
                 }
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
     }
 
@@ -120,36 +125,42 @@ export class SellView {
     }
 
     getSale(idNumber:number) {
-        this.aSale = new ASale();
-        this.saleService.getASale(idNumber)
+        var aSale = this.saleService.createASale();
+        aSale.saleId = idNumber;
+        this.aSale = aSale;
+
+        this.saleService.fetchASaleAsync(aSale)
             .then((aSale)=> {
                 this.aSale = aSale;
                 this.saleService.activeSale = aSale.sale;
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
         this.location.go('/sales/sale/' + idNumber);
     }
 
     createSale() {
-        this.saleService.createASale().then((aSale)=> {
-            this.aSale = aSale;
-        });
+        this.aSale = this.saleService.createASale();
         this.saleService.activeSale = null;
         this.location.go('/sales/sale/new');
     }
 
     onSaleInvalidated() {
-        this.saleService.removeASale(this.aSale).then(()=> {
-            this.aSale = null;
-            return this.saleService.createASale();
-        }).then((aSale:ASale)=> {
-            this.aSale = aSale;
-            this.location.go('/sales/sale/new');
-        });
+        this.saleService.removeASaleAsync(this.aSale)
+            .then(()=> {
+                this.aSale = null;
+                this.saleService.activeSale = null;
+                return this.saleService.createASale();
+            }).then((aSale:ASale)=> {
+                this.aSale = aSale;
+                this.location.go('/sales/sale/new');
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
+            });
     }
 
     onItemClicked(item:Item, commandView:CommandView, itemList:ItemListView) {
         itemList.focus();
-
 
         // Open sale if required
         if (this.aSale.sale == null) {
@@ -159,12 +170,17 @@ export class SellView {
                     var activeSaleId = aSale.saleId;
                     this.location.go('/sales/sale/' + activeSaleId);
                     return this.saleService
-                        .addItemToASale(aSale, item);
+                        .addItemToASaleAsync(aSale, item);
+                }).catch((error)=> {
+                    this.appService.handleRequestError(error);
                 });
             return;
         }
 
-        return this.saleService.addItemToASale(this.aSale, item);
+        return this.saleService.addItemToASaleAsync(this.aSale, item)
+            .catch((error)=> {
+                this.appService.handleRequestError(error);
+            });
     }
 
 
@@ -177,7 +193,12 @@ export class SellView {
     }
 
     onCommandPaid() {
-        this.saleService.closeASale(this.aSale);
+        this.saleService.closeASaleAsync(this.aSale)
+            .then(()=>{
+
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
+            });
 
         this.saleService.activeSale = null;
         this.payStep = false;

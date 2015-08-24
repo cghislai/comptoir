@@ -48,7 +48,11 @@
         </thead>
         <tbody>
         <tr *ng-for="#pay of aSalePay.payItems" class="payItem">
-            <td>{{ pay.account.description[language] }}</td>
+            <td>
+                <span *ng-if="pay.account != null">
+                    {{ pay.account.description[language] }}
+                </span>
+            </td>
             <td class="number">
                 <a class="edit actionlink" (^click)="startEditPayItem(pay)">
                     {{ pay.amount | currency:'EUR':true:'.2-2' }}

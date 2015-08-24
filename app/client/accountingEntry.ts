@@ -110,6 +110,15 @@ export class AccountingEntryClient {
             });
     }
 
+    getSearchAccountingEntriesRequest(search:AccountingEntrySearch, pagination:Pagination, authToken:string):ComptoirRequest {
+        var request = new ComptoirRequest();
+        var url = this.getSearchUrl(pagination);
+
+        request.setup('POST', url, authToken);
+        request.setupData(search);
+        return request;
+    }
+
     deleteAccountingEntry(id:number, authToken:string):Promise<any> {
         var request = new ComptoirRequest();
         var url = this.getAccountingEntryUrl(id);

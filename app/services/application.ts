@@ -9,6 +9,7 @@ export class ApplicationService {
     appName:string;
     appVersion:string;
     language:Language;
+
     hasError:boolean = false;
     errorContent:string;
     errorHeader:string;
@@ -40,8 +41,8 @@ export class ApplicationService {
         this.errorContent = "Request: " + error.request.getDebugString();
         this.errorContent = "Response code:" + error.code + "\n";
         this.errorContent += "Message: " + error.text;
-        this.errorFooter = "Essayer de répéter l'action que vous venez de commetre.<br/>";
-        this.errorFooter += "Si le probleme persiste, contactez";
+        this.errorFooter = "Essayer de répéter l'action que vous venez de commettre.<br/>";
+        this.errorFooter += "Si le probleme persiste, contactez ";
         this.errorFooter += this.getMailtoSupportLink();
         this.errorFooter += ".";
     }
@@ -50,12 +51,13 @@ export class ApplicationService {
         var string = "<a href='mailto:support@valuya.be'>le support</a>";
         return string;
     }
+
     showFatalError(error:Error) {
         this.hasError = true;
         this.errorHeader = "Une erreur fatale s'est produite.";
         this.errorContent = error.name;
         this.errorContent += ": " + error.message;
-        this.errorFooter = "Veuillez contacter";
+        this.errorFooter = "Veuillez contacter ";
         this.errorFooter += this.getMailtoSupportLink();
         this.errorFooter += ".";
     }
@@ -63,6 +65,8 @@ export class ApplicationService {
     dismissError() {
         this.hasError = false;
         this.errorContent = null;
+        // refresh page
+        window.location.reload();
     }
 
 }

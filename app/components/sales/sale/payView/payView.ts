@@ -32,6 +32,7 @@ import {FastInput} from 'directives/fastInput'
 export class PayView {
     accountService:AccountService;
     paymentService:PaymentService;
+    appService:ApplicationService;
     language:string;
 
     aSalePay:ASalePay;
@@ -48,6 +49,7 @@ export class PayView {
                 paymentService:PaymentService) {
         this.accountService = accountService;
         this.paymentService = paymentService;
+        this.appService = applicationService;
         this.language = applicationService.language.locale;
         this.aSalePay = new ASalePay();
     }
@@ -61,11 +63,14 @@ export class PayView {
     }
 
     start() {
-        this.paymentService.createASalePay(this.sale, this.pos)
-            .then((aSalePay:ASalePay)=> {
-                this.aSalePay = aSalePay;
+        this.aSalePay = this.paymentService.createASalePay(this.sale, this.pos);
+
+        this.paymentService.findASalePayItemsAsync(this.aSalePay)
+            .catch((error)=> {
+                this.appService.handleRequestError(error);
             });
         this.searchAccounts();
+
     }
 
     searchAccounts() {
@@ -79,6 +84,8 @@ export class PayView {
         this.accountService.searchAccounts(accountSearch, null)
             .then((result:SearchResult<Account>)=> {
                 thisView.allAccounts = result.list;
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
     }
 
@@ -121,9 +128,15 @@ export class PayView {
             var newItem = this.editingPayItem.accountingEntryId == null;
             if (newItem) {
                 this.editingPayItem.amount = amount;
-                this.paymentService.createASalePayItem(this.editingPayItem);
+                this.paymentService.createASalePayItem(this.editingPayItem)
+                    .catch((error)=> {
+                        this.appService.handleRequestError(error);
+                    });
             } else {
-                this.paymentService.setASalePayItemAmount(this.editingPayItem, amount);
+                this.paymentService.setASalePayItemAmount(this.editingPayItem, amount)
+                    .catch((error)=> {
+                        this.appService.handleRequestError(error);
+                    });
             }
         }
         this.cancelEditPayItem();
@@ -134,7 +147,10 @@ export class PayView {
     }
 
     removePayItem(payItem:ASalePayItem) {
-        return this.paymentService.removeASalePayItem(payItem);
+        return this.paymentService.removeASalePayItem(payItem)
+            .catch((error)=> {
+            this.appService.handleRequestError(error);
+        });
     }
 
     onValidateClicked() {

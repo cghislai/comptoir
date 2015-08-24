@@ -14,6 +14,7 @@ import {ComptoirResponse} from 'client/utils/request';
 import {NumberUtils} from 'client/utils/number';
 
 import {AccountingEntryClient} from 'client/accountingEntry';
+import {AccountClient} from 'client/account';
 
 import {AuthService} from 'services/auth';
 
@@ -22,13 +23,15 @@ export class PaymentService {
 
     authService:AuthService;
     accountingEntryClient:AccountingEntryClient;
+    accountClient:AccountClient;
 
     constructor(@Inject authService:AuthService) {
         this.authService = authService;
         this.accountingEntryClient = new AccountingEntryClient();
+        this.accountClient = new AccountClient();
     }
 
-    public createASalePay(aSale:ASale, pos:Pos):Promise<ASalePay> {
+    public createASalePay(aSale:ASale, pos:Pos):ASalePay {
         var salePay = new ASalePay();
         salePay.amount = 0;
         salePay.aSale = aSale;
@@ -38,10 +41,21 @@ export class PaymentService {
         salePay.pos = pos;
         salePay.searchItemsRequest = null;
         this.calcASalePay(salePay);
-        return Promise.resolve(salePay);
+        return salePay;
     }
 
-    public createASalePayItem(aSalePayItem: ASalePayItem):Promise<ASalePay> {
+    public findASalePayItemsAsync(aSalePay:ASalePay):Promise<ASalePay> {
+        aSalePay.dirty = true;
+        this.calcASalePay(aSalePay);
+        return this.findASalePayItemsAsyncPrivate(aSalePay)
+            .then(()=>{
+                aSalePay.dirty = false;
+                this.calcASalePay(aSalePay);
+                return aSalePay;
+            });
+    }
+
+    public createASalePayItem(aSalePayItem:ASalePayItem):Promise<ASalePay> {
         var sale = aSalePayItem.aSalePay.aSale.sale;
         var account = aSalePayItem.account;
         var amount = aSalePayItem.amount;
@@ -187,6 +201,7 @@ export class PaymentService {
 
     private setASalePayItemAcccountingEntry(aSalePayItem:ASalePayItem, accountingEntry:AccountingEntry) {
         aSalePayItem.accountingEntry = accountingEntry;
+        aSalePayItem.accountingEntryId = accountingEntry.id;
         aSalePayItem.amount = accountingEntry.amount;
     }
 
@@ -206,6 +221,55 @@ export class PaymentService {
         aSalePay.payItems = newItems;
     }
 
+    private findASalePayItemsAsyncPrivate(aSalePay:ASalePay):Promise<ASalePay> {
+        if (aSalePay.searchItemsRequest != null) {
+            aSalePay.searchItemsRequest.discardRequest();
+        }
+
+        var aSale = aSalePay.aSale;
+        var sale = aSale.sale;
+        var transactionRef = sale.accountingTransactionRef;
+        var companyRef = this.authService.loggedEmployee.companyRef;
+        var authToken = this.authService.authToken;
+
+        var entrySearch = new AccountingEntrySearch();
+        entrySearch.accountingTransactionRef = transactionRef;
+        entrySearch.companyRef = companyRef;
+
+        aSalePay.searchItemsRequest = this.accountingEntryClient.getSearchAccountingEntriesRequest(entrySearch, null, authToken);
+
+        return aSalePay.searchItemsRequest.run()
+            .then((response:ComptoirResponse)=> {
+                var result = new SearchResult<AccountingEntry>()
+                    .parseResponse(response, AccountingEntryFactory.fromJSONAccountingEntryReviver);
+                return this.setASalePayItemsAsync(aSalePay, result);
+            });
+    }
+
+    private setASalePayItemsAsync(aSalePay:ASalePay, result:SearchResult<AccountingEntry>):Promise<ASalePay> {
+        aSalePay.payItems = [];
+        var tasklist = [];
+        var authToken = this.authService.authToken;
+        for (var entry of result.list) {
+            var payItem = new ASalePayItem();
+            payItem.aSalePay = aSalePay;
+
+            this.setASalePayItemAcccountingEntry(payItem, entry);
+            aSalePay.payItems.push(payItem);
+
+            var accountId = entry.accountRef.id;
+            var fetchAccountTask = this.accountClient.getAccount(accountId, authToken)
+                .then((account)=> {
+                    payItem.account = account;
+                });
+            tasklist.push(fetchAccountTask);
+        }
+        return Promise.all(tasklist)
+            .then(()=> {
+                return aSalePay;
+            });
+    }
+
     private calcASalePay(aSalePay:ASalePay) {
         var totalPaid:number = 0;
         for (var payItem of aSalePay.payItems) {
@@ -221,7 +285,7 @@ export class PaymentService {
 
         totalPaid = NumberUtils.toFixedDecimals(totalPaid, 2);
         aSalePay.amount = totalPaid;
-        var missingAmount = NumberUtils.toFixedDecimals( toPay - totalPaid, 2);
+        var missingAmount = NumberUtils.toFixedDecimals(toPay - totalPaid, 2);
         aSalePay.missingAmount = missingAmount;
     }
 
