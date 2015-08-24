@@ -4,11 +4,7 @@ $onWhiteHoverColor: rgba(139, 170, 242, .5);
 $onWhiteLinkColor: #6981B8;
 $tableRowHoverColor: rgba(128, 128, 128, 0.1);
 $focusColor: $onWhiteHoverColor;
-
-:focus {
-  border: .1em solid $focusColor;
-  box-shadow: 0 0 .2em .1em $focusColor;
-}
+$onBlueFocusColor: #FFFBA1;
 
 .coloredHeader:not([hidden]) {
   background: $blueColor;
@@ -93,10 +89,29 @@ $focusColor: $onWhiteHoverColor;
   cursor: pointer;;
 }
 
-input.number {
-  text-align: right;
-  width: 5em;
+input {
+  font-size: 1em;
+  padding: .1em;
+  outline: .1em solid transparent;
+  &.number {
+    text-align: right;
+    width: 5em;
+  }
 }
+
+select {
+  outline: .1em solid transparent;
+}
+
+:focus {
+  outline: .1em solid $focusColor;
+  box-shadow: 0 0 .2em .1em $focusColor;
+}
+.coloredHeader :focus {
+  outline: .1em solid $onBlueFocusColor;
+  box-shadow: 0 0 .2em .1em $onBlueFocusColor;
+}
+
 
 table.dataTable, div.dataTable {
   width: 100%;
@@ -306,10 +321,4 @@ a.disabled, a.disabled:hover {
     vertical-align: top;
     width: 100%;
   }
-}
-
-input {
-  font-size: 1em;
-  padding: .1em;
-  border: .1em inset;
 }

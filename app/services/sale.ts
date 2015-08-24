@@ -161,7 +161,7 @@ export class SaleService {
         return Promise.resolve(aSale);
     }
 
-    public removeASale(aSale: ASale): Promise<any> {
+    public removeASale(aSale:ASale):Promise<any> {
         if (aSale.sale == null) {
             return Promise.resolve();
         }
@@ -226,18 +226,18 @@ export class SaleService {
         return Promise.resolve(aSale);
     }
 
-    public removeASaleItem(aSaleItem: ASaleItem) : Promise<ASale> {
+    public removeASaleItem(aSaleItem:ASaleItem):Promise<ASale> {
         var aSale = aSaleItem.aSale;
 
         this.removeASaleItemFromASaleItems(aSaleItem);
         aSale.dirty = true;
         aSaleItem.dirty = true;
         this.removeASaleItemAsync(aSaleItem)
-        .then(()=>{
+            .then(()=> {
                 // TODO: search items in //
                 return this.fetchASaleSaleAsync(aSale);
-            }).then(()=>{
-                aSale.dirty = false
+            }).then(()=> {
+                aSale.dirty = false;
                 this.calcASale(aSale);
             });
         return Promise.resolve(aSale);
@@ -245,9 +245,14 @@ export class SaleService {
 
     public setASaleDiscountPercentage(aSale:ASale, percentage:number):Promise<ASale> {
         var percentageInt = NumberUtils.toInt(percentage);
-        var ratio = NumberUtils.toFixedDecimals(percentage / 100, 2);
-        aSale.discountPercentage = percentageInt;
-        aSale.discountRate = ratio;
+        if (isNaN(percentageInt)) {
+            aSale.discountPercentage = null;
+            aSale.discountRate = null;
+        } else {
+            var ratio = NumberUtils.toFixedDecimals(percentage / 100, 2);
+            aSale.discountPercentage = percentageInt;
+            aSale.discountRate = ratio;
+        }
         aSale.dirty = true;
 
         this.updateASaleSaleAsync(aSale)
@@ -701,7 +706,7 @@ export class SaleService {
             var itemVatExclusive:number = null;
             var itemVatRate:number = null;
             var itemDiscountRatio:number = null;
-            var itemTotal: number = null;
+            var itemTotal:number = null;
 
             var itemSale = aSaleItem.itemSale;
             if (!aSaleItem.dirty && itemSale != null) {

@@ -15,6 +15,7 @@ import {NumberUtils} from 'client/utils/number';
 import {SaleService} from 'services/sale';
 
 import {AutoFocusDirective} from 'directives/autoFocus';
+import {FastInput} from 'directives/fastInput';
 import {ApplicationService} from 'services/application';
 
 
@@ -28,7 +29,7 @@ import {ApplicationService} from 'services/application';
 @View({
     templateUrl: './components/sales/sale/commandView/commandView.html',
     styleUrls: ['./components/sales/sale/commandView/commandView.css'],
-    directives: [AutoFocusDirective, NgFor, NgIf, formDirectives]
+    directives: [AutoFocusDirective, FastInput, NgFor, NgIf, formDirectives]
 })
 
 export class CommandView {
@@ -66,9 +67,55 @@ export class CommandView {
             });
     }
 
-    // Item edit
+    doValidate() {
+        this.validated = true;
+        this.validate.next(this.validated);
+    }
 
-    canceEdits() {
+    doUnvalidate() {
+        this.validated = false;
+        this.validate.next(this.validated);
+    }
+
+    // Validators
+
+    validateQuantity(value:string) {
+        if (value.length > 0) {
+            var intValue = parseInt(value);
+            if (isNaN(intValue)) {
+                return false;
+            }
+            return intValue > 0;
+        }
+        return true;
+    }
+
+    validateDiscount(value:string) {
+        if (value.length > 0) {
+            var intValue = parseInt(value);
+            if (isNaN(intValue)) {
+                return false;
+            }
+            return intValue >= 0 && intValue <= 100;
+        }
+        return true;
+    }
+
+    validatePrice(value:string) {
+        if (value.length > 0) {
+
+            var floatValue = parseFloat(value);
+            if (isNaN(floatValue)) {
+                return false;
+            }
+            return floatValue > 0;
+        }
+        return true;
+    }
+
+    // Edits
+
+    cancelEdits() {
         this.editingItem = null;
         this.editingItemQuantity = false;
         this.editingItemComment = false;
@@ -82,52 +129,30 @@ export class CommandView {
     // Item comment
 
     doEditItemComment(aSaleItem:ASaleItem) {
-        this.canceEdits();
+        this.cancelEdits();
         this.editingItem = aSaleItem;
         this.editingItemComment = true;
-    }
-
-    onItemCommentKeyEvent(event) {
-        if (event.which == 13) { // Enter
-            this.onItemCommentChanged(event);
-            this.applyItemComment();
-            return false;
+        if (this.editingItem.comment[this.language] == null) {
+            this.editingItem.comment[this.language] = '';
         }
-        if (event.which == 27) { // Escape
-            this.cancelItemComment();
-            return false;
-        }
-        return false;
     }
 
-    onItemCommentChanged(event) {
-        var commentString:string = event.target.value;
-        this.editingItem.comment = new LocaleTexts();
-        this.editingItem.comment[this.language] = commentString;
-    }
-
-    applyItemComment() {
+    onItemCommentChange(event) {
+        var commentTexts = this.editingItem.comment;
+        commentTexts[this.language] = event;
         this.saleService.setASaleItemComment(
-            this.editingItem,
-            this.editingItem.comment);
-        this.canceEdits();
+            this.editingItem, commentTexts
+        );
+        this.cancelEdits();
     }
 
-    cancelItemComment() {
-        var oldComment = this.editingItem.itemSale.comment;
-        if (oldComment == null) {
-            this.editingItem.comment = oldComment;
-        }
-        this.editingItem.comment = new LocaleTexts();
-        this.canceEdits();
-    }
 
     hasComment(saleItem:ASaleItem) {
         if (saleItem.comment == null) {
             return false;
         }
         var text = saleItem.comment[this.language];
-        if (text != null && text.length > 0) {
+        if (text != null && text.trim().length > 0) {
             return true;
         }
         return false;
@@ -136,217 +161,88 @@ export class CommandView {
     // Item discount
 
     doEditItemDiscount(aSaleItem:ASaleItem) {
-        this.canceEdits();
+        this.cancelEdits();
         this.editingItem = aSaleItem;
         this.editingItemDiscount = true;
     }
 
-    onItemDiscountKeyEvent(event) {
-        if (event.which == 13) { // Enter
-            this.onItemDiscountChanged(event);
-            this.applyItemDiscount();
-            return false;
-        }
-        if (event.which == 27) { // Escape
-            this.cancelItemDiscount();
-            return false;
-        }
-        return false;
-    }
-
-    onItemDiscountChanged(event) {
-        var discountString:string = event.target.value;
-        var discountPercentage = parseInt(discountString);
+    onItemDiscountChange(newValue) {
+        var discountPercentage = parseInt(newValue);
         if (isNaN(discountPercentage)) {
-            this.editingItem.discountPercentage = null;
-            return false;
+            this.saleService.setASaleItemDiscountPercentage(
+                this.editingItem, null);
+        } else {
+            this.saleService.setASaleItemDiscountPercentage(
+                this.editingItem, discountPercentage);
         }
-        this.editingItem.discountPercentage = discountPercentage;
+        this.cancelEdits();
     }
-
-    applyItemDiscount() {
-        this.saleService.setASaleItemDiscountPercentage(
-            this.editingItem,
-            this.editingItem.discountPercentage);
-        this.canceEdits();
-    }
-
-    cancelItemDiscount() {
-        var oldDiscount = this.editingItem.itemSale.discountRatio;
-        if (oldDiscount == null) {
-            this.editingItem.discountPercentage = null;
-        }
-        this.editingItem.discountPercentage = oldDiscount * 100;
-        this.canceEdits();
-    }
-
 
     // Item quantity
 
     doEditItemQuantity(aSaleItem:ASaleItem) {
-        this.canceEdits();
+        this.cancelEdits();
         this.editingItem = aSaleItem;
         this.editingItemQuantity = true;
     }
 
-    onItemQuantityKeyEvent(event) {
-        if (event.which == 13) { // Enter
-            this.onItemQuantityChanged(event);
-            this.applyItemQuantity();
-            return false;
-        }
-        if (event.which == 27) { // Escape
-            this.cancelItemQuantity();
-            return false;
-        }
-        return false;
-    }
 
-    onItemQuantityChanged(event) {
-        var quantityString:string = event.target.value;
-        var quantity = parseInt(quantityString);
+    onItemQuantityChange(newValue) {
+        var quantity = parseInt(newValue);
         if (isNaN(quantity)) {
-            this.editingItem.quantity = null;
-            return false;
+            this.saleService.setASaleItemQuantity(
+                this.editingItem, 1);
+        } else {
+            if (quantity == 0) {
+                quantity = 1;
+            }
+            this.saleService.setASaleItemQuantity(
+                this.editingItem, quantity);
         }
-        this.editingItem.quantity = quantity;
-    }
-
-    applyItemQuantity() {
-        this.saleService.setASaleItemQuantity(
-            this.editingItem,
-            this.editingItem.quantity);
-        this.canceEdits();
-    }
-
-    cancelItemQuantity() {
-        var oldQuantity = this.editingItem.itemSale.quantity;
-        if (oldQuantity == null) {
-            this.editingItem.quantity = null;
-        }
-        this.editingItem.quantity = oldQuantity;
-        this.canceEdits();
+        this.cancelEdits();
     }
 
     // Item price
 
     doEditItemPrice(aSaleItem:ASaleItem) {
-        this.canceEdits();
+        this.cancelEdits();
         this.editingItem = aSaleItem;
         this.editingItemPrice = true;
     }
 
-    onItemPriceKeyEvent(event) {
-        if (event.which == 13) { // Enter
-            this.onItemPriceChanged(event);
-            this.applyItemPrice();
-            return false;
-        }
-        if (event.which == 27) { // Escape
-            this.cancelItemPrice();
-            return false;
-        }
-        return false;
-    }
 
-    onItemPriceChanged(event) {
-        var priceString:string = event.target.value;
-        var price = parseFloat(priceString);
+    onItemPriceChange(newValue) {
+        var price = parseFloat(newValue);
         if (isNaN(price)) {
-            this.editingItem.vatExclusive = null;
-            return false;
+            this.saleService.setASaleItemVatExclusive(
+                this.editingItem, null);
+        } else {
+            var vatExclusive = NumberUtils.toFixedDecimals(price, 2);
+            this.saleService.setASaleItemVatExclusive(
+                this.editingItem, vatExclusive);
         }
-        var vatExclusive = NumberUtils.toFixedDecimals(price, 2);
-        this.editingItem.vatExclusive = vatExclusive;
+        this.cancelEdits();
     }
 
-    applyItemPrice() {
-        this.saleService.setASaleItemVatExclusive(
-            this.editingItem,
-            this.editingItem.vatExclusive);
-        this.canceEdits();
-    }
-
-    cancelItemPrice() {
-        var oldPrice = this.editingItem.itemSale.vatExclusive;
-        if (oldPrice == null) {
-            this.editingItem.vatExclusive = null;
-        }
-        this.editingItem.vatExclusive = oldPrice;
-        this.canceEdits();
-    }
-
-
-    // Item discount
+    // Sale discount
 
     doEditSaleDiscount() {
-        this.canceEdits();
+        this.cancelEdits();
         this.editingSaleDiscount = true;
     }
 
-    onSaleDiscountKeyEvent(event) {
-        if (event.which == 13) { // Enter
-            this.onSaleDiscountChanged(event);
-            this.applySaleDiscount();
-            return false;
+
+    onSaleDiscountChange(newValue:string) {
+        var intValue = parseInt(newValue);
+        if (isNaN(intValue)) {
+            this.saleService.setASaleDiscountPercentage(
+                this.aSale, null);
+        } else {
+            this.saleService.setASaleDiscountPercentage(
+                this.aSale, intValue);
         }
-        if (event.which == 27) { // Escape
-            this.cancelSaleDiscount();
-            return false;
-        }
-        return false;
+        this.cancelEdits();
     }
 
-    onSaleDiscountChanged(event) {
-        var discountString:string = event.target.value;
-        var discountPercentage = parseInt(discountString);
-        if (isNaN(discountPercentage)) {
-            this.aSale.discountPercentage = null;
-            return false;
-        }
-        this.aSale.discountPercentage = discountPercentage;
-    }
-
-    applySaleDiscount() {
-        this.saleService.setASaleDiscountPercentage(
-            this.aSale,
-            this.aSale.discountPercentage);
-        this.canceEdits();
-    }
-
-    cancelSaleDiscount() {
-        var oldDiscount = this.aSale.sale.discountRatio;
-        if (oldDiscount == null) {
-            this.aSale.discountPercentage = null;
-        }
-        this.aSale.discountPercentage = oldDiscount * 100;
-        this.canceEdits();
-    }
-
-    doValidateItemEdit() {
-        if (this.editingItemComment) {
-            this.applyItemComment();
-        }
-        if (this.editingItemDiscount) {
-            this.applyItemDiscount();
-        }
-        if (this.editingItemPrice) {
-            this.applyItemPrice();
-        }
-        if (this.editingItemQuantity) {
-            this.applyItemQuantity();
-        }
-    }
-
-
-    doValidate() {
-        this.validated = true;
-        this.validate.next(this.validated);
-    }
-
-    doUnvalidate() {
-        this.validated = false;
-        this.validate.next(this.validated);
-    }
 
 }

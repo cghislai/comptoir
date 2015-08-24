@@ -54,8 +54,7 @@
         text-align: center;
         height: 100%;
         display: table;
-        padding: .5em;
-        padding-bottom: 0;
+        padding: .5em .5em 0;
         font-weight: bold;
 
         .tab {
@@ -73,8 +72,6 @@
             vertical-align: middle;
             height: 100%;
             text-decoration: none;
-            border: none;
-            box-shadow: none;
         }
         a[href]:not(.active):hover {
             color: yellow;
@@ -84,11 +81,12 @@
             cursor: default;
         }
         a.active {
-            border: .1em solid;
             background-color: white;
             color: black;
-            border: none;
+            outline: none;
+            box-shadow: none;
             pointer-events: none;
+            tab-index: -1;
         }
         a:not([href]):not(.active) {
             color: lightgray;
