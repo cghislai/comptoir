@@ -63,10 +63,9 @@
                 <span class="amount">
                     <input type="number" min="0" step="1"
                            [value]="aMoneyPile.moneyPile.count"
-                           (keyup)="onCashInputKeyUp(aMoneyPile, $event)"
-                           (input)="onCashInputChanged(aMoneyPile, $event)"
-                           (blur)="applyCashInput(aMoneyPile)"
-                           size="5">
+                           [validator]="validateAmount"
+                           (fast-change)="onCashInputChanged(aMoneyPile, $event)"
+                           size="5" fast-input>
                 </span>
                 <span class="total">
                     {{ aMoneyPile.total | currency:'EUR':true:'.2-2'}}
@@ -87,12 +86,11 @@
                     <div class="editAmount">
                         <input type="number" min="0.01" step="0.01"
                                #totalInput *ng-if="editingTotal"
-                               [value]="aBalance.total | number:'.2-2'"
-                               (keyup)="onTotalKeyup($event)"
-                               (input)="onTotalChanged($event)"
-                               (blur)="applyTotal()"
+                               [value]="aBalance.total"
+                               [validator]="validatePrice"
+                               (fast-change)="onTotalChanged($event)"
                                class="number"
-                               autoFocus>
+                               fast-input>
                     </div>
                 </span>
             </div>

@@ -51,7 +51,7 @@ class PosFormModel {
 export class EditPosView {
     posId:number;
     posService:PosService;
-    applicationService:ApplicationService;
+    appService:ApplicationService;
     authService:AuthService;
     router:Router;
 
@@ -68,13 +68,13 @@ export class EditPosView {
         this.router = router;
         this.posService = posService;
         this.authService = authService;
-        this.applicationService = appService;
+        this.appService = appService;
         this.language = appService.language;
         this.buildFormModel();
     }
 
     buildFormModel() {
-        var lastEditLanguage = this.applicationService.laseUsedEditLanguage;
+        var lastEditLanguage = this.appService.laseUsedEditLanguage;
         if (this.posId == null) {
             this.posModel = new PosFormModel();
             this.posModel.language = lastEditLanguage;
@@ -84,6 +84,8 @@ export class EditPosView {
         this.posService.getPos(this.posId)
             .then(function (pos:Pos) {
                 thisView.posModel = new PosFormModel(pos, lastEditLanguage);
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
     }
 
@@ -95,6 +97,8 @@ export class EditPosView {
         this.posService.savePos(pos)
             .then((posRef)=> {
                 this.router.navigate('/pos/list');
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
 
     }

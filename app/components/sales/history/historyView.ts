@@ -25,6 +25,7 @@ import {SaleListComponent, SaleColumn} from 'components/sales/saleList/saleList'
 
 export class SaleHistoryView {
     saleService:SaleService;
+    appService:ApplicationService;
     router:Router;
     language:string;
 
@@ -32,7 +33,7 @@ export class SaleHistoryView {
     pagination:Pagination;
 
     salesResult:SearchResult<Sale>;
-    columns: SaleColumn[];
+    columns:SaleColumn[];
     salesPerPage:number = 25;
 
     loading:boolean;
@@ -41,6 +42,7 @@ export class SaleHistoryView {
     constructor(saleService:SaleService, applicationService:ApplicationService,
                 router:Router, authService:AuthService) {
         this.saleService = saleService;
+        this.appService = applicationService;
         this.router = router;
         this.saleSearch = new SaleSearch();
         this.saleSearch.companyRef = authService.loggedEmployee.companyRef
@@ -68,6 +70,8 @@ export class SaleHistoryView {
             .then(function (result) {
                 thisView.salesResult = result;
                 thisView.loading = false;
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
     }
 

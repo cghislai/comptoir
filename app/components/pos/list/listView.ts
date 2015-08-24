@@ -30,6 +30,7 @@ import {FocusableDirective} from 'directives/focusable'
 
 export class PosListView {
     posService:PosService;
+    appService: ApplicationService;
     router:Router;
 
     posSearch:PosSearch;
@@ -44,6 +45,7 @@ export class PosListView {
     constructor(posService:PosService, appService:ApplicationService,
                 authService:AuthService, router:Router) {
         this.posService = posService;
+        this.appService = appService;
         this.router = router;
 
         this.posSearch = new PosSearch();
@@ -68,9 +70,8 @@ export class PosListView {
                 thisView.posSearchResult = result;
                 thisView.posCount = result.count;
                 thisView.loading = false;
-            }, function (error) {
-                console.log("Failed to load pos list : " + error);
-                thisView.loading = false;
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
     }
 
@@ -92,8 +93,8 @@ export class PosListView {
             .removePos(pos)
             .then(function (result) {
                 thisView.searchPosList();
-            }, function (error) {
-                console.log("Failed to remove pos : " + error);
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
     }
 

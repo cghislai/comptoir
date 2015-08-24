@@ -25,7 +25,7 @@
                 <commandView #commandview
                              (validate)="onCommandValidated($event, payview)"
                              (sale-invalidated)="onSaleInvalidated()"
-                             [(sale)]="aSale" [validated]="commandValidated"></commandView>
+                             [(sale)]="aSale" [validated]="payStep"></commandView>
             </div>
         </div>
         <div class="payView">

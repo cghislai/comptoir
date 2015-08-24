@@ -21,19 +21,19 @@ import {AuthService} from 'services/auth';
     directives: [NgFor, NgIf, formDirectives]
 })
 export class ApplicationSettingsView {
-    applicationService:ApplicationService;
+    appService:ApplicationService;
     companyService:CompanyService;
-    authService: AuthService;
-    employeeService: EmployeeService;
+    authService:AuthService;
+    employeeService:EmployeeService;
 
     companyValue:Company;
-    employeeValue: Employee;
-    allLanguages=Language.ALL_LANGUAGES;
+    employeeValue:Employee;
+    allLanguages = Language.ALL_LANGUAGES;
     language:Language;
 
     constructor(applicationService:ApplicationService, companyService:CompanyService,
-                authService:AuthService, employeeService: EmployeeService) {
-        this.applicationService = applicationService;
+                authService:AuthService, employeeService:EmployeeService) {
+        this.appService = applicationService;
         this.companyService = companyService;
         this.authService = authService;
         this.employeeValue = this.authService.loggedEmployee;
@@ -53,6 +53,8 @@ export class ApplicationSettingsView {
             .getCompany(companyRef.id)
             .then(function (result:Company) {
                 thisView.companyValue = result;
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
     }
 
@@ -67,8 +69,8 @@ export class ApplicationSettingsView {
             this.authService.loggedEmployee = this.employeeValue;
             var thisView = this;
             this.employeeService.updateEmployee(this.employeeValue)
-            .catch(function(error) {
-                    thisView.applicationService.showFatalError(error);
+                .catch((error)=> {
+                    this.appService.handleRequestError(error);
                 });
         }
     }

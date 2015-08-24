@@ -61,7 +61,7 @@ export class RegisterView {
             .then((employee)=> {
                 thisView.router.navigate('/sales/sale/new');
             }).catch((error)=> {
-                this.appService.showFatalError(error);
+                this.appService.handleRequestError(error);
             });
     }
 

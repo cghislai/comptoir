@@ -25,6 +25,7 @@ import {SaleListComponent, SaleColumn} from 'components/sales/saleList/saleList'
 
 export class ActiveSalesView {
     saleService:SaleService;
+    appService:ApplicationService;
     router:Router;
     language:string;
 
@@ -32,7 +33,7 @@ export class ActiveSalesView {
     pagination:Pagination;
 
     salesResult:SearchResult<Sale>;
-    columns: SaleColumn[];
+    columns:SaleColumn[];
     salesPerPage:number = 25;
 
     loading:boolean;
@@ -41,6 +42,7 @@ export class ActiveSalesView {
     constructor(saleService:SaleService, applicationService:ApplicationService,
                 router:Router, authService:AuthService) {
         this.saleService = saleService;
+        this.appService = applicationService;
         this.router = router;
         this.saleSearch = new SaleSearch();
         this.saleSearch.companyRef = authService.loggedEmployee.companyRef
@@ -71,6 +73,8 @@ export class ActiveSalesView {
             .then(function (result) {
                 thisView.salesResult = result;
                 thisView.loading = false;
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
     }
 
@@ -99,12 +103,13 @@ export class ActiveSalesView {
 
     doRemoveSale(sale:Sale) {
         this.saleService.removeSale(sale.id)
-        .then((result)=>{
+            .then((result)=> {
                 if (result) {
                     this.searchSales();
                 }
-            })
-        // TODO
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
+            });
     }
 
 }

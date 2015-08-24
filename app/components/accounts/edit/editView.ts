@@ -59,7 +59,7 @@ class AccountFormModel {
 export class EditAccountView {
     accountId:number;
     accountService:AccountService;
-    applicationService:ApplicationService;
+    appService:ApplicationService;
     authService:AuthService;
     router:Router;
 
@@ -77,7 +77,7 @@ export class EditAccountView {
         this.router = router;
         this.accountService = accountService;
         this.authService = authService;
-        this.applicationService = appService;
+        this.appService = appService;
         this.language = appService.language;
 
         this.allAccountTypes = NamedAccountType.ALL_TYPES;
@@ -85,7 +85,7 @@ export class EditAccountView {
     }
 
     buildFormModel() {
-        var lastEditLanguage = this.applicationService.laseUsedEditLanguage;
+        var lastEditLanguage = this.appService.laseUsedEditLanguage;
         if (this.accountId == null) {
             this.accountModel = new AccountFormModel();
             this.accountModel.language = lastEditLanguage;
@@ -95,6 +95,8 @@ export class EditAccountView {
         this.accountService.getAccount(this.accountId)
             .then(function (account:Account) {
                 thisView.accountModel = new AccountFormModel(account, lastEditLanguage);
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
     }
 
@@ -111,6 +113,8 @@ export class EditAccountView {
         this.accountService.saveAccount(account)
             .then((accountRef)=> {
                 this.router.navigate('/accounts/list');
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
 
     }

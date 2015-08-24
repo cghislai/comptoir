@@ -31,12 +31,13 @@ import {FocusableDirective} from 'directives/focusable'
 
 export class AccountsListView {
     accountService:AccountService;
+    appService:ApplicationService;
     router:Router;
 
     accountSearch:AccountSearch;
     pagination:Pagination;
     accountSearchResult:SearchResult<Account>;
-    accountCount: number;
+    accountCount:number;
     accountsPerPage:number = 25;
 
     language:string;
@@ -45,6 +46,7 @@ export class AccountsListView {
     constructor(accountService:AccountService, appService:ApplicationService,
                 authService:AuthService, router:Router) {
         this.accountService = accountService;
+        this.appService = appService;
         this.router = router;
 
         this.accountSearch = new AccountSearch();
@@ -69,18 +71,17 @@ export class AccountsListView {
                 thisView.accountSearchResult = result;
                 thisView.accountCount = result.count;
                 thisView.loading = false;
-            }, function (error) {
-                console.log("Failed to load accounts : " + error);
-                thisView.loading = false;
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
     }
 
-    getAccountTypeLabel(accountTypeName: string): any {
+    getAccountTypeLabel(accountTypeName:string):any {
         if (accountTypeName == undefined) {
             return null;
         }
         var accountType:AccountType = AccountType[accountTypeName];
-        var namedAccountType =NamedAccountType.getNamedForType(accountType);
+        var namedAccountType = NamedAccountType.getNamedForType(accountType);
         if (namedAccountType == null) {
             return null;
         }
@@ -104,8 +105,8 @@ export class AccountsListView {
             .removeAccount(account)
             .then(function (result) {
                 thisView.searchAccounts();
-            }, function (error) {
-                console.log("Failed to remove account : " + error);
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
     }
 

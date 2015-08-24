@@ -29,12 +29,13 @@ import {Paginator} from 'components/utils/paginator/paginator';
 
 export class ProductsListView {
     itemService:ItemService;
+    appService:ApplicationService;
     router:Router;
 
     itemSearch:ItemSearch;
     pagination:Pagination;
     itemSearchResult:SearchResult<PicturedItem>;
-    itemCount: number;
+    itemCount:number;
     columns:ItemColumn[];
     itemsPerPage:number = 25;
 
@@ -45,6 +46,7 @@ export class ProductsListView {
     constructor(appService:ApplicationService, itemService:ItemService, router:Router) {
         this.router = router;
         this.itemService = itemService;
+        this.appService = appService;
 
         this.itemSearch = new ItemSearch();
         this.pagination = new Pagination(0, this.itemsPerPage);
@@ -67,6 +69,8 @@ export class ProductsListView {
             .then((result:SearchResult<PicturedItem>)=> {
                 thisView.itemSearchResult = result;
                 thisView.itemCount = result.count;
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
     }
 
@@ -94,6 +98,8 @@ export class ProductsListView {
         this.itemService.removeItem(item)
             .then(()=> {
                 thisView.searchItems();
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
     }
 

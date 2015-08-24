@@ -20,10 +20,10 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ng-for="#account of accountSearchResult.list" class="account" (^click)="doEditAccount(account)">
-            <td class="type">{{ getAccountTypeLabel(account.accountType) }}</td>
-            <td class="name">{{ account.name }}</td>
-            <td class="desc">{{ account.description[language] }}</td>
+        <tr *ng-for="#account of accountSearchResult.list" class="account">
+            <td class="type" (^click)="doEditAccount(account)">{{ getAccountTypeLabel(account.accountType) }}</td>
+            <td class="name" (^click)="doEditAccount(account)">{{ account.name }}</td>
+            <td class="desc" (^click)="doEditAccount(account)">{{ account.description[language] }}</td>
             <td class="actions">
                 <a class="remove actionIcon" (^click)="doRemoveAccount(account)">
                     <i class="fi-x red"></i>

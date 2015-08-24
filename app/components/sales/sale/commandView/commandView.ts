@@ -245,7 +245,8 @@ export class CommandView {
             intValue = 0;
         }
         this.saleService.setASaleDiscountPercentage(
-            this.aSale, intValue).catch((error)=> {
+            this.aSale, intValue)
+            .catch((error)=> {
                 this.appService.handleRequestError(error);
             });
         this.cancelEdits();

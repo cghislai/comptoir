@@ -10,6 +10,7 @@ import {Pos, PosRef, PosSearch} from 'client/domain/pos';
 
 import {ABalance, AMoneyPile, CashType} from 'client/utils/aBalance';
 import {Pagination} from 'client/utils/pagination';
+import {NumberUtils} from 'client/utils/number';
 
 import {BalanceService} from 'services/balance';
 import {PosService} from 'services/pos';
@@ -17,7 +18,7 @@ import {AccountService} from 'services/account';
 import {ApplicationService} from 'services/application';
 
 import {Paginator} from 'components/utils/paginator/paginator';
-import {AutoFocusDirective} from 'directives/autoFocus'
+import {FastInput} from 'directives/fastInput'
 
 @Component({
     selector: 'editCashView'
@@ -25,32 +26,35 @@ import {AutoFocusDirective} from 'directives/autoFocus'
 @View({
     templateUrl: './components/cash/count/countView.html',
     styleUrls: ['./components/cash/count/countView.css'],
-    directives: [NgFor, NgIf, AutoFocusDirective]
+    directives: [NgFor, NgIf, FastInput]
 })
 
 export class CountCashView {
     balanceService:BalanceService;
     posService:PosService;
     accountService:AccountService;
+    appService:ApplicationService;
 
     aBalance:ABalance;
     editingTotal:boolean;
 
     posList:Pos[];
     pos:Pos;
-    posId: number = -1;
+    posId:number = -1;
     accountSearch:AccountSearch;
     accountList:Account[];
     account:Account;
-    accountId: number = -1;
+    accountId:number = -1;
     lastBalance:Balance;
-    language: string;
+    language:string;
 
-    constructor(applicationService: ApplicationService, balanceService:BalanceService,
+    constructor(applicationService:ApplicationService, balanceService:BalanceService,
                 posService:PosService, accountService:AccountService) {
         this.balanceService = balanceService;
         this.posService = posService;
         this.accountService = accountService;
+        this.appService = applicationService;
+
         this.aBalance = new ABalance();
         this.language = applicationService.language.locale;
 
@@ -70,10 +74,12 @@ export class CountCashView {
                 if (this.pos == null && this.posList.length == 1) {
                     this.setPos(this.posList[0]);
                 }
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
     }
 
-    setPos(pos: Pos) {
+    setPos(pos:Pos) {
         if (this.pos == pos) {
             return;
         }
@@ -113,10 +119,12 @@ export class CountCashView {
                 if (this.account == null && this.accountList.length == 1) {
                     this.setAccount(this.accountList[0]);
                 }
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
     }
 
-    setAccount(account: Account) {
+    setAccount(account:Account) {
         if (this.account == account) {
             return;
         }
@@ -157,76 +165,48 @@ export class CountCashView {
         pagination.sorts = {
             'DATETIME': 'desc'
         };
-        this.balanceService.searchBalances(balanceSearch, pagination)
+        this.balanceService.searchBalancesAsync(balanceSearch, pagination)
             .then((result)=> {
                 this.lastBalance = result[0];
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
     }
 
-
-
-
-    onCashInputKeyUp(aMoneyPile: AMoneyPile, event) {
-        if (event.which == 13) { // Enter
-            this.onCashInputChanged(aMoneyPile, event);
-            this.applyCashInput(aMoneyPile);
-            return false;
+    onCashInputChanged(aMoneyPile:AMoneyPile, event) {
+        var amount = parseInt(event);
+        if (isNaN(amount)) {
+            amount = 0;
         }
-        if (event.which == 27) { // Escape
-            return false;
-        }
-        return false;
-    }
-
-    onCashInputChanged(aMoneyPile: AMoneyPile, event) {
-        var valueString = event.target.value;
-        var count = parseInt(valueString);
-        if (isNaN(count)) {
-            count = 0;
-        }
-        aMoneyPile.moneyPile.count = count;
-        event.target.value = count;
-    }
-
-    applyCashInput(aMoneyPile: AMoneyPile) {
-        this.balanceService.updateAMoneyPile(aMoneyPile);
+        aMoneyPile.moneyPile.count = amount;
+        this.balanceService.updateAMoneyPileAsync(aMoneyPile)
+            .catch((error)=> {
+                this.appService.handleRequestError(error);
+            });
     }
 
     startEditTotal() {
         this.editingTotal = true;
     }
 
-    onTotalKeyup(event) {
-        if (event.which == 13) { // Enter
-            this.onTotalChanged(event);
-            this.applyTotal();
-            return false;
-        }
-        if (event.which == 27) { // Escape
-            this.cancelTotal();
-            return false;
-        }
-        return false;
-    }
 
     onTotalChanged(event) {
-        var valueString = event.target.value;
-        var total = parseFloat(valueString);
-        var totalFixedString = total.toFixed(2);
-        var total = parseFloat(totalFixedString);
-        this.aBalance.total = total;
-    }
-
-    applyTotal() {
-        this.balanceService.updateABalance(this.aBalance);
-    }
-
-    cancelTotal() {
-        var oldTotal = this.aBalance.balance.balance;
-        this.aBalance.total = oldTotal;
+        var total = parseFloat(event);
+        if (!isNaN(total)) {
+            total = NumberUtils.toFixedDecimals(total, 2);
+            this.aBalance.total = total;
+            this.balanceService.updateABalanceAsync(this.aBalance)
+                .catch((error)=> {
+                    this.appService.handleRequestError(error);
+                });
+        }
+        this.editingTotal = false;
     }
 
     closeBalance() {
-        this.balanceService.closeABalance(this.aBalance);
+        this.balanceService.closeABalanceAsync(this.aBalance)
+            .catch((error)=> {
+                this.appService.handleRequestError(error);
+            });
     }
 }

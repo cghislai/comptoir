@@ -51,48 +51,12 @@ export class ItemService {
     }
 
     /**
-     * Resolves the returned promise as soon as the item is fetched with
-     * a PicturedItem instance.
-     * The picture is fetched asynchronously, then the PicturedItem is updated
-     * @param id item id
-     * @returns {Promise<PicturedItem>}
-     */
-    public getPicturedItemAsync(id:number):Promise<PicturedItem> {
-        var authToken = this.authService.authToken;
-        var thisService = this;
-
-        return this.getItem(id)
-            .then((item)=> {
-                if (item == undefined) {
-                    return undefined;
-                }
-                var picItem = new PicturedItem();
-                picItem.item = item;
-                var picRef = item.mainPictureRef;
-                if (picRef == undefined) {
-                    return picItem;
-                }
-
-                var picId = picRef.id;
-                this.pictureClient.getItemPicture(id, picId, authToken)
-                    .then((pic)=> {
-                        picItem.picture = pic;
-                        if (pic != undefined) {
-                            var dataURI = PicturedItemFactory.buildPictureURI(pic);
-                            picItem.dataURI = dataURI;
-                        }
-                    });
-                return picItem;
-            });
-    }
-
-    /**
      * Fetch the item then the picture then resolve the returned
      * promise with a PicturedItem instance
      * @param id item id
      * @returns {Promise<PicturedItem>}
      */
-    public getPicturedItemSync(id:number):Promise<PicturedItem> {
+    public getPicturedItemASync(id:number):Promise<PicturedItem> {
         var authToken = this.authService.authToken;
         var thisService = this;
 

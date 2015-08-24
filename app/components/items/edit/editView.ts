@@ -16,8 +16,8 @@ import {LangSelect, LocalizedDirective} from 'components/utils/langSelect/langSe
 
 class ItemFormModel {
     language:Language;
-    names: LocaleTexts;
-    descriptions: LocaleTexts;
+    names:LocaleTexts;
+    descriptions:LocaleTexts;
 
     reference:string;
     model:string;
@@ -66,7 +66,7 @@ class ItemFormModel {
 export class EditProductView {
     itemId:number;
     itemService:ItemService;
-    applicationService:ApplicationService;
+    appService:ApplicationService;
     router:Router;
 
     language:Language;
@@ -81,23 +81,25 @@ export class EditProductView {
         }
         this.router = router;
         this.itemService = itemService;
-        this.applicationService = appService;
+        this.appService = appService;
         this.language = appService.language;
         this.buildFormModel();
     }
 
     buildFormModel() {
-        var lastEditLanguage = this.applicationService.laseUsedEditLanguage;
+        var lastEditLanguage = this.appService.laseUsedEditLanguage;
         if (this.itemId == null) {
             this.itemModel = new ItemFormModel();
-            this.itemModel.language =lastEditLanguage;
+            this.itemModel.language = lastEditLanguage;
             return;
         }
         var thisView = this;
-        this.itemService.getPicturedItemSync(this.itemId)
+        this.itemService.getPicturedItemASync(this.itemId)
             .then((picItem:PicturedItem)=> {
                 thisView.itemModel = new ItemFormModel(picItem);
-                thisView.itemModel.language =lastEditLanguage;
+                thisView.itemModel.language = lastEditLanguage;
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
     }
 
@@ -108,15 +110,18 @@ export class EditProductView {
             return;
         }
         var file = files[0];
-        var reader = new FileReader();
         var thisView = this;
-        reader.onload = function () {
-            var data = reader.result;
-            thisView.itemModel.pictureDataURI = data;
-            // Triggering an event for refresh
-            event.target.dispatchEvent(new Event('fileread'));
-        };
-        reader.readAsDataURL(file);
+
+        new Promise((resolve, reject)=> {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var data = reader.result;
+                resolve(data);
+            };
+            reader.readAsDataURL(file);
+        }).then((data)=> {
+                thisView.itemModel.pictureDataURI = data;
+            });
     }
 
     onCurrentPriceChanged(event) {
@@ -140,11 +145,12 @@ export class EditProductView {
         item.reference = this.itemModel.reference;
 
         this.itemModel.item.dataURI = this.itemModel.pictureDataURI;
-        this.itemService.savePicturedItem(this.itemModel.item).then(
-            () => {
+        this.itemService.savePicturedItem(this.itemModel.item)
+            .then(() => {
                 this.router.navigate('/items/list');
-            }
-        );
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
+            });
 
     }
 

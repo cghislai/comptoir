@@ -20,7 +20,7 @@ import {AuthService} from 'services/auth';
     directives: [NgIf, formDirectives, RouterLink]
 })
 export class ImportProductView {
-    applicationService:ApplicationService;
+    appService:ApplicationService;
     authService:AuthService;
     router:Router;
     language:Language;
@@ -35,7 +35,7 @@ export class ImportProductView {
 
     constructor(appService:ApplicationService, authService:AuthService, router:Router) {
         this.router = router;
-        this.applicationService = appService;
+        this.appService = appService;
         this.authService = authService;
         this.companyClient = new CompanyClient();
         this.language = appService.language;
@@ -66,13 +66,16 @@ export class ImportProductView {
             this.toUploadFileSizeLabel = nApprox.toFixed(3) + " " + aMultiples[nMultiple] + " (" + size + " bytes)";
         }
 
-        var reader = new FileReader();
-        var thisView = this;
-        reader.onload = function () {
-            thisView.toUploadData = reader.result;
-        };
-
-        reader.readAsArrayBuffer(this.toUploadFile);
+        new Promise((resolve, reject)=> {
+            var reader = new FileReader();
+            var thisView = this;
+            reader.onload = function () {
+                resolve(reader.result);
+            };
+            reader.readAsArrayBuffer(this.toUploadFile);
+        }).then((data)=> {
+                this.toUploadData = data;
+            });
     }
 
 
@@ -89,6 +92,8 @@ export class ImportProductView {
             .then(()=> {
                 thisView.uploadInProgress = false;
                 thisView.router.navigate('/items/list');
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
     }
 

@@ -29,6 +29,9 @@ import {FocusableDirective} from 'directives/focusable';
 })
 
 export class ItemListView {
+    itemService:ItemService;
+    appService:ApplicationService;
+
     itemClicked = new EventEmitter();
     columns:ItemColumn[];
     language:string;
@@ -36,19 +39,20 @@ export class ItemListView {
     keyboardTimeoutSet:boolean;
     keyboardTimeout:number = 200;
     //
-    itemService: ItemService;
     itemSearch:ItemSearch;
-    pagination: Pagination;
+    pagination:Pagination;
     loading:boolean = false;
-    itemSearchResult: SearchResult<PicturedItem>;
+    itemSearchResult:SearchResult<PicturedItem>;
 
     constructor(applicationService:ApplicationService, itemService:ItemService) {
+        this.itemService = itemService;
+        this.appService = applicationService;
+
         this.language = applicationService.language.locale;
 
         this.itemSearch = new ItemSearch();
         this.itemSearch.multiSearch = null;
         this.pagination = new Pagination(0, 20);
-        this.itemService = itemService;
 
         this.columns = [
             ItemColumn.REFERENCE,
@@ -66,6 +70,8 @@ export class ItemListView {
             .then((result:SearchResult<PicturedItem>)=> {
                 thisView.itemSearchResult = result;
                 thisView.loading = false;
+            }).catch((error)=> {
+                this.appService.handleRequestError(error);
             });
     }
 

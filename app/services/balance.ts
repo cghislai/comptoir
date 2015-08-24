@@ -26,13 +26,13 @@ export class BalanceService {
         this.moneyPileClient = new MoneyPileClient();
     }
 
-    searchBalances(balanceSearch:BalanceSearch, pagination:Pagination) {
+    searchBalancesAsync(balanceSearch:BalanceSearch, pagination:Pagination) {
         var authToken = this.authService.authToken;
         balanceSearch.companyRef = this.authService.loggedEmployee.companyRef;
         return this.balanceClient.searchBalances(balanceSearch, pagination, authToken);
     }
 
-    openABalance(aBalance:ABalance):Promise<ABalance> {
+    openABalanceAsync(aBalance:ABalance):Promise<ABalance> {
         var authToken = this.authService.authToken;
         var account = aBalance.account;
         var balance = new Balance();
@@ -54,30 +54,30 @@ export class BalanceService {
             });
     }
 
-    updateABalance(aBalance:ABalance):Promise<ABalance> {
+    updateABalanceAsync(aBalance:ABalance):Promise<ABalance> {
         var authToken = this.authService.authToken;
         aBalance.dirty = true;
         this.calcABalance(aBalance);
 
-        this.balanceClient.updateBalance(aBalance.balance, authToken)
+        return this.balanceClient.updateBalance(aBalance.balance, authToken)
             .then((balanceRef)=> {
                 return this.balanceClient.getBalance(balanceRef.id, authToken);
             }).then((balance:Balance)=> {
                 aBalance.balance = balance;
                 aBalance.dirty = false;
                 this.calcABalance(aBalance);
+                return aBalance;
             });
-        return Promise.resolve(aBalance);
     }
 
-    updateAMoneyPile(aMoneyPile:AMoneyPile):Promise<ABalance> {
+    updateAMoneyPileAsync(aMoneyPile:AMoneyPile):Promise<ABalance> {
         var authToken = this.authService.authToken;
         var aBalance = aMoneyPile.aBalance;
 
         if (aBalance.balance == null) {
-            return this.openABalance(aBalance)
+            return this.openABalanceAsync(aBalance)
                 .then(()=> {
-                    return this.updateAMoneyPile(aMoneyPile);
+                    return this.updateAMoneyPileAsync(aMoneyPile);
                 });
 
         }
@@ -89,27 +89,28 @@ export class BalanceService {
         this.calcABalance(aBalance);
 
         if (moneyPile.id == null) {
-            this.moneyPileClient.createMoneyPile(moneyPile, authToken)
+            return this.moneyPileClient.createMoneyPile(moneyPile, authToken)
                 .then((pileRef)=> {
                     return this.moneyPileClient.getMoneyPile(pileRef.id, authToken);
                 }).then((pile:MoneyPile)=> {
                     aMoneyPile.moneyPile = pile;
                     this.calcABalance(aBalance);
+                    return aBalance;
                 });
         } else {
-            this.moneyPileClient.updateMoneyPile(moneyPile, authToken)
+            return this.moneyPileClient.updateMoneyPile(moneyPile, authToken)
                 .then((pileRef)=> {
                     return this.moneyPileClient.getMoneyPile(pileRef.id, authToken);
                 }).then((pile:MoneyPile)=> {
                     aMoneyPile.moneyPile = pile;
                     this.calcABalance(aBalance);
+                    return aBalance;
                 });
         }
-        return Promise.resolve(aBalance);
     }
 
 
-    closeABalance(aBalance:ABalance) {
+    closeABalanceAsync(aBalance:ABalance) {
         var authToken = this.authService.authToken;
         var id = aBalance.balance.id;
         aBalance.dirty = true;
