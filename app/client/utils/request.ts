@@ -12,6 +12,7 @@ export class ComptoirError {
     text:string;
     code:number;
     response:string;
+    request: ComptoirRequest;
 }
 
 export class ComptoirRequest {
@@ -76,6 +77,10 @@ export class ComptoirRequest {
         this.objectToSend = obj;
     }
 
+    getDebugString() {
+        var string = this.method+" "+this.url+" ";
+    }
+
     run():Promise<ComptoirResponse> {
         var xmlRequest = this.request;
         var thisRequest = this;
@@ -92,6 +97,7 @@ export class ComptoirRequest {
                     var error = new ComptoirError();
                     error.code = xmlRequest.status;
                     error.text = xmlRequest.statusText;
+                    error.request = thisRequest;
                     if (xmlRequest.response != null) {
                         error.response = xmlRequest.response.text;
                     }
@@ -112,12 +118,14 @@ export class ComptoirRequest {
                 var error = new ComptoirError();
                 error.code = xmlRequest.status;
                 error.text = xmlRequest.statusText;
+                error.request = thisRequest;
                 if (xmlRequest.response != null) {
                     error.response = xmlRequest.response.text;
                 }
                 reject(error);
                 return;
             };
+            xmlRequest.timeout = 3000;
             xmlRequest.open(thisRequest.method, thisRequest.url);
             xmlRequest.setRequestHeader('Accept', thisRequest.acceptContentType);
             xmlRequest.setRequestHeader('Content-Type', thisRequest.contentType + '; charset=' + thisRequest.charset);

@@ -68,7 +68,7 @@ export class ApplicationSettingsView {
             var thisView = this;
             this.employeeService.updateEmployee(this.employeeValue)
             .catch(function(error) {
-                    thisView.applicationService.showError(error);
+                    thisView.applicationService.showFatalError(error);
                 });
         }
     }

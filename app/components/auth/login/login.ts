@@ -50,10 +50,7 @@ export class LoginView {
                     thisView.errorReason = "Login / mot de passe incorrects";
                     return;
                 }
-                var appError = new Error();
-                appError.name = "Impossible de satisfaire la requete";
-                appError.message = error.text;
-                thisView.appService.showError(appError);
+                thisView.appService.handleRequestError(error);
             });
     }
 

@@ -10,14 +10,12 @@
     </footer>
     <dialogview modal="true" closable="true" title="Erreur" *ng-if="appService.hasError"
             (close)="onErrorClose()">
-        <p>
-            Une erreur est survenue. Le message était:
+        <p [inner-html]="appService.errorHeader">
         </p>
-        <p class="errorMessage">
-            {{ appService.errorContent }}
+        <p class="errorMessage"
+           [inner-html]="appService.errorContent">
         </p>
-        <p>
-            Veuillez contacter le support.
+        <p [inner-html]="appService.errorFooter">
         </p>
     </dialogview>
 </div>
