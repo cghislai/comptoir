@@ -18,6 +18,7 @@ export class ItemSale {
     vatExclusive: number;
     vatRate: number;
     discountRatio: number;
+    total: number;
 }
 
 export class ItemSaleRef {

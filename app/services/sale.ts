@@ -96,6 +96,7 @@ export class SaleService {
         aSale.vatExclusive = null;
         aSale.vatAmount = null;
         aSale.dirty = false;
+        this.calcASale(aSale);
         return Promise.resolve(aSale);
     }
 
@@ -205,6 +206,7 @@ export class SaleService {
         aSaleItem.quantity = 1;
         aSaleItem.vatExclusive = item.vatExclusive;
         aSaleItem.vatRate = item.vatRate;
+        aSaleItem.total = item.vatExclusive;
 
         aSale.items.push(aSaleItem);
         aSale.itemsMap[itemId] = aSaleItem;
@@ -479,6 +481,8 @@ export class SaleService {
         aSaleItem.vatExclusive = vatExclusive;
         var vatRate = NumberUtils.toFixedDecimals(itemSale.vatRate, 2);
         aSaleItem.vatRate = vatRate;
+        var total = NumberUtils.toFixedDecimals(itemSale.total, 2);
+        aSaleItem.total = total;
         if (aSaleItem.itemId != aSaleItem.itemId) {
             aSaleItem.item = null;
         }
@@ -714,13 +718,11 @@ export class SaleService {
                 itemVatExclusive = itemSale.vatExclusive;
                 itemVatRate = itemSale.vatRate;
                 itemDiscountRatio = itemSale.discountRatio;
-                itemTotal = itemVatExclusive * itemSale.quantity;
-                if (itemDiscountRatio != null) {
-                    itemTotal *= (1 - itemDiscountRatio);
-                }
+                itemTotal = itemSale.total;
 
                 aSaleItem.vatExclusive = itemVatExclusive;
                 aSaleItem.vatRate = itemVatRate;
+                aSaleItem.total = itemTotal;
 
                 var itemVatAmount = itemVatRate * itemTotal;
                 vatExlusive += itemTotal;
@@ -744,15 +746,19 @@ export class SaleService {
             var itemVatAmount = itemVatRate * itemTotal;
             aSaleItem.vatExclusive = itemVatExclusive;
             aSaleItem.vatRate = itemVatRate;
+            aSaleItem.total = itemTotal;
 
-            vatExlusive += itemVatExclusive;
+            vatExlusive += itemTotal;
             vatAmount += itemVatAmount;
+
+            console.log("calc "+itemTotal+' for item');
         }
 
         if (!aSale.dirty && sale != null) {
             aSale.vatAmount = sale.vatAmount;
             aSale.vatExclusive = sale.vatExclusiveAmount;
             aSale.discountAmount = sale.discountAmount;
+            aSale.total = aSale.vatExclusive = aSale.vatAmount;
             return;
         }
 
@@ -763,9 +769,12 @@ export class SaleService {
             vatExlusive -= discountAmount;
             vatAmount -= tvaDiscount;
         }
+
+        console.log("calc "+vatAmount+" vat, "+vatExlusive+' total');
         aSale.discountAmount = discountAmount;
         aSale.vatAmount = vatAmount;
         aSale.vatExclusive = vatExlusive;
+        aSale.total = aSale.vatExclusive = aSale.vatAmount;
     }
 
 }

@@ -20,6 +20,7 @@ export class ASaleItem {
     quantity: number;
     vatExclusive: number;
     vatRate: number;
+    total: number;
     discountRate: number;
     discountPercentage: number;
     comment: LocaleTexts = new LocaleTexts();
@@ -33,10 +34,10 @@ export class ASale {
     sale:Sale;
     items: ASaleItem[] = [];
     itemsMap:any = {}; // [itemId]=item
-    payList: ASalePay[];
     saleId: number;
     vatExclusive: number;
     vatAmount: number;
+    total: number;
     discountRate: number;
     discountPercentage: number;
     discountAmount: number;
