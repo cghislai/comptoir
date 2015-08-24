@@ -50,12 +50,12 @@ export class ASalePayItem {
     aSalePay: ASalePay;
     account: Account;
     accountingEntry: AccountingEntry;
+    accountingEntryId: number;
 
     amount: number;
     dirty: boolean;
-    addedToPay: boolean = false;
 
-    runningRequest: ComptoirRequest;
+    entryRequest: ComptoirRequest;
 }
 
 export class ASalePay {
@@ -67,7 +67,7 @@ export class ASalePay {
     missingAmount: number = 0;
     dirty: boolean = false;
 
-    runningRequest: ComptoirRequest;
+    searchItemsRequest: ComptoirRequest;
 }
 
 

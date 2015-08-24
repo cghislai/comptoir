@@ -44,7 +44,16 @@ export class AccountingEntryClient {
             .then(function (response) {
                 var accountingEntryRef = JSON.parse(response.text);
                 return accountingEntryRef;
-            })
+            });
+    }
+
+    getCreateAccountingEntryRequest(accountingEntry:AccountingEntry, authToken:string):ComptoirRequest {
+        var request = new ComptoirRequest();
+        var url = this.getAccountingEntryUrl();
+
+        request.setup('POST', url, authToken);
+        request.setupData(accountingEntry);
+        return request;
     }
 
     updateAccountingEntry(accountingEntry:AccountingEntry, authToken:string):Promise<AccountingEntryRef> {
@@ -59,6 +68,15 @@ export class AccountingEntryClient {
             });
     }
 
+    getUpdateAccountingEntryRequest(accountingEntry:AccountingEntry, authToken:string):ComptoirRequest {
+        var request = new ComptoirRequest();
+        var url = this.getAccountingEntryUrl(accountingEntry.id);
+
+        request.setup('PUT', url, authToken);
+        request.setupData(accountingEntry);
+        return request;
+    }
+
 
     getAccountingEntry(id:number, authToken:string):Promise<AccountingEntry> {
         var request = new ComptoirRequest();
@@ -70,6 +88,14 @@ export class AccountingEntryClient {
                 var accountingEntry = JSON.parse(response.text, AccountingEntryFactory.fromJSONAccountingEntryReviver);
                 return accountingEntry;
             });
+    }
+
+    getGetAccountingEntryRequest(id:number, authToken:string): ComptoirRequest {
+        var request = new ComptoirRequest();
+        var url = this.getAccountingEntryUrl(id);
+
+        request.setup('GET', url, authToken);
+        return request;
     }
 
     searchAccountingEntrys(search:AccountingEntrySearch, pagination:Pagination, authToken:string):Promise<SearchResult<AccountingEntry>> {
@@ -95,16 +121,14 @@ export class AccountingEntryClient {
             });
     }
 
-    closeAccountingEntry(id:number, authToken:string):Promise<AccountingEntryRef> {
+
+    getDeleteAccountingEntryRequest(id:number, authToken:string):ComptoirRequest {
         var request = new ComptoirRequest();
         var url = this.getAccountingEntryUrl(id);
-        url += "/state/CLOSED";
 
-        return request
-            .put(null, url, authToken)
-            .then(function (response) {
-                var accountingEntryRef = JSON.parse(response.text);
-                return accountingEntryRef;
-            });
+        request.setup('DELETE', url, authToken);
+        return request;
     }
+
+
 }

@@ -1,91 +1,95 @@
-<div>
-    <div class="toPayHeader coloredHeader"
-         [hidden]="aSalePay.missingAmount <= 0">
-        <h1>À payer</h1>
-        <span class="busy">
-            <span class="valignAnchor"></span>
-            <img src="res/img/spinner-2-white.gif"
-                 [hidden]="!aSalePay.dirty"/>
-        </span>
-         <span class="actions">
-        <span class="total single">
-            {{ aSalePay.missingAmount | currency:'EUR':true:'.2-2' }}
-        </span>
+<div class="payView" *ng-if="aSalePay != null">
+
+    <div>
+        <div class="toPayHeader coloredHeader"
+             [hidden]="aSalePay.missingAmount <= 0">
+            <h1>À payer</h1>
+            <span class="busy">
+                <span class="valignAnchor"></span>
+                <img src="res/img/spinner-2-white.gif"
+                     [hidden]="!aSalePay.dirty"/>
+            </span>
+            <span class="actions">
+                <span class="total single">
+                    {{ aSalePay.missingAmount | currency:'EUR':true:'.2-2' }}
+                </span>
+            </span>
+        </div>
+
+        <div class="toPayHeader coloredHeader"
+             [hidden]="aSalePay.missingAmount > 0">
+            <h1>À rendre</h1>
+            <span class="busy">
+                <span class="valignAnchor"></span>
+                <img src="res/img/spinner-2-white.gif"
+                     [hidden]="!aSalePay.dirty"/>
+            </span>
+
+            <span class="actions">
+                <span class="total"
+                      [class.negative]="aSalePay.missingAmount < 0"
+                      [class.exact]="aSalePay.missingAmount == 0">
+                    {{ -aSalePay.missingAmount | currency:'EUR':true:'.2-2'}}
+                </span>
+                <span class="action validateLink" (click)="onValidateClicked()">
+                    Valider
+                </span>
+            </span>
+        </div>
+    </div>
+
+    <table class="payItems dataTable" [hidden]="aSalePay.payItems.length == 0">
+        <thead>
+        <tr>
+            <th>Compte</th>
+            <th class="number">Montant</th>
+            <th class="actions"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ng-for="#pay of aSalePay.payItems" class="payItem">
+            <td>{{ pay.account.description[language] }}</td>
+            <td class="number">
+                <a class="edit actionlink" (^click)="startEditPayItem(pay)">
+                    {{ pay.amount | currency:'EUR':true:'.2-2' }}
+                </a>
+            </td>
+
+            <td class="actions">
+                <a class="actionIcon remove" (^click)="removePayItem(pay)">
+                    <i class="fi-x red"></i>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <th class="total">Total:</th>
+            <th class="total">
+                {{ aSalePay.amount | currency:'EUR':true:'.2-2' }}
+            </th>
+        </tr>
+
+        </tfoot>
+    </table>
+
+    <div class="editMethod" *ng-if="editingPayItem != null">
+        <span class="method">{{ editingPayItem.account.description[language] }}</span>
+        <span class="amount">
+            Montant: <input #amount
+                            [value]="editingPayItem.amount"
+                            type="number" min="0.01" step="0.01"
+                            [validator]="validatePayAmount"
+                            (fast-change)="onEditingPayItemChange($event)"
+                            fast-input> €
         </span>
     </div>
-    <div class="toPayHeader coloredHeader"
-         [hidden]="aSalePay.missingAmount > 0">
-        <span class="busy">
-            <span class="valignAnchor"></span>
-            <img src="res/img/spinner-2-white.gif"
-                 [hidden]="!aSalePay.dirty"/>
-        </span>
 
-        <h1>À rendre</h1>
-        <span class="actions">
-            <span class="total"
-                  [class.negative]="aSalePay.missingAmount < 0"
-                  [class.exact]="aSalePay.missingAmount == 0">
-                {{ -aSalePay.missingAmount | currency:'EUR':true:'.2-2'}}
-            </span>
-            <span class="action validateLink" (click)="onValidateClicked()">
-                Valider
-            </span>
-        </span>
-    </div>
-</div>
-
-<table class="usedMethod dataTable" [hidden]="aSalePay.payItems.length == 0">
-    <thead>
-    <tr>
-        <th>Compte</th>
-        <th class="number">Montant</th>
-        <th class="actions"></th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ng-for="#pay of aSalePay.payItems">
-        <td>{{ pay.account.description[language] }}</td>
-        <td class="number">
-            <a class="edit actionlink" (^click)="startEditPayItem(pay)">
-                {{ pay.amount | currency:'EUR':true:'.2-2' }}
-            </a>
-        </td>
-
-        <td class="actions">
-            <a class="actionIcon remove" (^click)="removePayItem(pay)">
-                <i class="fi-x red"></i>
-            </a>
-        </td>
-    </tr>
-    </tbody>
-    <tfoot>
-    <tr>
-        <th class="total">Total:</th>
-        <th class="total">
-            {{ aSalePay.amount | currency:'EUR':true:'.2-2' }}
-        </th>
-    </tr>
-
-    </tfoot>
-</table>
-
-<div class="editMethod" *ng-if="editingPayItem != null">
-    <span class="method">{{ editingPayItem.account.description[language] }}</span>
-    <span class="amount">
-        Montant: <input #amount [value]="editingPayItem.amount"
-                        type="number" min="0.01" step="0.01"
-                        (keyUp)="onPayItemKeyUp(amount.value, $event)"
-                        (input)="onPayItemChange($event)"
-                        (blur)="savePayItem"
-                        autofocusselect> €
-    </span>
-</div>
-
-<div class="addMethod">
-    <div *ng-for="#account of allAccounts"
-         class="boxedHoverableLink"
-         (^click)="startEditPay(account)">
-        {{ account.description[language] }}
+    <div class="addMethod">
+        <div *ng-for="#account of allAccounts"
+             class="boxedHoverableLink"
+             (^click)="startEditPay(account)">
+            {{ account.description[language] }}
+        </div>
     </div>
 </div>

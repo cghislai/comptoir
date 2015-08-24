@@ -15,7 +15,7 @@ import {ApplicationService} from 'services/application';
 import {AccountService} from 'services/account';
 import {PaymentService} from 'services/payment';
 
-import {AutoFocusDirective} from 'directives/autoFocus'
+import {FastInput} from 'directives/fastInput'
 
 
 @Component({
@@ -26,7 +26,7 @@ import {AutoFocusDirective} from 'directives/autoFocus'
 @View({
     templateUrl: './components/sales/sale/payView/payView.html',
     styleUrls: ['./components/sales/sale/payView/payView.css'],
-    directives: [NgFor, NgIf, AutoFocusDirective]
+    directives: [NgFor, NgIf, FastInput]
 })
 
 export class PayView {
@@ -36,9 +36,9 @@ export class PayView {
 
     aSalePay:ASalePay;
     editingPayItem:ASalePayItem;
+    pos:Pos;
+    sale:ASale;
 
-    remainingAmount:number;
-    paidAmount:number;
     paid = new EventEmitter();
 
     allAccounts:Account[];
@@ -49,20 +49,22 @@ export class PayView {
         this.accountService = accountService;
         this.paymentService = paymentService;
         this.language = applicationService.language.locale;
-        this.remainingAmount = 0;
         this.aSalePay = new ASalePay();
     }
 
     set saleProp(value:ASale) {
-        this.aSalePay.aSale = value;
+        this.sale = value;
     }
 
     set posProp(value:Pos) {
-        this.aSalePay.pos = value;
+        this.pos = value;
     }
 
     start() {
-        this.paymentService.calcASalePay(this.aSalePay);
+        this.paymentService.createASalePay(this.sale, this.pos)
+            .then((aSalePay:ASalePay)=> {
+                this.aSalePay = aSalePay;
+            });
         this.searchAccounts();
     }
 
@@ -84,70 +86,55 @@ export class PayView {
         if (this.editingPayItem != null) {
             this.cancelEditPayItem();
         }
-        this.paymentService.createPayment(this.aSalePay, account, 0)
-            .then((payItem)=> {
-                this.editingPayItem = payItem;
-                this.editingPayItem.amount = this.aSalePay.missingAmount;
-            });
+        var payItem:ASalePayItem = new ASalePayItem();
+        payItem.aSalePay = this.aSalePay;
+        payItem.account = account;
+        payItem.amount = 0;
+
+
+        this.editingPayItem = payItem;
+        this.editingPayItem.amount = this.aSalePay.missingAmount;
     }
 
-    startEditPayItem(payItem: ASalePayItem) {
+    startEditPayItem(payItem:ASalePayItem) {
         if (this.editingPayItem != null) {
             this.cancelEditPayItem();
         }
         this.editingPayItem = payItem;
     }
 
-    cancelEditPayItem() {
-        var entry = this.editingPayItem.accountingEntry;
-        if (entry != null) {
-            var oldAmount = entry.amount;
-            this.editingPayItem.amount = oldAmount;
-        } else {
-            this.editingPayItem.amount = null;
+    validatePayAmount(value:string) {
+        if (value.length > 0) {
+            var floatValue = parseFloat(value);
+            if (isNaN(floatValue)) {
+                return false;
+            }
+            return floatValue > 0;
         }
-        this.editingPayItem = null;
+        return true;
     }
 
-    savePayItem() {
-        if (!this.editingPayItem.addedToPay) {
-            this.paymentService.addPayment(this.editingPayItem);
+    onEditingPayItemChange(event) {
+        var amount = parseFloat(event);
+
+        if (!isNaN(amount)) {
+            var newItem = this.editingPayItem.accountingEntryId == null;
+            if (newItem) {
+                this.editingPayItem.amount = amount;
+                this.paymentService.createASalePayItem(this.editingPayItem);
+            } else {
+                this.paymentService.setASalePayItemAmount(this.editingPayItem, amount);
+            }
         }
-        this.paymentService.updatePayment(this.editingPayItem);
+        this.cancelEditPayItem();
+    }
+
+    cancelEditPayItem() {
         this.editingPayItem = null;
     }
 
     removePayItem(payItem:ASalePayItem) {
-        return this.paymentService.removePayment(payItem);
-    }
-
-    onPayItemKeyUp(amount:string, event) {
-
-        switch (event.which) {
-            case 13:
-            {
-                this.onPayItemChange(event);
-                this.savePayItem();
-                return false;
-            }
-            case 27:
-            {
-                this.cancelEditPayItem();
-                return false;
-            }
-        }
-        return false;
-    }
-
-    onPayItemChange(event) {
-        var amountNumber:number = parseFloat(event.target.value);
-        if (isNaN(amountNumber)) {
-            this.editingPayItem.amount = null;
-            return;
-        }
-        var roundedString = amountNumber.toFixed(2);
-        amountNumber = parseFloat(roundedString);
-        this.editingPayItem.amount = amountNumber;
+        return this.paymentService.removeASalePayItem(payItem);
     }
 
     onValidateClicked() {

@@ -391,6 +391,7 @@ export class SaleService {
             .then((response:ComptoirResponse)=> {
                 var saleRef:SaleRef = JSON.parse(response.text);
                 aSale.saleRequest = null;
+                aSale.saleId = saleRef.id;
                 return this.fetchASaleSaleAsync(aSale);
             });
     }

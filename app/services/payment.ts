@@ -4,32 +4,51 @@
 
 import {Inject} from 'angular2/angular2';
 
-import {ASale, ASalePay, ASalePayItem} from 'client/utils/aSale';
 import {Account, AccountRef, AccountSearch} from 'client/domain/account';
-import {AccountingEntry, AccountingEntryRef, AccountingEntrySearch} from 'client/domain/accountingEntry';
+import {AccountingEntry, AccountingEntryRef, AccountingEntrySearch, AccountingEntryFactory} from 'client/domain/accountingEntry';
 import {Pos, PosRef} from 'client/domain/pos';
+
+import {ASale, ASalePay, ASalePayItem} from 'client/utils/aSale';
 import {SearchResult} from 'client/utils/search';
+import {ComptoirResponse} from 'client/utils/request';
+import {NumberUtils} from 'client/utils/number';
+
 import {AccountingEntryClient} from 'client/accountingEntry';
 
-
 import {AuthService} from 'services/auth';
+
 
 export class PaymentService {
 
     authService:AuthService;
-    accountingEntryclient:AccountingEntryClient;
+    accountingEntryClient:AccountingEntryClient;
 
     constructor(@Inject authService:AuthService) {
         this.authService = authService;
-        this.accountingEntryclient = new AccountingEntryClient();
+        this.accountingEntryClient = new AccountingEntryClient();
     }
 
+    public createASalePay(aSale:ASale, pos:Pos):Promise<ASalePay> {
+        var salePay = new ASalePay();
+        salePay.amount = 0;
+        salePay.aSale = aSale;
+        salePay.dirty = false;
+        salePay.missingAmount = aSale.vatAmount + aSale.vatExclusive;
+        salePay.payItems = [];
+        salePay.pos = pos;
+        salePay.searchItemsRequest = null;
+        this.calcASalePay(salePay);
+        return Promise.resolve(salePay);
+    }
 
-    createPayment(aSalePay:ASalePay, account:Account, amount:number):Promise<ASalePayItem> {
-        var sale = aSalePay.aSale.sale;
+    public createASalePayItem(aSalePayItem: ASalePayItem):Promise<ASalePay> {
+        var sale = aSalePayItem.aSalePay.aSale.sale;
+        var account = aSalePayItem.account;
+        var amount = aSalePayItem.amount;
+        var aSalePay = aSalePayItem.aSalePay;
+
         var transactionRef = sale.accountingTransactionRef;
         var companyRef = this.authService.loggedEmployee.companyRef;
-        var authToken = this.authService.authToken;
 
         var accountingEntry = new AccountingEntry();
         accountingEntry.accountingTransactionRef = transactionRef;
@@ -38,100 +57,156 @@ export class PaymentService {
         accountingEntry.dateTime = new Date();
         accountingEntry.amount = amount;
 
-        var aSalePayItem = new ASalePayItem();
-        aSalePayItem.account = account;
         aSalePayItem.accountingEntry = accountingEntry;
-        aSalePayItem.amount = amount;
         aSalePayItem.aSalePay = aSalePay;
         aSalePayItem.dirty = true;
 
-        this.calcASalePay(aSalePay);
+        aSalePay.payItems.push(aSalePayItem);
+        aSalePay.dirty = true;
+        aSalePayItem.dirty = true;
 
-        // Fetch in background
-        this.accountingEntryclient.createAccountingEntry(accountingEntry, authToken)
-            .then((entryRef)=> {
-                return this.accountingEntryclient.getAccountingEntry(entryRef.id, authToken);
-            }).then((entry: AccountingEntry)=> {
-                aSalePayItem.accountingEntry = entry;
+        var promise = this.createASalePayItemAsync(aSalePayItem)
+            .then(()=> {
                 aSalePayItem.dirty = false;
+                aSalePay.dirty = false;
+                this.calcASalePay(aSalePay);
+                // TODO: fetch back all items
+                return aSalePay;
+            });
+
+        this.calcASalePay(aSalePay);
+        return promise;
+    }
+
+    public setASalePayItemAmount(aSalePayItem:ASalePayItem, amount:number):Promise<ASalePay> {
+        var aSalePay = aSalePayItem.aSalePay;
+        aSalePayItem.amount = amount;
+        aSalePayItem.dirty = true;
+        aSalePay.dirty = true;
+
+        var promise = this.updateASalePayItemAsync(aSalePayItem)
+            .then(()=> {
+                aSalePayItem.dirty = false;
+                aSalePay.dirty = false;
                 this.calcASalePay(aSalePay);
                 return aSalePay;
             });
 
-        return Promise.resolve(aSalePayItem);
+        this.calcASalePay(aSalePay);
+        return promise;
     }
 
-    addPayment(payItem: ASalePayItem) {
-        if (payItem.addedToPay) {
-            return;
-        }
-        payItem.aSalePay.payItems.push(payItem);
-        payItem.addedToPay = true;
-        this.calcASalePay(payItem.aSalePay);
-    }
-
-    updatePayment(aSalePayItem:ASalePayItem) : Promise<ASalePayItem> {
-        var amount = aSalePayItem.amount;
-        var entry = aSalePayItem.accountingEntry;
-        var authToken = this.authService.authToken;
-
-        aSalePayItem.dirty = true;
-        this.calcASalePay(aSalePayItem.aSalePay);
-
-        entry.amount = amount;
-        this.accountingEntryclient.updateAccountingEntry(entry, authToken)
-            .then((entryRef)=> {
-                return this.accountingEntryclient.getAccountingEntry(entryRef.id, authToken);
-            }).then((updatedEntry:AccountingEntry)=> {
-                aSalePayItem.accountingEntry = updatedEntry;
-                aSalePayItem.dirty = false;
-                this.calcASalePay(aSalePayItem.aSalePay);
-            });
-        return Promise.resolve(aSalePayItem);
-    }
-
-    removePayment(aSalePayItem:ASalePayItem):Promise<ASalePay> {
+    public removeASalePayItem(aSalePayItem:ASalePayItem):Promise<ASalePay> {
         var aSalePay = aSalePayItem.aSalePay;
-        var sale = aSalePay.aSale.sale;
-        var entry = aSalePayItem.accountingEntry;
-        var authToken = this.authService.authToken;
+        this.removeItemFromPay(aSalePay, aSalePayItem);
 
         aSalePay.dirty = true;
-        aSalePayItem.dirty = true;
-
-        var newItems = [];
-        for (var oldItem of aSalePay.payItems) {
-            if (oldItem == aSalePayItem) {
-                continue;
-            }
-            newItems.push(oldItem);
-        }
-        aSalePay.payItems = newItems;
-        this.calcASalePay(aSalePay);
-
-        this.accountingEntryclient.deleteAccountingEntry(entry.id, authToken)
+        var promise = this.removeASalePayItemAsync(aSalePayItem)
             .then(()=> {
-                var transactionRef = sale.accountingTransactionRef;
-                var entrySearch = new AccountingEntrySearch();
-                entrySearch.accountingTransactionRef = transactionRef;
-
-                var pos = aSalePay.pos;
-                if (pos != null) {
-                    var posRef = new PosRef(pos.id);
-                    var accountSearch = new AccountSearch();
-                    accountSearch.posRef = posRef;
-                    entrySearch.accountSearch = accountSearch;
-                }
-
-                return this.accountingEntryclient.searchAccountingEntrys(entrySearch, null, authToken)
-            }).then((result: SearchResult<AccountingEntry>)=>{
-                var entries = result.list;
-                this.updateASalePayItems(aSalePay, entries);
+                // todo: refetch all items
+                aSalePay.dirty = false;
+                this.calcASalePay(aSalePay);
+                return aSalePay;
             });
-        return Promise.resolve(aSalePay);
+
+        this.calcASalePay(aSalePay);
+        return promise;
     }
 
-    calcASalePay(aSalePay:ASalePay) {
+
+    ///
+
+    private createASalePayItemAsync(aSalePayItem:ASalePayItem):Promise<ASalePayItem> {
+        if (aSalePayItem.entryRequest != null) {
+            aSalePayItem.entryRequest.discardRequest();
+        }
+        var accountingEntry = aSalePayItem.accountingEntry;
+        var authToken = this.authService.authToken;
+
+        aSalePayItem.entryRequest = this.accountingEntryClient.getCreateAccountingEntryRequest(accountingEntry, authToken);
+
+        return aSalePayItem.entryRequest.run()
+            .then((response:ComptoirResponse)=> {
+                var entryRef:AccountingEntryRef = JSON.parse(response.text);
+                aSalePayItem.entryRequest = null;
+                aSalePayItem.accountingEntryId = entryRef.id;
+                return this.fetchASalePayItemAsync(aSalePayItem);
+            });
+    }
+
+    private fetchASalePayItemAsync(aSalePayItem:ASalePayItem):Promise<ASalePayItem> {
+        if (aSalePayItem.entryRequest != null) {
+            aSalePayItem.entryRequest.discardRequest();
+        }
+        var id = aSalePayItem.accountingEntryId;
+        var authToken = this.authService.authToken;
+
+        aSalePayItem.entryRequest = this.accountingEntryClient.getGetAccountingEntryRequest(id, authToken);
+        return aSalePayItem.entryRequest.run()
+            .then((response:ComptoirResponse)=> {
+                var accountingEntry = JSON.parse(response.text, AccountingEntryFactory.fromJSONAccountingEntryReviver);
+                this.setASalePayItemAcccountingEntry(aSalePayItem, accountingEntry);
+                aSalePayItem.entryRequest = null;
+                return aSalePayItem;
+            });
+    }
+
+
+    private updateASalePayItemAsync(aSalePayItem:ASalePayItem):Promise<ASalePayItem> {
+        if (aSalePayItem.entryRequest != null) {
+            aSalePayItem.entryRequest.discardRequest();
+        }
+        var authToken = this.authService.authToken;
+        this.updateASalePayItemAccountingEntry(aSalePayItem);
+
+        aSalePayItem.entryRequest = this.accountingEntryClient.getUpdateAccountingEntryRequest(aSalePayItem.accountingEntry, authToken);
+        return aSalePayItem.entryRequest.run()
+            .then((response:ComptoirResponse)=> {
+                var entryRef:AccountingEntryRef = JSON.parse(response.text);
+                aSalePayItem.accountingEntryId = entryRef.id;
+                aSalePayItem.entryRequest = null;
+                return this.fetchASalePayItemAsync(aSalePayItem);
+            });
+    }
+
+    private removeASalePayItemAsync(aSalePayItem:ASalePayItem):Promise<ASalePay> {
+        if (aSalePayItem.entryRequest != null) {
+            aSalePayItem.entryRequest.discardRequest();
+        }
+        var aSalePay = aSalePayItem.aSalePay;
+        var authToken = this.authService.authToken;
+        var id = aSalePayItem.accountingEntryId;
+
+        aSalePayItem.entryRequest = this.accountingEntryClient.getDeleteAccountingEntryRequest(id, authToken);
+        return aSalePayItem.entryRequest.run()
+            .then((response:ComptoirResponse)=> {
+                // Todo: fetch items
+                return aSalePay;
+            });
+    }
+
+    private setASalePayItemAcccountingEntry(aSalePayItem:ASalePayItem, accountingEntry:AccountingEntry) {
+        aSalePayItem.accountingEntry = accountingEntry;
+        aSalePayItem.amount = accountingEntry.amount;
+    }
+
+    private updateASalePayItemAccountingEntry(aSalePayItem:ASalePayItem) {
+        var accountingEntry = aSalePayItem.accountingEntry;
+        accountingEntry.amount = aSalePayItem.amount;
+    }
+
+    private removeItemFromPay(aSalePay:ASalePay, item:ASalePayItem) {
+        var newItems = [];
+        var oldItems = aSalePay.payItems;
+        for (var payitem of oldItems) {
+            if (payitem != item) {
+                newItems.push(payitem);
+            }
+        }
+        aSalePay.payItems = newItems;
+    }
+
+    private calcASalePay(aSalePay:ASalePay) {
         var totalPaid:number = 0;
         for (var payItem of aSalePay.payItems) {
             if (!payItem.dirty && payItem.accountingEntry != null) {
@@ -144,40 +219,10 @@ export class PaymentService {
         var aSale = aSalePay.aSale;
         var toPay = aSale.vatExclusive + aSale.vatAmount;
 
-        var totalPaidRounded = totalPaid.toFixed(2);
-        totalPaid = parseFloat(totalPaidRounded);
+        totalPaid = NumberUtils.toFixedDecimals(totalPaid, 2);
         aSalePay.amount = totalPaid;
-        var missingAmount = toPay - totalPaid;
-        var missingRounded = missingAmount.toFixed(2);
-        missingAmount = parseFloat(missingRounded);
+        var missingAmount = NumberUtils.toFixedDecimals( toPay - totalPaid, 2);
         aSalePay.missingAmount = missingAmount;
-    }
-
-    updateASalePayItems(aSalePay: ASalePay, items: AccountingEntry[])  {
-        var oldItems = aSalePay.payItems;
-        var perIdMap : {[entryId: number]: ASalePayItem;} = {};
-        for (var payItem of oldItems) {
-            perIdMap[payItem.accountingEntry.id] = payItem;
-        }
-        var newItems = [];
-        for (var accountingEntry of items) {
-            var payItem: ASalePayItem = perIdMap[accountingEntry.id];
-            if (payItem == null) {
-                payItem = new ASalePayItem();
-                payItem.aSalePay = aSalePay;
-            }
-            payItem.amount = accountingEntry.amount;
-            payItem.accountingEntry = accountingEntry;
-            payItem.dirty = false;
-            newItems.push(payItem);
-            delete perIdMap[accountingEntry.id];
-        }
-        for (var missingId in perIdMap) {
-            console.log("Warning: missing accounting entry id "+missingId+" from the new lsit fetched");
-        }
-        aSalePay.payItems = newItems;
-        aSalePay.dirty = false;
-        this.calcASalePay(aSalePay);
     }
 
 }
