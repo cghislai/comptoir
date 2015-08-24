@@ -152,7 +152,6 @@ export class CommandView {
         this.cancelEdits();
     }
 
-
     hasComment(saleItem:ASaleItem) {
         if (saleItem.comment == null) {
             return false;
@@ -252,5 +251,27 @@ export class CommandView {
         this.cancelEdits();
     }
 
+    doValidateInput(container) {
+        var input = this.doFindInput(container);
+        if (input == null) {
+            return;
+        }
+        input.dispatchEvent(FastInput.VALIDATE_EVENT);
+    }
+
+    doCancelInput(container) {
+        var input = this.doFindInput(container);
+        if (input == null) {
+            return;
+        }
+        input.dispatchEvent(FastInput.CANCEL_EVENT);
+    }
+
+    doFindInput(container: HTMLElement) {
+        var inputList = container.getElementsByTagName("input");
+        if (inputList.length > 0) {
+            return inputList[0];
+        }
+    }
 
 }

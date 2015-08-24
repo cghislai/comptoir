@@ -66,14 +66,14 @@ export class ImportProductView {
             this.toUploadFileSizeLabel = nApprox.toFixed(3) + " " + aMultiples[nMultiple] + " (" + size + " bytes)";
         }
 
-        new Promise((resolve, reject)=> {
+        new Promise<ArrayBuffer>((resolve, reject)=> {
             var reader = new FileReader();
             var thisView = this;
             reader.onload = function () {
                 resolve(reader.result);
             };
             reader.readAsArrayBuffer(this.toUploadFile);
-        }).then((data)=> {
+        }).then((data: ArrayBuffer)=> {
                 this.toUploadData = data;
             });
     }

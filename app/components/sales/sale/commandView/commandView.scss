@@ -19,12 +19,34 @@ header {
         height: 100%;
       }
 
-      input {
-        font-size: 1em;
-        width: 3em;
-        display: inline-block;
-        vertical-align: middle;
+      .editDiscount {
+        input {
+          font-size: 1em;
+          width: 3em;
+          display: inline-block;
+          vertical-align: middle;
+        }
+        .editActions {
+          > i {
+            &:hover {
+              cursor: pointer;
+            }
+            &.green {
+              color: green;
+              &:hover {
+                color: lighten(green, 30%);
+              }
+            }
+            &.red {
+              color: red;
+              &:hover {
+                color: lighten(red, 30%);
+              }
+            }
+          }
+        }
       }
+
     }
   }
 }

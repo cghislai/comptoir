@@ -740,8 +740,6 @@ export class SaleService {
 
             vatExlusive += itemTotal;
             vatAmount += itemVatAmount;
-
-            console.log("calc " + itemTotal + ' for item');
         }
 
         if (!aSale.dirty && sale != null) {
@@ -760,7 +758,6 @@ export class SaleService {
             vatAmount -= tvaDiscount;
         }
 
-        console.log("calc " + vatAmount + " vat, " + vatExlusive + ' total');
         aSale.discountAmount = discountAmount;
         aSale.vatAmount = vatAmount;
         aSale.vatExclusive = vatExlusive;

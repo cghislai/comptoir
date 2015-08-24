@@ -112,14 +112,14 @@ export class EditProductView {
         var file = files[0];
         var thisView = this;
 
-        new Promise((resolve, reject)=> {
+        new Promise<string>((resolve, reject)=> {
             var reader = new FileReader();
             reader.onload = function () {
                 var data = reader.result;
                 resolve(data);
             };
             reader.readAsDataURL(file);
-        }).then((data)=> {
+        }).then((data: string)=> {
                 thisView.itemModel.pictureDataURI = data;
             });
     }

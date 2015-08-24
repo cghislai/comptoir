@@ -5,6 +5,7 @@
 import {Directive, ElementRef, EventEmitter,
     Observable, Attribute} from 'angular2/angular2';
 
+
 @Directive({
     selector: 'input[fast-input]',
     properties: ['validator'],
@@ -12,10 +13,15 @@ import {Directive, ElementRef, EventEmitter,
     host: {
         '(keyup)': 'onKeyUp($event)',
         '(input)': 'onInput($event)',
-        '(blur)': 'onBlur($event)'
+        '(blur)': 'onBlur($event)',
+        '(cancelled)': 'doCancel()',
+        '(validated)': 'doValidate()'
     }
 })
 export class FastInput {
+    static VALIDATE_EVENT = new Event('validated');
+    static CANCEL_EVENT = new Event('cancelled');
+
     validator:(any)=>boolean;
     fastChange:EventEmitter;
     initialValue:any;
@@ -26,6 +32,14 @@ export class FastInput {
         this.initialValue = elementRef.nativeElement.value;
         this.fastChange = new EventEmitter();
         this.doFocus();
+
+        var nativeElement = this.elementRef.nativeElement;
+        nativeElement.doValidate = ()=>{
+            nativeElement.dispatchEvent(FastInput.VALIDATE_EVENT);
+        };
+        nativeElement.doCancel = ()=>{
+            nativeElement.dispatchEvent(FastInput.CANCEL_EVENT);
+        };
     }
 
     doFocus() {
@@ -63,7 +77,7 @@ export class FastInput {
     }
 
     onBlur(event) {
-        this.doValidate();
+        //this.doValidate();
         return true;
     }
 

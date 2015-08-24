@@ -171,6 +171,14 @@ table.dataTable, div.dataTable {
         color: rgb(220, 220, 220);
         -webkit-filter: blur(.1em);
       }
+      &.noBlur {
+        .red {
+          color: red;
+        }
+        .green {
+          color: darkgreen;
+        }
+      }
     }
 
     .actionIcon {

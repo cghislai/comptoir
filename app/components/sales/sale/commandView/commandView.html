@@ -26,14 +26,18 @@
                 <span [hidden]="editingSaleDiscount || aSale.discountPercentage == null || aSale.discountPercentage <= 0">
                     -{{ aSale.discountPercentage | number:'.0' }} %
                 </span>
-                <span *ng-if="editingSaleDiscount">
-                    <input #reduction
+                <span *ng-if="editingSaleDiscount" class="editDiscount">
+                    <input #discount
                            [value]="aSale.discountPercentage"
                            [validator]="validateDiscount"
                            (fast-change)="onSaleDiscountChange($event)"
                            type="number" min="0" max="100" step="1"
                            size="2" fast-input/>
                     %
+                    <span class="editActions">
+                        <i class="fi-check green" (^click)="discount.doValidate()"></i>
+                        <i class="fi-x red" (^click)="discount.doCancel()"></i>
+                    </span>
                 </span>
             </div>
             <div class="action validate" (click)="doValidate()" [hidden]="validated">Encaisser</div>
@@ -54,6 +58,7 @@
 
         <tbody>
         <tr *ng-for="#saleItem of aSale.items"
+            #row
             class="saleItem" [class.dirty]="saleItem.dirty">
 
             <td class="ref">
@@ -75,7 +80,7 @@
                         {{ saleItem.comment[language] }}
                     </a>
                     <span *ng-if="editingItem == saleItem && editingItemComment">
-                        <input #comment
+                        <input #activeInput
                                [value]="saleItem.comment[language]"
                                (fast-change)="onItemCommentChange($event)"
                                type="text"
@@ -105,7 +110,7 @@
                 </span>
                 <span class="editQuantity"
                       *ng-if="editingItemQuantity && editingItem == saleItem">
-                    <input #amount
+                    <input #activeInput
                            [value]="saleItem.quantity"
                            [validator]="validateQuantity"
                            (fast-change)="onItemQuantityChange($event)"
@@ -114,7 +119,7 @@
                 </span>
                 <span class="editPrice"
                       *ng-if="editingItemPrice && editingItem == saleItem">
-                    <input #price
+                    <input #activeInput
                            [value]="saleItem.vatExclusive"
                            [validator]="validatePrice"
                            (fast-change)="onItemPriceChange($event)"
@@ -132,7 +137,7 @@
                 </a>
                 <span class="setReduction"
                       *ng-if="editingItem == saleItem && editingItemDiscount">
-                    <input #reduction
+                    <input #activeInput
                            [value]="saleItem.discountPercentage"
                            [validator]="validateDiscount"
                            (fast-change)="onItemDiscountChange($event)"
@@ -144,22 +149,28 @@
             </td>
             <td class="actions" [hidden]="validated">
                 <a class="actionIcon noBlur validate"
+                   (^click)="doValidateInput(row)"
                    [hidden]="editingItem != saleItem">
                     <i class="fi-check green"></i>
                 </a>
-                <a class="actionIcon remove"
-                   [hidden]="editingItem == saleItem"
-                   (^click)="doRemoveItem(saleItem)">
+                <a class="actionIcon noBlur validate"
+                   (^click)="doCancelInput(row)"
+                   [hidden]="editingItem != saleItem">
                     <i class="fi-x red"></i>
+                </a>
+                <a class="actionIcon remove"
+                   [hidden]="editingItem != null"
+                   (^click)="doRemoveItem(saleItem)">
+                    <i class="fi-minus red"></i>
                 </a>
                 <a class="actionIcon setReductionLink"
                    (^click)="doEditItemDiscount(saleItem)"
-                   [hidden]="saleItem.discountPercentage > 0 || (editingItem == saleItem)">
+                   [hidden]="saleItem.discountPercentage > 0 || editingItem != null">
                     <span class="green" style="font-weight: bold;">%</span>
                 </a>
                 <a class="actionIcon commentLink"
                    (^click)="doEditItemComment(saleItem)"
-                   [hidden]="hasComment(saleItem) || (editingItem == saleItem)">
+                   [hidden]="hasComment(saleItem) || editingItem != null">
                     <i class="fi-comment"></i>
                 </a>
             </td>
