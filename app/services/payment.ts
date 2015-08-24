@@ -194,8 +194,7 @@ export class PaymentService {
         aSalePayItem.entryRequest = this.accountingEntryClient.getDeleteAccountingEntryRequest(id, authToken);
         return aSalePayItem.entryRequest.run()
             .then((response:ComptoirResponse)=> {
-                // Todo: fetch items
-                return aSalePay;
+                return this.findASalePayItemsAsyncPrivate(aSalePay);
             });
     }
 

@@ -206,7 +206,6 @@ export class SaleService {
             .then(()=> {
                 aSaleItem.dirty = false;
                 this.calcASale(aSale);
-                // TODO: search items in //
                 return this.fetchASaleSaleAsync(aSale);
             }).then(()=> {
                 aSale.dirty = false;
@@ -223,8 +222,16 @@ export class SaleService {
         aSaleItem.dirty = true;
         return this.removeASaleItemAsyncPrivate(aSaleItem)
             .then(()=> {
-                // TODO: search items in //
-                return this.fetchASaleSaleAsync(aSale);
+                var taskList = [];
+                taskList.push(this.fetchASaleAsync(aSale)
+                    .then(()=> {
+                        aSale.dirty = false;
+                    }));
+                taskList.push(this.searchASaleItemsAsync(aSale));
+                return Promise.all(taskList)
+                    .then(()=> {
+                        return aSale;
+                    });
             }).then(()=> {
                 aSale.dirty = false;
                 this.calcASale(aSale);

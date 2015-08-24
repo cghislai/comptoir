@@ -24,6 +24,9 @@ export class ApplicationService {
     }
 
     handleRequestError(error:ComptoirError) {
+        if (error = ComptoirError.DISCARDED_ERROR) {
+            return;
+        }
         this.hasError = true;
 
         switch (error.code) {
