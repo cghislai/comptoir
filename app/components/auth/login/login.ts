@@ -6,7 +6,7 @@ import {Component, View, formDirectives} from 'angular2/angular2';
 import {Router, RouterLink} from 'angular2/router';
 import {AuthService, LoginRequiredReason} from 'services/auth';
 import {ApplicationService} from 'services/application';
-import {MD5} from 'components/auth/login/md5';
+import {MD5} from 'components/auth/md5';
 
 @Component({
     selector: "loginView"

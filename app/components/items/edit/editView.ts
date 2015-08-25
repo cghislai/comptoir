@@ -8,9 +8,11 @@ import {Item} from 'client/domain/item';
 import {ItemPicture} from 'client/domain/itemPicture';
 import {PicturedItem} from 'client/utils/picture';
 import {Language, LocaleTexts} from 'client/utils/lang';
+import {NumberUtils} from 'client/utils/number';
 
 import {ItemService} from 'services/itemService';
 import {ApplicationService} from 'services/application';
+import {AuthService} from 'services/auth';
 
 import {LangSelect, LocalizedDirective} from 'components/utils/langSelect/langSelect';
 
@@ -22,7 +24,7 @@ class ItemFormModel {
     reference:string;
     model:string;
     price:number;
-    vat:number = 21.0;
+    vat:number;
     pictureDataURI:string;
     item:PicturedItem;
 
@@ -67,12 +69,13 @@ export class EditProductView {
     itemId:number;
     itemService:ItemService;
     appService:ApplicationService;
+    authService: AuthService;
     router:Router;
 
     language:Language;
     itemModel:ItemFormModel;
 
-    constructor(itemService:ItemService, appService:ApplicationService,
+    constructor(itemService:ItemService, appService:ApplicationService, authService: AuthService,
                 routeParams:RouteParams, router:Router) {
         var itemIdParam = routeParams.get('id');
         this.itemId = parseInt(itemIdParam);
@@ -82,6 +85,7 @@ export class EditProductView {
         this.router = router;
         this.itemService = itemService;
         this.appService = appService;
+        this.authService = authService;
         this.language = appService.language;
         this.buildFormModel();
     }
@@ -91,6 +95,9 @@ export class EditProductView {
         if (this.itemId == null) {
             this.itemModel = new ItemFormModel();
             this.itemModel.language = lastEditLanguage;
+            var defaultVatRate = this.authService.companyCountry.defaultVatRate;
+            var vatPercentage = NumberUtils.toFixedDecimals(defaultVatRate * 100, 2);
+            this.itemModel.vat = vatPercentage;
             return;
         }
         var thisView = this;

@@ -3,7 +3,7 @@
  */
 
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
-import {CountryRef} from 'client/utils/country';
+import {CountryRef} from 'client/domain/country';
 
 export class Company {
     id: number;

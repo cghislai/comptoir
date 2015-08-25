@@ -70,7 +70,7 @@
                 <td>
                         <span>
                         <input class="number" type="number" required
-                               min="0" max="100" step="1" id="vat"
+                               min="0" max="100" step="0.01" id="vat"
                                [ng-model]="itemModel.vat | number:'.2-2'"
                                (change)="onVatChanged($event)">
                             </span>

@@ -17,6 +17,8 @@ import {CountryClient} from 'client/country';
 
 import {ApplicationService} from 'services/application';
 
+import {MD5} from 'components/auth/md5';
+
 export enum LoginRequiredReason {
     NO_SESSION,
     SESSION_EXPIRED
@@ -50,9 +52,9 @@ export class AuthService {
         this.loadFromStorage();
     }
 
-    login(login:string, password:string):Promise<Employee> {
+    login(login:string, hashedPassword:string):Promise<any> {
         var thisService = this;
-        return this.client.login(login, password)
+        return this.client.login(login, hashedPassword)
             .then((response:Auth) => {
                 this.saveAuth(response);
                 var employeeRef = response.employeeRef;
@@ -68,7 +70,8 @@ export class AuthService {
                 console.log('Successfully registered for company #' + companyRef.id);
                 var login = registration.employee.login;
                 var password = registration.employeePassword;
-                return thisService.login(login, password);
+                var hashedPassword = MD5.encode(password);
+                return thisService.login(login, hashedPassword);
             });
     }
 
