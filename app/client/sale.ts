@@ -35,7 +35,7 @@ export class SaleClient {
                 var sorts = pagination.sorts;
                 for (var col in sorts) {
                     var order = sorts[col];
-                    url += col+"-"+order+',';
+                    url += col + "-" + order + ',';
                 }
             }
         }
@@ -116,7 +116,8 @@ export class SaleClient {
                 return result;
             });
     }
-    deleteSale(id: number, authToken: string) : Promise<any> {
+
+    deleteSale(id:number, authToken:string):Promise<any> {
         var request = new ComptoirRequest();
         var url = this.getSaleUrl(id);
 
@@ -128,7 +129,7 @@ export class SaleClient {
     }
 
 
-    closeSale(id: number, authToken: string) : Promise<SaleRef> {
+    closeSale(id:number, authToken:string):Promise<SaleRef> {
         var request = new ComptoirRequest();
         var url = this.getSaleUrl(id);
         url += "/state/CLOSED";
@@ -139,5 +140,28 @@ export class SaleClient {
                 var saleRef = JSON.parse(response.text);
                 return saleRef;
             });
+    }
+
+    getTotalPayed(id:number, authToken:string):Promise<number> {
+        var request = new ComptoirRequest();
+        var url = this.getSaleUrl(id);
+        url += "/payed";
+
+        return request
+            .get(url, authToken)
+            .then(function (response) {
+                var value = JSON.parse(response.text);
+                var payed = value.value;
+                return payed;
+            });
+    }
+
+    getGetTotalPayedRequest(id:number, authToken:string):ComptoirRequest {
+        var request = new ComptoirRequest();
+        var url = this.getSaleUrl(id);
+        url += "/payed";
+
+        request.setup('GET', url, authToken);
+        return request;
     }
 }

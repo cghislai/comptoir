@@ -15,6 +15,7 @@ import {NumberUtils} from 'client/utils/number';
 
 import {AccountingEntryClient} from 'client/accountingEntry';
 import {AccountClient} from 'client/account';
+import {SaleClient} from 'client/sale';
 
 import {AuthService} from 'services/auth';
 
@@ -24,16 +25,18 @@ export class PaymentService {
     authService:AuthService;
     accountingEntryClient:AccountingEntryClient;
     accountClient:AccountClient;
+    saleClient:SaleClient;
 
     constructor(@Inject authService:AuthService) {
         this.authService = authService;
         this.accountingEntryClient = new AccountingEntryClient();
         this.accountClient = new AccountClient();
+        this.saleClient = new SaleClient();
     }
 
     public createASalePay(aSale:ASale, pos:Pos):ASalePay {
         var salePay = new ASalePay();
-        salePay.amount = 0;
+        salePay.totalPayed = 0;
         salePay.aSale = aSale;
         salePay.dirty = false;
         salePay.missingAmount = aSale.vatAmount + aSale.vatExclusive;
@@ -48,7 +51,7 @@ export class PaymentService {
         aSalePay.dirty = true;
         this.calcASalePay(aSalePay);
         return this.findASalePayItemsAsyncPrivate(aSalePay)
-            .then(()=>{
+            .then(()=> {
                 aSalePay.dirty = false;
                 this.calcASalePay(aSalePay);
                 return aSalePay;
@@ -80,6 +83,9 @@ export class PaymentService {
         aSalePayItem.dirty = true;
 
         var promise = this.createASalePayItemAsync(aSalePayItem)
+            .then(()=>{
+                return this.getSaleTotalPayedAsync(aSalePay);
+            })
             .then(()=> {
                 aSalePayItem.dirty = false;
                 aSalePay.dirty = false;
@@ -99,6 +105,9 @@ export class PaymentService {
         aSalePay.dirty = true;
 
         var promise = this.updateASalePayItemAsync(aSalePayItem)
+            .then(()=>{
+                return this.getSaleTotalPayedAsync(aSalePay);
+            })
             .then(()=> {
                 aSalePayItem.dirty = false;
                 aSalePay.dirty = false;
@@ -116,6 +125,9 @@ export class PaymentService {
 
         aSalePay.dirty = true;
         var promise = this.removeASalePayItemAsync(aSalePayItem)
+            .then(()=>{
+                return this.getSaleTotalPayedAsync(aSalePay);
+            })
             .then(()=> {
                 // todo: refetch all items
                 aSalePay.dirty = false;
@@ -269,21 +281,45 @@ export class PaymentService {
             });
     }
 
+
+    private getSaleTotalPayedAsync(aSalePay:ASalePay):Promise<ASalePay> {
+        if (aSalePay.totalPayedRequest != null) {
+            aSalePay.totalPayedRequest.discardRequest();
+        }
+        var authToken = this.authService.authToken;
+        var sale = aSalePay.aSale.sale;
+
+        aSalePay.totalPayedRequest = this.saleClient.getGetTotalPayedRequest(sale.id, authToken);
+        return aSalePay.totalPayedRequest.run()
+            .then((response:ComptoirResponse)=> {
+                var payedValue = JSON.parse(response.text);
+                var payed = payedValue.value;
+                payed = NumberUtils.toFixedDecimals(payed, 2);
+                aSalePay.totalPayedRequest = null;
+                aSalePay.totalPayed = payed;
+                return aSalePay;
+            });
+    }
+
     private calcASalePay(aSalePay:ASalePay) {
         var totalPaid:number = 0;
-        for (var payItem of aSalePay.payItems) {
-            if (!payItem.dirty && payItem.accountingEntry != null) {
-                var amount = payItem.accountingEntry.amount;
-                totalPaid += amount;
-                continue;
+        if (!aSalePay.dirty) {
+            totalPaid = aSalePay.totalPayed;
+        } else {
+            for (var payItem of aSalePay.payItems) {
+                if (!payItem.dirty && payItem.accountingEntry != null) {
+                    var amount = payItem.accountingEntry.amount;
+                    totalPaid += amount;
+                    continue;
+                }
+                totalPaid += payItem.amount;
             }
-            totalPaid += payItem.amount;
         }
         var aSale = aSalePay.aSale;
         var toPay = aSale.vatExclusive + aSale.vatAmount;
 
         totalPaid = NumberUtils.toFixedDecimals(totalPaid, 2);
-        aSalePay.amount = totalPaid;
+        aSalePay.totalPayed = totalPaid;
         var missingAmount = NumberUtils.toFixedDecimals(toPay - totalPaid, 2);
         aSalePay.missingAmount = missingAmount;
     }

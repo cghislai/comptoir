@@ -64,10 +64,11 @@ export class ASalePay {
     pos: Pos;
     payItems: ASalePayItem[] = [];
 
-    amount: number = 0;
+    totalPayed: number;
     missingAmount: number = 0;
     dirty: boolean = false;
 
+    totalPayedRequest: ComptoirRequest;
     searchItemsRequest: ComptoirRequest;
 }
 
