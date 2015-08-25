@@ -721,14 +721,19 @@ export class SaleService {
             }
 
             var item = aSaleItem.item;
-            if (item == null) {
-                // Cant do anything
-                continue;
-            }
-            itemVatExclusive = item.vatExclusive;
+            itemVatExclusive = aSaleItem.vatExclusive;
             itemDiscountRatio = aSaleItem.discountRate;
-            itemVatRate = item.vatRate;
+            itemVatRate = aSaleItem.vatRate;
             itemTotal = itemVatExclusive * aSaleItem.quantity;
+
+
+            if (itemVatExclusive == null && item != null) {
+                itemVatExclusive = item.vatExclusive;
+            }
+            if (itemVatRate == null && item != null) {
+                itemVatRate = item.vatRate;
+            }
+
             if (itemDiscountRatio != null) {
                 itemTotal *= (1 - itemDiscountRatio);
             }
