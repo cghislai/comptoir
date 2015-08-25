@@ -3,7 +3,8 @@
  */
 import {Inject} from 'angular2/angular2';
 
-import {CompanyRef} from 'client/domain/company';
+import {Company, CompanyRef} from 'client/domain/company';
+import {Country} from 'client/domain/country';
 import {EmployeeRef, Employee, EmployeeFactory} from 'client/domain/employee';
 import {Auth, Registration, AuthFactory} from 'client/domain/auth';
 import {Language} from 'client/utils/lang';
@@ -11,6 +12,8 @@ import {JSONFactory} from 'client/utils/factory';
 
 import {AuthClient} from 'client/auth';
 import {EmployeeClient} from 'client/employee';
+import {CompanyClient} from 'client/company';
+import {CountryClient} from 'client/country';
 
 import {ApplicationService} from 'services/application';
 
@@ -21,23 +24,28 @@ export enum LoginRequiredReason {
 
 export class AuthService {
     static STORAGE_AUTH_KEY = "Auth";
-    static STORAGE_EMPLOYEE_KEY = "Employee";
 
     client:AuthClient;
     employeeClient:EmployeeClient;
     applicationService:ApplicationService;
+    companyClient:CompanyClient;
+    countryClient:CountryClient;
 
     authToken:string;
     auth:Auth;
     loggedEmployee:Employee;
+    employeeCompany:Company;
+    companyCountry:Country;
 
     loginRequired:boolean;
     loginRequiredReason:LoginRequiredReason;
 
     constructor(@Inject appService:ApplicationService) {
+        this.applicationService = appService;
         this.client = new AuthClient();
         this.employeeClient = new EmployeeClient();
-        this.applicationService = appService;
+        this.companyClient = new CompanyClient();
+        this.countryClient = new CountryClient();
 
         this.loadFromStorage();
     }
@@ -47,11 +55,8 @@ export class AuthService {
         return this.client.login(login, password)
             .then((response:Auth) => {
                 this.saveAuth(response);
-                var employeeId = response.employeeRef.id;
-                return this.employeeClient.getEmployee(employeeId, this.authToken);
-            }).then((employee:Employee) => {
-                this.saveLoggedEmployee(employee);
-                return employee;
+                var employeeRef = response.employeeRef;
+                return this.fetchEmployeeData(employeeRef);
             });
     }
 
@@ -60,10 +65,43 @@ export class AuthService {
         var thisService = this;
         return this.client.register(registration)
             .then((companyRef:CompanyRef)=> {
-                console.log('Sucessfully registerd for company #' + companyRef.id);
+                console.log('Successfully registered for company #' + companyRef.id);
                 var login = registration.employee.login;
                 var password = registration.employeePassword;
                 return thisService.login(login, password);
+            });
+    }
+
+
+    private fetchEmployeeData(employeeRef:EmployeeRef) {
+        return this.fetchEmployee(employeeRef.id)
+            .then(()=> {
+                var companyId = this.loggedEmployee.companyRef.id;
+                return this.fetchCompany(companyId);
+            }).then(()=> {
+                var countryCode = this.employeeCompany.countryRef.code;
+                return this.fetchCountry(countryCode);
+            });
+    }
+
+    private fetchEmployee(employeeId:number) {
+        return this.employeeClient.getEmployee(employeeId, this.authToken)
+            .then((employee:Employee)=> {
+                this.loggedEmployee = employee;
+            });
+    }
+
+    private fetchCompany(companyId:number) {
+        return this.companyClient.getCompany(companyId, this.authToken)
+            .then((company:Company)=> {
+                this.employeeCompany = company;
+            });
+    }
+
+    private fetchCountry(countryCode:string) {
+        return this.countryClient.getCountry(countryCode, this.authToken)
+            .then((country:Country)=> {
+                this.companyCountry = country;
             });
     }
 
@@ -76,20 +114,13 @@ export class AuthService {
         } else {
             this.authToken = null;
             localStorage.setItem(AuthService.STORAGE_AUTH_KEY, null);
-            localStorage.setItem(AuthService.STORAGE_EMPLOYEE_KEY, null);
         }
     }
 
-    private saveLoggedEmployee(employee:Employee) {
-        this.loggedEmployee = employee;
-        var employeeJSON = JSON.stringify(employee, JSONFactory.toJSONReplacer);
-        localStorage.setItem(AuthService.STORAGE_EMPLOYEE_KEY, employeeJSON);
-    }
 
     private loadFromStorage() {
         this.auth = null;
         this.authToken = null;
-        this.loggedEmployee = null;
 
         var authJSON = localStorage.getItem(AuthService.STORAGE_AUTH_KEY);
         if (authJSON == null) {
@@ -108,30 +139,10 @@ export class AuthService {
         }
         this.auth = auth;
         this.authToken = auth.token;
+        var employeeRef = this.auth.employeeRef;
 
-        var employeeId = this.auth.employeeRef.id;
-        var employeeJSON = localStorage.getItem(AuthService.STORAGE_EMPLOYEE_KEY);
-        if (employeeJSON == null) {
-            this.fetchEmployee();
-        } else {
-            var employee = JSON.parse(employeeJSON, EmployeeFactory.fromJSONEmployeeReviver);
-            if (employee.id == employeeId) {
-                this.loggedEmployee = employee;
-            } else {
-                this.fetchEmployee();
-            }
-        }
-
+        this.fetchEmployeeData(employeeRef);
         this.checkRefreshToken();
-    }
-
-    fetchEmployee() {
-        var employeeId = this.auth.employeeRef.id;
-        var authToken = this.authToken;
-        return this.employeeClient.getEmployee(employeeId, authToken)
-            .then((employee)=> {
-                this.saveLoggedEmployee(employee);
-            });
     }
 
     isExpireDateValid(date:Date) {
@@ -149,9 +160,9 @@ export class AuthService {
         }
         var nowTime = Date.now();
         var expireTime = date.getTime();
-        var remainigMs = expireTime - nowTime;
+        var remainingMs = expireTime - nowTime;
         var tenMinutesMs = 10 * 60 * 1000;
-        return remainigMs < tenMinutesMs;
+        return remainingMs < tenMinutesMs;
     }
 
     checkRefreshToken() {
