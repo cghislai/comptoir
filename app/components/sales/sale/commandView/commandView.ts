@@ -23,7 +23,7 @@ import {ApplicationService} from 'services/application';
 @Component({
     selector: 'commandView',
     events: ['validate', 'saleInvalidated'],
-    properties: ['aSale: sale', 'validated']
+    properties: ['aSale: sale', 'validated', 'noInput']
 })
 
 @View({
@@ -38,6 +38,7 @@ export class CommandView {
 
     aSale:ASale;
     language:string;
+    noInput: boolean;
 
     editingItem:ASaleItem = null;
     editingItemQuantity:boolean;

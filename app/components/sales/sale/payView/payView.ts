@@ -21,7 +21,7 @@ import {FastInput} from 'directives/fastInput'
 @Component({
     selector: "payView",
     events: ['paid'],
-    properties: ['saleProp: sale', 'posProp: pos']
+    properties: ['saleProp: sale', 'posProp: pos', 'noInput']
 })
 @View({
     templateUrl: './components/sales/sale/payView/payView.html',
@@ -39,6 +39,7 @@ export class PayView {
     editingPayItem:ASalePayItem;
     pos:Pos;
     sale:ASale;
+    noInput: boolean;
 
     paid = new EventEmitter();
 
@@ -56,16 +57,30 @@ export class PayView {
 
     set saleProp(value:ASale) {
         this.sale = value;
+        this.start();
     }
 
     set posProp(value:Pos) {
         this.pos = value;
+        this.start();
+    }
+
+    private hasSale() : boolean {
+        return this.aSalePay != null
+        && this.sale != null
+        && this.sale.sale != null;
     }
 
     start() {
-        this.aSalePay = this.paymentService.createASalePay(this.sale, this.pos);
+        if (!this.hasSale() || this.pos == null) {
+            return;
+        }
+        var aSalePay = this.paymentService.createASalePay(this.sale, this.pos);
 
-        this.paymentService.findASalePayItemsAsync(this.aSalePay)
+        this.paymentService.findASalePayItemsAsync(aSalePay)
+            .then(()=>{
+                this.aSalePay = aSalePay;
+            })
             .catch((error)=> {
                 this.appService.handleRequestError(error);
             });

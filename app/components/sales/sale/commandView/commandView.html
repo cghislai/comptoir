@@ -1,6 +1,6 @@
 <div class="commandView" *ng-if="aSale != null">
 
-    <header class="coloredHeader">
+    <header class="coloredHeader" [class.inactive]="noInput">
         <h1 [class.dirty]="aSale.dirty">
             <span>Vente</span>
             <span class="saleRef" [hidden]="aSale.saleId == null">
@@ -14,7 +14,7 @@
         </span>
 
         <div class="actions" *ng-if="aSale.sale != null"
-             [hidden]="aSale.items.length <= 0">
+             [hidden]="noInput || aSale.items.length <= 0">
             <div class="action reduction"
                  [hidden]="validated"
                  (^click)="doEditSaleDiscount()"

@@ -16,15 +16,18 @@
   .total.single {
     margin-top: .3em;
   }
-  .total.negative {
-    color: red;
-  }
-  .total.exact {
-    color: green;
+
+  &:not(.inactive) {
+    .total.negative {
+      color: red;
+    }
+    .total.exact {
+      color: green;
+    }
   }
 }
 
-table.usedMethod {
+table.payItems {
 
   font-size: 1.1em !important;
 
@@ -33,10 +36,14 @@ table.usedMethod {
   }
   td, th {
     padding: .5em !important;
-
-  }
-  td.actions {
-    width: 1.5em;
+    width: 100%;
+    &.actions, &.total {
+      max-width: 1%;
+      white-space: nowrap;
+    }
+    &.right, &.number {
+      text-align: right;
+    }
   }
 }
 

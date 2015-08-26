@@ -275,6 +275,7 @@ export class PaymentService {
                 });
             tasklist.push(fetchAccountTask);
         }
+        tasklist.push(this.getSaleTotalPayedAsync(aSalePay));
         return Promise.all(tasklist)
             .then(()=> {
                 return aSalePay;

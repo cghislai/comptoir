@@ -64,9 +64,9 @@ export class ItemSaleClient {
     }
 
     getUpdateItemSaleRequest(itemSale:ItemSale, authToken:string):ComptoirRequest{
-        var url = this.getResourceUrl();
+        var url = this.getItemSaleUrl(itemSale.id);
         var request = new ComptoirRequest();
-        request.setup('POST', url, authToken);
+        request.setup('PUT', url, authToken);
         request.setupData(itemSale);
         return request;
     }

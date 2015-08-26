@@ -44,7 +44,7 @@ export class ApplicationService {
         this.errorContent = "Request: " + error.request.getDebugString();
         this.errorContent = "Response code:" + error.code + "\n";
         this.errorContent += "Message: " + error.text;
-        this.errorFooter = "Essayer de répéter l'action que vous venez de commettre.<br/>";
+        this.errorFooter = "Essayez de répéter l'action que vous venez de commettre.<br/>";
         this.errorFooter += "Si le probleme persiste, contactez ";
         this.errorFooter += this.getMailtoSupportLink();
         this.errorFooter += ".";
@@ -69,7 +69,7 @@ export class ApplicationService {
         this.hasError = false;
         this.errorContent = null;
         // refresh page
-        window.location.reload();
+        //window.location.reload();
     }
 
 }

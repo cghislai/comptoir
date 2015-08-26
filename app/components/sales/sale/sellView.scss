@@ -29,7 +29,9 @@
   position: relative;
   left: 0;
 
-  @include transition(left 300ms ease-in-out);
+  &:not(.no-anim) {
+    @include transition(left 300ms ease-in-out);
+  }
 
   &.slide-left {
     left: -50vw;

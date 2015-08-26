@@ -18,7 +18,7 @@
     <saleList *ng-if="salesResult != null"
               [sales]="salesResult.list"
               [columns]="columns"
-              selectable="false"
+              selectable="true"
               headers="true"
               (sale-clicked)="onSaleClicked($event)"
               (column-action)="onColumnAction($event)">

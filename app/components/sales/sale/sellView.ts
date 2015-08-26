@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 29/07/15.
  */
-import {Component, View, NgIf, NgFor} from 'angular2/angular2';
+import {Component, View, NgIf, NgFor, Query,QueryList} from 'angular2/angular2';
 import {Router, RouteParams, Location} from 'angular2/router';
 
 import {Sale, SaleRef} from 'client/domain/sale';
@@ -40,11 +40,13 @@ export class SellView {
 
     aSale:ASale;
     payStep:boolean;
+    saleClosed: boolean;
 
     router:Router;
     location:Location;
     language:string;
     routeParams:RouteParams;
+    payView: PayView;
 
     constructor(saleService:SaleService, posService:PosService, appService:ApplicationService,
                 router:Router, routeParams:RouteParams, location:Location) {
@@ -127,12 +129,18 @@ export class SellView {
     getSale(idNumber:number) {
         var aSale = this.saleService.createASale();
         aSale.saleId = idNumber;
-        this.aSale = aSale;
 
         this.saleService.fetchASaleAsync(aSale)
             .then((aSale)=> {
                 this.aSale = aSale;
                 this.saleService.activeSale = aSale.sale;
+
+                if (aSale.sale.closed) {
+                    this.saleClosed = true;
+                    this.payStep = true;
+                } else {
+                    this.saleClosed = false;
+                }
             }).catch((error)=> {
                 this.appService.handleRequestError(error);
             });
@@ -142,6 +150,7 @@ export class SellView {
     createSale() {
         this.aSale = this.saleService.createASale();
         this.saleService.activeSale = null;
+        this.saleClosed = false;
         this.location.go('/sales/sale/new');
     }
 
@@ -186,10 +195,7 @@ export class SellView {
 
     onCommandValidated(validated:boolean, payView:PayView) {
         this.payStep = validated;
-        if (validated) {
-            payView.start();
-            //payView.calcRemaining();
-        }
+        payView.start();
     }
 
     onCommandPaid() {

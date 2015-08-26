@@ -1,7 +1,8 @@
-<div class="payView" *ng-if="aSalePay != null">
+<div class="payView" *ng-if="hasSale()">
 
     <div>
         <div class="toPayHeader coloredHeader"
+             [class.inactive]="noInput"
              [hidden]="aSalePay.missingAmount <= 0">
             <h1>À payer</h1>
             <span class="busy">
@@ -10,6 +11,7 @@
                      [hidden]="!aSalePay.dirty"/>
             </span>
             <span class="actions">
+                <span class="valignAnchor"></span>
                 <span class="total single">
                     {{ aSalePay.missingAmount | currency:'EUR':true:'.2-2' }}
                 </span>
@@ -17,8 +19,10 @@
         </div>
 
         <div class="toPayHeader coloredHeader"
+             [class.inactive]="noInput"
              [hidden]="aSalePay.missingAmount > 0">
-            <h1>À rendre</h1>
+            <h1 [hidden]="noInput">À rendre</h1>
+            <h1 [hidden]="!noInput">Rendu</h1>
             <span class="busy">
                 <span class="valignAnchor"></span>
                 <img src="res/img/spinner-2-white.gif"
@@ -26,12 +30,15 @@
             </span>
 
             <span class="actions">
+                <span class="valignAnchor"></span>
                 <span class="total"
                       [class.negative]="aSalePay.missingAmount < 0"
                       [class.exact]="aSalePay.missingAmount == 0">
                     {{ -aSalePay.missingAmount | currency:'EUR':true:'.2-2'}}
                 </span>
-                <span class="action validateLink" (click)="onValidateClicked()">
+                <span class="action validateLink"
+                      [hidden]="noInput"
+                      (click)="onValidateClicked()">
                     Valider
                 </span>
             </span>
@@ -42,7 +49,7 @@
         <thead>
         <tr>
             <th>Compte</th>
-            <th class="number">Montant</th>
+            <th class="number total">Montant</th>
             <th class="actions"></th>
         </tr>
         </thead>
@@ -53,13 +60,18 @@
                     {{ pay.account.description[language] }}
                 </span>
             </td>
-            <td class="number">
-                <a class="edit actionlink" (^click)="startEditPayItem(pay)">
+            <td class="number total">
+                <a class="edit actionlink"
+                   (^click)="startEditPayItem(pay)"
+                   [hidden]="noInput">
                     {{ pay.amount | currency:'EUR':true:'.2-2' }}
                 </a>
+                <span [hidden]="!noInput">
+                     {{ pay.amount | currency:'EUR':true:'.2-2' }}
+                </span>
             </td>
 
-            <td class="actions">
+            <td class="actions"  [hidden]="noInput">
                 <a class="actionIcon remove" (^click)="removePayItem(pay)">
                     <i class="fi-x red"></i>
                 </a>
@@ -68,16 +80,16 @@
         </tbody>
         <tfoot>
         <tr>
-            <th class="total">Total:</th>
-            <th class="total">
-                {{ aSalePay.amount | currency:'EUR':true:'.2-2' }}
+            <th class="right">Total</th>
+            <th class="number total">
+                {{ aSalePay.totalPayed | currency:'EUR':true:'.2-2' }}
             </th>
         </tr>
 
         </tfoot>
     </table>
 
-    <div class="editMethod" *ng-if="editingPayItem != null">
+    <div class="editMethod" *ng-if="editingPayItem != null"  [hidden]="noInput">
         <span class="method">{{ editingPayItem.account.description[language] }}</span>
         <span class="amount">
             Montant: <input #amount
@@ -89,7 +101,7 @@
         </span>
     </div>
 
-    <div class="addMethod">
+    <div class="addMethod" [hidden]="noInput">
         <div *ng-for="#account of allAccounts"
              class="boxedHoverableLink"
              (^click)="startEditPay(account)">

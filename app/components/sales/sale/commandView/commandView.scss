@@ -53,18 +53,25 @@ header {
 
 table {
   td, th {
-    > *:not([hidden]) {
-      //display: inline-block;
-      //vertical-align: middle;
-    }
+    white-space: nowrap;
+
     &.quantity {
       padding-right: 1em;
     }
+    &.price {
+      width: 1%;
+    }
+
     .nolink {
       pointer-events: none;
     }
     .unneeded {
       display: none;
+    }
+
+    tfoot td:last-child {
+      width: 1%;
+      white-space: nowrap;
     }
   }
 
@@ -122,7 +129,7 @@ table {
 
       }
       &.price {
-        min-width: 3em;
+
         font-size: .9em;
 
         .reduction {
@@ -159,6 +166,7 @@ tfoot {
     .total {
       font-size: 1.1em;
       font-weight: bold;
+      padding-left: 1em;
     }
   }
 

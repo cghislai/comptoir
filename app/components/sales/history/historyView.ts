@@ -63,10 +63,8 @@ export class SaleHistoryView {
     }
 
     searchSales() {
-        // TODO: cancel existing promises;
         this.loading = true;
         var thisView = this;
-        // TODO: filter by actives
         this.saleService
             .searchSales(this.saleSearch, this.pagination)
             .then(function (result) {
@@ -83,6 +81,8 @@ export class SaleHistoryView {
     }
 
     onSaleClicked(sale:Sale) {
+        var saleId = sale.id;
+        this.router.navigate('/sales/sale/'+saleId);
     }
 
     onColumnAction(sale:Sale, col:SaleColumn) {
