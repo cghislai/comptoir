@@ -64,6 +64,7 @@
                     <input type="number" min="0" step="1"
                            [value]="aMoneyPile.moneyPile.count"
                            [validator]="validateAmount"
+                           validate-on-blur="true"
                            (fast-change)="onCashInputChanged(aMoneyPile, $event)"
                            size="5" fast-input>
                 </span>

@@ -48,14 +48,16 @@ export class SaleHistoryView {
         this.saleSearch.companyRef = authService.loggedEmployee.companyRef
         this.saleSearch.closed = true;
         this.pagination = new Pagination(0, this.salesPerPage);
+        this.pagination.sorts = {
+            'DATETIME': 'desc'
+        };
         this.language = applicationService.language.locale;
         this.columns = [
             SaleColumn.ID,
             SaleColumn.REFERENCE,
             SaleColumn.DATETIME,
             SaleColumn.VAT_AMOUNT,
-            SaleColumn.VAT_EXCLUSIVE_AMOUNT,
-            SaleColumn.CLOSED
+            SaleColumn.VAT_EXCLUSIVE_AMOUNT
         ];
         this.searchSales();
     }

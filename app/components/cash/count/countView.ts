@@ -90,6 +90,7 @@ export class CountCashView {
             return;
         }
         this.posId = pos.id;
+        this.searchPaymentAccounts();
         this.searchLastBalance();
     }
 
@@ -195,10 +196,17 @@ export class CountCashView {
         if (!isNaN(total)) {
             total = NumberUtils.toFixedDecimals(total, 2);
             this.aBalance.total = total;
-            this.balanceService.updateABalanceAsync(this.aBalance)
-                .catch((error)=> {
-                    this.appService.handleRequestError(error);
-                });
+            if (this.aBalance.balance == null || this.aBalance.balance.id == null) {
+                this.balanceService.openABalanceAsync(this.aBalance)
+                    .catch((error)=> {
+                        this.appService.handleRequestError(error);
+                    });
+            } else {
+                this.balanceService.updateABalanceAsync(this.aBalance)
+                    .catch((error)=> {
+                        this.appService.handleRequestError(error);
+                    });
+            }
         }
         this.editingTotal = false;
     }

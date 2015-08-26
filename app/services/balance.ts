@@ -74,7 +74,7 @@ export class BalanceService {
         var authToken = this.authService.authToken;
         var aBalance = aMoneyPile.aBalance;
 
-        if (aBalance.balance == null) {
+        if (aBalance.balance == null || aBalance.balance.id == null) {
             return this.openABalanceAsync(aBalance)
                 .then(()=> {
                     return this.updateAMoneyPileAsync(aMoneyPile);
@@ -86,6 +86,7 @@ export class BalanceService {
         moneyPile.balanceRef = new BalanceRef(aBalance.balance.id);
 
         aMoneyPile.dirty = true;
+        aBalance.dirty = true;
         this.calcABalance(aBalance);
 
         if (moneyPile.id == null) {
@@ -94,6 +95,12 @@ export class BalanceService {
                     return this.moneyPileClient.getMoneyPile(pileRef.id, authToken);
                 }).then((pile:MoneyPile)=> {
                     aMoneyPile.moneyPile = pile;
+                    aMoneyPile.dirty = false;
+                    var balanceId = aBalance.balance.id;
+                    return this.balanceClient.getBalance(balanceId, authToken);
+                }).then((balance: Balance)=>{
+                    aBalance.balance = balance;
+                    aBalance.dirty = false;
                     this.calcABalance(aBalance);
                     return aBalance;
                 });
@@ -103,6 +110,12 @@ export class BalanceService {
                     return this.moneyPileClient.getMoneyPile(pileRef.id, authToken);
                 }).then((pile:MoneyPile)=> {
                     aMoneyPile.moneyPile = pile;
+                    aMoneyPile.dirty =false;
+                    var balanceId = aBalance.balance.id;
+                    return this.balanceClient.getBalance(balanceId, authToken);
+                }).then((balance: Balance)=>{
+                    aBalance.balance = balance;
+                    aBalance.dirty = false;
                     this.calcABalance(aBalance);
                     return aBalance;
                 });
@@ -133,6 +146,9 @@ export class BalanceService {
             if (!aMoneyPile.dirty && aMoneyPile.moneyPile != null
                 && aMoneyPile.moneyPile.id != null) {
                 pileTotal = aMoneyPile.moneyPile.total;
+                if (isNaN(pileTotal)) {
+                    pileTotal = 0;
+                }
                 aMoneyPile.total = pileTotal;
                 total += pileTotal;
                 continue;

@@ -46,6 +46,14 @@ export class AuthClient {
             });
     }
 
+    getRegisterRequest(registration:Registration):ComptoirRequest{
+        var request = new ComptoirRequest();
+        var url = this.getRegisterUrl();
+        request.setup('POST', url, null);
+        request.setupData(registration);
+        return request;
+    }
+
     refreshToken(refreshToken: string) {
         var request = new ComptoirRequest();
         var url = this.getRefreshUrl();

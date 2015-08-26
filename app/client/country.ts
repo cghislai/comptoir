@@ -32,4 +32,11 @@ export class CountryClient {
             });
     }
 
+    getGetCountryrequest(code:string, authToken:string):ComptoirRequest {
+        var request = new ComptoirRequest();
+        var url = this.getCountryUrl(code);
+        request.setup('GET', url, authToken);
+        return request;
+    }
+
 }

@@ -59,6 +59,13 @@ export class EmployeeClient {
             });
     }
 
+    getGetEmployeeRequest(id:number, authToken:string):ComptoirRequest {
+        var url = this.getEmployeeUrl(id);
+        var request = new ComptoirRequest();
+        request.setup('GET', url, authToken);
+        return request;
+    }
+
     searchEmployee(search:EmployeeSearch, authToken:string):Promise<SearchResult<Employee>> {
         var url = this.getSearchUrl();
         var request = new ComptoirRequest();

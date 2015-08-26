@@ -8,7 +8,7 @@ import {Directive, ElementRef, EventEmitter,
 
 @Directive({
     selector: 'input[fast-input]',
-    properties: ['validator'],
+    properties: ['validator', 'validateOnBlur'],
     events: ['fastChange'],
     host: {
         '(keyup)': 'onKeyUp($event)',
@@ -26,6 +26,7 @@ export class FastInput {
     fastChange:EventEmitter;
     initialValue:any;
     elementRef:ElementRef;
+    validateOnBlur: boolean;
 
     constructor(elementRef:ElementRef) {
         this.elementRef = elementRef;
@@ -78,6 +79,9 @@ export class FastInput {
 
     onBlur(event) {
         //this.doValidate();
+        if (this.validateOnBlur) {
+            this.doValidate();
+        }
         return true;
     }
 

@@ -31,11 +31,11 @@ export class SaleClient {
             url += "&length=";
             url += pagination.pageSize;
             if (pagination.sorts != null) {
-                url += "&sort=";
                 var sorts = pagination.sorts;
                 for (var col in sorts) {
                     var order = sorts[col];
-                    url += col + "-" + order + ',';
+                    url += "&sort=";
+                    url += col + "-" + order;
                 }
             }
         }

@@ -3,12 +3,13 @@
  */
 import {Inject} from 'angular2/angular2';
 
-import {Company, CompanyRef} from 'client/domain/company';
-import {Country} from 'client/domain/country';
+import {Country, CountryFactory} from 'client/domain/country';
+import {Company, CompanyRef, CompanyFactory} from 'client/domain/company';
 import {EmployeeRef, Employee, EmployeeFactory} from 'client/domain/employee';
 import {Auth, Registration, AuthFactory} from 'client/domain/auth';
 import {Language} from 'client/utils/lang';
 import {JSONFactory} from 'client/utils/factory';
+import {ComptoirRequest,ComptoirResponse} from 'client/utils/request';
 
 import {AuthClient} from 'client/auth';
 import {EmployeeClient} from 'client/employee';
@@ -38,6 +39,9 @@ export class AuthService {
     loggedEmployee:Employee;
     employeeCompany:Company;
     companyCountry:Country;
+    loaded: boolean;
+    loadingRequest:ComptoirRequest;
+    registrationRequest: ComptoirRequest;
 
     loginRequired:boolean;
     loginRequiredReason:LoginRequiredReason;
@@ -64,46 +68,78 @@ export class AuthService {
 
     // Register then log in
     register(registration:Registration):Promise<Employee> {
-        var thisService = this;
-        return this.client.register(registration)
-            .then((companyRef:CompanyRef)=> {
+        if (this.registrationRequest != null) {
+            console.log("Registration already running");
+            return;
+        }
+        this.registrationRequest = this.client.getRegisterRequest(registration);
+        return this.registrationRequest.run()
+            .then((response:ComptoirResponse)=> {
+                var companyRef = JSON.parse(response.text);
                 console.log('Successfully registered for company #' + companyRef.id);
                 var login = registration.employee.login;
                 var password = registration.employeePassword;
                 var hashedPassword = MD5.encode(password);
-                return thisService.login(login, hashedPassword);
+                return this.login(login, hashedPassword);
+            }).then(()=>{
+                return this.loggedEmployee;
+            }).catch((error)=> {
+                this.applicationService.handleRequestError(error);
+                return null;
             });
     }
 
 
     private fetchEmployeeData(employeeRef:EmployeeRef) {
-        return this.fetchEmployee(employeeRef.id)
+        this.fetchEmployee(employeeRef.id)
             .then(()=> {
                 var companyId = this.loggedEmployee.companyRef.id;
                 return this.fetchCompany(companyId);
             }).then(()=> {
                 var countryCode = this.employeeCompany.countryRef.code;
                 return this.fetchCountry(countryCode);
+            }).then(()=>{
+                this.loaded = true;
+            }).catch((error)=> {
+                this.applicationService.handleRequestError(error);
             });
     }
 
     private fetchEmployee(employeeId:number) {
-        return this.employeeClient.getEmployee(employeeId, this.authToken)
-            .then((employee:Employee)=> {
+        if (this.loadingRequest != null) {
+            this.loadingRequest.discardRequest();
+        }
+        this.loadingRequest = this.employeeClient.getGetEmployeeRequest(employeeId, this.authToken);
+        return this.loadingRequest.run()
+            .then((response:ComptoirResponse)=> {
+                var employee = JSON.parse(response.text, EmployeeFactory.fromJSONEmployeeReviver);
+                this.loadingRequest = null;
                 this.loggedEmployee = employee;
             });
     }
 
     private fetchCompany(companyId:number) {
-        return this.companyClient.getCompany(companyId, this.authToken)
-            .then((company:Company)=> {
+        if (this.loadingRequest != null) {
+            this.loadingRequest.discardRequest();
+        }
+        this.loadingRequest = this.companyClient.getGetCompanyRequest(companyId, this.authToken);
+        return this.loadingRequest.run()
+            .then((response:ComptoirResponse)=> {
+                var company = JSON.parse(response.text, CompanyFactory.fromJSONCompanyReviver);
+                this.loadingRequest = null;
                 this.employeeCompany = company;
             });
     }
 
     private fetchCountry(countryCode:string) {
-        return this.countryClient.getCountry(countryCode, this.authToken)
-            .then((country:Country)=> {
+        if (this.loadingRequest != null) {
+            this.loadingRequest.discardRequest();
+        }
+        this.loadingRequest = this.countryClient.getGetCountryrequest(countryCode, this.authToken);
+        return this.loadingRequest.run()
+            .then((response:ComptoirResponse) => {
+                var country = JSON.parse(response.text, CountryFactory.fromJSONCountryReviver);
+                this.loadingRequest = null;
                 this.companyCountry = country;
             });
     }
@@ -117,6 +153,9 @@ export class AuthService {
         } else {
             this.authToken = null;
             localStorage.setItem(AuthService.STORAGE_AUTH_KEY, null);
+            this.loggedEmployee = null;
+            this.employeeCompany = null;
+            this.companyCountry = null;
         }
     }
 
@@ -183,28 +222,24 @@ export class AuthService {
             });
     }
 
-    checkLoginRequired() {
+    checkLoggedIn():boolean {
         if (this.auth == null) {
             this.loginRequired = true;
             this.loginRequiredReason = LoginRequiredReason.NO_SESSION;
-            return true;
+            return false;
         }
         var expireDate = this.auth.expirationDateTime;
         if (!this.isExpireDateValid(expireDate)) {
             this.loginRequired = true;
             this.loginRequiredReason = LoginRequiredReason.SESSION_EXPIRED;
-            return true;
+            return false;
         }
-        if (this.loggedEmployee == null) {
-            this.loginRequired = true;
-            this.loginRequiredReason = LoginRequiredReason.NO_SESSION;
-            return true;
-        }
+
         this.loginRequired = false;
         this.loginRequiredReason = null;
 
         this.checkRefreshToken();
-        return false;
+        return true;
     }
 
 }

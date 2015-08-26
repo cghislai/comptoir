@@ -1,6 +1,6 @@
 /// <reference path="./typings/_custom.d.ts" />
 import {Component, View,  bootstrap, NgIf} from 'angular2/angular2';
-import {RouteConfig, RouterOutlet, RouterLink, routerInjectables, Location} from 'angular2/router';
+import {RouteConfig, Router, RouterOutlet, RouterLink, routerInjectables, Location} from 'angular2/router';
 
 import {ApplicationService} from 'services/application';
 import {AuthService} from 'services/auth';
@@ -16,7 +16,6 @@ import {PaymentService} from 'services/payment';
 import {PosService} from 'services/pos';
 import {FileUploadService} from "services/fileUpload";
 
-import {RequiresLogin} from 'directives/requiresLogin';
 import {NavMenu} from './components/navMenu/navMenu';
 import {DialogView} from 'components/utils/dialog/dialog';
 
@@ -45,12 +44,12 @@ import {ApplicationSettingsView} from 'components/settings/application/appSettin
 
 
 @Component({
-    selector: 'app'
+    selector: 'app',
 })
 @View({
     templateUrl: './app.html?v=<%= VERSION %>',
     styleUrls: ['./app.css'],
-    directives: [RouterOutlet, RouterLink, NavMenu, RequiresLogin, DialogView, NgIf]
+    directives: [RouterOutlet, RouterLink, NavMenu, DialogView, NgIf]
 })
 
 @RouteConfig([
@@ -84,27 +83,48 @@ import {ApplicationSettingsView} from 'components/settings/application/appSettin
 ])
 export class App {
     appService:ApplicationService;
-    loginRequired: boolean;
+    authService: AuthService;
 
-    constructor(appService:ApplicationService) {
+    loginRequired: boolean;
+    loggedIn: boolean;
+    router: Router;
+
+    constructor(appService:ApplicationService,authService: AuthService,
+                router: Router, location: Location) {
         this.appService = appService;
         this.appService.appName = "Comptoir";
         this.appService.appVersion = "0.1";
+        this.authService = authService;
+        this.router = router;
+        router.subscribe((path)=>{
+           this.checkLoginRequired(path);
+        });
+        this.checkLoginRequired(location.path());
     }
 
+    checkLoginRequired(path:string) {
+        if (path.indexOf('/login') >= 0) {
+            this.loginRequired = false;
+            return;
+        }
+        if (path.indexOf('/register') >= 0) {
+            this.loginRequired = false;
+            return;
+        }
+        this.loginRequired = true;
+        // Check if logged-in
+        var loggedIn:boolean = this.authService.checkLoggedIn();
+        this.loggedIn = loggedIn;
+        if (!loggedIn) {
+            this.router.navigate('/login');
+        }
+
+    }
 
 
     onErrorClose() {
         this.appService.dismissError();
     }
-
-    onLoginRequired(required: boolean) {
-        this.loginRequired = required;
-        if (required) {
-            console.log("Login required");
-        }
-    }
-
 }
 
 

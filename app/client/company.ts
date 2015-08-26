@@ -59,7 +59,12 @@ export class CompanyClient {
             });
     }
 
-
+    getGetCompanyRequest(id:number, authToken: string):ComptoirRequest {
+        var request = new ComptoirRequest();
+        var url = this.getCompanyUrl(id);
+        request.setup('GET', url, authToken);
+        return request;
+    }
     uploadImportDataFile(data:any, companyRef: CompanyRef, authToken: string,
                          progressCallback?:(precentage:number)=>any): Promise<any> {
         var request = new XMLHttpRequest();

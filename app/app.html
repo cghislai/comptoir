@@ -1,9 +1,9 @@
-<div class="app" requireslogin (requires-login)="onLoginRequired($event)">
+<div class="app">
     <header class="coloredHeader">
         <navMenu></navMenu>
     </header>
-    <section>
-        <router-outlet *ng-if="loginRequired == false"></router-outlet>
+    <section *ng-if="!loginRequired || authService.loaded">
+        <router-outlet></router-outlet>
     </section>
     <footer>
         {{ appService.appName }} {{ appService.appVersion }}
