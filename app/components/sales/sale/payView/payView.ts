@@ -39,7 +39,7 @@ export class PayView {
     editingPayItem:ASalePayItem;
     pos:Pos;
     sale:ASale;
-    noInput: boolean;
+    noInput:boolean;
 
     paid = new EventEmitter();
 
@@ -65,10 +65,10 @@ export class PayView {
         this.start();
     }
 
-    private hasSale() : boolean {
+    private hasSale():boolean {
         return this.aSalePay != null
-        && this.sale != null
-        && this.sale.sale != null;
+            && this.sale != null
+            && this.sale.sale != null;
     }
 
     start() {
@@ -78,7 +78,7 @@ export class PayView {
         var aSalePay = this.paymentService.createASalePay(this.sale, this.pos);
 
         this.paymentService.findASalePayItemsAsync(aSalePay)
-            .then(()=>{
+            .then(()=> {
                 this.aSalePay = aSalePay;
             })
             .catch((error)=> {
@@ -90,11 +90,8 @@ export class PayView {
 
     searchAccounts() {
         var accountSearch = new AccountSearch();
-        var pos = this.aSalePay.pos;
-        if (pos != null) {
-            var posRef = new PosRef(pos.id);
-            accountSearch.posRef = posRef;
-        }
+        var posRef = new PosRef(this.pos.id);
+        accountSearch.posRef = posRef;
         var thisView = this;
         this.accountService.searchAccounts(accountSearch, null)
             .then((result:SearchResult<Account>)=> {
@@ -164,8 +161,8 @@ export class PayView {
     removePayItem(payItem:ASalePayItem) {
         return this.paymentService.removeASalePayItem(payItem)
             .catch((error)=> {
-            this.appService.handleRequestError(error);
-        });
+                this.appService.handleRequestError(error);
+            });
     }
 
     onValidateClicked() {

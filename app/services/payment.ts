@@ -83,7 +83,7 @@ export class PaymentService {
         aSalePayItem.dirty = true;
 
         var promise = this.createASalePayItemAsync(aSalePayItem)
-            .then(()=>{
+            .then(()=> {
                 return this.getSaleTotalPayedAsync(aSalePay);
             })
             .then(()=> {
@@ -105,7 +105,7 @@ export class PaymentService {
         aSalePay.dirty = true;
 
         var promise = this.updateASalePayItemAsync(aSalePayItem)
-            .then(()=>{
+            .then(()=> {
                 return this.getSaleTotalPayedAsync(aSalePay);
             })
             .then(()=> {
@@ -125,7 +125,7 @@ export class PaymentService {
 
         aSalePay.dirty = true;
         var promise = this.removeASalePayItemAsync(aSalePayItem)
-            .then(()=>{
+            .then(()=> {
                 return this.getSaleTotalPayedAsync(aSalePay);
             })
             .then(()=> {
@@ -264,21 +264,24 @@ export class PaymentService {
         for (var entry of result.list) {
             var payItem = new ASalePayItem();
             payItem.aSalePay = aSalePay;
-
             this.setASalePayItemAcccountingEntry(payItem, entry);
             aSalePay.payItems.push(payItem);
 
-            var accountId = entry.accountRef.id;
-            var fetchAccountTask = this.accountClient.getAccount(accountId, authToken)
-                .then((account)=> {
-                    payItem.account = account;
-                });
-            tasklist.push(fetchAccountTask);
+            tasklist.push(this.getASalePayItemAccount(payItem));
         }
         tasklist.push(this.getSaleTotalPayedAsync(aSalePay));
         return Promise.all(tasklist)
             .then(()=> {
                 return aSalePay;
+            });
+    }
+
+    private getASalePayItemAccount(payItem:ASalePayItem) {
+        var authToken = this.authService.authToken;
+        var accountId = payItem.accountingEntry.accountRef.id;
+        return this.accountClient.getAccount(accountId, authToken)
+            .then((account)=> {
+                payItem.account = account;
             });
     }
 
