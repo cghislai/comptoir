@@ -1,21 +1,3 @@
 <div class="app">
-    <header class="coloredHeader">
-        <navMenu></navMenu>
-    </header>
-    <section *ng-if="!loginRequired || authService.loaded">
-        <router-outlet></router-outlet>
-    </section>
-    <footer>
-        {{ appService.appName }} {{ appService.appVersion }}
-    </footer>
-    <dialogview modal="true" closable="true" title="Erreur" *ng-if="appService.hasError"
-            (close)="onErrorClose()">
-        <p [inner-html]="appService.errorHeader">
-        </p>
-        <p class="errorMessage"
-           [inner-html]="appService.errorContent">
-        </p>
-        <p [inner-html]="appService.errorFooter">
-        </p>
-    </dialogview>
+    <router-outlet></router-outlet>
 </div>

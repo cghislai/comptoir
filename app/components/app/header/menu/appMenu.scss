@@ -1,0 +1,22 @@
+@import '../../../../styles/_constants';
+
+div.appMenu {
+  color: $onBlueTextColor;
+  h1 {
+    font-size: 2em;
+    font-weight: bold;
+
+    &:not(.inactive) {
+      &:hover {
+        color: $onBlueHoverColor;
+        cursor: pointer;
+      }
+      &::after {
+        content: " ▼";
+      }
+    }
+    &.inactive {
+      pointer-events: none;
+    }
+  }
+}

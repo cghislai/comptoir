@@ -20,8 +20,10 @@ import {NavMenu} from './components/navMenu/navMenu';
 import {DialogView} from 'components/utils/dialog/dialog';
 
 
-import {LoginView} from 'components/auth/login/login';
+import {LoginView} from 'routes/login/loginView';
 import {RegisterView} from 'components/auth/register/register';
+
+import {SalesView} from 'routes/sales/salesView';
 
 import {SellView} from 'components/sales/sale/sellView';
 import {ActiveSalesView} from 'components/sales/actives/listView';
@@ -49,7 +51,7 @@ import {ApplicationSettingsView} from 'components/settings/application/appSettin
 @View({
     templateUrl: './app.html?v=<%= VERSION %>',
     styleUrls: ['./app.css'],
-    directives: [RouterOutlet, RouterLink, NavMenu, DialogView, NgIf]
+    directives: [RouterOutlet]
 })
 
 @RouteConfig([
@@ -57,29 +59,8 @@ import {ApplicationSettingsView} from 'components/settings/application/appSettin
     {path: '/login', component: LoginView, as:'login'},
     {path: '/register', component: RegisterView, as:'register'},
 
-    {path: '/sales/sale', component: SellView, as: 'saleCurrent'},
-    {path: '/sales/sale/:id', component: SellView, as: 'salesSale'},
-    {path: '/sales/actives', component: ActiveSalesView, as: 'salesActives'},
-    {path: '/sales/history', component: SaleHistoryView, as: 'salesHistory'},
-
-    {path: '/items/list', component: ProductsListView, as: 'itemsList'},
-    {path: '/items/edit', component: EditProductView, as: 'itemsEditNew'},
-    {path: '/items/edit/:id', component: EditProductView, as: 'itemsEdit'},
-    {path: '/items/import', component: ImportProductView, as: 'itemsImport'},
-
-    {path: '/accounts/list', component: AccountsListView, as: 'accountsList'},
-    {path: '/accounts/edit', component: EditAccountView, as: 'accountsEditNew'},
-    {path: '/accounts/edit/:id', component: EditAccountView, as: 'accountsEdit'},
-
-    {path: '/pos/list', component: PosListView, as: 'posList'},
-    {path: '/pos/edit', component: EditPosView, as: 'posEditNew'},
-    {path: '/pos/edit/:id', component: EditPosView, as: 'posEdit'},
-
-    {path: '/cash/count', component: CountCashView, as: 'cashCount'},
-    {path: '/cash/history', component: CashHistoryView, as: 'cashHistory'},
-
-    {path: '/settings/app', component: ApplicationSettingsView, as: 'settingsApp'}
-
+    {path: '/sales', redirectTo:'/sales/sale'},
+    {path: '/sales/...', component: SalesView, as:'sales'}
 ])
 export class App {
     appService:ApplicationService;
@@ -97,9 +78,9 @@ export class App {
         this.authService = authService;
         this.router = router;
         router.subscribe((path)=>{
-           this.checkLoginRequired(path);
+         //  this.checkLoginRequired(path);
         });
-        this.checkLoginRequired(location.path());
+       // this.checkLoginRequired(location.path());
     }
 
     checkLoginRequired(path:string) {

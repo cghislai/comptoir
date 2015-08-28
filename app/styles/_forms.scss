@@ -1,0 +1,13 @@
+
+form {
+  padding: 1em;
+
+  input, button, textarea, select {
+    margin: .3em;
+    font-size: 1em;
+  }
+
+  button[type=submit] {
+    font-size: 1em;
+  }
+}

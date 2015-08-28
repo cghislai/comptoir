@@ -1,0 +1,19 @@
+div.formError {
+  &:not([hidden]) {
+    height: 1em;
+    font-size: .9em;
+    margin: .3em;
+    border: .1em solid;
+    padding: .3em;
+
+    display: inline-block;
+    &.inline-pos {
+      position: absolute;
+    }
+
+    &.fatal {
+      color: #D8000C;
+      background-color: #FFBABA;
+    }
+  }
+}

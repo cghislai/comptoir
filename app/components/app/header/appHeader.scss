@@ -1,0 +1,14 @@
+@import '../../../styles/_constants';
+
+header.appHeader {
+  background-color: $blueColor;
+  color: $onBlueTextColor;
+
+  width: 100%;
+  height: 3.5em;
+  padding: 0em 1em;
+
+  &:not([hidden]) {
+    display: table;
+  }
+}
