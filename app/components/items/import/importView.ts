@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 14/08/15.
  */
-import {Component, View, NgIf, formDirectives} from 'angular2/angular2';
+import {Component, View, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Router, RouterLink} from 'angular2/router';
 
 import {CompanyClient} from 'client/company';
@@ -17,7 +17,7 @@ import {AuthService} from 'services/auth';
 @View({
     templateUrl: './components/items/import/importView.html',
     styleUrls: ['./components/items/import/importView.css'],
-    directives: [NgIf, formDirectives, RouterLink]
+    directives: [NgIf, FORM_DIRECTIVES, RouterLink]
 })
 export class ImportProductView {
     appService:ApplicationService;

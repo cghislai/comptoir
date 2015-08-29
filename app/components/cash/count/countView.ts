@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 02/08/15.
  */
-import {Component, View, FormBuilder, formDirectives, NgFor, NgIf} from 'angular2/angular2';
+import {Component, View, FormBuilder, FORM_DIRECTIVES, NgFor, NgIf} from 'angular2/angular2';
 
 import {Account,AccountType, AccountSearch} from 'client/domain/account';
 import {Balance, BalanceSearch} from 'client/domain/balance';

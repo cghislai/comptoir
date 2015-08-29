@@ -48,28 +48,28 @@ export class NavMenu {
     }
 
     getPageName() {
-        if (this.isActive('/sale')) {
+        if (this.isActive('sale')) {
             return "Ventes";
         }
-        if (this.isActive('/items')) {
+        if (this.isActive('items')) {
             return "Produits";
         }
-        if (this.isActive('/cash')) {
+        if (this.isActive('cash')) {
             return "Caisse";
         }
-        if (this.isActive('/settings')) {
+        if (this.isActive('settings')) {
             return "Paramètres";
         }
-        if (this.isActive('/accounts')) {
+        if (this.isActive('accounts')) {
             return "Comptes";
         }
-        if (this.isActive('/login')) {
+        if (this.isActive('login')) {
             return "Connection";
         }
-        if (this.isActive('/register')) {
+        if (this.isActive('register')) {
             return "Nouveau Compte";
         }
-        if (this.isActive('/pos')) {
+        if (this.isActive('pos')) {
             return "Points de vente";
         }
     }

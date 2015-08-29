@@ -46,7 +46,7 @@ import {ApplicationSettingsView} from 'components/settings/application/appSettin
 
 
 @Component({
-    selector: 'app',
+    selector: 'app'
 })
 @View({
     templateUrl: './app.html?v=<%= VERSION %>',
@@ -55,7 +55,7 @@ import {ApplicationSettingsView} from 'components/settings/application/appSettin
 })
 
 @RouteConfig([
-    {path: '/', redirectTo:'/login'},
+    {path: '/', redirectTo:'/sales/sale/new'},
     {path: '/login', component: LoginView, as:'login'},
     {path: '/register', component: RegisterView, as:'register'},
 
@@ -106,6 +106,7 @@ export class App {
     onErrorClose() {
         this.appService.dismissError();
     }
+
 }
 
 

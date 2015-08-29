@@ -61,6 +61,7 @@ var PATH = {
 };
 
 var ng2Builder = new Builder({
+  defaultJSExtensions: true,
   paths: {
     'angular2/*': 'node_modules/angular2/es6/dev/*.js',
     rx: 'node_modules/angular2/node_modules/rx/dist/rx.js'
@@ -73,6 +74,7 @@ var ng2Builder = new Builder({
 });
 
 var appProdBuilder = new Builder({
+  defaultJSExtensions: true,
   baseURL: 'file:./tmp',
   meta: {
     'angular2/angular2': { build: false },
@@ -153,7 +155,7 @@ gulp.task('build.assets.dev', ['build.js.dev'], function () {
 });
 
 
-gulp.task('build.res.dev', ['build.js.prod'], function () {
+gulp.task('build.res.dev', ['build.js.dev'], function () {
   return gulp.src(['./app/res/**'], {base: './app'})
       .pipe(gulp.dest(PATH.dest.dev.all));
 });
@@ -329,10 +331,8 @@ function injectableDevAssetsRef() {
   var src = PATH.src.lib.map(function(path) {
     return join(PATH.dest.dev.lib, path.split('/').pop());
   });
-  // FIX for alpha34 router
-  src.push(join(PATH.dest.dev.all, '**/*.css'));
-  //src.push(PATH.dest.dev.ng2, PATH.dest.dev.router,
-  //    join(PATH.dest.dev.all, '**/*.css'));
+  src.push(PATH.dest.dev.ng2, PATH.dest.dev.router,
+      join(PATH.dest.dev.all, '**/*.css'));
   return src;
 }
 

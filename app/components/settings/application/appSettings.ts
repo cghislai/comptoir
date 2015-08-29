@@ -2,7 +2,7 @@
  * Created by cghislai on 05/08/15.
  */
 
-import {Component, View, NgFor, NgIf, formDirectives} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 
 import {Company} from 'client/domain/company';
 import {Employee} from 'client/domain/employee';
@@ -18,7 +18,7 @@ import {AuthService} from 'services/auth';
 @View({
     templateUrl: './components/settings/application/appSettings.html',
     styleUrls: ['./components/settings/application/appSettings.css'],
-    directives: [NgFor, NgIf, formDirectives]
+    directives: [NgFor, NgIf, FORM_DIRECTIVES]
 })
 export class ApplicationSettingsView {
     appService:ApplicationService;

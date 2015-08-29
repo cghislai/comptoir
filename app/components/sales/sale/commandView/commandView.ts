@@ -2,7 +2,7 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, NgIf, EventEmitter, formDirectives} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, EventEmitter, FORM_DIRECTIVES} from 'angular2/angular2';
 
 import {Item} from 'client/domain/item';
 import {Sale, SaleRef} from 'client/domain/sale';
@@ -29,7 +29,7 @@ import {ApplicationService} from 'services/application';
 @View({
     templateUrl: './components/sales/sale/commandView/commandView.html',
     styleUrls: ['./components/sales/sale/commandView/commandView.css'],
-    directives: [AutoFocusDirective, FastInput, NgFor, NgIf, formDirectives]
+    directives: [AutoFocusDirective, FastInput, NgFor, NgIf, FORM_DIRECTIVES]
 })
 
 export class CommandView {
@@ -274,5 +274,4 @@ export class CommandView {
             return inputList[0];
         }
     }
-
 }

@@ -2,7 +2,7 @@
  * Created by cghislai on 07/08/15.
  */
 
-import {Component, View, formDirectives} from 'angular2/angular2';
+import {Component, View, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Router, RouterLink} from 'angular2/router';
 import {AuthService, LoginRequiredReason} from 'services/auth';
 import {ApplicationService} from 'services/application';
@@ -14,7 +14,7 @@ import {MD5} from 'components/auth/md5';
 @View({
     templateUrl: './components/auth/login/login.html',
     styleUrls: ['./components/auth/login/login.css'],
-    directives: [formDirectives, RouterLink]
+    directives: [FORM_DIRECTIVES, RouterLink]
 })
 export class LoginView {
     authService:AuthService;

@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 05/08/15.
  */
-import {Component, View, NgFor, NgIf, formDirectives} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
 import {Account, AccountType} from 'client/domain/account';
@@ -54,7 +54,7 @@ class AccountFormModel {
 @View({
     templateUrl: './components/accounts/edit/editView.html',
     styleUrls: ['./components/accounts/edit/editView.css'],
-    directives: [NgFor, NgIf, formDirectives, RouterLink, LangSelect, LocalizedDirective]
+    directives: [NgFor, NgIf, FORM_DIRECTIVES, RouterLink, LangSelect, LocalizedDirective]
 })
 export class EditAccountView {
     accountId:number;

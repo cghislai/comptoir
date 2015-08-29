@@ -144,14 +144,15 @@ export class SellView {
             }).catch((error)=> {
                 this.appService.handleRequestError(error);
             });
-        this.location.go('/sales/sale/' + idNumber);
+         //this.location.go('/sales/sale/'+idNumber);
+        this.router.navigate('/sales/sale/'+idNumber);
     }
 
     createSale() {
         this.aSale = this.saleService.createASale();
         this.saleService.activeSale = null;
         this.saleClosed = false;
-        this.location.go('/sales/sale/new');
+        this.router.navigate('/sales/sale/new');
     }
 
     onSaleInvalidated() {

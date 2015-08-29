@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 31/07/15.
  */
-import {Component, View, NgFor, NgIf, formDirectives} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
 
@@ -24,7 +24,7 @@ import {Paginator} from 'components/utils/paginator/paginator';
 @View({
     templateUrl: './components/items/list/listView.html',
     styleUrls: ['./components/items/list/listView.css'],
-    directives: [NgFor, NgIf, Paginator, formDirectives, ItemList]
+    directives: [NgFor, NgIf, Paginator, FORM_DIRECTIVES, ItemList]
 })
 
 export class ProductsListView {

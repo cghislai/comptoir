@@ -24,14 +24,14 @@
     </div>
 
     <div class="navTabs">
-        <div [hidden]="!isActive('/sales')">
+        <div [hidden]="!isActive('sales')">
             <div class="tab">
-                <a [router-link]="['/saleCurrent']" [class.active]="isActive('/sales/sale')">
+                <a [router-link]="['/saleCurrent']" [class.active]="isActive('sales/sale')">
                     Vente
                 </a>
             </div>
             <div class="tab">
-                <a [router-link]="['/salesActives']" [class.active]="isActive('/sales/actives')">
+                <a [router-link]="['/salesActives']" [class.active]="isActive('sales/actives')">
                     En cours
                 </a>
             </div>
@@ -41,20 +41,20 @@
                 </a>
             </div>
             <div class="tab">
-                <a [router-link]="['/salesHistory']" [class.active]="isActive('/sales/history')">
+                <a [router-link]="['/salesHistory']" [class.active]="isActive('sales/history')">
                     Historique
                 </a>
             </div>
         </div>
 
-        <div [hidden]="!isActive('/items')">
+        <div [hidden]="!isActive('items')">
             <div class="tab">
-                <a [router-link]="['/itemsList']" [class.active]="isActive('/items/list')">
+                <a [router-link]="['/itemsList']" [class.active]="isActive('items/list')">
                     Liste
                 </a>
             </div>
             <div class="tab">
-                <a [class.active]="isActive('/items/edit')" [hidden]="!isActive('/items/edit')">
+                <a [class.active]="isActive('items/edit')" [hidden]="!isActive('items/edit')">
                     Édition
                 </a>
             </div>
@@ -64,33 +64,33 @@
                 </a>
             </div>
             <div class="tab">
-                <a [router-link]="['/itemsImport']" [class.active]="isActive('/items/import')">
+                <a [router-link]="['/itemsImport']" [class.active]="isActive('items/import')">
                     Importer
                 </a>
             </div>
         </div>
 
-        <div [hidden]="!isActive('/cash')">
+        <div [hidden]="!isActive('cash')">
             <div class="tab">
-                <a [router-link]="['/cashCount']" [class.active]="isActive('/cash/count')">
+                <a [router-link]="['/cashCount']" [class.active]="isActive('cash/count')">
                     Comptage
                 </a>
             </div>
             <div class="tab">
-                <a [router-link]="['/cashHistory']" [class.active]="isActive('/cash/history')">
+                <a [router-link]="['/cashHistory']" [class.active]="isActive('cash/history')">
                     Historique
                 </a>
             </div>
         </div>
 
-        <div [hidden]="!isActive('/accounts')">
+        <div [hidden]="!isActive('accounts')">
             <div class="tab">
-                <a [router-link]="['/accountsList']" [class.active]="isActive('/accounts/list')">
+                <a [router-link]="['/accountsList']" [class.active]="isActive('accounts/list')">
                     Liste
                 </a>
             </div>
             <div class="tab">
-                <a [class.active]="isActive('/accounts/edit')" [hidden]="!isActive('/accounts/edit')">
+                <a [class.active]="isActive('accounts/edit')" [hidden]="!isActive('accounts/edit')">
                     Édition
                 </a>
             </div>
@@ -101,14 +101,14 @@
             </div>
         </div>
 
-        <div [hidden]="!isActive('/pos')">
+        <div [hidden]="!isActive('pos')">
             <div class="tab">
-                <a [router-link]="['/posList']" [class.active]="isActive('/pos/list')">
+                <a [router-link]="['/posList']" [class.active]="isActive('pos/list')">
                     Liste
                 </a>
             </div>
             <div class="tab">
-                <a [class.active]="isActive('/pos/edit')" [hidden]="!isActive('/pos/edit')">
+                <a [class.active]="isActive('pos/edit')" [hidden]="!isActive('pos/edit')">
                     Édition
                 </a>
             </div>
@@ -119,9 +119,9 @@
             </div>
         </div>
 
-        <div [hidden]="!isActive('/settings')">
+        <div [hidden]="!isActive('settings')">
             <div class="tab">
-                <a [router-link]="['/settingsApp']" [class.active]="isActive('/settings/app')">
+                <a [router-link]="['/settingsApp']" [class.active]="isActive('settings/app')">
                     Application
                 </a>
             </div>
