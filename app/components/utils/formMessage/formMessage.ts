@@ -13,7 +13,7 @@ import {Component, View, Form, Control} from 'angular2/angular2';
 })
 export class FormMessage {
     control: Control;
-    error: boolean;
+    error: boolean = true;
     checkError: string;
     message: string;
     inline: boolean;

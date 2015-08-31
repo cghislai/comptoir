@@ -91,7 +91,7 @@ export class AuthService {
 
 
     private fetchEmployeeData(employeeRef:EmployeeRef) {
-        this.fetchEmployee(employeeRef.id)
+        return this.fetchEmployee(employeeRef.id)
             .then(()=> {
                 var companyId = this.loggedEmployee.companyRef.id;
                 return this.fetchCompany(companyId);
@@ -100,6 +100,7 @@ export class AuthService {
                 return this.fetchCountry(countryCode);
             }).then(()=>{
                 this.loaded = true;
+                return this.loggedEmployee;
             }).catch((error)=> {
                 this.applicationService.handleRequestError(error);
             });

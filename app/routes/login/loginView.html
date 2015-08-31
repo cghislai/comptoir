@@ -26,4 +26,8 @@
         <formMessage inline="false" error="true" [hidden]="!invalidCredentials"
                      message="Login/mot de passe invalide."></formMessage>
     </form>
+    <div>
+        <a [router-link]="['/register']"
+           class="lightBlueLink">Créer un compte</a>
+    </div>
 </appContent>

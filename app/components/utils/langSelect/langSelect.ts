@@ -66,24 +66,33 @@ export class LocalizedDirective {
     // field to update the actual attribute
     required: boolean;
 
+    placeHolderAttribute: string;
+
     constructor(elementRef: ElementRef) {
         this.elementRef = elementRef;
-        // Reset placeholder
-        this.elementRef.nativeElement.placeholder = '';
+        this.placeHolderAttribute = this.elementRef.nativeElement.placeholder;
+    }
+
+    resetPlaceHolder() {
+        this.elementRef.nativeElement.placeholder = this.placeHolderAttribute;
     }
 
     update() {
         if (this.localeTexts == null || this.language == null) {
             return;
         }
-        var placeHolderValue = null;
+        var placeHolderValue:string = null;
         if (this.previousLanguage != null) {
             placeHolderValue = this.localeTexts[this.previousLanguage.locale];
-        } else {
+        }
+        if (placeHolderValue == null) {
             var langWithContent = this.findLangWithContent();
             if (langWithContent != null) {
                 placeHolderValue = this.localeTexts[langWithContent.locale];
             }
+        }
+        if (placeHolderValue == null) {
+            placeHolderValue = this.placeHolderAttribute;
         }
 
         var text = this.localeTexts[this.language.locale];

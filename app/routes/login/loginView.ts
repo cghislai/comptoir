@@ -2,24 +2,19 @@
  * Created by cghislai on 28/08/15.
  */
 
-import {Component, View, FormBuilder, FORM_DIRECTIVES, ControlGroup, Control} from 'angular2/angular2';
-import {Router} from 'angular2/router';
+import {Component, View, FormBuilder, FORM_DIRECTIVES, ControlGroup} from 'angular2/angular2';
+import {Router, RouterLink} from 'angular2/router';
 
 import {AppHeader} from 'components/app/header/appHeader';
 import {AppContent} from 'components/app/content/appContent';
 import {FormMessage} from 'components/utils/formMessage/formMessage';
+import {requiredValidator} from 'components/utils/validators';
+
 import {AuthService, LoginRequiredReason} from 'services/auth';
 import {ApplicationService} from 'services/application';
 import {MD5} from 'components/auth/md5';
 
-function requiredValidator(c: Control) {
-    if(c.value==null || c.value.trim().length <= 0) {
-        return {
-            required: true
-        };
-    }
-    return null;
-}
+
 
 @Component({
     selector: "loginView",
@@ -28,7 +23,7 @@ function requiredValidator(c: Control) {
 @View({
     templateUrl: './routes/login/loginView.html',
     styleUrls: ['./routes/login/loginView.css'],
-    directives: [FORM_DIRECTIVES, AppHeader, AppContent, FormMessage]
+    directives: [FORM_DIRECTIVES, RouterLink, AppHeader, AppContent, FormMessage]
 })
 export class LoginView {
     authService:AuthService;
@@ -68,7 +63,7 @@ export class LoginView {
 
         this.authService.login(login, hashedPassword)
             .then(function (employee) {
-                thisView.router.navigate('/sales');
+                thisView.router.navigate('/sales/active');
             }).catch(function (error) {
                 if(error.code == 401) {
                     thisView.invalidCredentials = true;

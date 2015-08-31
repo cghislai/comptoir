@@ -21,7 +21,7 @@ import {DialogView} from 'components/utils/dialog/dialog';
 
 
 import {LoginView} from 'routes/login/loginView';
-import {RegisterView} from 'components/auth/register/register';
+import {RegisterView} from 'routes/register/register';
 
 import {SalesView} from 'routes/sales/salesView';
 
@@ -51,7 +51,7 @@ import {ApplicationSettingsView} from 'components/settings/application/appSettin
 @View({
     templateUrl: './app.html?v=<%= VERSION %>',
     styleUrls: ['./app.css'],
-    directives: [RouterOutlet]
+    directives: [RouterOutlet, NgIf]
 })
 
 @RouteConfig([
@@ -77,17 +77,17 @@ export class App {
         this.authService = authService;
         this.router = router;
         router.subscribe((path)=>{
-         //  this.checkLoginRequired(path);
+           this.checkLoginRequired(path);
         });
-       // this.checkLoginRequired(location.path());
+        this.checkLoginRequired(location.path());
     }
 
     checkLoginRequired(path:string) {
-        if (path.indexOf('/login') >= 0) {
+        if (path.indexOf('login') >= 0) {
             this.loginRequired = false;
             return;
         }
-        if (path.indexOf('/register') >= 0) {
+        if (path.indexOf('register') >= 0) {
             this.loginRequired = false;
             return;
         }

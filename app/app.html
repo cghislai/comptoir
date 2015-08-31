@@ -1,3 +1,6 @@
 <div class="app">
-    <router-outlet></router-outlet>
+
+    <div *ng-if="loggedIn || loginRequired == false">
+        <router-outlet></router-outlet>
+    </div>
 </div>
