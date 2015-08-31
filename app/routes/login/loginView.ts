@@ -2,7 +2,7 @@
  * Created by cghislai on 28/08/15.
  */
 
-import {Component, View, FormBuilder, formDirectives, ControlGroup, Control} from 'angular2/angular2';
+import {Component, View, FormBuilder, FORM_DIRECTIVES, ControlGroup, Control} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
 import {AppHeader} from 'components/app/header/appHeader';
@@ -28,7 +28,7 @@ function requiredValidator(c: Control) {
 @View({
     templateUrl: './routes/login/loginView.html',
     styleUrls: ['./routes/login/loginView.css'],
-    directives: [formDirectives, AppHeader, AppContent, FormMessage]
+    directives: [FORM_DIRECTIVES, AppHeader, AppContent, FormMessage]
 })
 export class LoginView {
     authService:AuthService;
@@ -61,14 +61,14 @@ export class LoginView {
 
     doLogin(event) {
         var login = this.loginForm.value.login;
-        var password = this.loginForm.value.pasword;
+        var password = this.loginForm.value.password;
 
         var hashedPassword = MD5.encode(password);
         var thisView = this;
 
         this.authService.login(login, hashedPassword)
             .then(function (employee) {
-                this.router.navigate('/sales/sale/new');
+                thisView.router.navigate('/sales');
             }).catch(function (error) {
                 if(error.code == 401) {
                     thisView.invalidCredentials = true;

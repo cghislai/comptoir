@@ -5,10 +5,30 @@ header.appHeader {
   color: $onBlueTextColor;
 
   width: 100%;
-  height: 3.5em;
+  //height: 3.5em;
+  white-space: nowrap;
   padding: 0em 1em;
 
   &:not([hidden]) {
-    display: table;
+    display: block;
+
+    >*:not([hidden]) {
+      display: inline-block;
+    }
+  }
+
+  div.tabsContainer {
+    vertical-align: bottom;
+    height: 100%;
+    width: 100%;
+    margin-left: 3em;
+
+    .tabsRow {
+      display: table-row;
+
+      >* {
+        display: table-cell;
+      }
+    }
   }
 }

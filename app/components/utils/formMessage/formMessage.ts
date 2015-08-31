@@ -5,7 +5,7 @@ import {Component, View, Form, Control} from 'angular2/angular2';
 
 @Component({
     selector: 'formMessage',
-    properties: ['control: for', 'error', 'message', 'inline']
+    properties: ['control: for', 'error', 'checkError', 'message', 'inline']
 })
 @View({
     templateUrl: './components/utils/formMessage/formMessage.html',
@@ -13,7 +13,8 @@ import {Component, View, Form, Control} from 'angular2/angular2';
 })
 export class FormMessage {
     control: Control;
-    error: string;
+    error: boolean;
+    checkError: string;
     message: string;
     inline: boolean;
 
@@ -21,11 +22,11 @@ export class FormMessage {
     }
 
     shouldDisplay() {
-        if (this.error == null) {
+        if (this.checkError == null) {
             return true;
         }
         return this.control.touched
-        && this.control.hasError(this.error);
+        && this.control.hasError(this.checkError);
     }
 }
 

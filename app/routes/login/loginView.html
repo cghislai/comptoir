@@ -12,16 +12,18 @@
             <input ng-control="login" type="text" placeholder="Login" autofocus
                     #login="form">
             <formMessage [for]="login.control" inline="true"
-                         error="required" message="Entrez votre login"></formMessage>
+                         check-error="required" message="Entrez votre login"></formMessage>
         </div>
         <div>
             <input ng-control="password" type="password" placeholder="Mot de passe"
                     #password="form">
             <formMessage [for]="password.control" inline="true"
-                         error="required" message="Entrez votre mot de passe"></formMessage>
+                         check-error="required" message="Entrez votre mot de passe"></formMessage>
         </div>
         <div>
             <button type="submit" [disabled]="!loginForm.valid">Se connecter</button>
         </div>
+        <formMessage inline="false" error="true" [hidden]="!invalidCredentials"
+                     message="Login/mot de passe invalide."></formMessage>
     </form>
 </appContent>

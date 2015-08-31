@@ -1,6 +1,9 @@
 <div class="appMenu">
-    <h1 [class.inactive]="inactive"
-        (^click)="openCloseMenu()">
+    <a [class.inactive]="inactive"
+       (^click)="openCloseMenu()"
+            href="#">
+        <h1>
             {{ title }}
-    </h1>
+        </h1>
+    </a>
 </div>

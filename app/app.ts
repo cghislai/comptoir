@@ -59,7 +59,6 @@ import {ApplicationSettingsView} from 'components/settings/application/appSettin
     {path: '/login', component: LoginView, as:'login'},
     {path: '/register', component: RegisterView, as:'register'},
 
-    {path: '/sales', redirectTo:'/sales/sale'},
     {path: '/sales/...', component: SalesView, as:'sales'}
 ])
 export class App {

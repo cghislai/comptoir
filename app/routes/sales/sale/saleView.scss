@@ -1,1 +1,53 @@
 @import '../../../styles/_constants';
+
+@mixin transition($args...) {
+  -webkit-transition: $args;
+  -moz-transition: $args;
+  -ms-transition: $args;
+  -o-transition: $args;
+  transition: $args;
+}
+
+.header {
+  form {
+    margin: .1em;
+
+    >*:not([hidden]) {
+      display: inline;
+    }
+
+    select {
+      font-size: 1em;
+    }
+  }
+}
+
+
+.wrapper {
+  overflow-x: hidden;
+}
+
+.sellView {
+  width: 150vw;
+  position: relative;
+  left: 0;
+
+  &:not(.no-anim) {
+    @include transition(left 300ms ease-in-out);
+  }
+
+  &.slide-left {
+    left: -50vw;
+  }
+
+  > * {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    width: 49vw;
+    > * {
+      margin: 1em;
+    }
+  }
+
+}

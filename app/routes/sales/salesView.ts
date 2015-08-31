@@ -3,24 +3,35 @@
  */
 
 import {Component, View} from 'angular2/angular2';
-import {Router, RouteConfig,RouterOutlet} from 'angular2/router';
+import {Router, RouteConfig,RouterOutlet,RouterLink, Location} from 'angular2/router';
 import {SaleView} from 'routes/sales/sale/saleView';
 import {AppHeader} from 'components/app/header/appHeader';
 import {AppMenu} from 'components/app/header/menu/appMenu';
+import {AppTab} from 'components/app/header/tab/appTab';
 
 @Component({
     selector: 'salesView'
 })
 @View({
     templateUrl: './routes/sales/salesView.html',
-    directives: [AppHeader, AppMenu, RouterOutlet]
+    directives: [AppHeader, AppMenu, AppTab, RouterOutlet, RouterLink]
 })
 @RouteConfig([
-    {path: '/sale', redirectTo: '/sale/active'},
-    {path: '/sale/:id', component: SaleView, as:'sale'}
+    {path: '/', redirectTo: '/active'},
+    {path: '/new', component: SaleView, as: 'newSale'},
+    {path: '/active', component: SaleView, as: 'activeSale'},
+    {path: '/sale/:id', component: SaleView, as: 'sale'}
 ])
 export class SalesView {
-    constructor() {
-        console.log("con");
+    location:Location;
+
+    constructor(location:Location) {
+        this.location = location;
+    }
+
+    isSaleViewActive() {
+        var path = this.location.path();
+        return path.indexOf('/sale/') >= 0
+            || path.indexOf('/new') >= 0;
     }
 }

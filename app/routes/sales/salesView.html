@@ -1,5 +1,10 @@
-<appHeader title="Ventes" inactive="true">
-
+<appHeader title="Ventes">
+    <appTab selectable="true" [active]="isSaleViewActive()">
+        <a [router-link]=["./activeSale"]>Vente</a>
+    </appTab>
+    <appTab selectable="true">
+        <a [router-link]=["./newSale"]>Nouvelle</a>
+    </appTab>
 </appHeader>
 <appContent>
     <router-outlet></router-outlet>
