@@ -12,7 +12,7 @@ import {NamedAccountType} from 'client/utils/account';
 
 import {AuthService} from 'services/auth';
 import {AccountService} from 'services/account';
-import {ApplicationService} from 'services/application';
+import {ErrorService} from 'services/error';
 
 import {LangSelect, LocalizedDirective} from 'components/utils/langSelect/langSelect';
 
@@ -59,7 +59,7 @@ class AccountFormModel {
 export class EditAccountView {
     accountId:number;
     accountService:AccountService;
-    appService:ApplicationService;
+    errorService:ErrorService;
     authService:AuthService;
     router:Router;
 
@@ -67,7 +67,7 @@ export class EditAccountView {
     accountModel:AccountFormModel;
     allAccountTypes:any[];
 
-    constructor(accountService:AccountService, authService:AuthService, appService:ApplicationService,
+    constructor(accountService:AccountService, authService:AuthService, errorService: ErrorService,
                 routeParams:RouteParams, router:Router) {
         var itemIdParam = routeParams.get('id');
         this.accountId = parseInt(itemIdParam);
@@ -77,26 +77,25 @@ export class EditAccountView {
         this.router = router;
         this.accountService = accountService;
         this.authService = authService;
-        this.appService = appService;
-        this.language = appService.language;
+        this.errorService = errorService;
+        this.language = authService.getEmployeeLanguage();
 
         this.allAccountTypes = NamedAccountType.ALL_TYPES;
         this.buildFormModel();
     }
 
     buildFormModel() {
-        var lastEditLanguage = this.appService.laseUsedEditLanguage;
         if (this.accountId == null) {
             this.accountModel = new AccountFormModel();
-            this.accountModel.language = lastEditLanguage;
+            this.accountModel.language = this.language;
             return;
         }
         var thisView = this;
         this.accountService.getAccount(this.accountId)
             .then(function (account:Account) {
-                thisView.accountModel = new AccountFormModel(account, lastEditLanguage);
+                thisView.accountModel = new AccountFormModel(account, this.language);
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 
@@ -114,7 +113,7 @@ export class EditAccountView {
             .then((accountRef)=> {
                 this.router.navigate('/accounts/list');
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
 
     }

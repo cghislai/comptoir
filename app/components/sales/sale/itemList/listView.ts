@@ -9,7 +9,7 @@ import {SearchResult} from 'client/utils/search';
 import {PicturedItem} from 'client/utils/picture';
 import {Pagination} from 'client/utils/pagination';
 
-import {ApplicationService} from 'services/application';
+import {ErrorService} from 'services/error';
 import {ItemService} from 'services/itemService';
 
 import {ItemList, ItemColumn} from 'components/items/itemList/itemList';
@@ -30,11 +30,10 @@ import {FocusableDirective} from 'directives/focusable';
 
 export class ItemListView {
     itemService:ItemService;
-    appService:ApplicationService;
+    errorService:ErrorService;
 
     itemClicked = new EventEmitter();
     columns:ItemColumn[];
-    language:string;
     // Delay keyevent for 500ms
     keyboardTimeoutSet:boolean;
     keyboardTimeout:number = 200;
@@ -44,11 +43,9 @@ export class ItemListView {
     loading:boolean = false;
     itemSearchResult:SearchResult<PicturedItem>;
 
-    constructor(applicationService:ApplicationService, itemService:ItemService) {
+    constructor(errorService:ErrorService, itemService:ItemService) {
         this.itemService = itemService;
-        this.appService = applicationService;
-
-        this.language = applicationService.language.locale;
+        this.errorService = errorService;
 
         this.itemSearch = new ItemSearch();
         this.itemSearch.multiSearch = null;
@@ -71,7 +68,7 @@ export class ItemListView {
                 thisView.itemSearchResult = result;
                 thisView.loading = false;
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 

@@ -1,7 +1,7 @@
 <div class="formError"
-     [class.fatal]="error"
-     [class.info]="!error"
-     [class.inline-pos]="inline"
+     [class.fatal]="error == 'true'"
+     [class.info]="error == 'false'"
+     [class.inline-pos]="inlinePos == 'true'"
      [hidden]="!shouldDisplay()">
           {{ message }}
 </div>

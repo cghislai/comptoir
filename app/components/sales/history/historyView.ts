@@ -5,7 +5,7 @@ import {Component, View, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
 import {Sale, SaleSearch} from 'client/domain/sale';
-import {ApplicationService} from 'services/application';
+import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
 import {SaleService} from 'services/sale';
 import {Pagination} from 'client/utils/pagination';
@@ -25,9 +25,8 @@ import {SaleListComponent, SaleColumn} from 'components/sales/saleList/saleList'
 
 export class SaleHistoryView {
     saleService:SaleService;
-    appService:ApplicationService;
+    errorService:ErrorService;
     router:Router;
-    language:string;
 
     saleSearch:SaleSearch;
     pagination:Pagination;
@@ -39,19 +38,18 @@ export class SaleHistoryView {
     loading:boolean;
 
 
-    constructor(saleService:SaleService, applicationService:ApplicationService,
+    constructor(saleService:SaleService, errorService:ErrorService,
                 router:Router, authService:AuthService) {
         this.saleService = saleService;
-        this.appService = applicationService;
+        this.errorService = errorService;
         this.router = router;
         this.saleSearch = new SaleSearch();
-        this.saleSearch.companyRef = authService.loggedEmployee.companyRef
+        this.saleSearch.companyRef = authService.loggedEmployee.companyRef;
         this.saleSearch.closed = true;
         this.pagination = new Pagination(0, this.salesPerPage);
         this.pagination.sorts = {
             'DATETIME': 'desc'
         };
-        this.language = applicationService.language.locale;
         this.columns = [
             SaleColumn.ID,
             SaleColumn.REFERENCE,
@@ -71,7 +69,7 @@ export class SaleHistoryView {
                 thisView.salesResult = result;
                 thisView.loading = false;
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 

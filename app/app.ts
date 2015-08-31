@@ -4,6 +4,7 @@ import {RouteConfig, Router, RouterOutlet, RouterLink, routerInjectables, Locati
 
 import {ApplicationService} from 'services/application';
 import {AuthService} from 'services/auth';
+import {ErrorService} from 'services/error';
 import {ItemService} from 'services/itemService';
 import {PictureService} from 'services/pictureService';
 import {BalanceService} from 'services/balance';
@@ -25,7 +26,6 @@ import {RegisterView} from 'routes/register/register';
 
 import {SalesView} from 'routes/sales/salesView';
 
-import {SellView} from 'components/sales/sale/sellView';
 import {ActiveSalesView} from 'components/sales/actives/listView';
 import {SaleHistoryView} from 'components/sales/history/historyView';
 
@@ -51,7 +51,7 @@ import {ApplicationSettingsView} from 'components/settings/application/appSettin
 @View({
     templateUrl: './app.html?v=<%= VERSION %>',
     styleUrls: ['./app.css'],
-    directives: [RouterOutlet, NgIf]
+    directives: [RouterOutlet, NgIf, DialogView]
 })
 
 @RouteConfig([
@@ -64,17 +64,20 @@ import {ApplicationSettingsView} from 'components/settings/application/appSettin
 export class App {
     appService:ApplicationService;
     authService: AuthService;
+    errorService: ErrorService;
 
     loginRequired: boolean;
     loggedIn: boolean;
     router: Router;
 
     constructor(appService:ApplicationService,authService: AuthService,
+                errorService: ErrorService,
                 router: Router, location: Location) {
         this.appService = appService;
         this.appService.appName = "Comptoir";
         this.appService.appVersion = "0.1";
         this.authService = authService;
+        this.errorService = errorService;
         this.router = router;
         router.subscribe((path)=>{
            this.checkLoginRequired(path);
@@ -102,10 +105,6 @@ export class App {
     }
 
 
-    onErrorClose() {
-        this.appService.dismissError();
-    }
-
 }
 
 
@@ -114,6 +113,7 @@ bootstrap(App, [
 
     ApplicationService,
     AuthService,
+    ErrorService,
 
     AccountService,
     BalanceService,

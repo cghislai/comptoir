@@ -11,7 +11,7 @@ import {LocaleTexts, Language} from 'client/utils/lang';
 import {NamedAccountType} from 'client/utils/account';
 
 import {AccountService} from 'services/account';
-import {ApplicationService} from 'services/application';
+import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
 import {Pagination} from 'client/utils/pagination';
 
@@ -31,7 +31,7 @@ import {FocusableDirective} from 'directives/focusable'
 
 export class AccountsListView {
     accountService:AccountService;
-    appService:ApplicationService;
+    errorService:ErrorService;
     router:Router;
 
     accountSearch:AccountSearch;
@@ -40,20 +40,20 @@ export class AccountsListView {
     accountCount:number;
     accountsPerPage:number = 25;
 
-    language:string;
+    locale:string;
     loading:boolean;
 
-    constructor(accountService:AccountService, appService:ApplicationService,
+    constructor(accountService:AccountService, errorService:ErrorService,
                 authService:AuthService, router:Router) {
         this.accountService = accountService;
-        this.appService = appService;
+        this.errorService = errorService;
         this.router = router;
 
         this.accountSearch = new AccountSearch();
         this.accountSearch.companyRef = authService.loggedEmployee.companyRef;
         this.pagination = new Pagination(0, this.accountsPerPage);
 
-        this.language = appService.language.locale;
+        this.locale = authService.getEmployeeLanguage().locale;
         this.searchAccounts();
     }
 
@@ -72,7 +72,7 @@ export class AccountsListView {
                 thisView.accountCount = result.count;
                 thisView.loading = false;
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 
@@ -85,7 +85,7 @@ export class AccountsListView {
         if (namedAccountType == null) {
             return null;
         }
-        return namedAccountType.label[this.language];
+        return namedAccountType.label[this.locale];
     }
 
     onPageChanged(pagination:Pagination) {
@@ -106,7 +106,7 @@ export class AccountsListView {
             .then(function (result) {
                 thisView.searchAccounts();
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 

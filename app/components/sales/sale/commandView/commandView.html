@@ -68,7 +68,7 @@
             </td>
             <td class="name" *ng-if="saleItem.item != null">
                 <div class="name">
-                    {{ saleItem.item.name[language] }}
+                    {{ saleItem.item.name[locale] }}
                 </div>
                 <div class="comment">
                     <a class="commentLink"
@@ -77,11 +77,11 @@
                        [class.editing]="editingItem == saleItem && editingItemComment"
                        [class.unneeded]="!hasComment(saleItem)"
                        [class.nolink]="validated">
-                        {{ saleItem.comment[language] }}
+                        {{ saleItem.comment[locale] }}
                     </a>
                     <span *ng-if="editingItem == saleItem && editingItemComment">
                         <input #activeInput
-                               [value]="saleItem.comment[language]"
+                               [value]="saleItem.comment[locale]"
                                (fast-change)="onItemCommentChange($event)"
                                type="text"
                                size="14" fast-input/>

@@ -3,4 +3,15 @@
     <div *ng-if="loggedIn || loginRequired == false">
         <router-outlet></router-outlet>
     </div>
+
+    <dialogview modal="true" closable="true" title="Erreur" *ng-if="errorService.hasError"
+                (close)="errorService.dismissError()">
+        <p [inner-html]="errorService.errorHeader">
+        </p>
+        <p class="errorMessage"
+           [inner-html]="errorService.errorContent">
+        </p>
+        <p [inner-html]="errorService.errorFooter">
+        </p>
+    </dialogview>
 </div>

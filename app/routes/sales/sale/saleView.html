@@ -1,19 +1,6 @@
 <div class="saleView">
-    <div class="header">
-        <form id="posSelectForm" *ng-if="allPosList != null"
-              [hidden]="saleClosed">
-            Point de vente :
-            <select [value]="posId" [hidden]="allPosList.length <= 1"
-                    (change)="onPosChanged($event)">
-                <option *ng-for="#posOption of allPosList"
-                        [value]="posOption.id">
-                    {{ posOption.description[language] }}
-                </option>
-            </select>
-            <div *ng-if="allPosList.length <=1 && pos != null">
-                <strong>{{ pos.description[language] }}</strong>
-            </div>
-        </form>
+    <div class="header" [hidden]="saleClosed">
+        <posSelect (pos-changed)="pos = $event"></posSelect>
     </div>
     <div class="wrapper" *ng-if="aSale != null">
         <div class="sellView" [class.slide-left]="payStep"  [class.no-anim]="saleClosed || aSale.sale == null">

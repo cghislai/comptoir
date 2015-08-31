@@ -11,7 +11,7 @@ import {PicturedItem} from 'client/utils/picture';
 import {LocaleTexts} from 'client/utils/lang';
 import {Pagination} from 'client/utils/pagination';
 
-import {ApplicationService} from 'services/application';
+import {ErrorService} from 'services/error';
 import {ItemService} from 'services/itemService';
 
 import {ItemList, ItemColumn} from 'components/items/itemList/itemList';
@@ -29,7 +29,7 @@ import {Paginator} from 'components/utils/paginator/paginator';
 
 export class ProductsListView {
     itemService:ItemService;
-    appService:ApplicationService;
+    errorService:ErrorService;
     router:Router;
 
     itemSearch:ItemSearch;
@@ -43,10 +43,10 @@ export class ProductsListView {
     keyboardTimeoutSet:boolean;
     keyboardTimeout:number = 200;
 
-    constructor(appService:ApplicationService, itemService:ItemService, router:Router) {
+    constructor(appService:ErrorService, itemService:ItemService, router:Router) {
         this.router = router;
         this.itemService = itemService;
-        this.appService = appService;
+        this.errorService = appService;
 
         this.itemSearch = new ItemSearch();
         this.pagination = new Pagination(0, this.itemsPerPage);
@@ -70,7 +70,7 @@ export class ProductsListView {
                 thisView.itemSearchResult = result;
                 thisView.itemCount = result.count;
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 
@@ -99,7 +99,7 @@ export class ProductsListView {
             .then(()=> {
                 thisView.searchItems();
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 

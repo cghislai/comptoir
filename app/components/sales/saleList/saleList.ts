@@ -8,7 +8,7 @@ import {Component, View, NgFor, NgIf,
 import {Sale, SaleSearch} from 'client/domain/sale';
 import {LocaleTexts} from 'client/utils/lang';
 
-import {ApplicationService} from 'services/application';
+import {AuthService} from 'services/auth';
 
 import {AutoFocusDirective} from 'directives/autoFocus';
 import {FocusableDirective} from 'directives/focusable';
@@ -65,10 +65,10 @@ export class SaleListComponent {
 
     saleClicked = new EventEmitter();
     columnAction = new EventEmitter();
-    language:string;
+    locale:string;
 
-    constructor(applicationService:ApplicationService) {
-        this.language = applicationService.language.locale;
+    constructor(authService:AuthService) {
+        this.locale = authService.getEmployeeLanguage().locale;
     }
 
     set headersParams(value: string) {

@@ -7,7 +7,7 @@ import {Router, RouterLink} from 'angular2/router';
 import {CompanyClient} from 'client/company';
 import {Language, LocaleTexts} from 'client/utils/lang';
 
-import {ApplicationService} from 'services/application';
+import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
 
 
@@ -20,7 +20,7 @@ import {AuthService} from 'services/auth';
     directives: [NgIf, FORM_DIRECTIVES, RouterLink]
 })
 export class ImportProductView {
-    appService:ApplicationService;
+    errorService:ErrorService;
     authService:AuthService;
     router:Router;
     language:Language;
@@ -33,12 +33,12 @@ export class ImportProductView {
     uploadInProgress:boolean;
     uploadPercentage:number;
 
-    constructor(appService:ApplicationService, authService:AuthService, router:Router) {
+    constructor(errorService:ErrorService, authService:AuthService, router:Router) {
         this.router = router;
-        this.appService = appService;
+        this.errorService = errorService;
         this.authService = authService;
         this.companyClient = new CompanyClient();
-        this.language = appService.language;
+        this.language = authService.getEmployeeLanguage();
 
         this.toUploadFile = null;
         this.toUploadData = null;
@@ -93,7 +93,7 @@ export class ImportProductView {
                 thisView.uploadInProgress = false;
                 thisView.router.navigate('/items/list');
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 

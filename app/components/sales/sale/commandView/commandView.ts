@@ -13,10 +13,11 @@ import {ASale, ASaleItem} from 'client/utils/aSale';
 import {NumberUtils} from 'client/utils/number';
 
 import {SaleService} from 'services/sale';
+import {ErrorService} from 'services/error';
+import {AuthService} from 'services/auth';
 
 import {AutoFocusDirective} from 'directives/autoFocus';
 import {FastInput} from 'directives/fastInput';
-import {ApplicationService} from 'services/application';
 
 
 // The component
@@ -34,10 +35,10 @@ import {ApplicationService} from 'services/application';
 
 export class CommandView {
     saleService:SaleService;
-    appService:ApplicationService;
+    errorService:ErrorService;
 
     aSale:ASale;
-    language:string;
+    locale:string;
     noInput: boolean;
 
     editingItem:ASaleItem = null;
@@ -51,11 +52,11 @@ export class CommandView {
     validated:boolean = false;
     saleInvalidated = new EventEmitter();
 
-    constructor(saleService:SaleService,
-                applicationService:ApplicationService) {
+    constructor(saleService:SaleService, authService: AuthService,
+                errorService:ErrorService) {
         this.saleService = saleService;
-        this.appService = applicationService;
-        this.language = applicationService.language.locale;
+        this.errorService = errorService;
+        this.locale = authService.getEmployeeLanguage().locale;
     }
 
     doRemoveItem(saleItem:ASaleItem) {
@@ -68,7 +69,7 @@ export class CommandView {
                     this.saleInvalidated.next(null);
                 }
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 
@@ -137,18 +138,18 @@ export class CommandView {
         this.cancelEdits();
         this.editingItem = aSaleItem;
         this.editingItemComment = true;
-        if (this.editingItem.comment[this.language] == null) {
-            this.editingItem.comment[this.language] = '';
+        if (this.editingItem.comment[this.locale] == null) {
+            this.editingItem.comment[this.locale] = '';
         }
     }
 
     onItemCommentChange(event) {
         var commentTexts = this.editingItem.comment;
-        commentTexts[this.language] = event;
+        commentTexts[this.locale] = event;
         this.saleService.setASaleItemCommentAsync(
             this.editingItem, commentTexts)
             .catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
         this.cancelEdits();
     }
@@ -157,7 +158,7 @@ export class CommandView {
         if (saleItem.comment == null) {
             return false;
         }
-        var text = saleItem.comment[this.language];
+        var text = saleItem.comment[this.locale];
         if (text != null && text.trim().length > 0) {
             return true;
         }
@@ -180,7 +181,7 @@ export class CommandView {
         this.saleService.setASaleItemDiscountPercentageAsync(
             this.editingItem, discountPercentage)
             .catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
         this.cancelEdits();
     }
@@ -203,7 +204,7 @@ export class CommandView {
         }
         this.saleService.setASaleItemQuantityAsync(
             this.editingItem, quantity).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
         this.cancelEdits();
     }
@@ -226,7 +227,7 @@ export class CommandView {
         this.saleService.setASaleItemVatExclusiveAsync(
             this.editingItem, vatExclusive)
             .catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
         this.cancelEdits();
     }
@@ -247,7 +248,7 @@ export class CommandView {
         this.saleService.setASaleDiscountPercentage(
             this.aSale, intValue)
             .catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
         this.cancelEdits();
     }

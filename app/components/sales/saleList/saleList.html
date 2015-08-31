@@ -7,7 +7,7 @@
                   *ng-for="#col of columns"
                   [class.right]="col.alignRight">
                     <span *ng-if="col.title != undefined">
-                        {{ col.title[language] }}
+                        {{ col.title[locale] }}
                     </span>
             </span>
             </div>
@@ -24,7 +24,7 @@
                             [class.right]="col.alignRight"
                             [sale]="sale"
                             [column]="col"
-                            [lang]="language"></saleColumn>
+                            [lang]="locale"></saleColumn>
             </div>
         </div>
     </div>

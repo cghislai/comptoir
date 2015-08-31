@@ -57,7 +57,7 @@
         <tr *ng-for="#pay of aSalePay.payItems" class="payItem">
             <td>
                 <span *ng-if="pay.account != null">
-                    {{ pay.account.description[language] }}
+                    {{ pay.account.description[locale] }}
                 </span>
             </td>
             <td class="number total">
@@ -90,7 +90,7 @@
     </table>
 
     <div class="editMethod" *ng-if="editingPayItem != null"  [hidden]="noInput">
-        <span class="method">{{ editingPayItem.account.description[language] }}</span>
+        <span class="method">{{ editingPayItem.account.description[locale] }}</span>
         <span class="amount">
             Montant: <input #amount
                             [value]="editingPayItem.amount"
@@ -105,7 +105,7 @@
         <div *ng-for="#account of allAccounts"
              class="boxedHoverableLink"
              (^click)="startEditPay(account)">
-            {{ account.description[language] }}
+            {{ account.description[locale] }}
         </div>
     </div>
 </div>

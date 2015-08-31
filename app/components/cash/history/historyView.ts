@@ -8,7 +8,7 @@ import {Balance, BalanceSearch} from 'client/domain/balance';
 import {Pagination} from 'client/utils/pagination';
 import {SearchResult} from 'client/utils/search';
 
-import {ApplicationService} from 'services/application';
+import {ErrorService} from 'services/error';
 import {BalanceService} from 'services/balance';
 
 import {Paginator} from 'components/utils/paginator/paginator';
@@ -23,15 +23,15 @@ import {Paginator} from 'components/utils/paginator/paginator';
 })
 export class CashHistoryView {
     balanceService:BalanceService;
-    appService:ApplicationService;
+    errorService: ErrorService;
 
     balanceSearch:BalanceSearch;
     pagination:Pagination;
     itemsPerPage:number = 25;
     result:SearchResult<Balance>;
 
-    constructor(balanceService:BalanceService, appService:ApplicationService) {
-        this.appService = appService;
+    constructor(balanceService:BalanceService, errorService:ErrorService) {
+        this.errorService = errorService;
         this.balanceService = balanceService;
         this.balanceSearch = new BalanceSearch();
         this.pagination = new Pagination(0, this.itemsPerPage);
@@ -43,7 +43,7 @@ export class CashHistoryView {
             .then((result)=> {
                 this.result = result;
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 

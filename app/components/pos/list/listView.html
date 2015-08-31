@@ -21,7 +21,7 @@
         <tbody>
         <tr *ng-for="#pos of posSearchResult.list" class="pos">
             <td class="name" (^click)="doEditPos(pos)">{{ pos.name }}</td>
-            <td class="desc" (^click)="doEditPos(pos)">{{ pos.description[language] }}</td>
+            <td class="desc" (^click)="doEditPos(pos)">{{ pos.description[locale] }}</td>
 
             <td class="actions">
                 <a class="remove actionIcon" (^click)="doRemovePos(pos)">

@@ -9,7 +9,7 @@
                   [class.right]="col.alignRight"
                   [class.center]="col.alignCenter">
                     <span *ng-if="col.title != undefined">
-                        {{ col.title[language] }}
+                        {{ col.title[locale] }}
                     </span>
             </span>
             </div>
@@ -27,7 +27,7 @@
                             [class.center]="col.alignCenter"
                             [item]="itempic"
                             [column]="col"
-                            [lang]="language"></itemColumn>
+                            [lang]="locale"></itemColumn>
             </div>
         </div>
         <div class="dataTableBody" *ng-if="items != undefined && !selectable">
@@ -40,7 +40,7 @@
                             [class.right]="col.alignRight"
                             [item]="itempic"
                             [column]="col"
-                            [lang]="language"></itemColumn>
+                            [lang]="locale"></itemColumn>
             </div>
         </div>
     </div>

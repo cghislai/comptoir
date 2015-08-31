@@ -7,7 +7,7 @@ import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Company} from 'client/domain/company';
 import {Employee} from 'client/domain/employee';
 import {Language} from 'client/utils/lang';
-import {ApplicationService} from 'services/application';
+import {ErrorService} from 'services/error';
 import {EmployeeService} from 'services/employee';
 import {CompanyService} from 'services/company';
 import {AuthService} from 'services/auth';
@@ -21,7 +21,7 @@ import {AuthService} from 'services/auth';
     directives: [NgFor, NgIf, FORM_DIRECTIVES]
 })
 export class ApplicationSettingsView {
-    appService:ApplicationService;
+    errorService:ErrorService;
     companyService:CompanyService;
     authService:AuthService;
     employeeService:EmployeeService;
@@ -31,14 +31,14 @@ export class ApplicationSettingsView {
     allLanguages = Language.ALL_LANGUAGES;
     language:Language;
 
-    constructor(applicationService:ApplicationService, companyService:CompanyService,
+    constructor(errorService:ErrorService, companyService:CompanyService,
                 authService:AuthService, employeeService:EmployeeService) {
-        this.appService = applicationService;
+        this.errorService = errorService;
         this.companyService = companyService;
         this.authService = authService;
         this.employeeValue = this.authService.loggedEmployee;
         this.employeeService = employeeService;
-        this.language = applicationService.language;
+        this.language = authService.getEmployeeLanguage();
 
         this.searchCompany();
     }
@@ -54,7 +54,7 @@ export class ApplicationSettingsView {
             .then(function (result:Company) {
                 thisView.companyValue = result;
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 
@@ -70,7 +70,7 @@ export class ApplicationSettingsView {
             var thisView = this;
             this.employeeService.updateEmployee(this.employeeValue)
                 .catch((error)=> {
-                    this.appService.handleRequestError(error);
+                    this.errorService.handleRequestError(error);
                 });
         }
     }

@@ -16,7 +16,7 @@ import {Registration} from 'client/domain/auth';
 import {LocaleTexts, Language} from 'client/utils/lang';
 
 import {AuthService} from 'services/auth';
-import {ApplicationService} from 'services/application';
+import {ErrorService} from 'services/error';
 
 
 @Component({
@@ -30,7 +30,7 @@ import {ApplicationService} from 'services/application';
 })
 export class RegisterView {
     authService:AuthService;
-    appService:ApplicationService;
+    errorService: ErrorService;
     router:Router;
 
     registerForm: ControlGroup;
@@ -40,14 +40,14 @@ export class RegisterView {
     editLanguage:Language;
     allLanguages: Language[];
 
-    constructor(authService:AuthService, appService:ApplicationService,
+    constructor(authService:AuthService, errorService:ErrorService,
                 router:Router, formBuilder: FormBuilder) {
         this.authService = authService;
-        this.appService = appService;
+        this.errorService = errorService;
         this.router = router;
 
-        this.appLocale = appService.language.locale;
-        this.editLanguage = appService.language;
+        this.appLocale = Language.DEFAULT_LANGUAGE.locale;
+        this.editLanguage = Language.DEFAULT_LANGUAGE;
         this.allLanguages = Language.ALL_LANGUAGES;
 
         this.buildForm(formBuilder);
@@ -76,14 +76,15 @@ export class RegisterView {
         var employee = new Employee();
         employee.firstName = this.registerForm.value.employeeFirstName;
         employee.lastName = this.registerForm.value.employeeLastName;
+        employee.login = this.registerForm.value.login;
         registration.employee = employee;
-        registration.employeePassword = this.registerForm.value.employeePassword;
+        registration.employeePassword = this.registerForm.value.password;
 
         this.authService.register(registration)
             .then((employee)=> {
                 thisView.router.navigate('/sales/active');
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
 
     }

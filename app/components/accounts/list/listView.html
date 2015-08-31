@@ -23,7 +23,7 @@
         <tr *ng-for="#account of accountSearchResult.list" class="account">
             <td class="type" (^click)="doEditAccount(account)">{{ getAccountTypeLabel(account.accountType) }}</td>
             <td class="name" (^click)="doEditAccount(account)">{{ account.name }}</td>
-            <td class="desc" (^click)="doEditAccount(account)">{{ account.description[language] }}</td>
+            <td class="desc" (^click)="doEditAccount(account)">{{ account.description[locale] }}</td>
             <td class="actions">
                 <a class="remove actionIcon" (^click)="doRemoveAccount(account)">
                     <i class="fi-minus red"></i>

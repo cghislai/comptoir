@@ -5,18 +5,18 @@ import {Component, View, Form, Control} from 'angular2/angular2';
 
 @Component({
     selector: 'formMessage',
-    properties: ['control: for', 'error', 'checkError', 'message', 'inline']
+    properties: ['control: for', 'error', 'checkError', 'message', 'inlinePos: inline']
 })
 @View({
     templateUrl: './components/utils/formMessage/formMessage.html',
-    styleUrls: ['./components/utils/formMessage/formMessage.css']
+    styleUrls: ['./components/utils/formMessage/formMessage.css'],
 })
 export class FormMessage {
     control: Control;
-    error: boolean = true;
+    error: string = 'true';
     checkError: string;
     message: string;
-    inline: boolean;
+    inlinePos: string = 'false';
 
     constructor() {
     }

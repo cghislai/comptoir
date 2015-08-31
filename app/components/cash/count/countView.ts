@@ -15,7 +15,8 @@ import {NumberUtils} from 'client/utils/number';
 import {BalanceService} from 'services/balance';
 import {PosService} from 'services/pos';
 import {AccountService} from 'services/account';
-import {ApplicationService} from 'services/application';
+import {ErrorService} from 'services/error';
+import {AuthService} from 'services/auth';
 
 import {Paginator} from 'components/utils/paginator/paginator';
 import {FastInput} from 'directives/fastInput'
@@ -33,7 +34,7 @@ export class CountCashView {
     balanceService:BalanceService;
     posService:PosService;
     accountService:AccountService;
-    appService:ApplicationService;
+    errorService:ErrorService;
 
     aBalance:ABalance;
     editingTotal:boolean;
@@ -46,17 +47,17 @@ export class CountCashView {
     account:Account;
     accountId:number = -1;
     lastBalance:Balance;
-    language:string;
+    locale:string;
 
-    constructor(applicationService:ApplicationService, balanceService:BalanceService,
-                posService:PosService, accountService:AccountService) {
+    constructor(errorService:ErrorService, balanceService:BalanceService,
+                posService:PosService, accountService:AccountService, authService: AuthService) {
         this.balanceService = balanceService;
         this.posService = posService;
         this.accountService = accountService;
-        this.appService = applicationService;
+        this.errorService=errorService;
 
         this.aBalance = new ABalance();
-        this.language = applicationService.language.locale;
+        this.locale = authService.getEmployeeLanguage().locale;
 
         this.searchPosList();
         this.searchPaymentAccounts();
@@ -75,7 +76,7 @@ export class CountCashView {
                     this.setPos(this.posList[0]);
                 }
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 
@@ -121,7 +122,7 @@ export class CountCashView {
                     this.setAccount(this.accountList[0]);
                 }
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 
@@ -170,7 +171,7 @@ export class CountCashView {
             .then((result)=> {
                 this.lastBalance = result[0];
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 
@@ -182,7 +183,7 @@ export class CountCashView {
         aMoneyPile.moneyPile.count = amount;
         this.balanceService.updateAMoneyPileAsync(aMoneyPile)
             .catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 
@@ -199,12 +200,12 @@ export class CountCashView {
             if (this.aBalance.balance == null || this.aBalance.balance.id == null) {
                 this.balanceService.openABalanceAsync(this.aBalance)
                     .catch((error)=> {
-                        this.appService.handleRequestError(error);
+                        this.errorService.handleRequestError(error);
                     });
             } else {
                 this.balanceService.updateABalanceAsync(this.aBalance)
                     .catch((error)=> {
-                        this.appService.handleRequestError(error);
+                        this.errorService.handleRequestError(error);
                     });
             }
         }
@@ -214,7 +215,7 @@ export class CountCashView {
     closeBalance() {
         this.balanceService.closeABalanceAsync(this.aBalance)
             .catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 }

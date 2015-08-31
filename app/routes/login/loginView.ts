@@ -11,8 +11,8 @@ import {FormMessage} from 'components/utils/formMessage/formMessage';
 import {requiredValidator} from 'components/utils/validators';
 
 import {AuthService, LoginRequiredReason} from 'services/auth';
-import {ApplicationService} from 'services/application';
-import {MD5} from 'components/auth/md5';
+import {ErrorService} from 'services/error';
+import {MD5} from 'components/utils/md5';
 
 
 
@@ -27,7 +27,7 @@ import {MD5} from 'components/auth/md5';
 })
 export class LoginView {
     authService:AuthService;
-    appService:ApplicationService;
+    errorService: ErrorService;
     router: Router;
 
     loginForm: ControlGroup;
@@ -37,11 +37,11 @@ export class LoginView {
 
     // TODO: RouteData for introText
     constructor(authService:AuthService,
-                appService:ApplicationService,
+                errorService: ErrorService,
                 router:Router,
                 formBuilder: FormBuilder) {
         this.authService = authService;
-        this.appService = appService;
+        this.errorService = errorService;
         this.router = router;
         this.buildForm(formBuilder);
     }
@@ -68,8 +68,11 @@ export class LoginView {
                 if(error.code == 401) {
                     thisView.invalidCredentials = true;
                     return;
+                } else if (error.code == 404)  {
+                    thisView.invalidCredentials = true;
+                    return;
                 }
-                thisView.appService.handleRequestError(error);
+                thisView.errorService.handleRequestError(error);
             });
     }
 }

@@ -16,9 +16,9 @@ import {EmployeeClient} from 'client/employee';
 import {CompanyClient} from 'client/company';
 import {CountryClient} from 'client/country';
 
-import {ApplicationService} from 'services/application';
+import {ErrorService} from 'services/error';
 
-import {MD5} from 'components/auth/md5';
+import {MD5} from 'components/utils/md5';
 
 export enum LoginRequiredReason {
     NO_SESSION,
@@ -30,7 +30,7 @@ export class AuthService {
 
     client:AuthClient;
     employeeClient:EmployeeClient;
-    applicationService:ApplicationService;
+    errorService:ErrorService;
     companyClient:CompanyClient;
     countryClient:CountryClient;
 
@@ -46,8 +46,8 @@ export class AuthService {
     loginRequired:boolean;
     loginRequiredReason:LoginRequiredReason;
 
-    constructor(@Inject appService:ApplicationService) {
-        this.applicationService = appService;
+    constructor(@Inject errorService:ErrorService) {
+        this.errorService = errorService;
         this.client = new AuthClient();
         this.employeeClient = new EmployeeClient();
         this.companyClient = new CompanyClient();
@@ -84,11 +84,22 @@ export class AuthService {
             }).then(()=>{
                 return this.loggedEmployee;
             }).catch((error)=> {
-                this.applicationService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
                 return null;
             });
     }
 
+    public getEmployeeLanguage(): Language {
+        if (this.loggedEmployee == null) {
+            return Language.DEFAULT_LANGUAGE;
+        }
+        var locale = this.loggedEmployee.locale;
+        var language = Language.fromLanguage(locale);
+        if (language != undefined) {
+            return language;
+        }
+        return Language.DEFAULT_LANGUAGE;
+    }
 
     private fetchEmployeeData(employeeRef:EmployeeRef) {
         return this.fetchEmployee(employeeRef.id)
@@ -101,8 +112,6 @@ export class AuthService {
             }).then(()=>{
                 this.loaded = true;
                 return this.loggedEmployee;
-            }).catch((error)=> {
-                this.applicationService.handleRequestError(error);
             });
     }
 
@@ -184,7 +193,10 @@ export class AuthService {
         this.authToken = auth.token;
         var employeeRef = this.auth.employeeRef;
 
-        this.fetchEmployeeData(employeeRef);
+        this.fetchEmployeeData(employeeRef)
+        .catch((error)=>{
+                this.errorService.handleRequestError(error);
+            });
         this.checkRefreshToken();
     }
 

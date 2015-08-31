@@ -8,19 +8,17 @@ import {Router, RouteParams, Location} from 'angular2/router';
 import {Sale, SaleRef} from 'client/domain/sale';
 import {Item, ItemRef} from 'client/domain/item';
 import {ItemSale, ItemSaleSearch} from 'client/domain/itemSale';
-import {Pos, PosRef, PosSearch} from 'client/domain/pos';
+import {Pos} from 'client/domain/pos';
 
-import {LocaleTexts} from 'client/utils/lang';
-import {SearchResult} from 'client/utils/search';
 import {ASale, ASaleItem} from 'client/utils/aSale';
 
-import {ApplicationService} from 'services/application';
+import {ErrorService} from 'services/error';
 import {SaleService} from 'services/sale';
-import {PosService} from 'services/pos';
 
 import {ItemListView} from 'components/sales/sale/itemList/listView';
 import {CommandView} from 'components/sales/sale/commandView/commandView';
 import {PayView} from 'components/sales/sale/payView/payView'
+import {PosSelect} from 'components/pos/posSelect/posSelect';
 
 @Component({
     selector: 'saleView'
@@ -28,13 +26,12 @@ import {PayView} from 'components/sales/sale/payView/payView'
 @View({
     templateUrl: './routes/sales/sale/saleView.html',
     styleUrls: ['./routes/sales/sale/saleView.css'],
-    directives: [ItemListView, CommandView, PayView, NgIf, NgFor]
+    directives: [ItemListView, CommandView, PayView, NgIf, NgFor, PosSelect]
 })
 
 export class SaleView {
     saleService:SaleService;
-    posService:PosService;
-    appService:ApplicationService;
+    errorService:ErrorService;
 
     routeParams:RouteParams;
     router:Router;
@@ -45,27 +42,22 @@ export class SaleView {
     saleClosed:boolean;
     navigatingWithinSale: boolean;
 
-    allPosList:Pos[];
     pos:Pos;
-    posId:number;
 
     language:string;
 
-    constructor(saleService:SaleService, posService:PosService, appService:ApplicationService,
+    constructor(saleService:SaleService, errorService:ErrorService,
                 routeParams:RouteParams, router: Router, location: Location) {
         this.saleService = saleService;
-        this.posService = posService;
-        this.appService = appService;
+        this.errorService = errorService;
 
         this.routeParams = routeParams;
         this.router = router;
         this.location = location;
-        this.language = appService.language.locale;
     }
 
     onActivate() {
         this.findSale();
-        this.searchPos();
     }
 
     canReuse() {
@@ -134,7 +126,7 @@ export class SaleView {
                 this.saleService.activeSale = aSale.sale;
                 this.checkSaleClosed();
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 
@@ -152,37 +144,6 @@ export class SaleView {
     }
 
 
-    searchPos() {
-        var lastUsedPos = this.posService.lastUsedPos;
-        if (lastUsedPos != null) {
-            this.pos = lastUsedPos;
-            this.posId = lastUsedPos.id;
-            return;
-        }
-        var posSearch = new PosSearch();
-        this.posService.searchPos(posSearch, null)
-            .then((result:SearchResult<Pos>)=> {
-                this.allPosList = result.list;
-                if (result.list.length > 0 && this.pos == null) {
-                    this.pos = result.list[0];
-                    this.posId = this.pos.id;
-                }
-            }).catch((error)=> {
-                this.appService.handleRequestError(error);
-            });
-    }
-
-    onPosChanged(event) {
-        this.pos = null;
-        this.posId = event.target.value;
-        for (var posItem of this.allPosList) {
-            if (posItem.id == this.posId) {
-                this.pos = posItem;
-                break;
-            }
-        }
-        this.posService.lastUsedPos = this.pos;
-    }
 
     onSaleInvalidated() {
         this.saleService.removeASaleAsync(this.aSale)
@@ -195,7 +156,7 @@ export class SaleView {
                 this.navigatingWithinSale = true;
                 this.router.navigate('/sales/new');
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 
@@ -214,14 +175,14 @@ export class SaleView {
                     this.navigatingWithinSale = true;
                     this.router.navigate('/sales/sale/' + activeSaleId);
                 }).catch((error)=> {
-                    this.appService.handleRequestError(error);
+                    this.errorService.handleRequestError(error);
                 });
             return;
         }
 
         return this.saleService.addItemToASaleAsync(this.aSale, item)
             .catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 
@@ -236,7 +197,7 @@ export class SaleView {
             .then(()=>{
 
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
 
         this.saleService.activeSale = null;

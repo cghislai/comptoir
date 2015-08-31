@@ -10,7 +10,7 @@ import {SearchResult} from 'client/utils/search';
 import {LocaleTexts, Language} from 'client/utils/lang';
 
 import {PosService} from 'services/pos';
-import {ApplicationService} from 'services/application';
+import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
 import {Pagination} from 'client/utils/pagination';
 
@@ -30,7 +30,7 @@ import {FocusableDirective} from 'directives/focusable'
 
 export class PosListView {
     posService:PosService;
-    appService: ApplicationService;
+    errorService: ErrorService;
     router:Router;
 
     posSearch:PosSearch;
@@ -39,20 +39,20 @@ export class PosListView {
     posCount:number;
     posPerPage:number = 25;
 
-    language:string;
+    locale:string;
     loading:boolean;
 
-    constructor(posService:PosService, appService:ApplicationService,
+    constructor(posService:PosService, appService:ErrorService,
                 authService:AuthService, router:Router) {
         this.posService = posService;
-        this.appService = appService;
+        this.errorService = appService;
         this.router = router;
 
         this.posSearch = new PosSearch();
         this.posSearch.companyRef = authService.loggedEmployee.companyRef;
         this.pagination = new Pagination(0, this.posPerPage);
 
-        this.language = appService.language.locale;
+        this.locale = authService.getEmployeeLanguage().locale;
         this.searchPosList();
     }
 
@@ -71,7 +71,7 @@ export class PosListView {
                 thisView.posCount = result.count;
                 thisView.loading = false;
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 
@@ -94,7 +94,7 @@ export class PosListView {
             .then(function (result) {
                 thisView.searchPosList();
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 

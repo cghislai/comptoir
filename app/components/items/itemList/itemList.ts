@@ -9,7 +9,7 @@ import {Item, ItemSearch} from 'client/domain/item';
 import {PicturedItem} from 'client/utils/picture';
 import {LocaleTexts} from 'client/utils/lang';
 
-import {ApplicationService} from 'services/application';
+import {AuthService} from 'services/auth';
 
 import {AutoFocusDirective} from 'directives/autoFocus';
 import {FocusableDirective} from 'directives/focusable';
@@ -66,11 +66,11 @@ export class ItemList {
 
     itemClicked = new EventEmitter();
     columnAction = new EventEmitter();
-    language:string;
+    locale:string;
 
-    constructor(applicationService:ApplicationService,
+    constructor(authService: AuthService,
                 @Attribute('selectable') selectable) {
-        this.language = applicationService.language.locale;
+        this.locale = authService.getEmployeeLanguage().locale;
 
         if (selectable != undefined) {
             this.selectable = selectable != 'false';

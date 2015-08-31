@@ -11,12 +11,12 @@
                     <select (input)="onPosChanged($event)" [value]="posId">
                         <option [value]="null" [hidden]="pos != null">Choisissez un point de vente</option>
                         <option *ng-for="#posOption of posList" [value]="posOption.id">
-                            {{ posOption.description[language] }}
+                            {{ posOption.description[locale] }}
                         </option>
                     </select>
                 </div>
                 <div *ng-if="pos != null && posList != null" [hidden]="posList.length > 1">
-                    {{ pos.description[language] }}
+                    {{ pos.description[locale] }}
                 </div>
             </div>
 
@@ -28,12 +28,12 @@
                     <select (input)="onAccountChanged($event)" [value]="accountId">
                         <option [value]="null" [hidden]="account != null">Choisissez un compte</option>
                         <option *ng-for="#accountOption of accountList" [value]="accountOption.id">
-                            {{ accountOption.description[language] }}
+                            {{ accountOption.description[locale] }}
                         </option>
                     </select>
                 </div>
                 <div *ng-if="account != null && accountList != null" [hidden]="accountList.length > 1">
-                    {{ account.description[language] }}
+                    {{ account.description[locale] }}
                 </div>
             </div>
 
@@ -59,7 +59,7 @@
         <div class="moneyPiles" [hidden]="account == null">
             <div *ng-for="#aMoneyPile of aBalance.moneyPiles; #index=index"
                  class="moneyPile">
-                <span class="name">{{ aMoneyPile.label[language] }}</span>
+                <span class="name">{{ aMoneyPile.label[locale] }}</span>
                 <span class="amount">
                     <input type="number" min="0" step="1"
                            [value]="aMoneyPile.moneyPile.count"

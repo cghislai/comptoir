@@ -11,7 +11,7 @@ import {Language, LocaleTexts} from 'client/utils/lang';
 import {NumberUtils} from 'client/utils/number';
 
 import {ItemService} from 'services/itemService';
-import {ApplicationService} from 'services/application';
+import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
 
 import {LangSelect, LocalizedDirective} from 'components/utils/langSelect/langSelect';
@@ -68,14 +68,14 @@ class ItemFormModel {
 export class EditProductView {
     itemId:number;
     itemService:ItemService;
-    appService:ApplicationService;
+    errorService: ErrorService;
     authService: AuthService;
     router:Router;
 
     language:Language;
     itemModel:ItemFormModel;
 
-    constructor(itemService:ItemService, appService:ApplicationService, authService: AuthService,
+    constructor(itemService:ItemService, errorService:ErrorService, authService: AuthService,
                 routeParams:RouteParams, router:Router) {
         var itemIdParam;
         if (routeParams != null) {
@@ -87,17 +87,16 @@ export class EditProductView {
         }
         this.router = router;
         this.itemService = itemService;
-        this.appService = appService;
+        this.errorService = errorService;
         this.authService = authService;
-        this.language = appService.language;
+        this.language = authService.getEmployeeLanguage();
         this.buildFormModel();
     }
 
     buildFormModel() {
-        var lastEditLanguage = this.appService.laseUsedEditLanguage;
         if (this.itemId == null) {
             this.itemModel = new ItemFormModel();
-            this.itemModel.language = lastEditLanguage;
+            this.itemModel.language = this.language;
             var defaultVatRate = this.authService.companyCountry.defaultVatRate;
             var vatPercentage = NumberUtils.toFixedDecimals(defaultVatRate * 100, 2);
             this.itemModel.vat = vatPercentage;
@@ -107,9 +106,9 @@ export class EditProductView {
         this.itemService.getPicturedItemASync(this.itemId)
             .then((picItem:PicturedItem)=> {
                 thisView.itemModel = new ItemFormModel(picItem);
-                thisView.itemModel.language = lastEditLanguage;
+                thisView.itemModel.language = this.language;
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 
@@ -159,7 +158,7 @@ export class EditProductView {
             .then(() => {
                 this.router.navigate('/items/list');
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
 
     }

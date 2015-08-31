@@ -11,8 +11,9 @@ import {Pos, PosRef} from 'client/domain/pos';
 import {ASale, ASalePay, ASalePayItem} from 'client/utils/aSale';
 import {SearchResult} from 'client/utils/search';
 
-import {ApplicationService} from 'services/application';
+import {ErrorService} from 'services/error';
 import {AccountService} from 'services/account';
+import {AuthService} from 'services/auth';
 import {PaymentService} from 'services/payment';
 
 import {FastInput} from 'directives/fastInput'
@@ -32,8 +33,8 @@ import {FastInput} from 'directives/fastInput'
 export class PayView {
     accountService:AccountService;
     paymentService:PaymentService;
-    appService:ApplicationService;
-    language:string;
+    errorService:ErrorService;
+    locale:string;
 
     aSalePay:ASalePay;
     editingPayItem:ASalePayItem;
@@ -46,12 +47,12 @@ export class PayView {
     allAccounts:Account[];
 
 
-    constructor(accountService:AccountService, applicationService:ApplicationService,
-                paymentService:PaymentService) {
+    constructor(accountService:AccountService, errorService:ErrorService,
+                paymentService:PaymentService, authService: AuthService) {
         this.accountService = accountService;
         this.paymentService = paymentService;
-        this.appService = applicationService;
-        this.language = applicationService.language.locale;
+        this.errorService = errorService;
+        this.locale = authService.getEmployeeLanguage().locale;
         this.aSalePay = new ASalePay();
     }
 
@@ -82,7 +83,7 @@ export class PayView {
                 this.aSalePay = aSalePay;
             })
             .catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
         this.searchAccounts();
 
@@ -97,7 +98,7 @@ export class PayView {
             .then((result:SearchResult<Account>)=> {
                 thisView.allAccounts = result.list;
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 
@@ -142,12 +143,12 @@ export class PayView {
                 this.editingPayItem.amount = amount;
                 this.paymentService.createASalePayItem(this.editingPayItem)
                     .catch((error)=> {
-                        this.appService.handleRequestError(error);
+                        this.errorService.handleRequestError(error);
                     });
             } else {
                 this.paymentService.setASalePayItemAmount(this.editingPayItem, amount)
                     .catch((error)=> {
-                        this.appService.handleRequestError(error);
+                        this.errorService.handleRequestError(error);
                     });
             }
         }
@@ -161,7 +162,7 @@ export class PayView {
     removePayItem(payItem:ASalePayItem) {
         return this.paymentService.removeASalePayItem(payItem)
             .catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 

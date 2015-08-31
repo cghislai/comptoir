@@ -5,7 +5,7 @@ import {Component, View, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
 import {Sale, SaleSearch} from 'client/domain/sale';
-import {ApplicationService} from 'services/application';
+import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
 import {SaleService} from 'services/sale';
 import {Pagination} from 'client/utils/pagination';
@@ -25,9 +25,8 @@ import {SaleListComponent, SaleColumn} from 'components/sales/saleList/saleList'
 
 export class ActiveSalesView {
     saleService:SaleService;
-    appService:ApplicationService;
+    errorService:ErrorService;
     router:Router;
-    language:string;
 
     saleSearch:SaleSearch;
     pagination:Pagination;
@@ -39,20 +38,19 @@ export class ActiveSalesView {
     loading:boolean;
 
 
-    constructor(saleService:SaleService, applicationService:ApplicationService,
+    constructor(saleService:SaleService, errorService:ErrorService,
                 router:Router, authService:AuthService) {
         this.saleService = saleService;
-        this.appService = applicationService;
+        this.errorService = errorService;
         this.router = router;
         this.saleSearch = new SaleSearch();
-        this.saleSearch.companyRef = authService.loggedEmployee.companyRef
+        this.saleSearch.companyRef = authService.loggedEmployee.companyRef;
         this.saleSearch.closed = false;
         this.pagination = new Pagination(0, this.salesPerPage);
         this.pagination.sorts = {
             'DATETIME': 'desc'
         };
-        this.language = applicationService.language.locale;
-        this.columns = [
+       this.columns = [
             SaleColumn.ID,
             SaleColumn.REFERENCE,
             SaleColumn.DATETIME,
@@ -67,14 +65,14 @@ export class ActiveSalesView {
         // TODO: cancel existing promises;
         this.loading = true;
         var thisView = this;
-        // TODO: filter by actives
+
         this.saleService
             .searchSales(this.saleSearch, this.pagination)
             .then(function (result) {
                 thisView.salesResult = result;
                 thisView.loading = false;
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 
@@ -108,7 +106,7 @@ export class ActiveSalesView {
                     this.searchSales();
                 }
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 

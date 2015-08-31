@@ -11,7 +11,7 @@ import {Language, LocaleTexts} from 'client/utils/lang';
 
 import {AuthService} from 'services/auth';
 import {PosService} from 'services/pos';
-import {ApplicationService} from 'services/application';
+import {ErrorService} from 'services/error';
 
 import {LangSelect, LocalizedDirective} from 'components/utils/langSelect/langSelect';
 
@@ -51,14 +51,14 @@ class PosFormModel {
 export class EditPosView {
     posId:number;
     posService:PosService;
-    appService:ApplicationService;
+    errorService:ErrorService;
     authService:AuthService;
     router:Router;
 
     language:Language;
     posModel:PosFormModel;
 
-    constructor(posService:PosService, authService:AuthService, appService:ApplicationService,
+    constructor(posService:PosService, authService:AuthService, appService:ErrorService,
                 routeParams:RouteParams, router:Router) {
         var itemIdParam = routeParams.get('id');
         this.posId = parseInt(itemIdParam);
@@ -68,13 +68,13 @@ export class EditPosView {
         this.router = router;
         this.posService = posService;
         this.authService = authService;
-        this.appService = appService;
-        this.language = appService.language;
+        this.errorService = appService;
+        this.language = authService.getEmployeeLanguage();
         this.buildFormModel();
     }
 
     buildFormModel() {
-        var lastEditLanguage = this.appService.laseUsedEditLanguage;
+        var lastEditLanguage = this.language;
         if (this.posId == null) {
             this.posModel = new PosFormModel();
             this.posModel.language = lastEditLanguage;
@@ -85,7 +85,7 @@ export class EditPosView {
             .then(function (pos:Pos) {
                 thisView.posModel = new PosFormModel(pos, lastEditLanguage);
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
     }
 
@@ -98,7 +98,7 @@ export class EditPosView {
             .then((posRef)=> {
                 this.router.navigate('/pos/list');
             }).catch((error)=> {
-                this.appService.handleRequestError(error);
+                this.errorService.handleRequestError(error);
             });
 
     }

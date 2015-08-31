@@ -5,7 +5,7 @@
 import {Component, View, Directive,
     EventEmitter, NgFor, ElementRef} from 'angular2/angular2';
 import {Language, LocaleTexts} from 'client/utils/lang';
-import {ApplicationService} from 'services/application';
+import {AuthService} from 'services/auth';
 
 /**
  * A language selection component.
@@ -21,21 +21,18 @@ import {ApplicationService} from 'services/application';
     directives: [NgFor]
 })
 export class LangSelect {
-    appService: ApplicationService;
-    displayLocale: string;
+     displayLocale: string;
     selectedLanguage: Language;
     allLanguages: Language[];
     languageChanged: EventEmitter;
 
-    constructor(appService: ApplicationService) {
-        this.appService = appService;
+    constructor(authService: AuthService) {
         this.allLanguages = Language.ALL_LANGUAGES;
-        this.selectedLanguage = appService.laseUsedEditLanguage;
+        this.selectedLanguage = authService.getEmployeeLanguage();
         this.languageChanged = new EventEmitter();
     }
 
     onLanguageSelected(lang : Language) {
-        this.appService.laseUsedEditLanguage = lang;
         this.selectedLanguage = lang;
         this.languageChanged.next(lang);
     }
