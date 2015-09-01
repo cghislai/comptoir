@@ -4,7 +4,7 @@
 import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
-import {Item} from 'client/domain/item';
+import {ItemVariant} from 'client/domain/item';
 import {ItemPicture} from 'client/domain/itemPicture';
 import {PicturedItem} from 'client/utils/picture';
 import {Language, LocaleTexts} from 'client/utils/lang';
@@ -33,7 +33,7 @@ class ItemFormModel {
     constructor(item?:PicturedItem) {
         if (item == undefined) {
             this.item = new PicturedItem();
-            this.item.item = new Item();
+            this.item.item = new ItemVariant();
             this.item.picture = new ItemPicture();
             this.names = new LocaleTexts();
             this.descriptions = new LocaleTexts();

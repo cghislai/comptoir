@@ -2,17 +2,17 @@
  * Created by cghislai on 07/08/15.
  */
 
-import {Item} from 'client/domain/item';
+import {ItemVariant} from 'client/domain/itemVariant';
 import {ItemPicture} from 'client/domain/itemPicture';
 
 export class PicturedItem {
-    item:Item;
+    item:ItemVariant;
     picture:ItemPicture;
     dataURI:string;
 }
 
 export class PicturedItemFactory {
-    static buildPictureData(item:Item, picture:ItemPicture):PicturedItem {
+    static buildPictureData(item:ItemVariant, picture:ItemPicture):PicturedItem {
         var picturedItem = new PicturedItem();
         picturedItem.item = item;
         picturedItem.picture = picture;

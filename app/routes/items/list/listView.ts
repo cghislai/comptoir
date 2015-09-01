@@ -5,7 +5,7 @@ import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
 
-import {Item, ItemSearch} from 'client/domain/item';
+import {ItemVariant, ItemVariantSearch} from 'client/domain/item';
 import {SearchResult} from 'client/utils/search';
 import {PicturedItem} from 'client/utils/picture';
 import {LocaleTexts} from 'client/utils/lang';
@@ -32,7 +32,7 @@ export class ItemsListView {
     errorService:ErrorService;
     router:Router;
 
-    itemSearch:ItemSearch;
+    itemSearch:ItemVariantSearch;
     pagination:Pagination;
     itemSearchResult:SearchResult<PicturedItem>;
     itemCount:number;
@@ -48,7 +48,7 @@ export class ItemsListView {
         this.itemService = itemService;
         this.errorService = appService;
 
-        this.itemSearch = new ItemSearch();
+        this.itemSearch = new ItemVariantSearch();
         this.pagination = new Pagination(0, this.itemsPerPage);
 
         this.columns = [
@@ -80,20 +80,20 @@ export class ItemsListView {
     }
 
     onColumnAction(event) {
-        var item:PicturedItem = event.item;
+        var item:PicturedItem = event.itemVariant;
         var column:ItemColumn = event.column;
         if (column == ItemColumn.ACTION_REMOVE) {
             this.doRemoveItem(item.item);
         }
     }
 
-    doEditItem(item:Item) {
+    doEditItem(item:ItemVariant) {
         var id = item.id;
         var url = '/items/edit/' + id;
         this.router.navigate(url);
     }
 
-    doRemoveItem(item:Item) {
+    doRemoveItem(item:ItemVariant) {
         var thisView = this;
         this.itemService.removeItem(item)
             .then(()=> {

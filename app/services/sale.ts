@@ -3,7 +3,7 @@
  */
 import {Inject, forwardRef} from 'angular2/angular2';
 
-import {Item, ItemRef, ItemFactory} from 'client/domain/item';
+import {ItemVariant, ItemVariantRef, ItemVariantFactory} from 'client/domain/item';
 import {Sale, SaleRef, SaleSearch, SaleFactory} from 'client/domain/sale';
 import {ItemSale, ItemSaleRef, ItemSaleSearch, ItemSaleFactory} from 'client/domain/itemSale';
 
@@ -159,7 +159,7 @@ export class SaleService {
         return this.removeSale(saleId);
     }
 
-    public addItemToASaleAsync(aSale:ASale, item:Item):Promise<ASale> {
+    public addItemToASaleAsync(aSale:ASale, item:ItemVariant):Promise<ASale> {
         if (aSale.sale == null) {
             throw 'sale not opened';
         }
@@ -189,8 +189,8 @@ export class SaleService {
         aSaleItem.aSale = aSale;
         aSaleItem.discountPercentage = 0;
         aSaleItem.discountRate = 0;
-        aSaleItem.item = item;
-        aSaleItem.itemId = item.id;
+        aSaleItem.itemVariant = item;
+        aSaleItem.itemVariantId = item.id;
         aSaleItem.quantity = 1;
         aSaleItem.vatExclusive = item.vatExclusive;
         aSaleItem.vatRate = item.vatRate;
@@ -434,7 +434,7 @@ export class SaleService {
         var newItemsMap = {};
 
         for (var fetchedItem of items) {
-            var itemId = fetchedItem.itemRef.id;
+            var itemId = fetchedItem.itemVariantRef.id;
             var aSaleItem:ASaleItem = currentItemsMap[itemId];
             if (aSaleItem != null) {
                 if (!this.isASaleItemUpToDate(aSaleItem, fetchedItem)) {
@@ -462,7 +462,7 @@ export class SaleService {
         aSaleItem.discountPercentage = discountPercentage;
         var discountRatio = NumberUtils.toFixedDecimals(itemSale.discountRatio, 2);
         aSaleItem.discountRate = discountRatio;
-        aSaleItem.itemId = itemSale.itemRef.id;
+        aSaleItem.itemVariantId = itemSale.itemVariantRef.id;
         aSaleItem.itemSale = itemSale;
         aSaleItem.itemSaleId = itemSale.id;
         var quantity = NumberUtils.toInt(itemSale.quantity);
@@ -473,8 +473,8 @@ export class SaleService {
         aSaleItem.vatRate = vatRate;
         var total = NumberUtils.toFixedDecimals(itemSale.total, 2);
         aSaleItem.total = total;
-        if (aSaleItem.itemId != aSaleItem.itemId) {
-            aSaleItem.item = null;
+        if (aSaleItem.itemVariantId != aSaleItem.itemVariantId) {
+            aSaleItem.itemVariant = null;
         }
     }
 
@@ -515,7 +515,7 @@ export class SaleService {
         if (oldItem.id != itemSale.id) {
             return false;
         }
-        if (oldItem.itemRef != itemSale.itemRef) {
+        if (oldItem.itemVariantRef != itemSale.itemVariantRef) {
             return false;
         }
         if (oldItem.quantity != itemSale.quantity) {
@@ -542,7 +542,7 @@ export class SaleService {
                     .then(()=> {
                         return this.fetchASaleItemItemAsync(item);
                     }));
-            } else if (item.item == null) {
+            } else if (item.itemVariant == null) {
                 taskList.push(this.fetchASaleItemItemAsync(item));
             }
         }
@@ -571,28 +571,28 @@ export class SaleService {
         if (aSaleItem.itemRequest != null) {
             aSaleItem.itemRequest.discardRequest();
         }
-        var item = aSaleItem.item;
+        var item = aSaleItem.itemVariant;
         var itemSale = aSaleItem.itemSale;
         if (item != null && itemSale != null) {
-            if (item.id = itemSale.itemRef.id) {
+            if (item.id = itemSale.itemVariantRef.id) {
                 // Items probably wont change during a sale
                 return;
             }
         }
         var authToken = this.authService.authToken;
-        var itemId = aSaleItem.itemId;
-        aSaleItem.itemRequest = this.itemClient.getGetItemRequest(itemId, authToken);
+        var itemId = aSaleItem.itemVariantId;
+        aSaleItem.itemRequest = this.itemClient.getGetItemVariantRequest(itemId, authToken);
         return aSaleItem.itemRequest.run()
             .then((response:ComptoirResponse)=> {
-                var item:Item = JSON.parse(response.text, ItemFactory.fromJSONItemReviver);
+                var item:ItemVariant = JSON.parse(response.text, ItemVariantFactory.fromJSONItemReviver);
                 this.setASaleItemItem(aSaleItem, item);
                 aSaleItem.itemRequest = null;
                 return aSaleItem;
             });
     }
 
-    private setASaleItemItem(aSaleItem:ASaleItem, item:Item) {
-        aSaleItem.item = item;
+    private setASaleItemItem(aSaleItem:ASaleItem, item:ItemVariant) {
+        aSaleItem.itemVariant = item;
         aSaleItem.vatExclusive = item.vatExclusive;
         aSaleItem.vatRate = item.vatRate;
     }
@@ -604,11 +604,11 @@ export class SaleService {
         var aSale = aSaleItem.aSale;
         var saleId = aSale.saleId;
         var saleRef = new SaleRef(saleId);
-        var itemId = aSaleItem.itemId;
-        var itemRef = new ItemRef(itemId);
+        var itemId = aSaleItem.itemVariantId;
+        var itemRef = new ItemVariantRef(itemId);
 
         var itemSale = new ItemSale();
-        itemSale.itemRef = itemRef;
+        itemSale.itemVariantRef = itemRef;
         itemSale.saleRef = saleRef;
         aSaleItem.itemSale = itemSale;
         this.updateItemSaleFromASaleItem(aSaleItem);
@@ -662,7 +662,7 @@ export class SaleService {
 
     private removeASaleItemFromASaleItems(aSaleItem:ASaleItem) {
         var aSale = aSaleItem.aSale;
-        var itemId = aSaleItem.itemId;
+        var itemId = aSaleItem.itemVariantId;
         var items = aSale.items;
         var itemsMap = aSale.itemsMap;
         var newItems = [];
@@ -720,7 +720,7 @@ export class SaleService {
                 continue;
             }
 
-            var item = aSaleItem.item;
+            var item = aSaleItem.itemVariant;
             itemVatExclusive = aSaleItem.vatExclusive;
             itemDiscountRatio = aSaleItem.discountRate;
             itemVatRate = aSaleItem.vatRate;

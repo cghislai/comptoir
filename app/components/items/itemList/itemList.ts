@@ -5,7 +5,7 @@
 import {Component, View, NgFor, NgIf,
     EventEmitter, Attribute, ViewEncapsulation} from 'angular2/angular2';
 
-import {Item, ItemSearch} from 'client/domain/item';
+import {ItemVariant, ItemVariantSearch} from 'client/domain/item';
 import {PicturedItem} from 'client/utils/picture';
 import {LocaleTexts} from 'client/utils/lang';
 
@@ -83,7 +83,7 @@ export class ItemList {
         this.headers = value != 'false';
     }
 
-    onItemClick(item:Item, col:ItemColumn) {
+    onItemClick(item:ItemVariant, col:ItemColumn) {
         if (col == ItemColumn.ACTION_REMOVE) {
             return;
         }

@@ -4,7 +4,7 @@
 
 import {Component, View, NgFor, NgIf, EventEmitter, FORM_DIRECTIVES} from 'angular2/angular2';
 
-import {Item} from 'client/domain/item';
+import {ItemVariant} from 'client/domain/item';
 import {Sale, SaleRef} from 'client/domain/sale';
 import {ItemSale, ItemSaleSearch} from 'client/domain/itemSale';
 
@@ -221,7 +221,7 @@ export class CommandView {
     onItemPriceChange(newValue) {
         var price = parseFloat(newValue);
         if (isNaN(price)) {
-            price = this.editingItem.item.vatExclusive;
+            price = this.editingItem.itemVariant.vatExclusive;
         }
         var vatExclusive = NumberUtils.toFixedDecimals(price, 2);
         this.saleService.setASaleItemVatExclusiveAsync(

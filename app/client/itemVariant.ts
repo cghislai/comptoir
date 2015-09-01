@@ -2,11 +2,11 @@
  * Created by cghislai on 07/08/15.
  */
 
-import {Item, ItemRef, ItemSearch, ItemFactory} from 'client/domain/item';
+import {ItemVariant, ItemVariantRef, ItemVariantSearch, ItemVariantFactory} from 'client/domain/itemVariant';
 import {ComptoirRequest} from 'client/utils/request';
 import {SearchResult} from 'client/utils/search';
-import {ServiceConfig} from 'client/utils/service'
-import {Pagination} from'client/utils/pagination';pagination:Pagination
+import {ServiceConfig} from 'client/utils/service';
+import {Pagination} from'client/utils/pagination';
 
 export class ItemClient {
     private static RESOURCE_PATH = "/item";
@@ -15,7 +15,7 @@ export class ItemClient {
         return ServiceConfig.URL + ItemClient.RESOURCE_PATH;
     }
 
-    private getItemUrl(id:number):string {
+    private getItemVariantUrl(id:number):string {
         var url = this.getResourceUrl();
         url += "/" + id;
         return url;
@@ -34,49 +34,49 @@ export class ItemClient {
     }
 
 
-    createIem(item:Item, authToken:string):Promise<ItemRef> {
+    createItemVariant(itemVariant:ItemVariant, authToken:string):Promise<ItemVariantRef> {
         var url = this.getResourceUrl();
         var request = new ComptoirRequest();
-        return request.post(item, url, authToken)
+        return request.post(itemVariant, url, authToken)
             .then(function (response) {
                 var itemRef = JSON.parse(response.text);
                 return itemRef;
             });
     }
 
-    updateItem(item:Item, authToken:string):Promise<ItemRef> {
-        var url = this.getItemUrl(item.id);
+    updateItemvariant(itemVariant:ItemVariant, authToken:string):Promise<ItemVariantRef> {
+        var url = this.getItemVariantUrl(itemVariant.id);
         var request = new ComptoirRequest();
-        return request.put(item, url, authToken)
+        return request.put(itemVariant, url, authToken)
             .then(function (response) {
                 var itemRef = JSON.parse(response.text);
                 return itemRef;
             });
     }
 
-    getItem(id:number, authToken:string):Promise<Item> {
-        var url = this.getItemUrl(id);
+    getItemVariant(id:number, authToken:string):Promise<ItemVariant> {
+        var url = this.getItemVariantUrl(id);
         var request = new ComptoirRequest();
         return request.get(url, authToken)
             .then(function (response) {
-                var item = JSON.parse(response.text, ItemFactory.fromJSONItemReviver);
+                var item = JSON.parse(response.text, ItemVariantFactory.fromJSONItemReviver);
                 return item;
             });
     }
 
-    getGetItemRequest(id:number, authToken:string):ComptoirRequest {
-        var url = this.getItemUrl(id);
+    getGetItemVariantRequest(id:number, authToken:string):ComptoirRequest {
+        var url = this.getItemVariantUrl(id);
         var request = new ComptoirRequest();
         request.setup('GET', url, authToken);
         return request;
     }
 
-    searchItems(search:ItemSearch, pagination:Pagination, authToken:string):Promise<SearchResult<Item>> {
+    searchItemVariants(search:ItemVariantSearch, pagination:Pagination, authToken:string):Promise<SearchResult<ItemVariant>> {
         var url = this.getSearchUrl(pagination);
         var request = new ComptoirRequest();
         return request.post(search, url, authToken)
             .then(function (response) {
-                var result = new SearchResult<Item>().parseResponse(response, ItemFactory.fromJSONItemReviver);
+                var result = new SearchResult<ItemVariant>().parseResponse(response, ItemVariantFactory.fromJSONItemReviver);
                 return result;
             });
     }
