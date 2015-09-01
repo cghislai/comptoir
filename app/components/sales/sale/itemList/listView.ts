@@ -4,7 +4,7 @@
 
 import {Component, View, NgFor, NgIf, EventEmitter} from 'angular2/angular2';
 
-import {Item, ItemSearch} from 'client/domain/item';
+import {ItemVariant, ItemVariantSearch} from 'client/domain/item';
 import {SearchResult} from 'client/utils/search';
 import {PicturedItem} from 'client/utils/picture';
 import {Pagination} from 'client/utils/pagination';
@@ -39,7 +39,7 @@ export class ItemListView {
     keyboardTimeoutSet:boolean;
     keyboardTimeout:number = 200;
     //
-    itemSearch:ItemSearch;
+    itemSearch:ItemVariantSearch;
     pagination:Pagination;
     loading:boolean = false;
     itemSearchResult:SearchResult<PicturedItem>;
@@ -50,7 +50,7 @@ export class ItemListView {
 
         this.language = applicationService.language.locale;
 
-        this.itemSearch = new ItemSearch();
+        this.itemSearch = new ItemVariantSearch();
         this.itemSearch.multiSearch = null;
         this.pagination = new Pagination(0, 20);
 
@@ -99,7 +99,7 @@ export class ItemListView {
         this.searchItems();
     }
 
-    onItemClicked(item:Item) {
+    onItemClicked(item:ItemVariant) {
         this.itemClicked.next(item);
     }
 

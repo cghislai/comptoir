@@ -3,7 +3,7 @@
  */
 import {Account} from 'client/domain/account';
 import {AccountingEntry} from 'client/domain/accountingEntry';
-import {Item} from 'client/domain/item';
+import {ItemVariant} from 'client/domain/itemVariant';
 import {Sale} from 'client/domain/sale';
 import {Pos} from 'client/domain/pos';
 import {ItemSale} from 'client/domain/itemSale';
@@ -12,10 +12,10 @@ import {LocaleTexts} from 'client/utils/lang';
 
 export class ASaleItem {
     aSale:ASale;
-    item:Item;
+    itemVariant:ItemVariant;
     itemSale:ItemSale;
 
-    itemId: number;
+    itemVariantId: number;
     itemSaleId: number;
     quantity: number;
     vatExclusive: number;

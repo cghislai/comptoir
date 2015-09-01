@@ -3,7 +3,7 @@
  */
 
 import {CompanyRef} from 'client/domain/company';
-import {ItemRef} from 'client/domain/item';
+import {ItemVariantRef} from 'client/domain/itemVariant';
 import {SaleRef} from 'client/domain/sale';
 import {Price} from 'client/domain/price';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
@@ -11,7 +11,7 @@ import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 export class ItemSale {
     id: number;
     dateTime: Date;
-    itemRef: ItemRef;
+    itemVariantRef: ItemVariantRef;
     quantity: number;
     saleRef: SaleRef;
     comment: LocaleTexts = new LocaleTexts();
@@ -29,7 +29,7 @@ export class ItemSaleRef {
 export class ItemSaleSearch {
     companyRef: CompanyRef;
     saleRef: SaleRef;
-    itemRef: ItemRef;
+    itemVariantRef: ItemVariantRef;
 }
 
 export class ItemSaleFactory {

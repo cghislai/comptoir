@@ -7,7 +7,7 @@ import {ItemPictureRef} from 'client/domain/itemPicture';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 import {Pagination} from 'client/utils/pagination';
 
-export class ItemRef {
+export class ItemVariantRef {
     id:number;
     link:string;
 
@@ -16,7 +16,7 @@ export class ItemRef {
     }
 }
 
-export class Item {
+export class ItemVariant {
     id:number;
     companyRef:CompanyRef;
     mainPictureRef:ItemPictureRef;
@@ -28,7 +28,7 @@ export class Item {
     vatRate:number;
 }
 
-export class ItemSearch {
+export class ItemVariantSearch {
     companyRef: CompanyRef;
     multiSearch:string;
     nameContains:string;
@@ -38,7 +38,7 @@ export class ItemSearch {
     model:string;
 }
 
-export class ItemFactory {
+export class ItemVariantFactory {
     static fromJSONItemReviver = (key, value)=>{
         if (key == 'name' || key == "description") {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);

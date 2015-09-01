@@ -7515,7 +7515,7 @@ System.register("angular2/src/change_detection/differs/default_iterable_differ",
               this._length = collection.length;
               for (index = 0; index < this._length; index++) {
                 item = list[index];
-                if (record === null || !looseIdentical(record.item, item)) {
+                if (record === null || !looseIdentical(record.itemVariant, item)) {
                   record = this._mismatch(record, item, index);
                   mayBeDirty = true;
                 } else if (mayBeDirty) {
@@ -7526,7 +7526,7 @@ System.register("angular2/src/change_detection/differs/default_iterable_differ",
             } else {
               index = 0;
               iterateListLike(collection, (function(item) {
-                if (record === null || !looseIdentical(record.item, item)) {
+                if (record === null || !looseIdentical(record.itemVariant, item)) {
                   record = $__0._mismatch(record, item, index);
                   mayBeDirty = true;
                 } else if (mayBeDirty) {
@@ -7763,7 +7763,7 @@ System.register("angular2/src/change_detection/differs/default_iterable_differ",
           this._nextMoved = null;
         }
         return ($traceurRuntime.createClass)(CollectionChangeRecord, {toString: function() {
-            return this.previousIndex === this.currentIndex ? stringify(this.item) : stringify(this.item) + '[' + stringify(this.previousIndex) + '->' + stringify(this.currentIndex) + ']';
+            return this.previousIndex === this.currentIndex ? stringify(this.itemVariant) : stringify(this.itemVariant) + '[' + stringify(this.previousIndex) + '->' + stringify(this.currentIndex) + ']';
           }}, {});
       }());
       $__export("CollectionChangeRecord", CollectionChangeRecord);
@@ -7788,7 +7788,7 @@ System.register("angular2/src/change_detection/differs/default_iterable_differ",
           get: function(item, afterIndex) {
             var record;
             for (record = this._head; record !== null; record = record._nextDup) {
-              if ((afterIndex === null || afterIndex < record.currentIndex) && looseIdentical(record.item, item)) {
+              if ((afterIndex === null || afterIndex < record.currentIndex) && looseIdentical(record.itemVariant, item)) {
                 return record;
               }
             }
@@ -7817,7 +7817,7 @@ System.register("angular2/src/change_detection/differs/default_iterable_differ",
         }
         return ($traceurRuntime.createClass)(_DuplicateMap, {
           put: function(record) {
-            var key = getMapKey(record.item);
+            var key = getMapKey(record.itemVariant);
             var duplicates = this.map.get(key);
             if (!isPresent(duplicates)) {
               duplicates = new _DuplicateItemRecordList();
@@ -7832,7 +7832,7 @@ System.register("angular2/src/change_detection/differs/default_iterable_differ",
             return isBlank(recordList) ? null : recordList.get(value, afterIndex);
           },
           remove: function(record) {
-            var key = getMapKey(record.item);
+            var key = getMapKey(record.itemVariant);
             var recordList = this.map.get(key);
             if (recordList.remove(record)) {
               MapWrapper.delete(this.map, key);

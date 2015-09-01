@@ -2,7 +2,7 @@
  * Created by cghislai on 07/08/15.
  */
 
-import {ItemRef} from 'client/domain/item';
+import {ItemVariantRef} from 'client/domain/itemVariant';
 
 export class ItemPictureRef {
     id:number;
@@ -11,7 +11,7 @@ export class ItemPictureRef {
 
 export class ItemPicture {
     id:number;
-    itemRef:ItemRef;
+    itemVariantRef:ItemVariantRef;
     data:string;
     contentType:string;
 }

@@ -6,13 +6,13 @@ import {ItemPicture, ItemPictureRef, ItemPictureSearch, ItemPictureFactory} from
 import {ComptoirRequest} from 'client/utils/request';
 import {SearchResult} from 'client/utils/search';
 import {ServiceConfig} from 'client/utils/service';
-import {Pagination} from'client/utils/pagination';pagination:Pagination
+import {Pagination} from'client/utils/pagination';
 
 export class ItemPictureClient {
     private static serviceUrl:string = "http://somewhere.com/itemPicture";
 
     private getResourceUrl(itemPicture: ItemPicture) : string {
-        var itemId = itemPicture.itemRef.id;
+        var itemId = itemPicture.itemVariantRef.id;
         var url = ServiceConfig.URL;
         url += "/item";
         url += "/"+itemId;

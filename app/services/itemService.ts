@@ -4,7 +4,7 @@
 
 import {Inject} from 'angular2/angular2';
 
-import {Item, ItemRef, ItemSearch, ItemFactory} from 'client/domain/item';
+import {ItemVariant, ItemVariantRef, ItemVariantSearch, ItemVariantFactory} from 'client/domain/item';
 import {ItemPicture, ItemPictureRef} from 'client/domain/itemPicture';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 import {PicturedItem, PicturedItemFactory} from 'client/utils/picture';
@@ -28,26 +28,26 @@ export class ItemService {
     }
 
 
-    public createItem(item:Item):Promise<ItemRef> {
+    public createItem(item:ItemVariant):Promise<ItemVariantRef> {
         item.companyRef = this.authService.loggedEmployee.companyRef;
         var authToken = this.authService.authToken;
-        return this.itemClient.createIem(item, authToken);
+        return this.itemClient.createItemVariant(item, authToken);
     }
 
-    public updateItem(item:Item):Promise<ItemRef> {
+    public updateItem(item:ItemVariant):Promise<ItemVariantRef> {
         var authToken = this.authService.authToken;
-        return this.itemClient.updateItem(item, authToken);
+        return this.itemClient.updateItemvariant(item, authToken);
     }
 
-    public getItem(id:number):Promise<Item> {
+    public getItem(id:number):Promise<ItemVariant> {
         var authToken = this.authService.authToken;
-        return this.itemClient.getItem(id, authToken);
+        return this.itemClient.getItemVariant(id, authToken);
     }
 
-    public searchItems(itemSearch:ItemSearch, pagination:Pagination):Promise<SearchResult<Item>> {
+    public searchItems(itemSearch:ItemVariantSearch, pagination:Pagination):Promise<SearchResult<ItemVariant>> {
         itemSearch.companyRef = this.authService.loggedEmployee.companyRef;
         var authToken = this.authService.authToken;
-        return this.itemClient.searchItems(itemSearch, pagination, authToken);
+        return this.itemClient.searchItemVariants(itemSearch, pagination, authToken);
     }
 
     /**
@@ -91,11 +91,11 @@ export class ItemService {
      * @param itemSearch
      * @returns {Promise<SearchResult<PicturedItem>>}
      */
-    public searchPicturedItems(itemSearch:ItemSearch, pagination:Pagination):Promise<SearchResult<PicturedItem>> {
+    public searchPicturedItems(itemSearch:ItemVariantSearch, pagination:Pagination):Promise<SearchResult<PicturedItem>> {
         var thisService = this;
         var authToken = this.authService.authToken;
         return this.searchItems(itemSearch, pagination)
-            .then(function (itemResult:SearchResult<Item>) {
+            .then(function (itemResult:SearchResult<ItemVariant>) {
                 var result = new SearchResult<PicturedItem>();
                 result.count = itemResult.count;
                 result.list = [];
@@ -160,7 +160,7 @@ export class ItemService {
                 picturedItem.picture = picture;
             }
         }
-        var saveAction:Promise<ItemRef>;
+        var saveAction:Promise<ItemVariantRef>;
         if (item.id == null) {
             saveAction = this.createItem(item);
         } else {
@@ -168,13 +168,13 @@ export class ItemService {
         }
 
         return saveAction
-            .then((itemRef:ItemRef)=> {
+            .then((itemRef:ItemVariantRef)=> {
                 // Save picture
                 item.id = itemRef.id;
                 if (picture == null) {
                     return null;
                 }
-                picture.itemRef = itemRef;
+                picture.itemVariantRef = itemRef;
 
                 if (picture != null) {
                     if (picture.id == null) {
@@ -191,7 +191,7 @@ export class ItemService {
     }
 
 
-    public removeItem(item:Item):Promise<boolean> {
+    public removeItem(item:ItemVariant):Promise<boolean> {
         // TODO
         var thisService = this;
         return new Promise((resolve, reject) => {

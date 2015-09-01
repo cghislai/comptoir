@@ -5,7 +5,7 @@ import {Component, View, NgIf, NgFor, Query,QueryList} from 'angular2/angular2';
 import {Router, RouteParams, Location} from 'angular2/router';
 
 import {Sale, SaleRef} from 'client/domain/sale';
-import {Item, ItemRef} from 'client/domain/item';
+import {ItemVariant, ItemVariantRef} from 'client/domain/item';
 import {ItemSale, ItemSaleSearch} from 'client/domain/itemSale';
 import {Pos, PosRef, PosSearch} from 'client/domain/pos';
 
@@ -168,7 +168,7 @@ export class SellView {
             });
     }
 
-    onItemClicked(item:Item, commandView:CommandView, itemList:ItemListView) {
+    onItemClicked(item:ItemVariant, commandView:CommandView, itemList:ItemListView) {
         itemList.focus();
 
         // Open sale if required
