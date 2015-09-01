@@ -15,11 +15,11 @@ import {AuthService} from 'services/auth';
     selector: 'importItems'
 })
 @View({
-    templateUrl: './components/items/import/importView.html',
-    styleUrls: ['./components/items/import/importView.css'],
+    templateUrl: './routes/items/import/importView.html',
+    styleUrls: ['./routes/items/import/importView.css'],
     directives: [NgIf, FORM_DIRECTIVES, RouterLink]
 })
-export class ImportProductView {
+export class ItemsImportView {
     errorService:ErrorService;
     authService:AuthService;
     router:Router;

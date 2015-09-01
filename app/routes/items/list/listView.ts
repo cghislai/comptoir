@@ -22,12 +22,12 @@ import {Paginator} from 'components/utils/paginator/paginator';
 })
 
 @View({
-    templateUrl: './components/items/list/listView.html',
-    styleUrls: ['./components/items/list/listView.css'],
+    templateUrl: './routes/items/list/listView.html',
+    styleUrls: ['./routes/items/list/listView.css'],
     directives: [NgFor, NgIf, Paginator, FORM_DIRECTIVES, ItemList]
 })
 
-export class ProductsListView {
+export class ItemsListView {
     itemService:ItemService;
     errorService:ErrorService;
     router:Router;

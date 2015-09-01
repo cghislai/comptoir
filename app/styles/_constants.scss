@@ -3,7 +3,13 @@ $blueColor: #8BAAF2;
 $onBlueHoverColor: yellow;
 $onBlueTextColor: white;
 $onBlueFocusColor: #FFFBA1;
+
 $onWhiteHoverColor: rgba(139, 170, 242, .5);
 $onWhiteLinkColor: #6981B8;
 $onWhiteFocusColor: $onWhiteHoverColor;
 $tableRowHoverColor: rgba(128, 128, 128, 0.1);
+
+@mixin focus($focusColor) {
+  outline: .1em solid $focusColor;
+  box-shadow: 0 0 .2em .1em $focusColor;
+}

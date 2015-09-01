@@ -4,7 +4,7 @@ span.appTab {
   text-align: center;
   height: 100%;
   display: inline-block;
-  padding:0 .5em;
+  padding: 0 .5em;
   font-weight: bold;
 
   div.tab {
@@ -23,7 +23,7 @@ span.appTab {
       vertical-align: middle;
       text-decoration: none;
     }
-    &.active a{
+    &.active a {
       background-color: white;
       color: black;
       outline: none;
@@ -35,7 +35,7 @@ span.appTab {
         cursor: default;
       }
     }
-    &.selectable:not(.active) a{
+    &.selectable:not(.active) a {
       &:hover {
         color: yellow;
         cursor: pointer;
@@ -45,10 +45,12 @@ span.appTab {
         box-shadow: 0 0 0.2em 0.1em $onBlueFocusColor;
       }
     }
-    &:not(.selectable) a {
+    &:not(.selectable) &:not(.active) a {
+
       color: lightgray;
+
       tab-index: -1;
-      a:hover {
+      &:hover {
         cursor: default;
       }
     }

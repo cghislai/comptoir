@@ -12,7 +12,7 @@
         <div>
             <input ng-control="companyName" type="text" placeholder="Nom de la compagnie"
                     #company-name="form" autofocus required>
-            <formMessage [for]="companyName.control" inline="true"
+            <formMessage [for]="companyName.control" [inline]="true"
                          check-error="required" message="Entrez un nom"></formMessage>
         </div>
         <div>
@@ -20,7 +20,7 @@
                     localized [language]="editLanguage"
                     [locale-texts]="companyDescriptions"
                     #company-description="form" required>
-            <formMessage [for]="companyDescription.control" inline="true"
+            <formMessage [for]="companyDescription.control" [inline]="true"
                          check-error="required" message="Entrez une description"></formMessage>
         </div>
 
@@ -36,13 +36,13 @@
         <div>
             <input ng-control="employeeFirstName" type="text" placeholder="Prénom"
                    #employee-first-name="form" required>
-            <formMessage [for]="employeeFirstName.control" inline="true"
+            <formMessage [for]="employeeFirstName.control" [inline]="true"
                          check-error="required" message="Entrez votre prénom"></formMessage>
         </div>
         <div>
             <input ng-control="employeeLastName" type="text" placeholder="Nom"
                    #employee-last-name="form" required>
-            <formMessage [for]="employeeLastName.control" inline="true"
+            <formMessage [for]="employeeLastName.control" [inline]="true"
                          check-error="required" message="Entrez votre nom"></formMessage>
         </div>
 
@@ -50,15 +50,15 @@
         <div>
             <input ng-control="login" type="text" placeholder="Login"
                    #login="form" required>
-            <formMessage [for]="login.control" inline="true"
+            <formMessage [for]="login.control" [inline]="true"
                          check-error="required" message="Entrez un login"></formMessage>
         </div>
         <div>
             <input ng-control="password" type="password" placeholder="Mot de passe"
                    #password="form" required>
-            <formMessage [for]="password.control" inline="true"
+            <formMessage [for]="password.control" [inline]="true"
                          check-error="required" message="Entrez un mot de passe"></formMessage>
-            <formMessage [for]="password.control" inline="true"
+            <formMessage [for]="password.control" [inline]="true"
                          check-error="passwordTooShort" message="Le mot de passe doit faire 8 caratères minimum"></formMessage>
         </div>
         <div>

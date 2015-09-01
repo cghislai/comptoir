@@ -1,6 +1,6 @@
 <div class="saleView">
     <div class="header" [hidden]="saleClosed">
-        <posSelect (pos-changed)="pos = $event"></posSelect>
+        <posSelect (pos-changed)="pos = $event" ></posSelect>
     </div>
     <div class="wrapper" *ng-if="aSale != null">
         <div class="sellView" [class.slide-left]="payStep"  [class.no-anim]="saleClosed || aSale.sale == null">

@@ -1,9 +1,17 @@
 <div class="appMenu">
     <a [class.inactive]="inactive"
-       (^click)="openCloseMenu()"
-            href="#">
+       [class.active]="menuVisible"
+       (^click)="openCloseMenu($event)">
         <h1>
             {{ title }}
         </h1>
     </a>
+    <div id="appMenu"
+         [hidden]="!menuVisible" (^click)="closeMenu()">
+        <a [router-link]="['/sales']"
+           [class.active]="isActive('/sales')">Ventes</a>
+        <a [router-link]="['/items']"
+           [class.active]="isActive('/items')">Produits</a>
+
+    </div>
 </div>

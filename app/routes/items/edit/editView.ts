@@ -61,11 +61,11 @@ class ItemFormModel {
     selector: 'editProduct'
 })
 @View({
-    templateUrl: './components/items/edit/editView.html',
-    styleUrls: ['./components/items/edit/editView.css'],
+    templateUrl: './routes/items/edit/editView.html',
+    styleUrls: ['./routes/items/edit/editView.css'],
     directives: [NgFor, NgIf, FORM_DIRECTIVES, RouterLink, LangSelect, LocalizedDirective]
 })
-export class EditProductView {
+export class ItemsEdiView {
     itemId:number;
     itemService:ItemService;
     errorService: ErrorService;

@@ -1,3 +1,5 @@
+@import '_constants';
+
 $blueColor: #8BAAF2;
 $onBlueTextColor: white;
 $onBlueHoverColor: yellow;
@@ -109,13 +111,12 @@ select {
   outline: .1em solid transparent;
 }
 
+
 :focus {
-  outline: .1em solid $focusColor;
-  box-shadow: 0 0 .2em .1em $focusColor;
+  @include focus($focusColor);
 }
 .coloredHeader :focus {
-  outline: .1em solid $onBlueFocusColor;
-  box-shadow: 0 0 .2em .1em $onBlueFocusColor;
+  @include focus($focusColor);
 }
 
 

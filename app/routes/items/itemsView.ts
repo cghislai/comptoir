@@ -4,27 +4,28 @@
 
 import {Component, View} from 'angular2/angular2';
 import {Router, RouteConfig,RouterOutlet,RouterLink, Location} from 'angular2/router';
-import {SaleView} from 'routes/sales/sale/saleView';
-import {ActiveSalesView} from 'routes/sales/actives/listView';
-import {SaleHistoryView} from 'routes/sales/history/historyView';
+
 import {AppHeader} from 'components/app/header/appHeader';
 import {AppMenu} from 'components/app/header/menu/appMenu';
 import {AppTab} from 'components/app/header/tab/appTab';
 
+import {ItemsListView} from 'routes/items/list/listView';
+import {ItemsEdiView} from 'routes/items/edit/editView';
+import {ItemsImportView} from 'routes/items/import/importView';
 @Component({
-    selector: 'salesView'
+    selector: 'itemsView'
 })
 @View({
-    templateUrl: './routes/sales/salesView.html',
+    templateUrl: './routes/items/itemsView.html',
     directives: [AppHeader, AppMenu, AppTab, RouterOutlet, RouterLink]
 })
 @RouteConfig([
-    {path: '/', redirectTo: '/sale/active'},
-    {path: '/sale/:id', component: SaleView, as: 'sale'},
-    {path: '/actives', component: ActiveSalesView, as: 'actives'},
-    {path: '/history', component: SaleHistoryView, as: 'history'}
+    {path: '/', redirectTo: '/items/list'},
+    {path: '/edit/:id', component: ItemsEdiView, as: 'edit'},
+    {path: '/list', component: ItemsListView, as: 'list'},
+    {path: '/import', component: ItemsImportView, as: 'import'},
 ])
-export class SalesView {
+export class ItemsView {
     location:Location;
 
     constructor(location:Location) {
@@ -32,7 +33,7 @@ export class SalesView {
     }
 
     isActive(path: string) {
-        var fullPath = path.replace('./', 'sales/');
+        var fullPath = path.replace('./', 'items/');
         var locationPath = this.location.path();
         return locationPath.indexOf(fullPath) >= 0;
     }

@@ -1,6 +1,10 @@
 <div class="listPage">
     <h1>Liste des produits</h1>
 
+    <div class="busy" [hidden]="!loading">
+        <img src="../../../../res/img/ajax-loader.white.gif">
+    </div>
+
     <div class="topActions">
         <span class="input">
             <input [(ng-model)]="itemSearch.multiSearch" autofocus

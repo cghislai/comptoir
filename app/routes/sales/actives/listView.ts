@@ -18,8 +18,8 @@ import {SaleListComponent, SaleColumn} from 'components/sales/saleList/saleList'
 })
 
 @View({
-    templateUrl: './components/sales/actives/listView.html',
-    styleUrls: ['./components/sales/actives/listView.css'],
+    templateUrl: './routes/sales/actives/listView.html',
+    styleUrls: ['./routes/sales/actives/listView.css'],
     directives: [SaleListComponent, NgIf, Paginator, FORM_DIRECTIVES]
 })
 

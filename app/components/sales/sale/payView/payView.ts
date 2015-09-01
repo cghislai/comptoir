@@ -73,8 +73,13 @@ export class PayView {
     }
 
     start() {
-        if (!this.hasSale() || this.pos == null) {
+        if (!this.hasSale()) {
             return;
+        }
+        if (!this.sale.sale.closed) {
+            if (this.pos == null) {
+                return;
+            }
         }
         var aSalePay = this.paymentService.createASalePay(this.sale, this.pos);
 
@@ -90,6 +95,9 @@ export class PayView {
     }
 
     searchAccounts() {
+        if (this.sale.sale.closed) {
+            return;
+        }
         var accountSearch = new AccountSearch();
         var posRef = new PosRef(this.pos.id);
         accountSearch.posRef = posRef;

@@ -9,7 +9,7 @@
         <input type="file" id="file" accept="*/*" #file-input
                name="fileInput"
                (change)="onFileSelected(f, $event)"
-               (fileread) required hidden>
+               required hidden>
         <div class="boxedHoverableLink" (^click)="fileInput.click()">
             <span [hidden]="toUploadFile == null">
                 Choisir un autre fichier
@@ -41,7 +41,6 @@
         </div>
         <div class="actions">
             <button type="submit" [disabled]="uploadInProgress ||toUploadFile == null ">Importer</button>
-            <a [router-link]="['/itemsList']">Annuler</a>
         </div>
     </form>
     </div>

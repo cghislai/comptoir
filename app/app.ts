@@ -17,7 +17,6 @@ import {PaymentService} from 'services/payment';
 import {PosService} from 'services/pos';
 import {FileUploadService} from "services/fileUpload";
 
-import {NavMenu} from './components/navMenu/navMenu';
 import {DialogView} from 'components/utils/dialog/dialog';
 
 
@@ -25,13 +24,8 @@ import {LoginView} from 'routes/login/loginView';
 import {RegisterView} from 'routes/register/register';
 
 import {SalesView} from 'routes/sales/salesView';
+import {ItemsView} from 'routes/items/itemsView';
 
-import {ActiveSalesView} from 'components/sales/actives/listView';
-import {SaleHistoryView} from 'components/sales/history/historyView';
-
-import {ProductsListView} from 'components/items/list/listView';
-import {EditProductView} from 'components/items/edit/editView';
-import {ImportProductView} from 'components/items/import/importView';
 
 import {CountCashView} from 'components/cash/count/countView';
 import {CashHistoryView} from 'components/cash/history/historyView';
@@ -59,7 +53,8 @@ import {ApplicationSettingsView} from 'components/settings/application/appSettin
     {path: '/login', component: LoginView, as:'login'},
     {path: '/register', component: RegisterView, as:'register'},
 
-    {path: '/sales/...', component: SalesView, as:'sales'}
+    {path: '/sales/...', component: SalesView, as:'sales'},
+    {path: '/items/...', component: ItemsView, as:'items'}
 ])
 export class App {
     appService:ApplicationService;
@@ -125,6 +120,5 @@ bootstrap(App, [
     PaymentService,
     PictureService,
     PosService,
-    SaleService,
-    NavMenu
+    SaleService
 ]);

@@ -70,19 +70,20 @@ export class SaleView {
 
     private findSale() {
         var path = this.location.path();
-        if (path.indexOf('/new') >= 0) {
-            this.getNewSale();
-            return;
-        }
-        if (path.indexOf('/active') >= 0) {
-            this.getActiveSale();
-            return;
-        }
+
         if (this.routeParams != null && this.routeParams.params != null) {
             var idParam = this.routeParams.get('id');
             var id = parseInt(idParam);
             if (isNaN(id)) {
-                this.router.navigate('/sales/new');
+                if (idParam == 'new') {
+                    this.getNewSale();
+                    return;
+                }
+                if (idParam == 'active') {
+                    this.getActiveSale();
+                    return;
+                }
+                this.getActiveSale();
                 return;
             }
             this.getSale(id);
@@ -94,7 +95,7 @@ export class SaleView {
     private getActiveSale() {
         var activeSale = this.saleService.activeSale;
         if (activeSale == null) {
-            this.router.navigate('/sales/new');
+            this.router.navigate('/sales/sale/new');
             return;
         }
         this.router.navigate('/sales/sale/'+activeSale.id);
@@ -120,6 +121,7 @@ export class SaleView {
         }
         var aSale = this.saleService.createASale();
         aSale.saleId = id;
+        this.saleService.activeSale = aSale.sale;
         this.saleService.fetchASaleAsync(aSale)
             .then(()=> {
                 this.aSale = aSale;
@@ -154,7 +156,7 @@ export class SaleView {
             }).then((aSale:ASale)=> {
                 this.aSale = aSale;
                 this.navigatingWithinSale = true;
-                this.router.navigate('/sales/new');
+                this.router.navigate('/sales/sale/new');
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -203,6 +205,6 @@ export class SaleView {
         this.saleService.activeSale = null;
         this.payStep = false;
 
-        this.router.navigate('/sales/new');
+        this.router.navigate('/sales/sale/new');
     }
 }
