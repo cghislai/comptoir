@@ -4,7 +4,7 @@
 
 import {Component, View, NgFor, NgIf, EventEmitter} from 'angular2/angular2';
 
-import {ItemVariant, ItemVariantSearch} from 'client/domain/item';
+import {ItemVariant, ItemVariantSearch} from 'client/domain/itemVariant';
 import {SearchResult} from 'client/utils/search';
 import {PicturedItem} from 'client/utils/picture';
 import {Pagination} from 'client/utils/pagination';

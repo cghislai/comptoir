@@ -3,13 +3,13 @@
  */
 import {Inject, forwardRef} from 'angular2/angular2';
 
-import {ItemVariant, ItemVariantRef, ItemVariantFactory} from 'client/domain/item';
+import {ItemVariant, ItemVariantRef, ItemVariantFactory} from 'client/domain/itemVariant';
 import {Sale, SaleRef, SaleSearch, SaleFactory} from 'client/domain/sale';
 import {ItemSale, ItemSaleRef, ItemSaleSearch, ItemSaleFactory} from 'client/domain/itemSale';
 
 import {SaleClient} from 'client/sale';
 import {ItemSaleClient} from 'client/itemSale';
-import {ItemClient} from 'client/item';
+import {ItemClient} from 'client/itemVariant';
 
 import {ASale, ASaleItem} from 'client/utils/aSale';
 import {LocaleTexts} from 'client/utils/lang';
@@ -584,7 +584,7 @@ export class SaleService {
         aSaleItem.itemRequest = this.itemClient.getGetItemVariantRequest(itemId, authToken);
         return aSaleItem.itemRequest.run()
             .then((response:ComptoirResponse)=> {
-                var item:ItemVariant = JSON.parse(response.text, ItemVariantFactory.fromJSONItemReviver);
+                var item:ItemVariant = JSON.parse(response.text, ItemVariantFactory.fromJSONItemVariantReviver);
                 this.setASaleItemItem(aSaleItem, item);
                 aSaleItem.itemRequest = null;
                 return aSaleItem;

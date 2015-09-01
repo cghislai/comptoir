@@ -4,13 +4,13 @@
 
 import {Inject} from 'angular2/angular2';
 
-import {ItemVariant, ItemVariantRef, ItemVariantSearch, ItemVariantFactory} from 'client/domain/item';
+import {ItemVariant, ItemVariantRef, ItemVariantSearch, ItemVariantFactory} from 'client/domain/itemVariant';
 import {ItemPicture, ItemPictureRef} from 'client/domain/itemPicture';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 import {PicturedItem, PicturedItemFactory} from 'client/utils/picture';
 import {Pagination} from 'client/utils/pagination';
 import {SearchResult} from 'client/utils/search';
-import {ItemClient} from 'client/item';
+import {ItemClient} from 'client/itemVariant';
 import {ItemPictureClient} from 'client/itemPicture'
 
 import {AuthService} from 'services/auth';

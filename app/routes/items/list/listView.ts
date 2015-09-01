@@ -5,7 +5,7 @@ import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
 
-import {ItemVariant, ItemVariantSearch} from 'client/domain/item';
+import {ItemVariant, ItemVariantSearch} from 'client/domain/itemVariant';
 import {SearchResult} from 'client/utils/search';
 import {PicturedItem} from 'client/utils/picture';
 import {LocaleTexts} from 'client/utils/lang';
