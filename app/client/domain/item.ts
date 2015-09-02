@@ -15,17 +15,19 @@ export class ItemRef {
     constructor(id?: number) {
         this.id = id;
     }
-
 }
 
 export class Item {
     id: number;
     companyRef:CompanyRef;
-    mainPictureRef:ItemPictureRef;
+    reference: string;
     name:LocaleTexts;
     description:LocaleTexts;
+
     vatExclusive:number;
     vatRate:number;
+
+    mainPictureRef:ItemPictureRef;
 }
 
 export class ItemSearch {

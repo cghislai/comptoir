@@ -15,7 +15,7 @@ export class AccountingEntry {
     amount: number = 0;
     vatRate: number = 0;
     dateTime: Date;
-    description: LocaleTexts = new LocaleTexts();
+    description: LocaleTexts;
     accountingTransactionRef: AccountingTransactionRef;
     vatAccountingEntryRef: AccountingEntryRef;
     customerRef: CustomerRef;

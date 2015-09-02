@@ -4,12 +4,12 @@
 
 import {Component, View, NgFor, NgIf, EventEmitter, FORM_DIRECTIVES} from 'angular2/angular2';
 
-import {ItemVariant} from 'client/domain/itemVariant';
 import {Sale, SaleRef} from 'client/domain/sale';
 import {ItemSale, ItemSaleSearch} from 'client/domain/itemSale';
+import {ItemVariant} from 'client/domain/itemVariant';
+import {LocalSale, LocalItemSale} from 'client/localDomain/sale';
 
 import {LocaleTexts} from 'client/utils/lang';
-import {ASale, ASaleItem} from 'client/utils/aSale';
 import {NumberUtils} from 'client/utils/number';
 
 import {SaleService} from 'services/sale';
@@ -37,11 +37,11 @@ export class CommandView {
     saleService:SaleService;
     errorService:ErrorService;
 
-    aSale:ASale;
+    sale:LocalSale;
     locale:string;
-    noInput: boolean;
+    noInput:boolean;
 
-    editingItem:ASaleItem = null;
+    editingItem:LocalItemSale = null;
     editingItemQuantity:boolean;
     editingItemPrice:boolean;
     editingItemComment:boolean;
@@ -52,18 +52,18 @@ export class CommandView {
     validated:boolean = false;
     saleInvalidated = new EventEmitter();
 
-    constructor(saleService:SaleService, authService: AuthService,
+    constructor(saleService:SaleService, authService:AuthService,
                 errorService:ErrorService) {
         this.saleService = saleService;
         this.errorService = errorService;
         this.locale = authService.getEmployeeLanguage().locale;
     }
 
-    doRemoveItem(saleItem:ASaleItem) {
-        var aSale = saleItem.aSale;
-        var saleToBeRemoved = aSale.items.length == 1;
+    doRemoveItem(localItemSale:LocalItemSale) {
+        var localSale = localItemSale.sale;
+        var saleToBeRemoved = localSale.items.length == 1;
 
-        this.saleService.removeASaleItemAsync(saleItem)
+        this.saleService.removeItemFromLocalSaleAsync(localSale, localItemSale.itemVariant)
             .then(()=> {
                 if (saleToBeRemoved) {
                     this.saleInvalidated.next(null);
@@ -134,9 +134,9 @@ export class CommandView {
 
     // Item comment
 
-    doEditItemComment(aSaleItem:ASaleItem) {
+    doEditItemComment(localItemSale:LocalItemSale) {
         this.cancelEdits();
-        this.editingItem = aSaleItem;
+        this.editingItem = localItemSale;
         this.editingItemComment = true;
         if (this.editingItem.comment[this.locale] == null) {
             this.editingItem.comment[this.locale] = '';
@@ -146,19 +146,18 @@ export class CommandView {
     onItemCommentChange(event) {
         var commentTexts = this.editingItem.comment;
         commentTexts[this.locale] = event;
-        this.saleService.setASaleItemCommentAsync(
-            this.editingItem, commentTexts)
+        this.saleService.updateLocalSaleItemAsync(this.editingItem)
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
         this.cancelEdits();
     }
 
-    hasComment(saleItem:ASaleItem) {
-        if (saleItem.comment == null) {
+    hasComment(localItemSale:LocalItemSale) {
+        if (localItemSale.comment == null) {
             return false;
         }
-        var text = saleItem.comment[this.locale];
+        var text = localItemSale.comment[this.locale];
         if (text != null && text.trim().length > 0) {
             return true;
         }
@@ -167,9 +166,9 @@ export class CommandView {
 
     // Item discount
 
-    doEditItemDiscount(aSaleItem:ASaleItem) {
+    doEditItemDiscount(localItemSale:LocalItemSale) {
         this.cancelEdits();
-        this.editingItem = aSaleItem;
+        this.editingItem = localItemSale;
         this.editingItemDiscount = true;
     }
 
@@ -178,8 +177,9 @@ export class CommandView {
         if (isNaN(discountPercentage)) {
             discountPercentage = 0;
         }
-        this.saleService.setASaleItemDiscountPercentageAsync(
-            this.editingItem, discountPercentage)
+        var discountRatio = NumberUtils.toFixedDecimals(discountPercentage / 100, 2);
+        this.editingItem.discountRatio = discountRatio;
+        this.saleService.updateLocalSaleItemAsync(this.editingItem)
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -188,9 +188,9 @@ export class CommandView {
 
     // Item quantity
 
-    doEditItemQuantity(aSaleItem:ASaleItem) {
+    doEditItemQuantity(localItemSale:LocalItemSale) {
         this.cancelEdits();
-        this.editingItem = aSaleItem;
+        this.editingItem = localItemSale;
         this.editingItemQuantity = true;
     }
 
@@ -202,8 +202,9 @@ export class CommandView {
         } else if (quantity < 1) {
             quantity = 1;
         }
-        this.saleService.setASaleItemQuantityAsync(
-            this.editingItem, quantity).catch((error)=> {
+        this.editingItem.quantity = quantity;
+        this.saleService.updateLocalSaleItemAsync(this.editingItem)
+            .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
         this.cancelEdits();
@@ -211,9 +212,9 @@ export class CommandView {
 
     // Item price
 
-    doEditItemPrice(aSaleItem:ASaleItem) {
+    doEditItemPrice(localItemSale:LocalItemSale) {
         this.cancelEdits();
-        this.editingItem = aSaleItem;
+        this.editingItem = localItemSale;
         this.editingItemPrice = true;
     }
 
@@ -221,11 +222,11 @@ export class CommandView {
     onItemPriceChange(newValue) {
         var price = parseFloat(newValue);
         if (isNaN(price)) {
-            price = this.editingItem.itemVariant.vatExclusive;
+            price = this.editingItem.itemVariant.calcPrice();
         }
         var vatExclusive = NumberUtils.toFixedDecimals(price, 2);
-        this.saleService.setASaleItemVatExclusiveAsync(
-            this.editingItem, vatExclusive)
+        this.editingItem.vatExclusive = vatExclusive;
+        this.saleService.updateLocalSaleItemAsync(this.editingItem)
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -241,12 +242,13 @@ export class CommandView {
 
 
     onSaleDiscountChange(newValue:string) {
-        var intValue = parseInt(newValue);
-        if (isNaN(intValue)) {
-            intValue = 0;
+        var discountPercentage = parseInt(newValue);
+        if (isNaN(discountPercentage)) {
+            discountPercentage = 0;
         }
-        this.saleService.setASaleDiscountPercentage(
-            this.aSale, intValue)
+        var discountRatio = NumberUtils.toFixedDecimals(discountPercentage / 100, 2);
+        this.editingItem.discountRatio = discountRatio;
+        this.saleService.updateLocalSaleItemAsync(this.editingItem)
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -269,7 +271,7 @@ export class CommandView {
         input.dispatchEvent(FastInput.CANCEL_EVENT);
     }
 
-    doFindInput(container: HTMLElement) {
+    doFindInput(container:HTMLElement) {
         var inputList = container.getElementsByTagName("input");
         if (inputList.length > 0) {
             return inputList[0];

@@ -70,6 +70,13 @@ export class AccountClient {
             });
     }
 
+    getGetAccountRequest(id:number, authToken:string):ComptoirRequest {
+        var request = new ComptoirRequest();
+        var url = this.getAccountUrl(id);
+        request.setup('GET', url, authToken);
+        return request;
+    }
+
     searchAccounts(search:AccountSearch, pagination:Pagination, authToken:string):Promise<SearchResult<Account>> {
         var request = new ComptoirRequest();
         var url = this.getSearchUrl(pagination);

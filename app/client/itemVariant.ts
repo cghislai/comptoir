@@ -8,11 +8,11 @@ import {SearchResult} from 'client/utils/search';
 import {ServiceConfig} from 'client/utils/service';
 import {Pagination} from'client/utils/pagination';
 
-export class ItemClient {
+export class ItemVariantClient {
     private static RESOURCE_PATH = "/item";
 
     private getResourceUrl():string {
-        return ServiceConfig.URL + ItemClient.RESOURCE_PATH;
+        return ServiceConfig.URL + ItemVariantClient.RESOURCE_PATH;
     }
 
     private getItemVariantUrl(id:number):string {

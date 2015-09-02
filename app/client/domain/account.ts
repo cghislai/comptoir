@@ -6,11 +6,18 @@ import {CompanyRef} from 'client/domain/company';
 import {PosRef} from 'client/domain/pos';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 
+
 export enum AccountType {
     PAYMENT,
     VAT,
     OTHER
 }
+
+export var ALL_ACCOUNT_TYPES : AccountType[] = [
+    AccountType.OTHER,
+    AccountType.PAYMENT,
+    AccountType.VAT
+];
 
 export class Account {
     id: number;
@@ -20,7 +27,7 @@ export class Account {
     bic: string;
     name: string;
     description: LocaleTexts;
-    accountType: string;
+    accountType: AccountType;
 }
 
 export class AccountRef {

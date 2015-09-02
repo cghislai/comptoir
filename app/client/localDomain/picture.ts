@@ -1,26 +1,38 @@
 /**
- * Created by cghislai on 07/08/15.
+ * Created by cghislai on 01/09/15.
  */
 
-import {ItemVariant} from 'client/domain/itemVariant';
 import {ItemPicture} from 'client/domain/itemPicture';
 
-export class PicturedItem {
-    item:ItemVariant;
-    picture:ItemPicture;
-    dataURI:string;
+export class LocalPicture {
+    id: number;
+    data:string;
+    contentType:string;
+    dataURI: string;
 }
 
-export class PicturedItemFactory {
-    static buildPictureData(item:ItemVariant, picture:ItemPicture):PicturedItem {
-        var picturedItem = new PicturedItem();
-        picturedItem.item = item;
-        picturedItem.picture = picture;
-        picturedItem.dataURI = PicturedItemFactory.buildPictureURI(picture);
-        return picturedItem;
+export class LocalPictureFactory {
+    static toLocalPicture(itemPicture: ItemPicture):LocalPicture {
+        var localPicture = new LocalPicture();
+        localPicture.id = itemPicture.id;
+        localPicture.data = itemPicture.data;
+        localPicture.contentType = itemPicture.contentType;
+        localPicture.dataURI = LocalPictureFactory.toDataURI(itemPicture);
+        return localPicture;
     }
 
-    static buildPictureURI(picture:ItemPicture):string {
+    static fromLocalPicture(localPicture: LocalPicture):ItemPicture {
+       var picture = new ItemPicture();
+        picture.id = localPicture.id;
+        picture.data = localPicture.data;
+        picture.contentType = localPicture.contentType;
+        if (localPicture.dataURI != null) {
+            LocalPictureFactory.fromDataURI(localPicture.dataURI, picture);
+        }
+        return picture;
+    }
+
+    static toDataURI(picture:ItemPicture):string {
         if (picture == undefined) {
             return undefined;
         }
@@ -33,7 +45,7 @@ export class PicturedItemFactory {
         return undefined;
     }
 
-    static buildPictureDataFromDataURI(dataURI:string, picture:ItemPicture) {
+    static fromDataURI(dataURI:string, picture:ItemPicture) {
         if (picture == undefined) {
             return;
         }
@@ -48,7 +60,7 @@ export class PicturedItemFactory {
         picture.data = encodedData;
     }
 
-    static getPictureDataFromString(datastring:string) {
+    static dataFromString(datastring:string) {
         var buf = new ArrayBuffer(datastring.length * 2); // 2 bytes for each char
         var bufView = new Uint16Array(buf);
         for (var i = 0; i < datastring.length; i++) {

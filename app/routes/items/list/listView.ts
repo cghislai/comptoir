@@ -65,7 +65,7 @@ export class ItemsListView {
 
     searchItems() {
         var thisView = this;
-        this.itemService.searchPicturedItems(this.itemSearch, this.pagination)
+        this.itemService.searchPicturedItemVariants(this.itemSearch, this.pagination)
             .then((result:SearchResult<PicturedItem>)=> {
                 thisView.itemSearchResult = result;
                 thisView.itemCount = result.count;

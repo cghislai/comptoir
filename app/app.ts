@@ -2,23 +2,21 @@
 import {Component, View,  bootstrap, NgIf} from 'angular2/angular2';
 import {RouteConfig, Router, RouterOutlet, RouterLink, routerInjectables, Location} from 'angular2/router';
 
+import {AccountService} from 'services/account';
 import {ApplicationService} from 'services/application';
 import {AuthService} from 'services/auth';
-import {ErrorService} from 'services/error';
-import {ItemService} from 'services/itemService';
-import {PictureService} from 'services/pictureService';
 import {BalanceService} from 'services/balance';
-import {SaleService} from 'services/sale';
-import {ItemSaleService} from 'services/itemSale';
 import {CompanyService} from 'services/company';
-import {AccountService} from 'services/account';
 import {EmployeeService} from 'services/employee';
-import {PaymentService} from 'services/payment';
-import {PosService} from 'services/pos';
+import {ErrorService} from 'services/error';
 import {FileUploadService} from "services/fileUpload";
+import {ItemService} from 'services/item';
+import {ItemSaleService} from 'services/itemSale';
+import {ItemVariantService} from 'services/itemVariant';
+import {PosService} from 'services/pos';
+import {SaleService} from 'services/sale';
 
 import {DialogView} from 'components/utils/dialog/dialog';
-
 
 import {LoginView} from 'routes/login/loginView';
 import {RegisterView} from 'routes/register/register';
@@ -106,19 +104,17 @@ export class App {
 bootstrap(App, [
     routerInjectables,
 
-    ApplicationService,
     AuthService,
-    ErrorService,
 
     AccountService,
+    ApplicationService,
     BalanceService,
     CompanyService,
     EmployeeService,
+    ErrorService,
     FileUploadService,
     ItemService,
     ItemSaleService,
-    PaymentService,
-    PictureService,
     PosService,
     SaleService
 ]);

@@ -113,5 +113,12 @@ export class ItemSaleClient {
         return request.delete(url, authToken);
     }
 
+    getRemoveItemSaleRequest(id:number, authToken:string):ComptoirRequest {
+        var url = this.getItemSaleUrl(id);
+        var request = new ComptoirRequest();
+        request.setup('DELETE', url, authToken);
+        return request;
+    }
+
 
 }

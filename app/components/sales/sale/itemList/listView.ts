@@ -5,12 +5,13 @@
 import {Component, View, NgFor, NgIf, EventEmitter} from 'angular2/angular2';
 
 import {ItemVariant, ItemVariantSearch} from 'client/domain/itemVariant';
+import {LocalItemVariant} from 'client/localDomain/itemVariant';
 import {SearchResult} from 'client/utils/search';
 import {PicturedItem} from 'client/utils/picture';
 import {Pagination} from 'client/utils/pagination';
 
 import {ErrorService} from 'services/error';
-import {ItemService} from 'services/itemService';
+import {ItemVariantService} from 'services/itemVariant';
 
 import {ItemList, ItemColumn} from 'components/items/itemList/itemList';
 import {AutoFocusDirective} from 'directives/autoFocus';
@@ -29,7 +30,7 @@ import {FocusableDirective} from 'directives/focusable';
 })
 
 export class ItemListView {
-    itemService:ItemService;
+    itemVariantService:ItemVariantService;
     errorService:ErrorService;
 
     itemClicked = new EventEmitter();
@@ -41,10 +42,10 @@ export class ItemListView {
     itemSearch:ItemVariantSearch;
     pagination:Pagination;
     loading:boolean = false;
-    itemSearchResult:SearchResult<PicturedItem>;
+    itemSearchResult:SearchResult<LocalItemVariant>;
 
-    constructor(errorService:ErrorService, itemService:ItemService) {
-        this.itemService = itemService;
+    constructor(errorService:ErrorService, itemVariantService:ItemVariantService) {
+        this.itemVariantService = itemVariantService;
         this.errorService = errorService;
 
         this.itemSearch = new ItemVariantSearch();
@@ -61,12 +62,11 @@ export class ItemListView {
     }
 
     searchItems() {
-        var thisView = this;
         this.loading = true;
-        this.itemService.searchPicturedItems(this.itemSearch, this.pagination)
-            .then((result:SearchResult<PicturedItem>)=> {
-                thisView.itemSearchResult = result;
-                thisView.loading = false;
+        this.itemVariantService.searchLocalItemVariantsAsync(this.itemSearch, this.pagination)
+            .then((result:SearchResult<LocalItemVariant>)=> {
+                this.itemSearchResult = result;
+                this.loading = false;
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });

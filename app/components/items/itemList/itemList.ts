@@ -5,8 +5,9 @@
 import {Component, View, NgFor, NgIf,
     EventEmitter, Attribute, ViewEncapsulation} from 'angular2/angular2';
 
-import {ItemVariant, ItemVariantSearch} from 'client/domain/itemVariant';
-import {PicturedItem} from 'client/utils/picture';
+import {LocalItemVariant} from 'client/localDomain/itemVariant';
+import {LocalPicture} from 'client/localDomain/picture';
+
 import {LocaleTexts} from 'client/utils/lang';
 
 import {AuthService} from 'services/auth';
@@ -20,7 +21,7 @@ import {FocusableDirective} from 'directives/focusable';
  */
 @Component({
     selector: "itemColumn",
-    properties: ['picItem: item', 'column', 'lang'],
+    properties: ['itemVariant', 'column', 'lang'],
     events: ['action']
 })
 @View({
@@ -33,7 +34,7 @@ import {FocusableDirective} from 'directives/focusable';
 export class ItemColumnComponent {
     action = new EventEmitter();
 
-    onColumnAction(item:PicturedItem, column:ItemColumn, event) {
+    onColumnAction(item:LocalItemVariant, column:ItemColumn, event) {
         this.action.next({item: item, column: column});
         //  event.stopPropagation();
     }
@@ -47,8 +48,8 @@ export class ItemColumnComponent {
 
 @Component({
     selector: 'itemList',
-    properties: ['items', 'columns', 'selectable', 'headersParams: headers'],
-    events: ['itemClicked', 'columnAction']
+    properties: ['items', 'columns', 'rowSelectable', 'headersVisible'],
+    events: ['rowClicked', 'columnAction']
 })
 
 @View({
@@ -59,35 +60,25 @@ export class ItemColumnComponent {
 
 export class ItemList {
     // properties
-    items:PicturedItem[];
+    items:LocalItemVariant[];
     columns:ItemColumn[];
-    selectable:boolean;
-    headers:boolean;
+    itemSelectable:boolean;
+    headersVisible:boolean;
 
-    itemClicked = new EventEmitter();
+    rowClicked = new EventEmitter();
     columnAction = new EventEmitter();
     locale:string;
 
-    constructor(authService: AuthService,
-                @Attribute('selectable') selectable) {
+    constructor(authService: AuthService) {
         this.locale = authService.getEmployeeLanguage().locale;
-
-        if (selectable != undefined) {
-            this.selectable = selectable != 'false';
-        } else {
-            this.selectable = true;
-        }
     }
 
-    set headersParams(value: string) {
-        this.headers = value != 'false';
-    }
 
-    onItemClick(item:ItemVariant, col:ItemColumn) {
+    onItemClick(item:LocalItemVariant, col:ItemColumn) {
         if (col == ItemColumn.ACTION_REMOVE) {
             return;
         }
-        this.itemClicked.next(item);
+        this.rowClicked.next(item);
     }
 
     onColumnAction(event:any) {

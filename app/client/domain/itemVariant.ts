@@ -15,8 +15,8 @@ export enum Pricing{
 
 export class AttributeDefinition {
     id:number;
-    company = CompanyRef;
-    name:string;
+    companyRef = CompanyRef;
+    name:LocaleTexts;
 }
 
 export class AttributeDefinitionRef {
@@ -31,6 +31,7 @@ export class AttributeDefinitionRef {
 }
 
 export class AttributeValue {
+    id: number;
     attributeDefinitionRef:AttributeDefinitionRef;
     value:LocaleTexts;
 }
@@ -48,12 +49,14 @@ export class ItemVariantRef {
 export class ItemVariant {
     id:number;
     itemRef: ItemRef;
-    mainPictureRef:ItemPictureRef;
-    reference:string;
+    variantReference:string;
 
     pricing:Pricing;
-    attributes:AttributeValue[];
+    pricingAmount: number;
 
+    attributeValues:AttributeValue[];
+
+    mainPictureRef:ItemPictureRef;
 }
 
 export class ItemVariantSearch {

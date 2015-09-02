@@ -52,6 +52,16 @@ export class ItemPictureClient {
             });
     }
 
+
+    getCreateItemPictureRequest(itemPicture:ItemPicture, authToken: string):ComptoirRequest {
+        var url = this.getResourceUrl(itemPicture);
+        var request = new ComptoirRequest();
+        request.setup('POST', url, authToken);
+        request.setupData(itemPicture);
+        return request;
+    }
+
+
     updateItemPicture(itemPicture:ItemPicture, authToken: string):Promise<ItemPictureRef> {
         var url = this.getResourceUrl(itemPicture);
         var request = new ComptoirRequest();
@@ -61,6 +71,14 @@ export class ItemPictureClient {
                 return itemPictureRef;
             });
     }
+    getUpdateItemPictureRequest(itemPicture:ItemPicture, authToken: string):ComptoirRequest {
+        var url = this.getResourceUrl(itemPicture);
+        var request = new ComptoirRequest();
+        request.setup('PUT', url, authToken);
+        request.setupData(itemPicture);
+        return request;
+    }
+
 
     getItemPicture(itemId: number, id:number, authToken: string):Promise<ItemPicture> {
         var url = this.getItemPictureUrl(itemId, id);
@@ -71,6 +89,13 @@ export class ItemPictureClient {
                 return itemPicture;
             });
     }
+    getGetItemPictureRequest(itemId: number, pictureId:number, authToken: string):ComptoirRequest {
+        var url = this.getItemPictureUrl(itemId, pictureId);
+        var request = new ComptoirRequest();
+        request.setup('GET', url, authToken);
+        return request;
+    }
+
 
     searchItemPicture(itemId: number, pagination: Pagination, authToken: string):Promise<SearchResult<ItemPicture>> {
         var url = this.getItemPictureSearchUrl(itemId, pagination);

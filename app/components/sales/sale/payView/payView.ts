@@ -4,17 +4,20 @@
 
 import {Component, View, EventEmitter, NgFor, NgIf} from 'angular2/angular2';
 
-import {Sale} from 'client/domain/sale';
+import {LocalSale} from 'client/localDomain/sale';
+import {LocalAccount} from 'client/localDomain/account';
+import {LocalAccountingEntry} from 'client/localDomain/accountingEntry';
+
+
+import {AccountingEntry} from 'client/domain/accountingEntry';
 import {Account, AccountRef,AccountSearch} from 'client/domain/account';
-import {Balance, BalanceRef, BalanceSearch} from 'client/domain/balance'
 import {Pos, PosRef} from 'client/domain/pos';
-import {ASale, ASalePay, ASalePayItem} from 'client/utils/aSale';
 import {SearchResult} from 'client/utils/search';
 
 import {ErrorService} from 'services/error';
 import {AccountService} from 'services/account';
 import {AuthService} from 'services/auth';
-import {PaymentService} from 'services/payment';
+import {SaleService} from 'services/sale';
 
 import {FastInput} from 'directives/fastInput'
 
@@ -32,31 +35,30 @@ import {FastInput} from 'directives/fastInput'
 
 export class PayView {
     accountService:AccountService;
-    paymentService:PaymentService;
+    saleService:SaleService;
     errorService:ErrorService;
     locale:string;
 
-    aSalePay:ASalePay;
-    editingPayItem:ASalePayItem;
+    sale:LocalSale;
+    editingEntry:LocalAccountingEntry;
     pos:Pos;
-    sale:ASale;
     noInput:boolean;
 
     paid = new EventEmitter();
 
-    allAccounts:Account[];
+    allAccounts:LocalAccount[];
 
 
     constructor(accountService:AccountService, errorService:ErrorService,
-                paymentService:PaymentService, authService: AuthService) {
+                saleService:SaleService, authService:AuthService) {
         this.accountService = accountService;
-        this.paymentService = paymentService;
+        this.saleService = saleService;
         this.errorService = errorService;
         this.locale = authService.getEmployeeLanguage().locale;
-        this.aSalePay = new ASalePay();
+
     }
 
-    set saleProp(value:ASale) {
+    set saleProp(value:LocalSale) {
         this.sale = value;
         this.start();
     }
@@ -67,71 +69,68 @@ export class PayView {
     }
 
     private hasSale():boolean {
-        return this.aSalePay != null
-            && this.sale != null
-            && this.sale.sale != null;
+        return this.sale != null;
     }
 
     start() {
         if (!this.hasSale()) {
             return;
         }
-        if (!this.sale.sale.closed) {
+        if (!this.sale.closed) {
             if (this.pos == null) {
                 return;
             }
         }
-        var aSalePay = this.paymentService.createASalePay(this.sale, this.pos);
-
-        this.paymentService.findASalePayItemsAsync(aSalePay)
-            .then(()=> {
-                this.aSalePay = aSalePay;
-            })
+        this.saleService.getLocalSaleAccountingEntriesAsync(this.sale)
+            .catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });
+        this.saleService.updateLocalSalePaidAmountAsync(this.sale)
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
         this.searchAccounts();
-
     }
 
     searchAccounts() {
-        if (this.sale.sale.closed) {
+        if (this.sale.closed) {
             return;
         }
         var accountSearch = new AccountSearch();
         var posRef = new PosRef(this.pos.id);
         accountSearch.posRef = posRef;
         var thisView = this;
-        this.accountService.searchAccounts(accountSearch, null)
-            .then((result:SearchResult<Account>)=> {
+        this.accountService.searchLocalAccountsAsync(accountSearch, null)
+            .then((result:SearchResult<LocalAccount>)=> {
                 thisView.allAccounts = result.list;
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }
 
-    startEditPay(account:Account) {
-        if (this.editingPayItem != null) {
-            this.cancelEditPayItem();
-        }
-        var payItem:ASalePayItem = new ASalePayItem();
-        payItem.aSalePay = this.aSalePay;
-        payItem.account = account;
-        payItem.amount = 0;
+    addAccountingEntry(account:LocalAccount) {
+        var localAccountingEntry = new LocalAccountingEntry();
+        var remainingAmount = this.sale.vatExclusiveAmount + this.sale.vatAmount;
+        remainingAmount -= this.sale.totalPaid;
 
-
-        this.editingPayItem = payItem;
-        this.editingPayItem.amount = this.aSalePay.missingAmount;
+        localAccountingEntry.account = account;
+        localAccountingEntry.amount = remainingAmount;
+        return this.saleService.addAccountingEntryToLocalSaleAsync(this.sale, localAccountingEntry)
+            .then(()=> {
+                this.startEditEntry(localAccountingEntry);
+            }).catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });
     }
 
-    startEditPayItem(payItem:ASalePayItem) {
-        if (this.editingPayItem != null) {
-            this.cancelEditPayItem();
+    startEditEntry(localAccountingEntry:LocalAccountingEntry) {
+        if (this.editingEntry != null) {
+            this.cancelEditEntry();
         }
-        this.editingPayItem = payItem;
+        this.editingEntry = localAccountingEntry;
     }
 
-    validatePayAmount(value:string) {
+    validateEntryAmount(value:string) {
         if (value.length > 0) {
             var floatValue = parseFloat(value);
             if (isNaN(floatValue)) {
@@ -142,33 +141,24 @@ export class PayView {
         return true;
     }
 
-    onEditingPayItemChange(event) {
+    applyEditingEntry(event) {
         var amount = parseFloat(event);
 
         if (!isNaN(amount)) {
-            var newItem = this.editingPayItem.accountingEntryId == null;
-            if (newItem) {
-                this.editingPayItem.amount = amount;
-                this.paymentService.createASalePayItem(this.editingPayItem)
-                    .catch((error)=> {
-                        this.errorService.handleRequestError(error);
-                    });
-            } else {
-                this.paymentService.setASalePayItemAmount(this.editingPayItem, amount)
-                    .catch((error)=> {
-                        this.errorService.handleRequestError(error);
-                    });
-            }
+            this.saleService.updateLocalSaleAccountingEntry(this.sale, this.editingEntry)
+                .catch((error)=> {
+                    this.errorService.handleRequestError(error);
+                });
         }
-        this.cancelEditPayItem();
+        this.cancelEditEntry();
     }
 
-    cancelEditPayItem() {
-        this.editingPayItem = null;
+    cancelEditEntry() {
+        this.editingEntry = null;
     }
 
-    removePayItem(payItem:ASalePayItem) {
-        return this.paymentService.removeASalePayItem(payItem)
+    removeEntry(entry:LocalAccountingEntry) {
+        return this.saleService.removeLocalSaleAccountingEntry(this.sale, entry)
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -176,7 +166,6 @@ export class PayView {
 
     onValidateClicked() {
         this.paid.next(true);
-        this.editingPayItem = null;
-        this.aSalePay = new ASalePay();
+        this.cancelEditEntry();
     }
 }

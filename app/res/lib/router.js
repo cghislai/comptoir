@@ -18034,7 +18034,7 @@ System.register("angular2/src/dom/browser_adapter", ["angular2/src/facade/collec
           },
           attributeMap: function(element) {
             var res = new Map();
-            var elAttrs = element.attributes;
+            var elAttrs = element.attributeValues;
             for (var i = 0; i < elAttrs.length; i++) {
               var attrib = elAttrs[i];
               res.set(attrib.name, attrib.value);
@@ -23860,7 +23860,7 @@ System.register("angular2/src/core/compiler/element_injector", ["angular2/src/fa
             return undefinedValue;
           },
           _buildAttribute: function(dep) {
-            var attributes = this._proto.attributes;
+            var attributes = this._proto.attributeValues;
             if (isPresent(attributes) && attributes.has(dep.attributeName)) {
               return attributes.get(dep.attributeName);
             } else {
