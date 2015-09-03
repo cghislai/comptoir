@@ -1,0 +1,30 @@
+<div class="formPage pageContent">
+    <h1 class="pageTitle">Édition du point de vente</h1>
+
+    <form #f="form" (ng-submit)="doSaveEdit()"
+          *ng-if="posModel != undefined">
+        <div class="table">
+            <div>
+                <label>Langue:</label>
+                <langSelect [display-locale]="language.locale"
+                            [selected-language]="posModel.language"
+                            (language-changed)="posModel.language = $event"></langSelect>
+            </div>
+            <div>
+                <label for="name">Nom:</label>
+                <input id="name" type="text" required
+                       [(ng-model)]="posModel.name">
+            </div>
+            <div>
+                <label for="description">Description:</label>
+                <textarea type="text" id="description" rows="3"
+                          localized [language]="posModel.language"
+                          [locale-texts]="posModel.description"></textarea>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button type="submit" [disabled]="!f.form.valid">Enregistrer</button>
+        </div>
+    </form>
+</div>

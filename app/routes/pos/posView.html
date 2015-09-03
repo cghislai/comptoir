@@ -1,18 +1,12 @@
-<appHeader title="Comptes">
+<appHeader title="Points de vente">
     <appTab [selectable]="true" [active]="isActive('./list')">
-        <a [router-link]="['./list']">
-            Liste
-        </a>
+        <a [router-link]="['./list']">Liste</a>
     </appTab>
     <appTab [selectable]="true">
-        <a [router-link]="['./edit', {id: 'new'}]">
-            Nouveau
-        </a>
+        <a [router-link]="['./edit', {id: 'new'}]">Nouveau</a>
     </appTab>
     <appTab [selectable]="false" [active]="isActive('./edit')">
-        <a>
-            Édition
-        </a>
+        <a>Édition</a>
     </appTab>
 </appHeader>
 <router-outlet></router-outlet>

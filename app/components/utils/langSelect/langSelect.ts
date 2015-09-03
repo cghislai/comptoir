@@ -17,7 +17,7 @@ import {AuthService} from 'services/auth';
 })
 @View({
     templateUrl: './components/utils/langSelect/langSelect.html',
-    styleurls: ['./components/utils/langSelect/langSelect.html'],
+    styleUrls: ['./components/utils/langSelect/langSelect.html'],
     directives: [NgFor]
 })
 export class LangSelect {
@@ -105,6 +105,9 @@ export class LocalizedDirective {
     }
 
     findLangWithContent():Language {
+        if (this.localeTexts == null) {
+            return null;
+        }
         var allLanguages = Language.ALL_LANGUAGES;
         for (var lang of allLanguages) {
             var locale = lang.locale;

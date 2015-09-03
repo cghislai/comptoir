@@ -23,8 +23,8 @@ import {FocusableDirective} from 'directives/focusable'
 })
 
 @View({
-    templateUrl: './components/pos/list/listView.html',
-    styleUrls: ['./components/pos/list/listView.css'],
+    templateUrl: './routes/pos/list/listView.html',
+    styleUrls: ['./routes/pos/list/listView.css'],
     directives: [NgFor, NgIf, Paginator, FORM_DIRECTIVES]
 })
 
@@ -87,7 +87,7 @@ export class PosListView {
         this.router.navigate(url);
     }
 
-    doRemovePos(pos:Pos) {
+    doRemovePos(pos:Pos, event) {
         var thisView = this;
         this.posService
             .removePos(pos)
@@ -96,6 +96,8 @@ export class PosListView {
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
+        event.stopPropagation();
+        event.preventDefault();
     }
 
 

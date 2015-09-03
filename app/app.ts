@@ -24,13 +24,8 @@ import {RegisterView} from 'routes/register/register';
 import {SalesView} from 'routes/sales/salesView';
 import {ItemsView} from 'routes/items/itemsView';
 import {AccountsView} from 'routes/accounts/accountsView';
-
-
-import {CountCashView} from 'components/cash/count/countView';
-import {CashHistoryView} from 'components/cash/history/historyView';
-
-import {PosListView} from 'components/pos/list/listView';
-import {EditPosView} from 'components/pos/edit/editView';
+import {CashView} from 'routes/cash/cashView';
+import {PosView} from 'routes/pos/posView';
 
 import {ApplicationSettingsView} from 'components/settings/application/appSettings';
 
@@ -51,7 +46,9 @@ import {ApplicationSettingsView} from 'components/settings/application/appSettin
 
     {path: '/sales/...', component: SalesView, as:'sales'},
     {path: '/items/...', component: ItemsView, as:'items'},
-    {path: '/accounts/...', component: AccountsView, as:'accounts'}
+    {path: '/accounts/...', component: AccountsView, as:'accounts'},
+    {path: '/cash/...', component: CashView, as:'cash'},
+    {path: '/pos/...', component: PosView, as:'pos'}
 ])
 export class App {
     appService:ApplicationService;

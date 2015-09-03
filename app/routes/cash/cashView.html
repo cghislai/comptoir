@@ -1,0 +1,9 @@
+<appHeader title="Caisse">
+    <appTab [selectable]="true" [active]="isActive('./count')">
+        <a [router-link]="['./count']">Comptage</a>
+    </appTab>
+    <appTab [selectable]="true" [active]="isActive('./history')">
+        <a [router-link]="['./history']">Historique</a>
+    </appTab>
+</appHeader>
+<router-outlet></router-outlet>

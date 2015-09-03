@@ -13,8 +13,8 @@ table.dataTable {
     padding-bottom: .3em;
   }
   td, th {
-    padding-left: .3em;
-    padding-right: .3em;
+    padding: .3em .3em;
+    text-align: left;
 
     &.right {
       text-align: right;
@@ -33,6 +33,10 @@ table.dataTable {
 
   tbody {
     tr {
+      &:not(:first-child) {
+        border-top: .08em solid lightgray;
+      }
+
       &:hover {
         background-color: $tableRowHoverColor;
         &.selectable {

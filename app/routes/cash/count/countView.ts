@@ -25,8 +25,8 @@ import {FastInput} from 'directives/fastInput'
     selector: 'editCashView'
 })
 @View({
-    templateUrl: './components/cash/count/countView.html',
-    styleUrls: ['./components/cash/count/countView.css'],
+    templateUrl: './routes/cash/count/countView.html',
+    styleUrls: ['./routes/cash/count/countView.css'],
     directives: [NgFor, NgIf, FastInput]
 })
 

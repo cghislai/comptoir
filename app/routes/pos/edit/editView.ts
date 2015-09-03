@@ -44,8 +44,8 @@ class PosFormModel {
     selector: 'editPos'
 })
 @View({
-    templateUrl: './components/pos/edit/editView.html',
-    styleUrls: ['./components/pos/edit/editView.css'],
+    templateUrl: './routes/pos/edit/editView.html',
+    styleUrls: ['./routes/pos/edit/editView.css'],
     directives: [NgFor, NgIf, FORM_DIRECTIVES, RouterLink, LocalizedDirective, LangSelect]
 })
 export class EditPosView {

@@ -1,0 +1,30 @@
+<div class="pageContent">
+    <h1 class="pageTitle">Historique de la caisse</h1>
+
+    <div class="search">
+    </div>
+
+
+    <paginator *ng-if="searchResult != null"
+               [total-count]="searchResult.count"
+               [page-size]="itemsPerPage"
+               show-prev-next="true" show-first-last="true"
+               (page-change)="onPageChanged($event)"></paginator>
+
+    <table class="dataTable" *ng-if="searchResult != null">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Commentaire</th>
+            <th class="right">Montant</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ng-for="#balance of searchResult.list" class="command">
+            <td class="date">{{ balance.dateTime| date:'ddMMyyyy HHmm' }}</td>
+            <td class="comment">{{ balance.comment }}</td>
+            <td class="right    ">{{ balance.balance | currency:'EUR':true:'.2-2' }}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>

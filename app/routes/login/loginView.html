@@ -6,8 +6,7 @@
         {{ introText }}
     </p>
 
-    <form (^submit)="doLogin($event)" [ng-form-model]="loginForm"
-            class="formTable">
+    <form (^submit)="doLogin($event)" [ng-form-model]="loginForm">
         <div>
             <input ng-control="login" type="text" placeholder="Login" autofocus
                     #login="form">

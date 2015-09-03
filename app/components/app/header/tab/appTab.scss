@@ -3,9 +3,11 @@
 span.appTab {
   text-align: center;
   height: 100%;
-  display: inline-block;
   padding: 0 .5em;
   font-weight: bold;
+  &:not([hidden]) {
+    display: inline-block;
+  }
 
   div.tab {
     vertical-align: bottom;
@@ -45,14 +47,8 @@ span.appTab {
         box-shadow: 0 0 0.2em 0.1em $onBlueFocusColor;
       }
     }
-    &:not(.selectable) &:not(.active) a {
-
-      color: lightgray;
-
-      tab-index: -1;
-      &:hover {
-        cursor: default;
-      }
+    &:not(.selectable):not(.active) {
+      display: none;
     }
   }
 }

@@ -22,8 +22,8 @@ import {Paginator} from 'components/utils/paginator/paginator';
 })
 
 @View({
-    templateUrl: './components/accounts/list/listView.html',
-    styleUrls: ['./components/accounts/list/listView.css'],
+    templateUrl: './routes/accounts/list/listView.html',
+    styleUrls: ['./routes/accounts/list/listView.css'],
     directives: [NgFor, NgIf, Paginator, FORM_DIRECTIVES]
 })
 

@@ -99,6 +99,9 @@ export class AccountsEditView {
             });
     }
 
+    getAccountTypeLabel(accountType: AccountType) {
+        return LocalAccountFactory.getAccountTypeLabel(accountType);
+    }
 
     doSaveEdit() {
         var localAccount = this.accountModel.account;

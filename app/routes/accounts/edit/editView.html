@@ -1,69 +1,56 @@
-<div class="formPage">
-    <h1>Édition du compte</h1>
+<div class="pageContent">
+    <h1 class="pageTitle">Édition du compte</h1>
 
     <form #f="form" (ng-submit)="doSaveEdit()"
-          *ng-if="accountModel != undefined">
-        <table>
-            <tr>
-                <td><label>Langue:</label></td>
-                <td>
-                    <langSelect [display-locale]="language.locale"
-                                [selected-language]="accountModel.language"
-                                (language-changed)="accountModel.language = $event"></langSelect>
-                </td>
-            </tr>
-            <tr>
-                <td><label for="type">Type:</label></td>
-                <td>
-                    <select id="type" required
-                            [(ng-model)]="accountModel.accountType">
-                        <option *ng-for="#accountType of allAccountTypes"
-                                [value]="accountType.type">
-                            {{ accountType.label[language.locale] }}
-                        </option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td><label for="name">Nom:</label></td>
-                <td>
-                    <input id="name" type="text" required
-                           [(ng-model)]="accountModel.name">
-                </td>
-            </tr>
-            <tr>
-                <td><label for="description">Description:</label></td>
-                <td>
-                    <textarea type="text" id="description" rows="3"
-                              localized [language]="accountModel.language"
-                              [locale-texts]="accountModel.description"></textarea>
-                </td>
-            </tr>
-            <tr>
-                <td><label for="number">Numéro de comptabilité:</label></td>
-                <td>
-                    <input type="text" id="number"
-                           [(ng-model)]="accountModel.accountingNumber">
-                </td>
-            </tr>
-            <tr>
-                <td><label for="iban">IBAN:</label></td>
-                <td>
-                    <input type="text" id="iban"
-                           [(ng-model)]="accountModel.iban">
-                </td>
-            </tr>
-            <tr>
-                <td><label for="bic">BIC:</label></td>
-                <td>
-                    <input type="text" id="bic"
-                           [(ng-model)]="accountModel.bic">
-                </td>
-            </tr>
-        </table>
+          *ng-if="accountModel != undefined"
+          class="table">
+        <div class="table">
+            <div>
+                <label>Langue</label>
+                <langSelect [display-locale]="language.locale"
+                            [selected-language]="accountModel.language"
+                            (language-changed)="accountModel.language = $event"></langSelect>
+            </div>
+            <div>
+                <label for="type">Type</label>
+                <select id="type" required
+                        [(ng-model)]="accountModel.accountType">
+                    <option *ng-for="#accountType of allAccountTypes"
+                            [value]="accountType">
+                        {{ getAccountTypeLabel(accountType)[language.locale] }}
+                    </option>
+                </select>
+            </div>
+            <div>
+                <label for="name">Nom</label>
+                <input id="name" type="text" required
+                       [(ng-model)]="accountModel.name">
+            </div>
+            <div>
+                <label for="description">Description</label>
+             <textarea type="text" id="description" rows="3"
+                       localized [language]="accountModel.language"
+                       [locale-texts]="accountModel.description"></textarea>
+            </div>
+            <div>
+                <label for="number">Numéro de comptabilité</label>
+                <input type="text" id="number"
+                       [(ng-model)]="accountModel.accountingNumber">
+            </div>
+            <div>
+                <label for="iban">IBAN</label>
+                <input type="text" id="iban"
+                       [(ng-model)]="accountModel.iban">
+            </div>
+            <div>
+                <label for="bic">BIC</label>
+                <input type="text" id="bic"
+                       [(ng-model)]="accountModel.bic">
+            </div>
+
+        </div>
         <div class="actions">
             <button type="submit" [disabled]="!f.form.valid">Enregistrer</button>
-            <a [router-link]="['/accountsList']">Annuler</a>
         </div>
     </form>
 </div>

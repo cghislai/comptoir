@@ -17,8 +17,8 @@ import {Paginator} from 'components/utils/paginator/paginator';
     selector: 'historyCashView'
 })
 @View({
-    templateUrl: './components/cash/history/historyView.html',
-    styleUrls: ['./components/cash/history/historyView.css'],
+    templateUrl: './routes/cash/history/historyView.html',
+    styleUrls: ['./routes/cash/history/historyView.css'],
     directives: [Paginator, NgFor, NgIf]
 })
 export class CashHistoryView {
@@ -28,7 +28,7 @@ export class CashHistoryView {
     balanceSearch:BalanceSearch;
     pagination:Pagination;
     itemsPerPage:number = 25;
-    result:SearchResult<Balance>;
+    searchResult:SearchResult<Balance>;
 
     constructor(balanceService:BalanceService, errorService:ErrorService) {
         this.errorService = errorService;
@@ -41,7 +41,7 @@ export class CashHistoryView {
     searchBalances() {
         this.balanceService.searchBalancesAsync(this.balanceSearch, this.pagination)
             .then((result)=> {
-                this.result = result;
+                this.searchResult = result;
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });

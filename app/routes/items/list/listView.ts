@@ -62,11 +62,9 @@ export class ItemsListView {
     }
 
     searchItems() {
-        var thisView = this;
         this.itemService.searchLocalItemsAsync(this.itemSearch, this.pagination)
             .then((result:SearchResult<LocalItem>)=> {
-                thisView.searchResult = result;
-                thisView.itemCount = result.count;
+                this.searchResult = result;
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -92,10 +90,9 @@ export class ItemsListView {
     }
 
     doRemoveItem(item:LocalItem) {
-        var thisView = this;
         this.itemService.removeLocalItemAsync(item)
             .then(()=> {
-                thisView.searchItems();
+                this.searchItems();
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
