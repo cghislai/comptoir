@@ -38,11 +38,11 @@ export class SaleService {
 
     authService:AuthService;
     itemVariantService:ItemVariantService;
-    activeSale:Sale;
+    activeSale:LocalSale;
 
-    constructor(@Inject authService:AuthService, @Inject itemVariantService:ItemVariantService) {
+    constructor(@Inject authService:AuthService) {
         this.authService = authService;
-        this.itemVariantService = itemVariantService;
+        this.itemVariantService = new ItemVariantService(authService);
 
         this.accountClient = new AccountClient();
         this.saleClient = new SaleClient();
@@ -105,6 +105,43 @@ export class SaleService {
 
         var authToken = this.authService.authToken;
         localSale.dirty = true;
+        localSale.saleRequest = this.saleClient.getUpdateSaleRequest(localSale, authToken);
+
+        return localSale.saleRequest.run()
+            .then((response:ComptoirResponse)=> {
+                var saleRef = JSON.parse(response.text);
+                localSale.id = saleRef.id;
+                return this.refreshLocalSaleAsync(localSale);
+            });
+    }
+
+    public createLocalSaleAsync(localSale:LocalSale):Promise<LocalSale> {
+        if (localSale.saleRequest != null) {
+            localSale.saleRequest.discardRequest();
+        }
+
+        var authToken = this.authService.authToken;
+        localSale.dirty = true;
+        var sale:Sale = LocalSaleFactory.fromLocalSale(localSale);
+        sale.companyRef = this.authService.loggedEmployee.companyRef;
+
+        localSale.saleRequest = this.saleClient.getCreateSaleRequest(sale, authToken);
+
+        return localSale.saleRequest.run()
+            .then((response:ComptoirResponse)=> {
+                var saleRef = JSON.parse(response.text);
+                localSale.id = saleRef.id;
+                return this.refreshLocalSaleAsync(localSale);
+            });
+    }
+
+    public refreshLocalSaleAsync(localSale:LocalSale):Promise<LocalSale> {
+        if (localSale.saleRequest != null) {
+            localSale.saleRequest.discardRequest();
+        }
+
+        var authToken = this.authService.authToken;
+        localSale.dirty = true;
         localSale.saleRequest = this.saleClient.getGetSaleRequest(localSale.id, authToken);
         return localSale.saleRequest.run()
             .then((response:ComptoirResponse)=> {
@@ -131,7 +168,7 @@ export class SaleService {
             .then(()=> {
                 localSale.dirty = false;
                 localSale.saleRequest = null;
-                return this.updateLocalSaleAsync(localSale);
+                return this.refreshLocalSaleAsync(localSale);
             });
     }
 
@@ -162,7 +199,7 @@ export class SaleService {
         localItemSale.dirty = true;
         localItemSale.itemSaleRequest = this.itemSaleClient.getCreateItemSaleRequest(itemSale, authToken);
         return localItemSale.itemSaleRequest.run()
-            .then((response: ComptoirResponse)=> {
+            .then((response:ComptoirResponse)=> {
                 var itemSaleRef:ItemSaleRef = JSON.parse(response.text);
                 var itemSaleId = itemSaleRef.id;
                 localItemSale.id = itemSaleId;
@@ -170,7 +207,7 @@ export class SaleService {
                 localSale.dirty = false;
                 localItemSale.dirty = false;
                 localItemSale.itemSaleRequest = null;
-                return this.updateLocalSaleAsync(localSale);
+                return this.refreshLocalSaleAsync(localSale);
             });
     }
 
@@ -201,7 +238,7 @@ export class SaleService {
             .then(()=> {
                 localItemSale.dirty = false;
                 localItemSale.itemSaleRequest = null;
-                return this.updateLocalSaleAsync(localItemSale.sale);
+                return this.refreshLocalSaleAsync(localItemSale.sale);
             });
     }
 
@@ -246,7 +283,7 @@ export class SaleService {
             });
     }
 
-    public updateLocalSaleAccountingEntry(localSale: LocalSale, localAccountingEntry: LocalAccountingEntry) : Promise<LocalSale>{
+    public updateLocalSaleAccountingEntry(localSale:LocalSale, localAccountingEntry:LocalAccountingEntry):Promise<LocalSale> {
         localAccountingEntry.companyRef = this.authService.loggedEmployee.companyRef;
         var authToken = this.authService.authToken;
 
@@ -265,7 +302,7 @@ export class SaleService {
             });
     }
 
-    public removeLocalSaleAccountingEntry(localSale: LocalSale, localAccountingEntry: LocalAccountingEntry): Promise<LocalSale> {
+    public removeLocalSaleAccountingEntry(localSale:LocalSale, localAccountingEntry:LocalAccountingEntry):Promise<LocalSale> {
         localAccountingEntry.companyRef = this.authService.loggedEmployee.companyRef;
         var authToken = this.authService.authToken;
 
@@ -406,7 +443,7 @@ export class SaleService {
                 var localItemVariant = LocalItemVariantFactory.toLocalItemVariant(itemVariant);
                 localSaleItem.itemVariant = itemVariant;
                 localSaleItem.itemVariantRequest = null;
-                return this.itemVariantService.updateLocalItemVariantAsync(localItemVariant, itemVariant);
+                return this.itemVariantService.refreshLocalItemVariantAsync(localItemVariant, itemVariant);
             });
     }
 
@@ -431,7 +468,7 @@ export class SaleService {
         localItemSale.itemSaleRequest = this.itemSaleClient.getRemoveItemSaleRequest(itemSaleId, authToken);
         return localItemSale.itemSaleRequest.run()
             .then(()=> {
-                return this.updateLocalSaleAsync(localSale);
+                return this.refreshLocalSaleAsync(localSale);
             });
     }
 

@@ -1,16 +1,17 @@
-<div class="formPage">
-    <div style="display: inline-block;">
+<div class="pageContent">
+    <h1 class="pageTitle">Importer des produits</h1>
 
 
-    <h1>Importer des produits</h1>
+
 
     <form #f="form" (ng-submit)="onSubmit()"
           enctype="multipart/form-data" >
+
         <input type="file" id="file" accept="*/*" #file-input
                name="fileInput"
                (change)="onFileSelected(f, $event)"
                required hidden>
-        <div class="boxedHoverableLink" (^click)="fileInput.click()">
+        <div class="boxedLink" (^click)="fileInput.click()">
             <span [hidden]="toUploadFile == null">
                 Choisir un autre fichier
             </span>
@@ -31,17 +32,20 @@
                 <td>{{ toUploadFile.type}}</td>
             </tr></table>
         </div>
-        <div class="uploadProgress" *ng-if="uploadInProgress">
+        <div class="uploadProgress" [hidden]="!uploadInProgress">
             <span class="busy">
-                <img src="/res/img/ajax-loader.black.gif">
+                <img src="/res/img/spinner-2-black.gif">
             </span>
             <span>
                 {{ uploadPercentage | number:'.0' }} %
             </span>
         </div>
         <div class="actions">
-            <button type="submit" [disabled]="uploadInProgress ||toUploadFile == null ">Importer</button>
+            <button type="submit" class="boxedLink"
+                    [disabled]="uploadInProgress ||toUploadFile == null ">
+                Importer
+            </button>
         </div>
     </form>
-    </div>
+
 </div>

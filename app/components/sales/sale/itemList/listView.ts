@@ -4,16 +4,17 @@
 
 import {Component, View, NgFor, NgIf, EventEmitter} from 'angular2/angular2';
 
-import {ItemVariant, ItemVariantSearch} from 'client/domain/itemVariant';
 import {LocalItemVariant} from 'client/localDomain/itemVariant';
+import {LocalPicture} from 'client/localDomain/picture';
+
+import {ItemVariant, ItemVariantSearch} from 'client/domain/itemVariant';
 import {SearchResult} from 'client/utils/search';
-import {PicturedItem} from 'client/utils/picture';
 import {Pagination} from 'client/utils/pagination';
 
 import {ErrorService} from 'services/error';
 import {ItemVariantService} from 'services/itemVariant';
 
-import {ItemList, ItemColumn} from 'components/items/itemList/itemList';
+import {ItemVariantList, ItemVariantColumn} from 'components/items/itemVariantList/itemList';
 import {AutoFocusDirective} from 'directives/autoFocus';
 import {FocusableDirective} from 'directives/focusable';
 
@@ -26,7 +27,7 @@ import {FocusableDirective} from 'directives/focusable';
 @View({
     templateUrl: './components/sales/sale/itemList/listView.html',
     styleUrls: ['./components/sales/sale/itemList/listView.css'],
-    directives: [NgFor, NgIf, AutoFocusDirective, FocusableDirective, ItemList]
+    directives: [NgFor, NgIf, AutoFocusDirective, FocusableDirective, ItemVariantList]
 })
 
 export class ItemListView {
@@ -34,7 +35,7 @@ export class ItemListView {
     errorService:ErrorService;
 
     itemClicked = new EventEmitter();
-    columns:ItemColumn[];
+    columns:ItemVariantColumn[];
     // Delay keyevent for 500ms
     keyboardTimeoutSet:boolean;
     keyboardTimeout:number = 200;
@@ -42,7 +43,7 @@ export class ItemListView {
     itemSearch:ItemVariantSearch;
     pagination:Pagination;
     loading:boolean = false;
-    itemSearchResult:SearchResult<LocalItemVariant>;
+    searchResult:SearchResult<LocalItemVariant>;
 
     constructor(errorService:ErrorService, itemVariantService:ItemVariantService) {
         this.itemVariantService = itemVariantService;
@@ -53,10 +54,10 @@ export class ItemListView {
         this.pagination = new Pagination(0, 20);
 
         this.columns = [
-            ItemColumn.REFERENCE,
-            ItemColumn.PICTURE,
-            ItemColumn.NAME_MODEL,
-            ItemColumn.TVA_EXCLUSIVE
+            ItemVariantColumn.REFERENCE,
+            ItemVariantColumn.PICTURE,
+            ItemVariantColumn.NAME_MODEL,
+            ItemVariantColumn.TVA_EXCLUSIVE
         ];
         this.searchItems();
     }
@@ -65,7 +66,7 @@ export class ItemListView {
         this.loading = true;
         this.itemVariantService.searchLocalItemVariantsAsync(this.itemSearch, this.pagination)
             .then((result:SearchResult<LocalItemVariant>)=> {
-                this.itemSearchResult = result;
+                this.searchResult = result;
                 this.loading = false;
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);

@@ -5,12 +5,13 @@
 import {Component, View, NgIf, NgFor} from 'angular2/angular2';
 import {Router, RouteParams, Location} from 'angular2/router';
 
+import {LocalSale, LocalItemSale} from 'client/localDomain/sale';
+import {LocalItemVariant} from 'client/localDomain/itemVariant';
+
 import {Sale, SaleRef} from 'client/domain/sale';
 import {Item, ItemRef} from 'client/domain/item';
 import {ItemSale, ItemSaleSearch} from 'client/domain/itemSale';
 import {Pos} from 'client/domain/pos';
-
-import {ASale, ASaleItem} from 'client/utils/aSale';
 
 import {ErrorService} from 'services/error';
 import {SaleService} from 'services/sale';
@@ -35,19 +36,18 @@ export class SaleView {
 
     routeParams:RouteParams;
     router:Router;
-    location: Location;
+    location:Location;
 
-    aSale:ASale;
+    sale:LocalSale;
     payStep:boolean;
-    saleClosed:boolean;
-    navigatingWithinSale: boolean;
+    navigatingWithinSale:boolean;
 
     pos:Pos;
 
     language:string;
 
     constructor(saleService:SaleService, errorService:ErrorService,
-                routeParams:RouteParams, router: Router, location: Location) {
+                routeParams:RouteParams, router:Router, location:Location) {
         this.saleService = saleService;
         this.errorService = errorService;
 
@@ -98,94 +98,67 @@ export class SaleView {
             this.router.navigate('/sales/sale/new');
             return;
         }
-        this.router.navigate('/sales/sale/'+activeSale.id);
+        this.router.navigate('/sales/sale/' + activeSale.id);
     }
 
     private getNewSale() {
-        if (this.aSale == null) {
-            this.aSale = this.saleService.createASale();
+        this.payStep = false;
+        if (this.sale == null) {
+            this.sale = new LocalSale();
         } else {
-            if (this.aSale.saleId != null) {
-                this.aSale = this.saleService.createASale();
+            if (this.sale.id != null) {
+                this.sale = new LocalSale();
             }
         }
         this.saleService.activeSale = null;
-        this.checkSaleClosed();
     }
 
     private getSale(id) {
-        if (this.aSale != null) {
-            if (this.aSale.saleId == id) {
-                 return;
+        if (this.sale != null) {
+            if (this.sale.id == id) {
+                return;
             }
         }
-        var aSale = this.saleService.createASale();
-        aSale.saleId = id;
-        this.saleService.activeSale = aSale.sale;
-        this.saleService.fetchASaleAsync(aSale)
-            .then(()=> {
-                this.aSale = aSale;
-                this.saleService.activeSale = aSale.sale;
-                this.checkSaleClosed();
+        this.saleService.getLocalSaleAsync(id)
+            .then((sale)=> {
+                this.sale = sale;
+                this.saleService.activeSale = sale;
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }
 
-    private checkSaleClosed() {
-        if (this.aSale.sale == null) {
-            this.saleClosed = false;
-        } else {
-            if (this.aSale.sale.closed) {
-                this.saleClosed = true;
-                this.payStep = true;
-            } else {
-                this.saleClosed = false;
-            }
-        }
-    }
-
-
-
-    onSaleInvalidated() {
-        this.saleService.removeASaleAsync(this.aSale)
+    onSaleEmptied() {
+        this.saleService.removeLocalSaleAsync(this.sale)
             .then(()=> {
-                this.aSale = null;
+                this.sale = null;
                 this.saleService.activeSale = null;
-                return this.saleService.createASale();
-            }).then((aSale:ASale)=> {
-                this.aSale = aSale;
-                this.navigatingWithinSale = true;
                 this.router.navigate('/sales/sale/new');
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }
 
-    onItemClicked(item:Item, commandView:CommandView, itemList:ItemListView) {
+    onItemClicked(item:LocalItemVariant) {
+        var itemList = document.getElementById('saleItemList');
         itemList.focus();
 
-        // Open sale if required
-        if (this.aSale.sale == null) {
-            this.saleService
-                .openASaleAsync(this.aSale)
-                .then((aSale)=> {
-                    return this.saleService
-                        .addItemToASaleAsync(aSale, item);
-                }).then((aSale:ASale)=>{
-                    var activeSaleId = aSale.saleId;
-                    this.navigatingWithinSale = true;
-                    this.router.navigate('/sales/sale/' + activeSaleId);
-                }).catch((error)=> {
-                    this.errorService.handleRequestError(error);
-                });
-            return;
+        var nextTask = Promise.resolve(this.sale);
+        var newSale = this.sale.id == null;
+        if (this.sale.id == null) {
+            nextTask = this.saleService.createLocalSaleAsync(this.sale);
         }
-
-        return this.saleService.addItemToASaleAsync(this.aSale, item)
-            .catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
+        nextTask.then((sale)=> {
+            return this.saleService.addItemToLocalSaleAsync(this.sale, item);
+        }).then((sale)=> {
+            if (newSale) {
+                this.saleService.activeSale = sale;
+                this.navigatingWithinSale = true;
+                this.router.navigate('/sales/sale/' + sale.id);
+            }
+        }).catch((error)=> {
+            this.errorService.handleRequestError(error);
+        });
     }
 
 
@@ -195,10 +168,8 @@ export class SaleView {
     }
 
     onCommandPaid() {
-        this.saleService.closeASaleAsync(this.aSale)
-            .then(()=>{
-
-            }).catch((error)=> {
+        this.saleService.closeLocalSaleAsync(this.sale)
+            .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
 

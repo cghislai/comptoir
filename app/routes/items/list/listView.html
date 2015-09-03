@@ -1,5 +1,5 @@
-<div class="listPage">
-    <h1>Liste des produits</h1>
+<div class="listPage pageContent">
+    <h1 class="pageTitle">Liste des produits</h1>
 
     <div class="busy" [hidden]="!loading">
         <img src="../../../../res/img/ajax-loader.white.gif">
@@ -13,17 +13,20 @@
         </span>
     </div>
 
-   <paginator *ng-if="itemSearchResult != undefined"
-              [total-count]="itemCount"
+    <paginator *ng-if="searchResult != undefined"
+               [total-count]="searchResult.count"
                [page-size]="itemsPerPage"
                show-prev-next-link="true" show-first-last-link="true"
                (page-change)="onPageChanged($event)"></paginator>
 
-    <itemList #itemlistcomp *ng-if="itemSearchResult != undefined"
-              [columns]="columns" [items]="itemSearchResult.list"
-              selectable="true" headers="true"
-              (column-action)="onColumnAction($event)"
-              (item-clicked)="doEditItem($event)">
+    <itemVariantList
+            *ng-if="searchResult != undefined"
+            [items]="searchResult.list"
+            [columns]="columns"
+            [row-selectable]="true"
+            [headers-visible]="true"
+            (column-action)="onColumnAction($event)"
+            (row-clicked)="doEditItem($event)">
 
-    </itemList>
+    </itemVariantList>
 </div>

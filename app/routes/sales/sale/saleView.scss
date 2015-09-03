@@ -12,7 +12,7 @@
   form {
     margin: .1em;
 
-    >*:not([hidden]) {
+    > *:not([hidden]) {
       display: inline;
     }
 
@@ -22,32 +22,29 @@
   }
 }
 
-
 .wrapper {
   overflow-x: hidden;
-}
-
-.sellView {
-  width: 150vw;
-  position: relative;
-  left: 0;
-
-  &:not(.no-anim) {
-    @include transition(left 300ms ease-in-out);
-  }
-
-  &.slide-left {
-    left: -50vw;
-  }
-
-  > * {
-    display: inline-block;
+  .saleViewContainer {
+    width: 150vw;
     position: relative;
-    vertical-align: top;
-    width: 49vw;
+    left: 0;
+
+    &:not(.no-anim) {
+      @include transition(left 300ms ease-in-out);
+    }
+
+    &.slide-left {
+      left: -50vw;
+    }
+
     > * {
-      margin: 1em;
+      display: inline-block;
+      position: relative;
+      vertical-align: top;
+      width: 49vw;
+      > * {
+        margin: 1em;
+      }
     }
   }
-
 }

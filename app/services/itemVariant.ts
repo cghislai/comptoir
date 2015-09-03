@@ -4,23 +4,24 @@
 
 import {Inject} from 'angular2/angular2';
 
-import {ItemVariant, ItemVariantRef, ItemVariantSearch, ItemVariantFactory, AttributeDefinition} from 'client/domain/itemVariant';
+import {ItemVariant, ItemVariantRef,
+    ItemVariantSearch, ItemVariantFactory,
+    AttributeDefinition} from 'client/domain/itemVariant';
 import {Item, ItemRef, ItemFactory} from 'client/domain/item';
-import {ItemPicture, ItemPictureRef} from 'client/domain/itemPicture';
+import {Picture, PictureRef, PictureFactory} from 'client/domain/picture';
 
 import {LocalItem, LocalItemFactory}from 'client/localDomain/item';
 import {LocalAttributeValue,  LocalItemVariant, LocalItemVariantFactory}from 'client/localDomain/itemVariant';
 import {LocalPicture, LocalPictureFactory}from 'client/localDomain/picture';
 
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
-import {PicturedItemVariant, PicturedItemFactory} from 'client/utils/picture';
 import {Pagination} from 'client/utils/pagination';
 import {SearchResult} from 'client/utils/search';
 import {ComptoirResponse} from'client/utils/request';
 
 import {ItemClient} from 'client/item';
 import {ItemVariantClient} from 'client/itemVariant';
-import {ItemPictureClient} from 'client/itemPicture'
+import {PictureClient} from 'client/picture'
 
 import {AuthService} from 'services/auth';
 
@@ -29,13 +30,13 @@ export class ItemVariantService {
     private authService:AuthService;
     private itemClient:ItemClient;
     private itemVariantClient:ItemVariantClient;
-    private pictureClient:ItemPictureClient;
+    private pictureClient:PictureClient;
 
     constructor(@Inject authService:AuthService) {
         this.authService = authService;
         this.itemClient = new ItemClient();
         this.itemVariantClient = new ItemVariantClient();
-        this.pictureClient = new ItemPictureClient();
+        this.pictureClient = new PictureClient();
     }
 
 
@@ -68,16 +69,16 @@ export class ItemVariantService {
 
         return this.getItemVariant(id)
             .then((itemVariant:ItemVariant)=> {
-                return this.updateLocalItemVariantAsync(localItemVariant, itemVariant);
+                return this.refreshLocalItemVariantAsync(localItemVariant, itemVariant);
             });
     }
 
-    public updateLocalItemVariantAsync(localItemVariant:LocalItemVariant, itemVariant:ItemVariant):Promise<LocalItemVariant> {
+    public refreshLocalItemVariantAsync(localItemVariant:LocalItemVariant, itemVariant:ItemVariant):Promise<LocalItemVariant> {
         LocalItemVariantFactory.updateLocalItemVariant(localItemVariant, itemVariant);
         var tasks = [];
         if (itemVariant.mainPictureRef != null) {
             var pictureId = itemVariant.mainPictureRef.id;
-            tasks.push(this.fetchLocalItemVariantPictureAsync(localItemVariant, pictureId));
+         //   tasks.push(this.fetchLocalItemVariantPictureAsync(localItemVariant, pictureId));
         }
         if (itemVariant.itemRef != null) {
             var itemId = itemVariant.itemRef.id;
@@ -88,6 +89,7 @@ export class ItemVariantService {
             var localAttributeValues = [];
             for (var attributeValue of itemVariant.attributeValues) {
                 var localAttribute = LocalItemVariantFactory.toLocalAttributeValue(attributeValue);
+                localAttributeValues.push(localAttribute);
                 attributesTasks.push(this.fetchLocalAttributeDefinitionAsync(localAttribute, attributeValue.attributeDefinitionRef.id));
             }
             var attributesTask = Promise.all(attributesTasks);
@@ -140,7 +142,7 @@ export class ItemVariantService {
                 for (var itemVariant of result.list) {
                     var localItemVariant = LocalItemVariantFactory.toLocalItemVariant(itemVariant);
                     localResult.list.push(localItemVariant);
-                    taskList.push(this.updateItemVariant(itemVariant));
+                    taskList.push(this.refreshLocalItemVariantAsync(localItemVariant, itemVariant));
                 }
                 return Promise.all(taskList)
                     .then(()=> {
@@ -160,15 +162,15 @@ export class ItemVariantService {
         var authToken = this.authService.authToken;
         var pictureExists = localPicture.id != null;
         if (pictureExists) {
-            var itemVariantPicture = LocalPictureFactory.fromLocalPicture(localPicture);
-            // TODO          localItemVariant.mainPictureRequest = this.pictureClient.getUpdateItemVariantPictureRequest(itemVariantPicture, authToken);
+            var picture = LocalPictureFactory.fromLocalPicture(localPicture);
+            localItemVariant.mainPictureRequest = this.pictureClient.getUpdatePictureRequest(picture, authToken);
         } else {
-            // TODO   localItemVariant.mainPictureRequest = this.pictureClient.getCreateItemVariantPictureRequest(itemVariantPicture, authToken);
+            localItemVariant.mainPictureRequest = this.pictureClient.getCreatePictureRequest(picture, authToken);
         }
         return localItemVariant.mainPictureRequest.run()
             .then((response)=> {
-                // TODO var picRef:ItemVariantPictureRef = JSON.parse(response.text);
-                //localPicture.id = picRef.id;
+                var picRef:PictureRef = JSON.parse(response.text);
+                localPicture.id = picRef.id;
                 return localItemVariant;
             });
     }
@@ -179,21 +181,18 @@ export class ItemVariantService {
             localItemVariant.mainPictureRequest.discardRequest();
         }
 
-        var itemVariantId = localItemVariant.id;
         var authToken = this.authService.authToken;
-        // TODO var request = this.pictureClient.getGetItemVariantPictureRequest(itemVariantId, pictureId, authToken)
-        return Promise.resolve(localItemVariant);
-        /*
-         localItemVariant.mainPictureRequest = request;
+        var request = this.pictureClient.getGetPictureRequest(pictureId, authToken)
+        localItemVariant.mainPictureRequest = request;
 
-         return localItemVariant.mainPictureRequest.run()
-         .then((response:ComptoirResponse)=> {
-         var itemVariantPicture:ItemVariantPicture = JSON.parse(response.text, ItemVariantFactory.fromJSONItemVariantReviver);
-         var localItemVariantPicture:LocalPicture = LocalPictureFactory.toLocalPicture(itemVariantPicture);
-         localItemVariant.mainPicture = localItemVariantPicture;
-         localItemVariant.mainPictureRequest = null;
-         return localItemVariant;
-         });*/
+        return localItemVariant.mainPictureRequest.run()
+            .then((response:ComptoirResponse)=> {
+                var picture:Picture = JSON.parse(response.text, ItemVariantFactory.fromJSONItemVariantReviver);
+                var localPicture:LocalPicture = LocalPictureFactory.toLocalPicture(picture);
+                localItemVariant.mainPicture = localPicture;
+                localItemVariant.mainPictureRequest = null;
+                return localItemVariant;
+            });
     }
 
 

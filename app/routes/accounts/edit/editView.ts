@@ -4,11 +4,12 @@
 import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
-import {Account, AccountType} from 'client/domain/account';
+import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
+
+import {Account, AccountType, ALL_ACCOUNT_TYPES} from 'client/domain/account';
 import {LocaleText} from 'client/domain/lang';
 
 import {Language, LocaleTexts} from 'client/utils/lang';
-import {NamedAccountType} from 'client/utils/account';
 
 import {AuthService} from 'services/auth';
 import {AccountService} from 'services/account';
@@ -26,13 +27,13 @@ class AccountFormModel {
     description:LocaleTexts;
     accountType:AccountType;
 
-    account:Account;
+    account:LocalAccount;
 
     constructor();
-    constructor(account:Account, lang:Language);
-    constructor(account?:Account, lang?:Language) {
+    constructor(account:LocalAccount, lang:Language);
+    constructor(account?:LocalAccount, lang?:Language) {
         if (account == undefined) {
-            this.account = new Account();
+            this.account = new LocalAccount();
             this.description = new LocaleTexts();
             return;
         }
@@ -43,7 +44,7 @@ class AccountFormModel {
         this.bic = account.bic;
         this.name = account.name;
         this.description = account.description;
-        this.accountType = AccountType[account.accountType];
+        this.accountType = account.accountType;
     }
 }
 
@@ -52,11 +53,11 @@ class AccountFormModel {
     selector: 'editAccount'
 })
 @View({
-    templateUrl: './components/accounts/edit/editView.html',
-    styleUrls: ['./components/accounts/edit/editView.css'],
+    templateUrl: './routes/accounts/edit/editView.html',
+    styleUrls: ['./routes/accounts/edit/editView.css'],
     directives: [NgFor, NgIf, FORM_DIRECTIVES, RouterLink, LangSelect, LocalizedDirective]
 })
-export class EditAccountView {
+export class AccountsEditView {
     accountId:number;
     accountService:AccountService;
     errorService:ErrorService;
@@ -65,7 +66,7 @@ export class EditAccountView {
 
     language:Language;
     accountModel:AccountFormModel;
-    allAccountTypes:any[];
+    allAccountTypes = ALL_ACCOUNT_TYPES;
 
     constructor(accountService:AccountService, authService:AuthService, errorService: ErrorService,
                 routeParams:RouteParams, router:Router) {
@@ -80,7 +81,6 @@ export class EditAccountView {
         this.errorService = errorService;
         this.language = authService.getEmployeeLanguage();
 
-        this.allAccountTypes = NamedAccountType.ALL_TYPES;
         this.buildFormModel();
     }
 
@@ -91,8 +91,8 @@ export class EditAccountView {
             return;
         }
         var thisView = this;
-        this.accountService.getAccount(this.accountId)
-            .then(function (account:Account) {
+        this.accountService.getLocalAccountAsync(this.accountId)
+            .then(function (account:LocalAccount) {
                 thisView.accountModel = new AccountFormModel(account, this.language);
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
@@ -101,8 +101,9 @@ export class EditAccountView {
 
 
     doSaveEdit() {
-        var account = this.accountModel.account;
-        account.accountType = AccountType[this.accountModel.accountType];
+        var localAccount = this.accountModel.account;
+        var account = LocalAccountFactory.fromLocalAccount(localAccount);
+        account.accountType = this.accountModel.accountType;
         account.accountingNumber = this.accountModel.accountingNumber;
         account.bic = this.accountModel.bic;
         account.companyRef = this.authService.loggedEmployee.companyRef;

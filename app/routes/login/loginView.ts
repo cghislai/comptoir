@@ -6,7 +6,6 @@ import {Component, View, FormBuilder, FORM_DIRECTIVES, ControlGroup} from 'angul
 import {Router, RouterLink} from 'angular2/router';
 
 import {AppHeader} from 'components/app/header/appHeader';
-import {AppContent} from 'components/app/content/appContent';
 import {FormMessage} from 'components/utils/formMessage/formMessage';
 import {requiredValidator} from 'components/utils/validators';
 
@@ -23,7 +22,7 @@ import {MD5} from 'components/utils/md5';
 @View({
     templateUrl: './routes/login/loginView.html',
     styleUrls: ['./routes/login/loginView.css'],
-    directives: [FORM_DIRECTIVES, RouterLink, AppHeader, AppContent, FormMessage]
+    directives: [FORM_DIRECTIVES, RouterLink, AppHeader, FormMessage]
 })
 export class LoginView {
     authService:AuthService;
@@ -63,7 +62,7 @@ export class LoginView {
 
         this.authService.login(login, hashedPassword)
             .then(function (employee) {
-                thisView.router.navigate('/sales/active');
+                thisView.router.navigate('/sales/sale/active');
             }).catch(function (error) {
                 if(error.code == 401) {
                     thisView.invalidCredentials = true;

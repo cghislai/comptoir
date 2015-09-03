@@ -1,7 +1,7 @@
 <appHeader title="Connection" inactive="true">
-
 </appHeader>
-<appContent title="Connection">
+<div class="loginView pageContent">
+    <h1 class="pageTitle">Création d'un nouveau compte</h1>
     <p [hidden]="introText == null">
         {{ introText }}
     </p>
@@ -30,4 +30,4 @@
         <a [router-link]="['/register']"
            class="lightBlueLink">Créer un compte</a>
     </div>
-</appContent>
+</div>

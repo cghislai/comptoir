@@ -1,6 +1,8 @@
 <appHeader title="Nouveau compte" inactive="true">
 </appHeader>
-<appContent title="Création d'un nouveau compte">
+<div class="registerView pageContent">
+    <h1 class="pageTitle">Création d'un nouveau compte</h1>
+
     <form (^submit)="doRegister($event)" [ng-form-model]="registerForm"
           class="formTable">
         <h2>Compagnie</h2>
@@ -65,4 +67,4 @@
             <button type="submit" [disabled]="!registerForm.valid">Créer un compte</button>
         </div>
     </form>
-</appContent>
+</div>

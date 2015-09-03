@@ -4,17 +4,16 @@
 import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
-
-import {ItemVariant, ItemVariantSearch} from 'client/domain/itemVariant';
+import {LocalItem} from 'client/localDomain/item';
+import {ItemSearch} from 'client/domain/item';
 import {SearchResult} from 'client/utils/search';
-import {PicturedItem} from 'client/utils/picture';
 import {LocaleTexts} from 'client/utils/lang';
 import {Pagination} from 'client/utils/pagination';
 
 import {ErrorService} from 'services/error';
-import {ItemService} from 'services/itemService';
+import {ItemService} from 'services/item';
 
-import {ItemList, ItemColumn} from 'components/items/itemList/itemList';
+import {ItemVariantList, ItemVariantColumn} from 'components/items/itemVariantList/itemList';
 import {Paginator} from 'components/utils/paginator/paginator';
 
 @Component({
@@ -24,7 +23,7 @@ import {Paginator} from 'components/utils/paginator/paginator';
 @View({
     templateUrl: './routes/items/list/listView.html',
     styleUrls: ['./routes/items/list/listView.css'],
-    directives: [NgFor, NgIf, Paginator, FORM_DIRECTIVES, ItemList]
+    directives: [NgFor, NgIf, Paginator, FORM_DIRECTIVES, ItemVariantList]
 })
 
 export class ItemsListView {
@@ -32,11 +31,10 @@ export class ItemsListView {
     errorService:ErrorService;
     router:Router;
 
-    itemSearch:ItemVariantSearch;
+    itemSearch:ItemSearch;
     pagination:Pagination;
-    itemSearchResult:SearchResult<PicturedItem>;
-    itemCount:number;
-    columns:ItemColumn[];
+    searchResult:SearchResult<LocalItem>;
+    columns:ItemVariantColumn[];
     itemsPerPage:number = 25;
 
     // Delay filter input keyevent for 200ms
@@ -48,26 +46,26 @@ export class ItemsListView {
         this.itemService = itemService;
         this.errorService = appService;
 
-        this.itemSearch = new ItemVariantSearch();
+        this.itemSearch = new ItemSearch();
         this.pagination = new Pagination(0, this.itemsPerPage);
 
         this.columns = [
-            ItemColumn.REFERENCE,
-            ItemColumn.PICTURE,
-            ItemColumn.NAME,
-            ItemColumn.MODEL,
-            ItemColumn.TVA_EXCLUSIVE,
-            ItemColumn.TVA_RATE,
-            ItemColumn.ACTION_REMOVE
+            ItemVariantColumn.REFERENCE,
+            ItemVariantColumn.PICTURE,
+            ItemVariantColumn.NAME,
+            ItemVariantColumn.MODEL,
+            ItemVariantColumn.TVA_EXCLUSIVE,
+            ItemVariantColumn.TVA_RATE,
+            ItemVariantColumn.ACTION_REMOVE
         ];
         this.searchItems();
     }
 
     searchItems() {
         var thisView = this;
-        this.itemService.searchPicturedItemVariants(this.itemSearch, this.pagination)
-            .then((result:SearchResult<PicturedItem>)=> {
-                thisView.itemSearchResult = result;
+        this.itemService.searchLocalItemsAsync(this.itemSearch, this.pagination)
+            .then((result:SearchResult<LocalItem>)=> {
+                thisView.searchResult = result;
                 thisView.itemCount = result.count;
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
@@ -80,22 +78,22 @@ export class ItemsListView {
     }
 
     onColumnAction(event) {
-        var item:PicturedItem = event.itemVariant;
-        var column:ItemColumn = event.column;
-        if (column == ItemColumn.ACTION_REMOVE) {
-            this.doRemoveItem(item.item);
+        var item:LocalItem = event.itemVariant;
+        var column:ItemVariantColumn = event.column;
+        if (column == ItemVariantColumn.ACTION_REMOVE) {
+            this.doRemoveItem(item);
         }
     }
 
-    doEditItem(item:ItemVariant) {
+    doEditItem(item:LocalItem) {
         var id = item.id;
         var url = '/items/edit/' + id;
         this.router.navigate(url);
     }
 
-    doRemoveItem(item:ItemVariant) {
+    doRemoveItem(item:LocalItem) {
         var thisView = this;
-        this.itemService.removeItem(item)
+        this.itemService.removeLocalItemAsync(item)
             .then(()=> {
                 thisView.searchItems();
             }).catch((error)=> {

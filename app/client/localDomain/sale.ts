@@ -67,11 +67,16 @@ export class LocalSale {
     accountingEntriesRequest: ComptoirRequest;
 
     dirty:boolean;
+
+    constructor() {
+        this.items = [];
+        this.accountingEntries = [];
+    }
 }
 
 export class LocalSaleFactory {
 
-    static fromLocalSale(localSale:LocalSale) {
+    static fromLocalSale(localSale:LocalSale) :Sale{
         var sale = new Sale();
         sale.id = localSale.id;
         sale.accountingTransactionRef = localSale.accountingTransactionRef;
@@ -85,15 +90,16 @@ export class LocalSaleFactory {
         sale.reference = localSale.reference;
         sale.vatAmount = localSale.vatAmount;
         sale.vatExclusiveAmount = localSale.vatExclusiveAmount;
+        return sale;
     }
 
-    static toLocalSale(sale:Sale) {
+    static toLocalSale(sale:Sale):LocalSale {
         var localSale = new LocalSale();
         LocalSaleFactory.updateLocalSale(localSale, sale);
         return localSale;
     }
 
-    static updateLocalSale(localSale:LocalSale, sale:Sale) {
+    static updateLocalSale(localSale:LocalSale, sale:Sale) : void{
         localSale.id = sale.id;
 
         localSale.accountingTransactionRef = sale.accountingTransactionRef;

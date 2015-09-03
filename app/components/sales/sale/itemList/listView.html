@@ -1,4 +1,4 @@
-<div class="itemList" (show)="searchItems()">
+<div class="itemList">
     <header class="coloredHeader">
         <div class="filter">
             <input #filter id="itemListFilterInput"
@@ -14,11 +14,13 @@
             </div>
         </div>
     </header>
-    <div class="scrollPane" *ng-if="itemSearchResult != undefined">
-        <itemList [columns]="columns" #itemlistcomp
-                  [items]="itemSearchResult.list"
-                  selectable="true" headers="false"
-                  (item-clicked)="onItemClicked($event)"></itemList>
+    <div class="scrollPane" *ng-if="searchResult != undefined">
+        <itemVariantList
+                [columns]="columns"
+                [items]="searchResult.list"
+                [row-selectable]="true"
+                [headers-visible]="false"
+                (row-clicked)="onItemClicked($event)"></itemVariantList>
 
     </div>
 </div>

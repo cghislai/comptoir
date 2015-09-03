@@ -5,19 +5,17 @@ import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
 
+import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
 import {Account, AccountType, AccountSearch} from 'client/domain/account';
 import {SearchResult} from 'client/utils/search';
 import {LocaleTexts, Language} from 'client/utils/lang';
-import {NamedAccountType} from 'client/utils/account';
+import {Pagination} from 'client/utils/pagination';
 
 import {AccountService} from 'services/account';
 import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
-import {Pagination} from 'client/utils/pagination';
 
 import {Paginator} from 'components/utils/paginator/paginator';
-import {AutoFocusDirective} from 'directives/autoFocus'
-import {FocusableDirective} from 'directives/focusable'
 
 @Component({
     selector: "accountsList"
@@ -81,11 +79,8 @@ export class AccountsListView {
             return null;
         }
         var accountType:AccountType = AccountType[accountTypeName];
-        var namedAccountType = NamedAccountType.getNamedForType(accountType);
-        if (namedAccountType == null) {
-            return null;
-        }
-        return namedAccountType.label[this.locale];
+        var label = LocalAccountFactory.getAccountTypeLabel(accountType);
+        return label[this.locale];
     }
 
     onPageChanged(pagination:Pagination) {

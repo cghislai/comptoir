@@ -6,8 +6,8 @@ import {Component, View} from 'angular2/angular2';
 import {Router, RouteConfig,RouterOutlet,RouterLink, Location} from 'angular2/router';
 
 import {AppHeader} from 'components/app/header/appHeader';
-import {AppMenu} from 'components/app/header/menu/appMenu';
 import {AppTab} from 'components/app/header/tab/appTab';
+
 
 import {ItemsListView} from 'routes/items/list/listView';
 import {ItemsEdiView} from 'routes/items/edit/editView';
@@ -17,13 +17,13 @@ import {ItemsImportView} from 'routes/items/import/importView';
 })
 @View({
     templateUrl: './routes/items/itemsView.html',
-    directives: [AppHeader, AppMenu, AppTab, RouterOutlet, RouterLink]
+    directives: [AppHeader, AppTab, RouterOutlet, RouterLink]
 })
 @RouteConfig([
     {path: '/', redirectTo: '/items/list'},
     {path: '/edit/:id', component: ItemsEdiView, as: 'edit'},
     {path: '/list', component: ItemsListView, as: 'list'},
-    {path: '/import', component: ItemsImportView, as: 'import'},
+    {path: '/import', component: ItemsImportView, as: 'import'}
 ])
 export class ItemsView {
     location:Location;

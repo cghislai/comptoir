@@ -63,7 +63,7 @@ export class ItemsImportView {
         this.toUploadFileSizeLabel = size + " bytes";
         // optional code for multiples approximation
         for (var aMultiples = ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"], nMultiple = 0, nApprox = size / 1024; nApprox > 1; nApprox /= 1024, nMultiple++) {
-            this.toUploadFileSizeLabel = nApprox.toFixed(3) + " " + aMultiples[nMultiple] + " (" + size + " bytes)";
+            this.toUploadFileSizeLabel = nApprox.toFixed(3) + " " + aMultiples[nMultiple];// + " (" + size + " bytes)";
         }
 
         new Promise<ArrayBuffer>((resolve, reject)=> {

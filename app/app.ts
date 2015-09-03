@@ -23,13 +23,11 @@ import {RegisterView} from 'routes/register/register';
 
 import {SalesView} from 'routes/sales/salesView';
 import {ItemsView} from 'routes/items/itemsView';
+import {AccountsView} from 'routes/accounts/accountsView';
 
 
 import {CountCashView} from 'components/cash/count/countView';
 import {CashHistoryView} from 'components/cash/history/historyView';
-
-import {AccountsListView} from 'components/accounts/list/listView';
-import {EditAccountView} from 'components/accounts/edit/editView';
 
 import {PosListView} from 'components/pos/list/listView';
 import {EditPosView} from 'components/pos/edit/editView';
@@ -52,7 +50,8 @@ import {ApplicationSettingsView} from 'components/settings/application/appSettin
     {path: '/register', component: RegisterView, as:'register'},
 
     {path: '/sales/...', component: SalesView, as:'sales'},
-    {path: '/items/...', component: ItemsView, as:'items'}
+    {path: '/items/...', component: ItemsView, as:'items'},
+    {path: '/accounts/...', component: AccountsView, as:'accounts'}
 ])
 export class App {
     appService:ApplicationService;
@@ -115,6 +114,7 @@ bootstrap(App, [
     FileUploadService,
     ItemService,
     ItemSaleService,
+    ItemVariantService,
     PosService,
     SaleService
 ]);

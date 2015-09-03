@@ -1,0 +1,33 @@
+/**
+ * Created by cghislai on 03/09/15.
+ */
+@import '_constants';
+
+.boxedLink {
+  border: .1em solid $blueColor;
+  font-weight: bolder;
+  padding: .3em;
+  margin: .3em;
+  color: black;
+  text-decoration: none;
+  background-color: white;
+
+  &:not([hidden]) {
+    display: inline-block;
+  }
+  &:hover {
+    background-color: $onWhiteHoverColor;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  &:focus {
+    background-color: $onWhiteHoverColor;
+  }
+
+  &[disabled], &[disabled]:focus, &[disabled]:hover {
+    border-color: lightgray;
+    background-color: white;
+    text-decoration: none;
+    cursor: default;
+  }
+}

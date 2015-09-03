@@ -1,116 +1,105 @@
 /**
  * Created by cghislai on 05/08/15.
  */
-import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf,
+    FORM_DIRECTIVES, FormBuilder, ControlGroup, Control} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
-import {Item} from 'client/domain/item';
+import {LocalPicture, LocalPictureFactory} from 'client/localDomain/picture';
+import {LocalItemVariant} from 'client/localDomain/itemVariant';
+
 import {ItemVariant} from 'client/domain/itemVariant';
-import {ItemPicture} from 'client/domain/itemPicture';
-import {PicturedItem, PicturedItemFactory} from 'client/utils/picture';
 import {Language, LocaleTexts} from 'client/utils/lang';
 import {NumberUtils} from 'client/utils/number';
 
-import {ItemService} from 'services/item';
+import {ItemVariantService} from 'services/itemVariant';
 import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
 
 import {LangSelect, LocalizedDirective} from 'components/utils/langSelect/langSelect';
 
-class ItemFormModel {
-    item:PicturedItem;
-
-    pictureDataURI:string;
-    language:Language;
-    names:LocaleTexts;
-    descriptions:LocaleTexts;
-    reference:string;
-    vatExclusive:number;
-    vatPercentage:number;
-
-    constructor(language:Language, picturedItem?:PicturedItem) {
-        this.language = language;
-        if (picturedItem == undefined) {
-            this.names = new LocaleTexts();
-            this.descriptions = new LocaleTexts();
-            return;
-        } else {
-            this.pictureDataURI = PicturedItemFactory.buildPictureURI(picturedItem.picture);
-        }
-        this.item = picturedItem;
-        this.names = picturedItem.item.name;
-        this.descriptions = picturedItem.item.description;
-        this.reference = picturedItem.item.reference;
-        this.vatExclusive = picturedItem.item.vatExclusive;
-        this.vatPercentage = picturedItem.item.vatRate;
-    }
-}
-
 
 @Component({
-    selector: 'editItem'
+    selector: 'editItemVariant'
 })
 @View({
-    templateUrl: './routes/items/edit/editView.html',
-    styleUrls: ['./routes/items/edit/editView.css'],
+    templateUrl: './routes/itemVariants/edit/editView.html',
+    styleUrls: ['./routes/itemVariants/edit/editView.css'],
     directives: [NgFor, NgIf, FORM_DIRECTIVES, RouterLink, LangSelect, LocalizedDirective]
 })
-export class ItemsEdiView {
-    itemService:ItemService;
+export class ItemVariantsEdiView {
+    itemVariantService:ItemVariantService;
     errorService:ErrorService;
     authService:AuthService;
     router:Router;
 
-    language:Language;
-    itemModel:ItemFormModel;
+    itemVariant:LocalItemVariant;
+    itemVariantForm:ControlGroup;
+    appLocale:string;
+    editLanguage:Language;
+    allLanguages:Language[];
+
+    itemVariantFormDefinition = {
+        'pictureBlob': [null],
+        'name': [''],
+        'description': [''],
+        'reference': [''],
+        'vatExclusive': [0],
+        'vatPercentage': [0]
+    };
 
 
-    constructor(itemService:ItemService, errorService:ErrorService, authService:AuthService,
+    constructor(itemVariantService:ItemVariantService, errorService:ErrorService, authService:AuthService,
                 routeParams:RouteParams, router:Router) {
         this.router = router;
-        this.itemService = itemService;
+        this.itemVariantService = itemVariantService;
         this.errorService = errorService;
         this.authService = authService;
-        this.language = authService.getEmployeeLanguage();
+        this.appLocale = authService.getEmployeeLanguage().locale;
+        this.editLanguage = authService.getEmployeeLanguage();
 
-        this.findItem(routeParams);
+        this.findItemVariant(routeParams);
     }
 
-    findItem(routeParams:RouteParams) {
+    findItemVariant(routeParams:RouteParams) {
         if (routeParams == null || routeParams.params == null) {
-            this.getNewItem();
+            this.getNewItemVariant();
             return;
         }
         var idParam = routeParams.get('id');
         var idNumber = parseInt(idParam);
         if (isNaN(idNumber)) {
             if (idParam == 'new') {
-                this.getNewItem();
+                this.getNewItemVariant();
                 return;
             }
-            this.getNewItem();
+            this.getNewItemVariant();
             return;
         }
-        this.getItem(idNumber);
+        this.getItemVariant(idNumber);
     }
 
-    getNewItem() {
-        this.itemModel = new ItemFormModel(this.language);
+    getNewItemVariant() {
+        this.itemVariant = new LocalItemVariant();
     }
 
-    getItem(id:number) {
-        this.itemService.getPicturedItemVariantASync(id)
-            .then((picturedItem:PicturedItem)=> {
-                this.itemModel = new ItemFormModel(this.language, picturedItem);
+    getItemVariant(id:number) {
+        this.itemVariantService.getLocalItemVariantAsync(id)
+            .then((itemVariant:LocalItemVariant)=> {
+                this.itemVariant = itemVariant;
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }
 
 
-
-    public doSaveItem() {
-
+    public doSaveItemVariant() {
+        this.itemVariantService.saveLocalItemVariantAsync(this.itemVariant)
+            .then(() => {
+                this.router.navigate('/itemVariants/list');
+            }).catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });
     }
 
 
@@ -130,47 +119,13 @@ export class ItemsEdiView {
             };
             reader.readAsDataURL(file);
         }).then((data:string)=> {
-                thisView.itemModel.pictureDataURI = data;
+                if (thisView.itemVariant.mainPicture == null) {
+                    thisView.itemVariant.mainPicture = new LocalPicture();
+                }
+                thisView.itemVariant.mainPicture.dataURI = data;
             });
     }
 
-    onCurrentPriceChanged(event) {
-        var price = event.target.value;
-        this.itemModel.vatExclusive = parseFloat(price);
-    }
 
-    onVatChanged(event) {
-        var vat = event.target.value;
-        this.itemModel.vatPercentage = parseInt(vat);
-    }
-
-    doSaveEdit() {
-        var picturedItem = this.itemModel.item;
-        if (picturedItem == null) {
-            picturedItem = new PicturedItem();
-        }
-        var item = picturedItem.item;
-        if (item == null) {
-            item = new Item();
-            picturedItem.item = item;
-        }
-
-        item.vatExclusive = this.itemModel.vatExclusive;
-        item.vatRate = NumberUtils.toFixedDecimals(this.itemModel.vatPercentage * 0.01, 2);
-
-        item.description = this.itemModel.descriptions;
-        item.name = this.itemModel.names;
-        item.reference = this.itemModel.reference;
-
-        picturedItem.dataURI = this.itemModel.pictureDataURI;
-
-        this.itemService.savePicturedItem(picturedItem)
-            .then(() => {
-                this.router.navigate('/items/list');
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
-
-    }
 
 }

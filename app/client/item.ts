@@ -64,6 +64,13 @@ export class ItemClient {
             });
     }
 
+    deleteItem(id:number, authToken:string):Promise<any> {
+        var url = this.getItemUrl(id);
+        var request = new ComptoirRequest();
+        return request.delete(url, authToken);
+
+    }
+
     getGetItemRequest(id:number, authToken:string):ComptoirRequest {
         var url = this.getItemUrl(id);
         var request = new ComptoirRequest();

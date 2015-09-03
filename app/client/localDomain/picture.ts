@@ -2,7 +2,7 @@
  * Created by cghislai on 01/09/15.
  */
 
-import {ItemPicture} from 'client/domain/itemPicture';
+import {Picture} from 'client/domain/picture';
 
 export class LocalPicture {
     id: number;
@@ -12,17 +12,17 @@ export class LocalPicture {
 }
 
 export class LocalPictureFactory {
-    static toLocalPicture(itemPicture: ItemPicture):LocalPicture {
+    static toLocalPicture(picture: Picture):LocalPicture {
         var localPicture = new LocalPicture();
-        localPicture.id = itemPicture.id;
-        localPicture.data = itemPicture.data;
-        localPicture.contentType = itemPicture.contentType;
-        localPicture.dataURI = LocalPictureFactory.toDataURI(itemPicture);
+        localPicture.id = picture.id;
+        localPicture.data = picture.data;
+        localPicture.contentType = picture.contentType;
+        localPicture.dataURI = LocalPictureFactory.toDataURI(picture);
         return localPicture;
     }
 
-    static fromLocalPicture(localPicture: LocalPicture):ItemPicture {
-       var picture = new ItemPicture();
+    static fromLocalPicture(localPicture: LocalPicture):Picture {
+       var picture = new Picture();
         picture.id = localPicture.id;
         picture.data = localPicture.data;
         picture.contentType = localPicture.contentType;
@@ -32,7 +32,7 @@ export class LocalPictureFactory {
         return picture;
     }
 
-    static toDataURI(picture:ItemPicture):string {
+    static toDataURI(picture:Picture):string {
         if (picture == undefined) {
             return undefined;
         }
@@ -45,7 +45,7 @@ export class LocalPictureFactory {
         return undefined;
     }
 
-    static fromDataURI(dataURI:string, picture:ItemPicture) {
+    static fromDataURI(dataURI:string, picture:Picture) {
         if (picture == undefined) {
             return;
         }

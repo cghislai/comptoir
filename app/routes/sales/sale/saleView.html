@@ -1,26 +1,29 @@
-<div class="saleView">
-    <div class="header" [hidden]="saleClosed">
+<div class="saleView" *ng-if="sale != null">
+    <div class="header" [hidden]="sale.closed">
         <posSelect (pos-changed)="pos = $event" ></posSelect>
     </div>
-    <div class="wrapper" *ng-if="aSale != null">
-        <div class="sellView" [class.slide-left]="payStep"  [class.no-anim]="saleClosed || aSale.sale == null">
+    <div class="wrapper">
+        <div class="saleViewContainer" [class.slide-left]="payStep"  [class.no-anim]="sale.closed || sale.id == null">
             <div class="itemList" >
                 <div>
-                    <itemListView #itemlist (item-clicked)="onItemClicked($event, commandview, itemlist)"></itemListView>
+                    <itemListView #itemlist id="saleItemList"
+                                  (item-clicked)="onItemClicked($event)"></itemListView>
                 </div>
             </div>
             <div class="commandView" >
                 <div>
-                    <commandView #commandview
+                    <commandView #commandview id="saleCommandView"
                                  (validate)="onCommandValidated($event, payview)"
                                  (sale-invalidated)="onSaleInvalidated()"
                                  [no-input]="saleClosed"
-                                 [(sale)]="aSale" [validated]="payStep"></commandView>
+                                 [sale]="sale"
+                                 [validated]="payStep"></commandView>
                 </div>
             </div>
             <div class="payView">
                 <div>
-                    <payView #payview (paid)="onCommandPaid()"
+                    <payView #payview id="salePayView"
+                             (paid)="onCommandPaid()"
                              [pos]="pos"
                              [no-input]="saleClosed"
                              [sale]="aSale"></payView>

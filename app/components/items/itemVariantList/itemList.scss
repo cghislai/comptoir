@@ -1,34 +1,7 @@
-@import '../../../styles/_main';
+@import '../../../styles/_dataTable';
 
 .itemList {
   position: relative;
-
-  .dataTable {
-
-    .dataTableHead .dataTableCell {
-      font-size: .9em;
-      font-weight: bold;
-      border-bottom: .1em solid lightgray;
-    }
-    .item {
-      border: .1em solid transparent;
-    }
-    .item.selectable:hover {
-      cursor: pointer;
-    }
-
-    .item:not(.selectable):hover {
-      cursor: default;
-      pointer-events: none;
-    }
-
-    .dataTableCell.right {
-      text-align: right !important;
-    }
-    .dataTableCell.center {
-      text-align: center !important;
-    }
-  }
 }
 
 .name {

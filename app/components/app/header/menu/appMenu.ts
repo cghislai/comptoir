@@ -46,12 +46,12 @@ export class AppMenu {
 
     openMenu() {
         this.menuVisible = true;
-        document.body.addEventListener('click', this.closeMenuListener);
+        document.addEventListener('click', this.closeMenuListener);
     }
 
     closeMenu() {
         this.menuVisible = false;
-        document.body.removeEventListener('click', this.closeMenuListener);
+        document.removeEventListener('click', this.closeMenuListener);
     }
 
     isActive(path: string) {

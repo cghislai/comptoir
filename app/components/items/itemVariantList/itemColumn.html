@@ -1,52 +1,51 @@
-
 <span class="ref"
     *ng-if="column.name == 'ref' ">
-    {{ picItem.item.reference }}
+    {{ itemVariant.variantReference }}
 </span>
 <span class="name"
     *ng-if="column.name == 'name'">
-    <span *ng-if="picItem.item.name != undefined">
-        {{ picItem.item.name[lang] }}
+    <span *ng-if="itemVariant.name != undefined">
+        {{ itemVariant.name[lang] }}
     </span>
 </span>
 <span class="model"
     *ng-if="column.name == 'model'">
-    {{ picItem.item.model }}
+    {{ itemVariant.model }}
 </span>
 <span class="desc"
     *ng-if="column.name == 'desc'">
-    <span *ng-if="picItem.item.description != undefined">
-    {{ picItem.item.description[lang] }}
+    <span *ng-if="itemVariant.description != undefined">
+    {{ itemVariant.description[lang] }}
         </span>
 </span>
 <span class="name_model"
     *ng-if="column.name == 'name_model'">
-    <div class="name" *ng-if="picItem.item.name != undefined">
-        {{ picItem.item.name[lang] }}
+    <div class="name" *ng-if="itemVariant.name != undefined">
+        {{ itemVariant.name[lang] }}
     </div>
     <div class="model">
-        {{ picItem.item.model }}
+        {{ itemVariant.model }}
     </div>
 </span>
-<div class="picture"
+<span class="picture"
     *ng-if="column.name == 'picture' ">
-    <img [src]="picItem.dataURI" *ng-if="picItem.dataURI != undefined">
-    <div class="imagePlaceover" *ng-if="picItem.dataURI == undefined">
+    <img [src]="itemVariant.picture.dataURI" *ng-if="itemVariant.mainPicture?.dataURI != undefined">
+    <div class="imagePlaceover" *ng-if="itemVariant.mainPicture?.dataURI == undefined">
         <i class="fi-book"></i>
     </div>
-</div>
+</span>
 <span class="tva_excl price"
         *ng-if="column.name == 'tva_excl'">
-    {{ picItem.item.vatExclusive | currency:'EUR':true:'.2-2' }}
+    {{ itemVariant.vatExclusive | currency:'EUR':true:'.2-2' }}
 </span>
 <span class="tva_rate price"
     *ng-if="column.name == 'tva_rate'">
-    {{ ( picItem.item.vatRate * 100 )| number:'.0-2' }}
+    {{ ( itemVariant.vatRate * 100 )| number:'.0-2' }}
 </span>
 <span class="action remove"
       *ng-if="column.name == 'action_remove' " >
     <a class="actionIcon "
-       (^click)="onColumnAction(picItem, column, $event)">
+       (^click)="onColumnAction(itemVariant, column, $event)">
     <i class="fi-minus red"></i>
     </a>
 </span>

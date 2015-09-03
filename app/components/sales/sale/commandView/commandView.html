@@ -1,34 +1,34 @@
-<div class="commandView" *ng-if="aSale != null">
+<div class="commandView" *ng-if="sale != null">
 
-    <header class="coloredHeader" [class.inactive]="noInput">
-        <h1 [class.dirty]="aSale.dirty">
-            <span>Vente</span>
-            <span class="saleRef" [hidden]="aSale.saleId == null">
-                #{{ aSale.saleId }}
+    <header class="coloredHeader"
+            [class.inactive]="noInput">
+        <h1 <span>Vente</span>
+            <span class="saleRef" [hidden]="sale.id == null">
+                #{{ sale.id}}
             </span>
         </h1>
         <span class="busy">
             <span class="valignAnchor"></span>
             <img src="res/img/spinner-2-white.gif"
-                 [hidden]="!aSale.dirty"/>
+                 [hidden]="!sale.dirty"/>
         </span>
 
-        <div class="actions" *ng-if="aSale.sale != null"
-             [hidden]="noInput || aSale.items.length <= 0">
+        <div class="actions"
+             [hidden]="noInput || sale.items.length <= 0">
             <div class="action reduction"
                  [hidden]="validated"
                  (^click)="doEditSaleDiscount()"
                  [class.editing]="editingSaleDiscount"
-                 [class.has-reduction]="aSale.discountPercentage > 0">
-                <span [hidden]="editingSaleDiscount || aSale.discountPercentage > 0">
+                 [class.has-reduction]="sale.discountRatio > 0">
+                <span [hidden]="editingSaleDiscount || sale.discountRatio != null">
                     Réduction
                 </span>
-                <span [hidden]="editingSaleDiscount || aSale.discountPercentage == null || aSale.discountPercentage <= 0">
-                    -{{ aSale.discountPercentage | number:'.0' }} %
+                <span [hidden]="editingSaleDiscount || sale.discountRatio == null">
+                    -{{ (sale.discountRatio * 100) | number:'.0' }} %
                 </span>
                 <span *ng-if="editingSaleDiscount" class="editDiscount">
                     <input #discount
-                           [value]="aSale.discountPercentage"
+                           [value]="(sale.discountRatio * 100)"
                            [validator]="validateDiscount"
                            (fast-change)="onSaleDiscountChange($event)"
                            type="number" min="0" max="100" step="1"
@@ -45,7 +45,7 @@
         </div>
     </header>
 
-    <table class="dataTable" [hidden]="aSale.items ==  null">
+    <table class="dataTable" [hidden]="sale.items ==  null">
         <thead>
         <tr>
             <th>Ref</th>
@@ -57,7 +57,7 @@
         </thead>
 
         <tbody>
-        <tr *ng-for="#saleItem of aSale.items"
+        <tr *ng-for="#saleItem of sale.items"
             #row
             class="saleItem" [class.dirty]="saleItem.dirty">
 
@@ -177,29 +177,29 @@
         </tr>
 
         </tbody>
-        <tfoot *ng-if="aSale.sale != null" [hidden]="aSale.items.length <= 0">
-        <tr [hidden]="aSale.discountPercentage == null || aSale.discountPercentage <= 0"
+        <tfoot [hidden]="sale.items.length <= 0">
+        <tr [hidden]="sale.discountRatio == null"
             class="details">
             <th colspan="3" class="saleFooter reduction">
-                Réduction {{ (aSale.discountPercentage) | number:'.0' }}%
+                Réduction {{ (sale.discountRatio * 100) | number:'.0' }}%
             </th>
             <th class="saleFooter reduction number">
-                -{{ aSale.discountAmount | currency:'EUR':true:'.2-2'}}
+                -{{ sale.discountAmount | currency:'EUR':true:'.2-2'}}
             </th>
         </tr>
         <tr class="details">
             <th colspan="3" class="saleFooter">Total HTVA</th>
-            <th class="saleFooter number">{{ aSale.vatExclusive | currency:'EUR':true:'.2-2'}}</th>
+            <th class="saleFooter number">{{ sale.vatExclusive | currency:'EUR':true:'.2-2'}}</th>
         </tr>
         <tr class="details">
             <th colspan="3" class="saleFooter">TVA</th>
-            <th class="number saleFooter">{{ aSale.vatAmount | currency:'EUR':true:'.2-2'}}</th>
+            <th class="number saleFooter">{{ sale.vatAmount | currency:'EUR':true:'.2-2'}}</th>
         </tr>
 
         <tr>
             <th colspan="3" class="total saleFooter">Total</th>
             <th class="total price number saleFooter">
-                {{ aSale.total | currency:'EUR':true:'.2-2' }}
+                {{ sale.total | currency:'EUR':true:'.2-2' }}
             </th>
         </tr>
         </tfoot>

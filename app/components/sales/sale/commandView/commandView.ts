@@ -24,7 +24,7 @@ import {FastInput} from 'directives/fastInput';
 @Component({
     selector: 'commandView',
     events: ['validate', 'saleInvalidated'],
-    properties: ['aSale: sale', 'validated', 'noInput']
+    properties: ['sale', 'validated', 'noInput']
 })
 
 @View({

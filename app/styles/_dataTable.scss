@@ -1,0 +1,86 @@
+/**
+ * Created by cghislai on 03/09/15.
+ */
+@import './_constants';
+
+table.dataTable {
+  width: 100%;
+  font-size: 1em;
+  border-collapse: collapse;
+  position: relative;
+
+  th {
+    padding-bottom: .3em;
+  }
+  td, th {
+    padding-left: .3em;
+    padding-right: .3em;
+
+    &.right {
+      text-align: right;
+    }
+    &.center {
+      text-align: center;
+    }
+  }
+
+  thead {
+    tr {
+      border-bottom: .1em solid lightgray;
+      margin-bottom: 1em;
+    }
+  }
+
+  tbody {
+    tr {
+      &:hover {
+        background-color: $tableRowHoverColor;
+        &.selectable {
+          cursor: pointer;
+        }
+
+        a.actionIcon {
+          -webkit-filter: none !important;
+          color: black;
+          .red {
+            color: red;
+          }
+          .green {
+            color: darkgreen;
+          }
+        }
+      }
+
+      a.actionIcon {
+        &:not([hidden]) {
+          display: inline-block;
+        }
+        font-size: 1em;
+        vertical-align: middle;
+
+        &:not(.noBlur) {
+          color: rgb(220, 220, 220);
+          -webkit-filter: blur(.1em);
+        }
+        &.noBlur {
+          .red {
+            color: red;
+          }
+          .green {
+            color: darkgreen;
+          }
+        }
+        &:hover {
+          cursor: pointer;
+          color: lighten(black, 50%);
+          .red {
+            color: lighten(red, 30%);
+          }
+          .green {
+            color: lighten(darkgreen, 30%);
+          }
+        }
+      }
+    }
+  }
+}

@@ -13,8 +13,9 @@ import {LocalPicture, LocalPictureFactory} from 'client/localDomain/picture';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 import {Pagination} from 'client/utils/pagination';
 import {SearchResult} from 'client/utils/search';
+
 import {ItemClient} from 'client/item';
-import {ItemPictureClient} from 'client/itemPicture'
+import {PictureClient} from 'client/picture'
 import {ComptoirResponse} from 'client/utils/request';
 
 import {AuthService} from 'services/auth';
@@ -23,12 +24,12 @@ import {AuthService} from 'services/auth';
 export class ItemService {
     private authService:AuthService;
     private itemClient:ItemClient;
-    private pictureClient:ItemPictureClient;
+    private pictureClient:PictureClient;
 
     constructor(@Inject authService:AuthService) {
         this.authService = authService;
         this.itemClient = new ItemClient();
-        this.pictureClient = new ItemPictureClient();
+        this.pictureClient = new PictureClient();
     }
 
 
@@ -54,6 +55,10 @@ export class ItemService {
         return this.itemClient.searchItems(itemSearch, pagination, authToken);
     }
 
+    public deleteItem(id: number):Promise<any> {
+        var authToken = this.authService.authToken;
+        return this.itemClient.deleteItem(id, authToken);
+    }
 
     // Local items
 
@@ -88,6 +93,35 @@ export class ItemService {
             });
     }
 
+    public searchLocalItemsAsync(itemSearch:ItemSearch, pagination:Pagination):Promise<SearchResult<LocalItem>> {
+        itemSearch.companyRef = this.authService.loggedEmployee.companyRef;
+        var authToken = this.authService.authToken;
+        return this.searchItems(itemSearch, pagination)
+            .then((result)=> {
+                var localResult = new SearchResult<LocalItem>();
+                localResult.count = result.count;
+                localResult.list = [];
+                var taskList = [];
+                for (var item of result.list) {
+                    var localItem = LocalItemFactory.toLocalItem(item);
+                    localResult.list.push(localItem);
+
+                    var picRef = item.mainPictureRef;
+                    if (picRef != null) {
+                        taskList.push(this.fetchLocalItemPictureAsync(localItem, picRef.id));
+                    }
+                }
+                return Promise.all(taskList)
+                    .then(()=> {
+                        return localResult;
+                    });
+            });
+    }
+
+    public removeLocalItemAsync(localItem: LocalItem) : Promise<any> {
+        return this.deleteItem(localItem.id);
+    }
+
     private saveLocalItemPictureAsync(localItem:LocalItem):Promise<LocalItem> {
         var localPicture = localItem.mainPicture;
         if (localPicture == null) {
@@ -99,10 +133,10 @@ export class ItemService {
         var authToken = this.authService.authToken;
         var pictureExists = localPicture.id != null;
         if (pictureExists) {
-            var itemPicture = LocalPictureFactory.fromLocalPicture(localPicture);
-            localItem.mainPictureRequest = this.pictureClient.getUpdateItemPictureRequest(itemPicture, authToken);
+            var picture = LocalPictureFactory.fromLocalPicture(localPicture);
+            localItem.mainPictureRequest = this.pictureClient.getUpdatePictureRequest(picture, authToken);
         } else {
-            localItem.mainPictureRequest = this.pictureClient.getCreateItemPictureRequest(itemPicture, authToken);
+            localItem.mainPictureRequest = this.pictureClient.getCreatePictureRequest(picture, authToken);
         }
         return localItem.mainPictureRequest.run()
             .then((response)=> {
@@ -118,16 +152,15 @@ export class ItemService {
             localItem.mainPictureRequest.discardRequest();
         }
 
-        var itemId = localItem.id;
         var authToken = this.authService.authToken;
-        var request = this.pictureClient.getGetItemPictureRequest(itemId, pictureId, authToken)
+        var request = this.pictureClient.getGetPictureRequest(pictureId, authToken)
         localItem.mainPictureRequest = request;
 
         return localItem.mainPictureRequest.run()
             .then((response:ComptoirResponse)=> {
-                var itemPicture:ItemPicture = JSON.parse(response.text, ItemFactory.fromJSONItemReviver);
-                var localItemPicture:LocalPicture = LocalPictureFactory.toLocalPicture(itemPicture);
-                localItem.mainPicture = localItemPicture;
+                var picture:ItemPicture = JSON.parse(response.text, ItemFactory.fromJSONItemReviver);
+                var localPicture:LocalPicture = LocalPictureFactory.toLocalPicture(picture);
+                localItem.mainPicture = localPicture;
                 localItem.mainPictureRequest = null;
                 return localItem;
             });

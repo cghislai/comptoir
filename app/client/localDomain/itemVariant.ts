@@ -76,7 +76,7 @@ export class LocalItemVariantFactory {
         if (localVariant.mainPicture != null) {
             itemVariant.mainPictureRef = new ItemPictureRef(localVariant.mainPicture.id);
         }
-        itemVariant.pricing = Pricing[localVariant.pricing];
+        itemVariant.pricing = localVariant.pricing;
         itemVariant.pricingAmount = localVariant.pricingAmount;
         itemVariant.variantReference = localVariant.variantReference;
         return itemVariant;
@@ -85,15 +85,16 @@ export class LocalItemVariantFactory {
     static updateLocalItemVariant(localItemVariant:LocalItemVariant, itemVariant:ItemVariant) {
         localItemVariant.id = itemVariant.id;
         localItemVariant.variantReference = itemVariant.variantReference;
-        localItemVariant.pricing = Pricing[itemVariant.pricing];
+        localItemVariant.pricing = itemVariant.pricing;
         localItemVariant.pricingAmount = itemVariant.pricingAmount;
         return localItemVariant;
     }
 
-    static toLocalAttributeValue(attributevalue: AttributeValue) {
+    static toLocalAttributeValue(attributevalue: AttributeValue): LocalAttributeValue {
         var localValue = new LocalAttributeValue();
         localValue.id = attributevalue.id;
         localValue.value = attributevalue.value;
+        return localValue;
     }
 
 }

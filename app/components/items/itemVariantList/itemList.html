@@ -1,0 +1,33 @@
+<div class="itemList listPage">
+
+    <table class="dataTable">
+        <thead [hidden]="!headersVisible">
+        <tr>
+            <th *ng-for="#col of columns"
+                [class.right]="col.alignRight"
+                [class.center]="col.alignCenter">
+                    <span *ng-if="col.title != undefined">
+                        {{ col.title[locale] }}
+                    </span>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ng-for="#item of items"
+            [class.selectable]="rowSelectable"
+            (^click)="onItemClick(item, $event)"
+            focusable>
+            <td *ng-for="#col of columns"
+                [class.right]="col.alignRight"
+                [class.center]="col.alignCenter">
+                <itemVariantColumn class="column"
+                        (action)="onColumnAction($event)"
+                        [item-variant]="item"
+                        [column]="col"
+                        [lang]="locale">
+                </itemVariantColumn>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

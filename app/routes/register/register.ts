@@ -5,7 +5,6 @@ import {Component, View, FormBuilder, FORM_DIRECTIVES, ControlGroup, Control, Ng
 import {Router, RouterLink} from 'angular2/router';
 
 import {AppHeader} from 'components/app/header/appHeader';
-import {AppContent} from 'components/app/content/appContent';
 import {FormMessage} from 'components/utils/formMessage/formMessage';
 import {LangSelect, LocalizedDirective} from 'components/utils/langSelect/langSelect';
 import {requiredValidator, passwordValidator} from 'components/utils/validators';
@@ -26,7 +25,7 @@ import {ErrorService} from 'services/error';
 @View({
     templateUrl: './routes/register/register.html',
     styleUrls: ['./routes/register/register.css'],
-    directives: [FORM_DIRECTIVES, NgFor,  RouterLink, AppHeader, AppContent, FormMessage, LangSelect, LocalizedDirective]
+    directives: [FORM_DIRECTIVES, NgFor,  RouterLink, AppHeader, FormMessage, LangSelect, LocalizedDirective]
 })
 export class RegisterView {
     authService:AuthService;
