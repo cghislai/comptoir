@@ -24,6 +24,7 @@ import {FormMessage} from 'components/utils/formMessage/formMessage';
 import {percentageValidator} from 'components/utils/validators';
 import {ItemVariantList, ItemVariantColumn} from 'components/itemVariant/list/itemVariantList';
 
+import {ItemVariantEditView} from 'routes/items/edit/editVariant/editVariantView';
 
 @Component({
     selector: 'editItem',
@@ -36,7 +37,7 @@ import {ItemVariantList, ItemVariantColumn} from 'components/itemVariant/list/it
         RouterLink, LangSelect, LocalizedDirective, FormMessage,
         ItemVariantList]
 })
-export class ItemsEdiView {
+export class ItemEditView {
     itemService:ItemService;
     itemVariantService:ItemVariantService;
     errorService:ErrorService;
@@ -49,12 +50,11 @@ export class ItemsEdiView {
     itemForm:ControlGroup;
     appLocale:string;
     editLanguage:Language;
-    allLanguages:Language[];
 
     formBuilder:FormBuilder;
 
     itemVariantList:LocalItemVariant[];
-    itemVariantListColumns: ItemVariantColumn[]
+    itemVariantListColumns:ItemVariantColumn[];
 
     constructor(itemService:ItemService, errorService:ErrorService,
                 authService:AuthService, itemVariantService:ItemVariantService,
@@ -102,7 +102,7 @@ export class ItemsEdiView {
             this.getNewItem();
             return;
         }
-        var idParam = routeParams.get('id');
+        var idParam = routeParams.get('itemId');
         var idNumber = parseInt(idParam);
         if (isNaN(idNumber)) {
             if (idParam == 'new') {
@@ -120,6 +120,7 @@ export class ItemsEdiView {
         this.item.description = new LocaleTexts();
         this.item.name = new LocaleTexts();
         this.buildForm();
+        this.findItemVariants();
     }
 
     getItem(id:number) {
@@ -127,12 +128,13 @@ export class ItemsEdiView {
             .then((item:LocalItem)=> {
                 this.item = item;
                 this.buildForm();
+                this.findItemVariants();
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }
 
-    getItemVariants() {
+    findItemVariants() {
         var itemId = this.item.id;
         if (itemId == null) {
             this.itemVariantList = [];
@@ -152,6 +154,15 @@ export class ItemsEdiView {
 
 
     public doSaveItem() {
+        this.saveItem()
+            .then(()=> {
+                this.router.navigate('/items/list');
+            }).catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });;
+    }
+
+    private saveItem():Promise<LocalItem> {
         var item = this.item;
         item.description = this.itemDescriptions;
         item.name = this.itemNames;
@@ -161,12 +172,7 @@ export class ItemsEdiView {
         var vatPecentage = parseInt(this.itemForm.value.vatPercentage);
         item.vatRate = NumberUtils.toFixedDecimals(vatPecentage / 100, 2);
 
-        this.itemService.saveLocalItemAsync(item)
-            .then(() => {
-                this.router.navigate('/items/list');
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
+        return this.itemService.saveLocalItemAsync(item);
     }
 
 
@@ -193,16 +199,24 @@ export class ItemsEdiView {
             });
     }
 
-    onCurrentPriceChanged(event) {
-        var price = event.target.value;
-        var priceFloat = parseFloat(price);
-        this.item.vatExclusive = NumberUtils.toFixedDecimals(priceFloat, 2);
+    doAddNewVariant() {
+        this.saveItem().then((item)=>{
+            this.router.navigate('/items/edit/'+item.id+'/variant/new');
+        }).catch((error)=> {
+            this.errorService.handleRequestError(error);
+        });
     }
 
-    onVatChanged(event) {
-        var vat = event.target.value;
-        var vatPercentage = parseInt(vat);
-        this.item.vatRate = NumberUtils.toFixedDecimals(vatPercentage / 100, 2);
+    onVariantRowSelected(localVariant: LocalItemVariant) {
+        var variantId = localVariant.id;
+        this.saveItem().then((item)=>{
+            this.router.navigate('/items/edit/'+item.id+'/variant/'+variantId);
+        }).catch((error)=> {
+            this.errorService.handleRequestError(error);
+        });
     }
 
+    onVariantColumnAction(event) {
+        console.log(event);
+    }
 }

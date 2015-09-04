@@ -27,7 +27,7 @@ export class Account {
     bic: string;
     name: string;
     description: LocaleTexts;
-    accountType: AccountType;
+    accountType: string;
 }
 
 export class AccountRef {

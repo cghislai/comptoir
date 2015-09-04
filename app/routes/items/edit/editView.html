@@ -2,42 +2,42 @@
     <h1 class="pageTitle">Édition du produit</h1>
 
     <div class="column left">
-    <form #f="form"
-          (ng-submit)="doSaveItem()"
-          [ng-form-model]="itemForm"
-          *ng-if="item != null"
-          enctype="multipart/form-data">
+        <form #f="form"
+              (ng-submit)="doSaveItem()"
+              [ng-form-model]="itemForm"
+              *ng-if="item != null"
+              enctype="multipart/form-data">
 
-        <div class="table">
-            <div>
-                <label for="picture">Image</label>
-
+            <div class="table">
                 <div>
-                    <img [src]="item.mainPicture.dataURI"
-                         class="itemPicturePreview"
-                         *ng-if="item.mainPicture?.dataURI != null">
-                    <input type="file" id="picture" accept="image/*"
-                           (change)="onPictureFileSelected($event)">
+                    <label for="picture">Image</label>
+
+                    <div>
+                        <img [src]="item.mainPicture.dataURI"
+                             class="itemPicturePreview"
+                             *ng-if="item.mainPicture?.dataURI != null">
+                        <input type="file" id="picture" accept="image/*"
+                               (change)="onPictureFileSelected($event)">
+                    </div>
                 </div>
-            </div>
-            <div>
-                <label>Langue</label>
-                <langSelect [display-locale]="appLocale"
-                            [selected-language]="editLanguage"
-                            (language-changed)="editLanguage = $event"></langSelect>
-            </div>
-            <div>
-                <label for="reference">Référence</label>
+                <div>
+                    <label>Langue</label>
+                    <langSelect [display-locale]="appLocale"
+                                [selected-language]="editLanguage"
+                                (language-changed)="editLanguage = $event"></langSelect>
+                </div>
+                <div>
+                    <label for="reference">Référence</label>
                 <span>
                     <input type="text" id="reference" required
-                           ng-control="reference" [ng-model]="item.reference"
+                           ng-control="reference"
                            #reference="form">
                     <formMessage [for]="reference.control"
                                  check-error="required" message="Entrez une référence"></formMessage>
                 </span>
-            </div>
-            <div>
-                <label for="name">Nom</label>
+                </div>
+                <div>
+                    <label for="name">Nom</label>
                 <span>
                     <input type="text" id="name" required
                            localized [language]="editLanguage"
@@ -47,9 +47,9 @@
                     <formMessage [for]="name.control"
                                  check-error="required" message="Entrez un nom"></formMessage>
                 </span>
-            </div>
-            <div>
-                <label for="description">Description</label>
+                </div>
+                <div>
+                    <label for="description">Description</label>
                 <span>
                     <textarea type="text" id="description" rows="3"
                               localized [language]="editLanguage"
@@ -59,51 +59,55 @@
                     <formMessage [for]="description.control"
                                  check-error="required" message="Entrez une description"></formMessage>
                 </span>
-            </div>
-            <div>
-                <label for="price">Prix</label>
+                </div>
+                <div>
+                    <label for="price">Prix</label>
                 <span>
                     <input class="number" type="number" required
                            min="0" step="0.01" id="price" size="5"
                            ng-control="vatExclusive"
-                            #vat-exclusive="form">
+                           #vat-exclusive="form">
                     €
                     <formMessage [for]="vatExclusive.control"
                                  check-error="required" message="Entrez un prix"></formMessage>
                 </span>
-            </div>
-            <div>
-                <label for="vat">TVA</label>
-
+                </div>
                 <div>
-                    <input class="number" type="number" required
-                           min="0" max="100" step="1" id="vat" size="5"
-                           ng-control="vatPercentage"
-                            #vat-percentage-control="form">
-                    %
-                    <formMessage [for]="vatPercentageControl.control"
-                                 check-error="required" message="Entrez un taux de TVA"></formMessage>
-                    <formMessage [for]="vatPercentageControl.control"
-                                 check-error="percentageOutOfRange"
-                                 message="Le taux de TVA doit être compris entre 0 et 100"></formMessage>
+                    <label for="vat">TVA</label>
+
+                    <div>
+                        <input class="number" type="number" required
+                               min="0" max="100" step="1" id="vat" size="5"
+                               ng-control="vatPercentage"
+                               #vat-percentage-control="form">
+                        %
+                        <formMessage [for]="vatPercentageControl.control"
+                                     check-error="required" message="Entrez un taux de TVA"></formMessage>
+                        <formMessage [for]="vatPercentageControl.control"
+                                     check-error="percentageOutOfRange"
+                                     message="Le taux de TVA doit être compris entre 0 et 100"></formMessage>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="actions">
-            <button type="submit" [disabled]="!f.form.valid">Enregistrer</button>
-        </div>
-    </form>
+            <div class="actions">
+                <button type="submit" [disabled]="!f.form.valid">Enregistrer</button>
+            </div>
+        </form>
     </div>
 
     <div class="column right">
-        <h2>Variantes</h2>
+        <h3>Variantes</h3>
 
         <itemVariantList [items]="itemVariantList"
                          [columns]="itemVariantListColumns"
                          [row-selectable]="true"
-                         [headers-visible]="true">
-
+                         [headers-visible]="true"
+                         (row-clicked)="onVariantRowSelected($event)"
+                         (column-action)="onVariantColumnAction($event)">
         </itemVariantList>
+
+        <a (^click)="doAddNewVariant()"
+           class="newVariantLink blueLink">Ajouter une variante</a>
     </div>
 </div>

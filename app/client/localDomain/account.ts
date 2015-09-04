@@ -53,8 +53,8 @@ export class LocalAccountFactory {
 
     static updateLocalAccount(localAccount: LocalAccount, account: Account) {
         localAccount.accountingNumber = account.accountingNumber;
-        localAccount.accountType = account.accountType;
-        localAccount.accountTypeLabel = LocalAccountFactory.getAccountTypeLabel(account.accountType);
+        localAccount.accountType = AccountType[account.accountType];
+        localAccount.accountTypeLabel = LocalAccountFactory.getAccountTypeLabel(localAccount.accountType);
         localAccount.bic = account.bic;
         localAccount.companyRef = account.companyRef;
         localAccount.description = account.description;
@@ -66,7 +66,7 @@ export class LocalAccountFactory {
     static fromLocalAccount(localAccount: LocalAccount) {
         var account = new Account();
         account.accountingNumber = localAccount.accountingNumber;
-        account.accountType = localAccount.accountType;
+        account.accountType = AccountType[localAccount.accountType];
         account.bic = localAccount.bic;
         account.companyRef = localAccount.companyRef;
         account.description = localAccount.description;

@@ -106,7 +106,7 @@ export class AccountsEditView {
     doSaveEdit() {
         var localAccount = this.accountModel.account;
         var account = LocalAccountFactory.fromLocalAccount(localAccount);
-        account.accountType = this.accountModel.accountType;
+        account.accountType = AccountType[this.accountModel.accountType];
         account.accountingNumber = this.accountModel.accountingNumber;
         account.bic = this.accountModel.bic;
         account.companyRef = this.authService.loggedEmployee.companyRef;

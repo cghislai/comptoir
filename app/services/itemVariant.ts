@@ -4,9 +4,8 @@
 
 import {Inject} from 'angular2/angular2';
 
-import {ItemVariant, ItemVariantRef,
-    ItemVariantSearch, ItemVariantFactory,
-    AttributeDefinition} from 'client/domain/itemVariant';
+import {AttributeDefinition, AttributeDefinitionFactory} from 'client/domain/attributeDefinition';
+import {ItemVariant, ItemVariantRef, ItemVariantSearch, ItemVariantFactory} from 'client/domain/itemVariant';
 import {Item, ItemRef, ItemFactory} from 'client/domain/item';
 import {Picture, PictureRef, PictureFactory} from 'client/domain/picture';
 
@@ -22,6 +21,8 @@ import {ComptoirResponse} from'client/utils/request';
 import {ItemClient} from 'client/item';
 import {ItemVariantClient} from 'client/itemVariant';
 import {PictureClient} from 'client/picture'
+import {AttributeDefinitionClient} from 'client/attributeDefinition';
+import {AttributeValueClient} from 'client/attributeValue';
 
 import {AuthService} from 'services/auth';
 
@@ -31,12 +32,16 @@ export class ItemVariantService {
     private itemClient:ItemClient;
     private itemVariantClient:ItemVariantClient;
     private pictureClient:PictureClient;
+    private attributeDefinitiobClient:AttributeDefinitionClient;
+    private attributeValueClient:AttributeValueClient;
 
     constructor(@Inject authService:AuthService) {
         this.authService = authService;
         this.itemClient = new ItemClient();
         this.itemVariantClient = new ItemVariantClient();
         this.pictureClient = new PictureClient();
+        this.attributeDefinitiobClient = new AttributeDefinitionClient();
+        this.attributeValueClient = new AttributeValueClient();
     }
 
 
@@ -78,19 +83,20 @@ export class ItemVariantService {
         var tasks = [];
         if (itemVariant.mainPictureRef != null) {
             var pictureId = itemVariant.mainPictureRef.id;
-         //   tasks.push(this.fetchLocalItemVariantPictureAsync(localItemVariant, pictureId));
+            tasks.push(this.fetchLocalItemVariantPictureAsync(localItemVariant, pictureId));
         }
         if (itemVariant.itemRef != null) {
             var itemId = itemVariant.itemRef.id;
             tasks.push(this.fetchLocalItemVariantItemAsync(localItemVariant, itemId));
         }
-        if (itemVariant.attributeValues != null) {
+        if (itemVariant.attributeValueRefs != null) {
             var attributesTasks = [];
-            var localAttributeValues = [];
-            for (var attributeValue of itemVariant.attributeValues) {
-                var localAttribute = LocalItemVariantFactory.toLocalAttributeValue(attributeValue);
-                localAttributeValues.push(localAttribute);
-                attributesTasks.push(this.fetchLocalAttributeDefinitionAsync(localAttribute, attributeValue.attributeDefinitionRef.id));
+            localItemVariant.attributeValues = [];
+            for (var attributeValueRef of itemVariant.attributeValueRefs) {
+                attributesTasks.push(this.fetchLocalAttributeValueAsync(attributeValueRef.id)
+                    .then((localValue)=> {
+                        localItemVariant.attributeValues.push(localValue);
+                    }));
             }
             var attributesTask = Promise.all(attributesTasks);
             tasks.push(attributesTask);
@@ -101,13 +107,56 @@ export class ItemVariantService {
             });
     }
 
-    private fetchLocalAttributeDefinitionAsync(localAttributeValue:LocalAttributeValue, attributeDefinitionId:number):Promise<LocalAttributeValue> {
-        if (localAttributeValue.attributeDefinitionRequest != null) {
-            localAttributeValue.attributeDefinitionRequest.discardRequest();
+
+    private fetchLocalAttributeValueAsync(attributeDefinitionId:number):Promise<LocalAttributeValue> {
+        var authToken = this.authService.authToken;
+        return this.attributeValueClient.getAttributeValue(attributeDefinitionId, authToken)
+            .then((attributeValue)=> {
+                var localValue = LocalItemVariantFactory.toLocalAttributeValue(attributeValue);
+
+                localValue.attributeDefinitionRequest = this.attributeDefinitiobClient.getGetAttributeDefinitionRequest(attributeValue.attributeDefinitionRef.id, authToken);
+                return localValue.attributeDefinitionRequest.run()
+                    .then((response: ComptoirResponse)=> {
+                        var attributeDefinition = JSON.parse(response.text, AttributeDefinitionFactory.fromJSONAttributeDefinitionReviver);
+                        localValue.attributeDefinition = attributeDefinition;
+                        localValue.attributeDefinitionRequest = null;
+                        return localValue;
+                    });
+            });
+    }
+
+    public saveLocalItemVariantAttribute(localAttribute:LocalAttributeValue) : Promise<LocalAttributeValue> {
+        var attributeDefinition = localAttribute.attributeDefinition;
+        var definitionId = attributeDefinition.id;
+
+        var authToken = this.authService.authToken;
+        var createDefinitionTask = Promise.resolve(attributeDefinition);
+        if (definitionId == null) {
+            attributeDefinition.companyRef = this.authService.loggedEmployee.companyRef;
+            createDefinitionTask = this.attributeDefinitiobClient.createAttributeDefinition(attributeDefinition, authToken)
+                .then((definitionRef)=> {
+                    attributeDefinition.id = definitionRef.id;
+                    definitionId = definitionRef.id;
+                    return attributeDefinition;
+                });
         }
 
-        // TODO
-        return Promise.resolve(localAttributeValue);
+        return createDefinitionTask.then(()=> {
+            var valueId = localAttribute.id;
+            var attributeValue = LocalItemVariantFactory.fromLocalAttributeValue(localAttribute);
+            if (valueId == null) {
+                return this.attributeValueClient.createAttributeValue(attributeValue, authToken)
+                    .then((attributeRef)=> {
+                        localAttribute.id = attributeRef.id;
+                        return localAttribute;
+                    });
+            } else {
+                return this.attributeValueClient.updateAttributeValue(attributeValue, authToken)
+                    .then((attributeRef)=> {
+                        return localAttribute;
+                    });
+            }
+        });
     }
 
     public saveLocalItemVariantAsync(localItemVariant:LocalItemVariant):Promise<LocalItemVariant> {

@@ -8,10 +8,10 @@ import {Router, RouteConfig,RouterOutlet,RouterLink, Location} from 'angular2/ro
 import {AppHeader} from 'components/app/header/appHeader';
 import {AppTab} from 'components/app/header/tab/appTab';
 
-
+import {EditItemRedirect} from 'routes/items/edit/editRedirect';
 import {ItemsListView} from 'routes/items/list/listView';
-import {ItemsEdiView} from 'routes/items/edit/editView';
 import {ItemsImportView} from 'routes/items/import/importView';
+
 @Component({
     selector: 'itemsView'
 })
@@ -21,7 +21,7 @@ import {ItemsImportView} from 'routes/items/import/importView';
 })
 @RouteConfig([
     {path: '/', redirectTo: '/items/list'},
-    {path: '/edit/:id', component: ItemsEdiView, as: 'edit'},
+    {path: '/edit/...', component: EditItemRedirect, as: 'edit'},
     {path: '/list', component: ItemsListView, as: 'list'},
     {path: '/import', component: ItemsImportView, as: 'import'}
 ])

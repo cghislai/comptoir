@@ -2,8 +2,9 @@
  * Created by cghislai on 01/09/15.
  */
 
-import {ItemVariant, Pricing,
-    AttributeDefinition, AttributeDefinitionRef, AttributeValue} from 'client/domain/itemVariant';
+import {AttributeDefinition, AttributeDefinitionRef} from 'client/domain/attributeDefinition';
+import {AttributeValue, AttributeValueRef} from 'client/domain/attributeValue';
+import {ItemVariant, Pricing} from 'client/domain/itemVariant';
 import {Item, ItemRef} from 'client/domain/item';
 import {ItemPicture, ItemPictureRef} from 'client/domain/itemPicture';
 
@@ -46,7 +47,7 @@ export class LocalItemVariant {
                 var itemVatExclusive = this.item.vatExclusive;
                 return itemVatExclusive + this.pricingAmount;
             }
-            case Pricing.PARENT_VALUE:
+            case Pricing.PARENT_ITEM:
             {
                 if (this.item == null) {
                     return null;
@@ -65,7 +66,7 @@ export class LocalItemVariantFactory {
     static PRICING_ABSOLUTE_LABEL = {
         'fr': 'Prix de la variante'
     };
-    static PRICING_PARENT_VALUE_LABEL = {
+    static PRICING_PARENT_ITEM_LABEL = {
         'fr': 'Idem produit'
     };
 
@@ -75,8 +76,8 @@ export class LocalItemVariantFactory {
                 return LocalItemVariantFactory.PRICING_ABSOLUTE_LABEL;
             case Pricing.ADD_TO_BASE:
                 return LocalItemVariantFactory.PRICING_ADD_TO_BASE_LABEL;
-            case Pricing.PARENT_VALUE:
-                return LocalItemVariantFactory.PRICING_PARENT_VALUE_LABEL;
+            case Pricing.PARENT_ITEM:
+                return LocalItemVariantFactory.PRICING_PARENT_ITEM_LABEL;
         }
         return null;
     }
@@ -89,13 +90,13 @@ export class LocalItemVariantFactory {
 
     static fromLocalItemVariant(localVariant:LocalItemVariant) {
         var itemVariant:ItemVariant = new ItemVariant();
-        itemVariant.attributeValues = [];
+        itemVariant.attributeValueRefs = [];
         for (var localAttribute of localVariant.attributeValues) {
             var attributeValue:AttributeValue = new AttributeValue();
             attributeValue.attributeDefinitionRef = new AttributeDefinitionRef(localAttribute.id);
             attributeValue.id = localAttribute.id;
             attributeValue.value = localAttribute.value;
-            itemVariant.attributeValues.push(attributeValue);
+            itemVariant.attributeValueRefs.push(attributeValue);
         }
         itemVariant.id = localVariant.id;
         if (localVariant.item != null) {
@@ -104,7 +105,7 @@ export class LocalItemVariantFactory {
         if (localVariant.mainPicture != null) {
             itemVariant.mainPictureRef = new ItemPictureRef(localVariant.mainPicture.id);
         }
-        itemVariant.pricing = localVariant.pricing;
+        itemVariant.pricing = Pricing[localVariant.pricing];
         itemVariant.pricingAmount = localVariant.pricingAmount;
         itemVariant.variantReference = localVariant.variantReference;
         return itemVariant;
@@ -113,7 +114,7 @@ export class LocalItemVariantFactory {
     static updateLocalItemVariant(localItemVariant:LocalItemVariant, itemVariant:ItemVariant) {
         localItemVariant.id = itemVariant.id;
         localItemVariant.variantReference = itemVariant.variantReference;
-        localItemVariant.pricing = itemVariant.pricing;
+        localItemVariant.pricing = Pricing[itemVariant.pricing];
         localItemVariant.pricingAmount = itemVariant.pricingAmount;
         return localItemVariant;
     }
@@ -123,6 +124,17 @@ export class LocalItemVariantFactory {
         localValue.id = attributevalue.id;
         localValue.value = attributevalue.value;
         return localValue;
+    }
+
+
+    static fromLocalAttributeValue(localValue:LocalAttributeValue):AttributeValue {
+    var attrValue = new AttributeValue();
+        attrValue.id = localValue.id;
+        attrValue.value = localValue.value;
+        if (localValue.attributeDefinition != null) {
+            attrValue.attributeDefinitionRef = new AttributeDefinitionRef(localValue.attributeDefinition.id);
+        }
+        return attrValue;
     }
 
 }

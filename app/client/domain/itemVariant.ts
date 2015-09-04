@@ -2,6 +2,7 @@
  * Created by cghislai on 07/08/15.
  */
 
+import {AttributeDefinitionRef} from 'client/domain/attributeDefinition';
 import {ItemRef} from 'client/domain/item';
 import {CompanyRef} from 'client/domain/company';
 import {ItemPictureRef} from 'client/domain/itemPicture';
@@ -11,24 +12,7 @@ import {Pagination} from 'client/utils/pagination';
 export enum Pricing{
     ABSOLUTE,
     ADD_TO_BASE,
-    PARENT_VALUE
-}
-
-export class AttributeDefinition {
-    id:number;
-    companyRef = CompanyRef;
-    name:LocaleTexts;
-}
-
-export class AttributeDefinitionRef {
-    id:number;
-    link:string;
-
-    constructor(id?:number) {
-        if (id != null) {
-            this.id = id;
-        }
-    }
+    PARENT_ITEM
 }
 
 export class AttributeValue {
@@ -52,10 +36,10 @@ export class ItemVariant {
     itemRef: ItemRef;
     variantReference:string;
 
-    pricing:Pricing;
+    pricing:string;
     pricingAmount: number;
 
-    attributeValues:AttributeValue[];
+    attributeValueRefs:AttributeValue[];
 
     mainPictureRef:ItemPictureRef;
 }

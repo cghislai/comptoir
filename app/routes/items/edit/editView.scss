@@ -17,5 +17,10 @@ div.pageContent {
     &.right {
       min-width: 10em;
     }
+
+    .newVariantLink {
+      display: block;
+      margin-top: 1em;
+    }
   }
 }

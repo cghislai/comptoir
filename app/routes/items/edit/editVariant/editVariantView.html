@@ -1,0 +1,126 @@
+<div class="pageContent">
+    <h1 class="pageTitle">Édition de la variante</h1>
+
+    <form #f="form" class="left"
+          (ng-submit)="doSaveItemVariant()"
+          [ng-form-model]="itemVariantForm"
+          *ng-if="itemVariant != undefined && item != undefined"
+          enctype="multipart/form-data">
+
+        <div class="table">
+            <div>
+                <label for="picture">Image</label>
+
+                <div>
+                    <img [src]="itemVariant.mainPicture.dataURI"
+                         class="itemPicturePreview"
+                         *ng-if="itemVariant.mainPicture?.dataURI != null">
+                    <input type="file" id="picture" accept="image/*"
+                           (change)="onPictureFileSelected($event)">
+                </div>
+            </div>
+            <div>
+                <label for="reference">Référence</label>
+                <span>
+                    <input type="text" id="reference" required
+                           ng-control="variantReference"
+                           [placeholder]="item.reference"
+                           #reference="form">
+                    <formMessage [for]="reference.control"
+                                 check-error="required" message="Entrez une référence"></formMessage>
+                </span>
+            </div>
+            <div>
+                <label for="pricing">Type de tarification</label>
+                <span>
+                    <select id="pricing" required
+                            ng-control="pricing"
+                            (change)="onPricingChanged()"
+                            #pricing-control="form">
+                        <option *ng-for="#pricing of allPricings"
+                                [value]="pricing">
+                            {{ getPricingLabel(pricing)[appLocale] }}
+                        </option>
+                    </select>
+                    <formMessage [for]="pricingControl.control"
+                                 check-error="required" message="Entrez une tarification"></formMessage>
+                </span>
+            </div>
+            <div>
+                <label for="pricing">Tarif</label>
+                <span>
+                    <span [hidden]="!pricingAmountRequired">
+                        <input class="number" type="number" [attr.required]="pricingAmountRequired"
+                               min="0" step="0.01" id="pricingAmount" size="5"
+                               ng-control="pricingAmount"
+                               #pricing-amount="form">
+                        €
+                    </span>
+                    <div class="totalPreview">
+                        <span>
+                            Total: {{ getPricingTotalAmount() | currency:'EUR':true:'.2-2' }}
+                        </span>
+                    </div>
+                    <formMessage [for]="pricingAmount.control"
+                                 check-error="required" message="Entrez un tarif"></formMessage>
+                </span>
+            </div>
+        </div>
+        <div class="actions">
+            <button type="submit" [disabled]="!f.form.valid">Enregistrer</button>
+            <a [router-link]="['../edit', {itemId: item.id}]" class="blueLink">Retour</a>
+        </div>
+    </form>
+
+    <form #f="form" class="right"
+          (ng-submit)="doAddAttribute()"
+          [ng-form-model]="newAttributeForm"
+          *ng-if="itemVariant != undefined">
+        <h3>Attributs</h3>
+
+        <div class="attributeTable">
+            <div class="attribute"
+                 *ng-for="#attribute of itemVariant.attributeValues">
+                <span class="definition">
+                    {{ attribute.attributeDefinition?.name[editLanguage.locale] }}
+                </span>
+                <span class="value">
+                    {{ attribute.value[editLanguage.locale] }}
+                </span>
+                <span class="action remove"
+                      (^click)="doRemoveAttribute(attribute)">
+                    <i class="fi-minus"></i>
+                </span>
+            </div>
+        </div>
+        <div class="form">
+            <div class="language">
+                <langSelect [display-locale]="appLocale"
+                            [selected-language]="editLanguage"
+                            (language-changed)="editLanguage = $event"></langSelect>
+            </div>
+            <div class="attribute">
+                <input class="definition" required
+                       ng-control="definition"
+                       placeholder="Clef"
+                       localized [language]="editLanguage"
+                       [locale-texts]="newAttributeDefinitions"
+                       #definition="form">
+                <input class="value" required
+                       ng-control="value"
+                       placeholder="Valeur"
+                       localized [language]="editLanguage"
+                       [locale-texts]="newAttributeValues"
+                       #value="form">
+                <button type="submit" [disabled]="!f.form.valid"
+                        class="boxedLink">
+                    <i class="fi-plus"></i>
+                </button>
+            </div>
+            <formMessage [for]="definition.control"
+                         check-error="required" message="Entrez une clef"></formMessage>
+            <formMessage [for]="value.control"
+                         check-error="required" message="Entrez une valeur"></formMessage>
+        </div>
+    </form>
+</div>
