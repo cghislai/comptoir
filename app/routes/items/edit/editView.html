@@ -1,6 +1,7 @@
 <div class="pageContent">
     <h1 class="pageTitle">Édition du produit</h1>
 
+    <div class="column left">
     <form #f="form"
           (ng-submit)="doSaveItem()"
           [ng-form-model]="itemForm"
@@ -93,4 +94,16 @@
             <button type="submit" [disabled]="!f.form.valid">Enregistrer</button>
         </div>
     </form>
+    </div>
+
+    <div class="column right">
+        <h2>Variantes</h2>
+
+        <itemVariantList [items]="itemVariantList"
+                         [columns]="itemVariantListColumns"
+                         [row-selectable]="true"
+                         [headers-visible]="true">
+
+        </itemVariantList>
+    </div>
 </div>

@@ -132,6 +132,21 @@ export class ItemVariantService {
             });
     }
 
+    public searchLocalItemVariantsAsyncNoRefresh(itemVariantSearch:ItemVariantSearch, pagination:Pagination):Promise<SearchResult<LocalItemVariant>> {
+        return this.searchItemsVariant(itemVariantSearch, pagination)
+            .then((result)=> {
+                var localResult = new SearchResult<LocalItemVariant>();
+                localResult.count = result.count;
+                localResult.list = [];
+                for (var itemVariant of result.list) {
+                    var localItemVariant = LocalItemVariantFactory.toLocalItemVariant(itemVariant);
+                    localResult.list.push(localItemVariant);
+                }
+                return localResult;
+            });
+    }
+
+
     public searchLocalItemVariantsAsync(itemVariantSearch:ItemVariantSearch, pagination:Pagination):Promise<SearchResult<LocalItemVariant>> {
         return this.searchItemsVariant(itemVariantSearch, pagination)
             .then((result)=> {

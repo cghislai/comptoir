@@ -14,7 +14,7 @@ import {Pagination} from 'client/utils/pagination';
 import {ErrorService} from 'services/error';
 import {ItemVariantService} from 'services/itemVariant';
 
-import {ItemVariantList, ItemVariantColumn} from 'components/itemvariant/list/itemList';
+import {ItemVariantList, ItemVariantColumn} from 'components/itemVariant/list/itemVariantList';
 import {AutoFocusDirective} from 'directives/autoFocus';
 import {FocusableDirective} from 'directives/focusable';
 
@@ -54,10 +54,10 @@ export class ItemListView {
         this.pagination = new Pagination(0, 20);
 
         this.columns = [
-            ItemVariantColumn.REFERENCE,
+            ItemVariantColumn.VARIANT_REFERENCE,
             ItemVariantColumn.PICTURE,
-            ItemVariantColumn.NAME_MODEL,
-            ItemVariantColumn.TVA_EXCLUSIVE
+            ItemVariantColumn.ITEM_NAME_VARIANT_ATTRIBUTES,
+            ItemVariantColumn.TOTAL_PRICE
         ];
         this.searchItems();
     }

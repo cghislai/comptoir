@@ -7,19 +7,22 @@ import {RouteParams, Router, RouterLink} from 'angular2/router';
 
 import {LocalPicture, LocalPictureFactory} from 'client/localDomain/picture';
 import {LocalItem} from 'client/localDomain/item';
+import {LocalItemVariant} from 'client/localDomain/itemVariant';
 
-import {Item} from 'client/domain/item';
-import {ItemVariant} from 'client/domain/itemVariant';
+import {Item, ItemRef} from 'client/domain/item';
+import {ItemVariant, ItemVariantSearch} from 'client/domain/itemVariant';
 import {Language, LocaleTexts} from 'client/utils/lang';
 import {NumberUtils} from 'client/utils/number';
 
 import {ItemService} from 'services/item';
+import {ItemVariantService} from 'services/itemVariant';
 import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
 
 import {LangSelect, LocalizedDirective} from 'components/utils/langSelect/langSelect';
 import {FormMessage} from 'components/utils/formMessage/formMessage';
 import {percentageValidator} from 'components/utils/validators';
+import {ItemVariantList, ItemVariantColumn} from 'components/itemVariant/list/itemVariantList';
 
 
 @Component({
@@ -29,10 +32,13 @@ import {percentageValidator} from 'components/utils/validators';
 @View({
     templateUrl: './routes/items/edit/editView.html',
     styleUrls: ['./routes/items/edit/editView.css'],
-    directives: [NgFor, NgIf, FORM_DIRECTIVES, RouterLink, LangSelect, LocalizedDirective, FormMessage]
+    directives: [NgFor, NgIf, FORM_DIRECTIVES,
+        RouterLink, LangSelect, LocalizedDirective, FormMessage,
+        ItemVariantList]
 })
 export class ItemsEdiView {
     itemService:ItemService;
+    itemVariantService:ItemVariantService;
     errorService:ErrorService;
     authService:AuthService;
     router:Router;
@@ -47,17 +53,29 @@ export class ItemsEdiView {
 
     formBuilder:FormBuilder;
 
+    itemVariantList:LocalItemVariant[];
+    itemVariantListColumns: ItemVariantColumn[]
 
-    constructor(itemService:ItemService, errorService:ErrorService, authService:AuthService,
+    constructor(itemService:ItemService, errorService:ErrorService,
+                authService:AuthService, itemVariantService:ItemVariantService,
                 routeParams:RouteParams, router:Router, formBuilder:FormBuilder) {
         this.router = router;
         this.itemService = itemService;
+        this.itemVariantService = itemVariantService;
         this.errorService = errorService;
         this.authService = authService;
         this.formBuilder = formBuilder;
         this.appLocale = authService.getEmployeeLanguage().locale;
         this.editLanguage = authService.getEmployeeLanguage();
 
+        this.itemVariantList = [];
+        this.itemVariantListColumns = [
+            ItemVariantColumn.VARIANT_REFERENCE,
+            ItemVariantColumn.PICTURE,
+            ItemVariantColumn.ATTRIBUTES,
+            ItemVariantColumn.TOTAL_PRICE,
+            ItemVariantColumn.ACTION_REMOVE
+        ]
         this.findItem(routeParams);
     }
 
@@ -109,6 +127,24 @@ export class ItemsEdiView {
             .then((item:LocalItem)=> {
                 this.item = item;
                 this.buildForm();
+            }).catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });
+    }
+
+    getItemVariants() {
+        var itemId = this.item.id;
+        if (itemId == null) {
+            this.itemVariantList = [];
+            return;
+        }
+        var variantSearch = new ItemVariantSearch();
+        var itemRef = new ItemRef(itemId);
+        variantSearch.itemRef = itemRef;
+
+        this.itemVariantService.searchLocalItemVariantsAsync(variantSearch, null)
+            .then((result)=> {
+                this.itemVariantList = result.list;
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });

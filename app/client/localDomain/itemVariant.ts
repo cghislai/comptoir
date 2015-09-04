@@ -17,7 +17,7 @@ export class LocalAttributeValue {
     value:LocaleTexts;
 
     attributeDefinition:AttributeDefinition;
-    attributeDefinitionRequest: ComptoirRequest;
+    attributeDefinitionRequest:ComptoirRequest;
 }
 
 export class LocalItemVariant {
@@ -32,7 +32,7 @@ export class LocalItemVariant {
     item:LocalItem;
     itemRequest:ComptoirRequest;
 
-    calcPrice() {
+    calcPrice(): number {
         switch (this.pricing) {
             case Pricing.ABSOLUTE:
             {
@@ -46,12 +46,40 @@ export class LocalItemVariant {
                 var itemVatExclusive = this.item.vatExclusive;
                 return itemVatExclusive + this.pricingAmount;
             }
+            case Pricing.PARENT_VALUE:
+            {
+                if (this.item == null) {
+                    return null;
+                }
+                return this.item.vatExclusive;
+            }
         }
         return null;
     }
 }
 
 export class LocalItemVariantFactory {
+    static PRICING_ADD_TO_BASE_LABEL = {
+        'fr': 'À ajouter'
+    };
+    static PRICING_ABSOLUTE_LABEL = {
+        'fr': 'Prix de la variante'
+    };
+    static PRICING_PARENT_VALUE_LABEL = {
+        'fr': 'Idem produit'
+    };
+
+    static getPricingLabel(pricing:Pricing):LocaleTexts {
+        switch (pricing) {
+            case Pricing.ABSOLUTE:
+                return LocalItemVariantFactory.PRICING_ABSOLUTE_LABEL;
+            case Pricing.ADD_TO_BASE:
+                return LocalItemVariantFactory.PRICING_ADD_TO_BASE_LABEL;
+            case Pricing.PARENT_VALUE:
+                return LocalItemVariantFactory.PRICING_PARENT_VALUE_LABEL;
+        }
+        return null;
+    }
 
     static toLocalItemVariant(itemVariant:ItemVariant) {
         var localVariant = new LocalItemVariant();
@@ -90,7 +118,7 @@ export class LocalItemVariantFactory {
         return localItemVariant;
     }
 
-    static toLocalAttributeValue(attributevalue: AttributeValue): LocalAttributeValue {
+    static toLocalAttributeValue(attributevalue:AttributeValue):LocalAttributeValue {
         var localValue = new LocalAttributeValue();
         localValue.id = attributevalue.id;
         localValue.value = attributevalue.value;

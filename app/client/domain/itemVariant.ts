@@ -10,7 +10,8 @@ import {Pagination} from 'client/utils/pagination';
 
 export enum Pricing{
     ABSOLUTE,
-    ADD_TO_BASE
+    ADD_TO_BASE,
+    PARENT_VALUE
 }
 
 export class AttributeDefinition {
@@ -61,6 +62,7 @@ export class ItemVariant {
 
 export class ItemVariantSearch {
     companyRef:CompanyRef;
+    itemRef: ItemRef;
     multiSearch:string;
 }
 
