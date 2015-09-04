@@ -1,0 +1,43 @@
+<span class="id"
+      *ng-if="column.name == 'id' ">
+    {{ item.id }}
+</span>
+<span class="ref"
+    *ng-if="column.name == 'ref' ">
+    {{ item.reference }}
+</span>
+<span class="name"
+    *ng-if="column.name == 'name'">
+    <span *ng-if="item.name != undefined">
+        {{ item.name[lang] }}
+    </span>
+</span>
+<span class="desc"
+    *ng-if="column.name == 'desc'">
+    <span *ng-if="item.description != undefined">
+    {{ item.description[lang] }}
+        </span>
+</span>
+
+<span class="picture"
+    *ng-if="column.name == 'picture' ">
+    <img [src]="item.mainPicture.dataURI" *ng-if="item.mainPicture?.dataURI != undefined">
+    <div class="imagePlaceover" *ng-if="item.mainPicture?.dataURI == undefined">
+        <i class="fi-book"></i>
+    </div>
+</span>
+<span class="tva_excl price"
+        *ng-if="column.name == 'tva_excl'">
+    {{ item.vatExclusive | currency:'EUR':true:'.2-2' }}
+</span>
+<span class="tva_rate price"
+    *ng-if="column.name == 'tva_rate'">
+    {{ ( item.vatRate * 100 )| number:'.0-2' }}
+</span>
+<span class="action remove"
+      *ng-if="column.name == 'action_remove' " >
+    <a class="actionIcon "
+       (^click)="onColumnAction(item, column, $event)">
+    <i class="fi-minus red"></i>
+    </a>
+</span>

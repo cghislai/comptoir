@@ -5,7 +5,7 @@
 import {Inject} from 'angular2/angular2';
 
 import {Item, ItemRef, ItemSearch, ItemFactory} from 'client/domain/item';
-import {ItemPicture, ItemPictureRef} from 'client/domain/itemPicture';
+import {Picture, PictureRef} from 'client/domain/picture';
 
 import {LocalItem, LocalItemFactory} from 'client/localDomain/item';
 import {LocalPicture, LocalPictureFactory} from 'client/localDomain/picture';
@@ -68,7 +68,12 @@ export class ItemService {
         return this.getItem(id)
             .then((item:Item)=> {
                 LocalItemFactory.updateLocalItem(localItem, item);
-                return this.fetchLocalItemPictureAsync(localItem, item.mainPictureRef.id);
+                var pictureRef = item.mainPictureRef;
+                if (pictureRef != null) {
+                    return this.fetchLocalItemPictureAsync(localItem, pictureRef.id);
+                } else {
+                    return localItem;
+                }
             });
     }
 
@@ -132,15 +137,17 @@ export class ItemService {
         }
         var authToken = this.authService.authToken;
         var pictureExists = localPicture.id != null;
+        var picture = LocalPictureFactory.fromLocalPicture(localPicture);
         if (pictureExists) {
-            var picture = LocalPictureFactory.fromLocalPicture(localPicture);
             localItem.mainPictureRequest = this.pictureClient.getUpdatePictureRequest(picture, authToken);
         } else {
+            picture.companyRef = this.authService.loggedEmployee.companyRef;
+            localPicture.companyRef = picture.companyRef;
             localItem.mainPictureRequest = this.pictureClient.getCreatePictureRequest(picture, authToken);
         }
         return localItem.mainPictureRequest.run()
             .then((response)=> {
-                var picRef:ItemPictureRef = JSON.parse(response.text);
+                var picRef:PictureRef = JSON.parse(response.text);
                 localPicture.id = picRef.id;
                 return localItem;
             });
@@ -158,7 +165,7 @@ export class ItemService {
 
         return localItem.mainPictureRequest.run()
             .then((response:ComptoirResponse)=> {
-                var picture:ItemPicture = JSON.parse(response.text, ItemFactory.fromJSONItemReviver);
+                var picture:Picture = JSON.parse(response.text, ItemFactory.fromJSONItemReviver);
                 var localPicture:LocalPicture = LocalPictureFactory.toLocalPicture(picture);
                 localItem.mainPicture = localPicture;
                 localItem.mainPictureRequest = null;

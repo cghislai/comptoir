@@ -2,10 +2,12 @@
  * Created by cghislai on 01/09/15.
  */
 
+import {CompanyRef} from 'client/domain/company';
 import {Picture} from 'client/domain/picture';
 
 export class LocalPicture {
     id: number;
+    companyRef: CompanyRef;
     data:string;
     contentType:string;
     dataURI: string;
@@ -15,6 +17,7 @@ export class LocalPictureFactory {
     static toLocalPicture(picture: Picture):LocalPicture {
         var localPicture = new LocalPicture();
         localPicture.id = picture.id;
+        localPicture.companyRef = picture.companyRef;
         localPicture.data = picture.data;
         localPicture.contentType = picture.contentType;
         localPicture.dataURI = LocalPictureFactory.toDataURI(picture);
@@ -24,6 +27,7 @@ export class LocalPictureFactory {
     static fromLocalPicture(localPicture: LocalPicture):Picture {
        var picture = new Picture();
         picture.id = localPicture.id;
+        picture.companyRef = localPicture.companyRef;
         picture.data = localPicture.data;
         picture.contentType = localPicture.contentType;
         if (localPicture.dataURI != null) {

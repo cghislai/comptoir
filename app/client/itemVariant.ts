@@ -9,7 +9,7 @@ import {ServiceConfig} from 'client/utils/service';
 import {Pagination} from'client/utils/pagination';
 
 export class ItemVariantClient {
-    private static RESOURCE_PATH = "/item";
+    private static RESOURCE_PATH = "/itemVariant";
 
     private getResourceUrl():string {
         return ServiceConfig.URL + ItemVariantClient.RESOURCE_PATH;

@@ -1,0 +1,32 @@
+@import '../../../styles/_dataTable';
+
+.name {
+  font-weight: bold;
+}
+
+.ref {
+  font-size: .8em;
+  font-family: monospace;
+  text-align: left;
+  max-width: 10%;
+}
+
+.description {
+  font-size: .8em;
+  max-width: 20%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.picture {
+  height: 3em;
+  img {
+    max-height: 3em;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .imagePlaceover {
+    font-size: 3em;
+  }
+}

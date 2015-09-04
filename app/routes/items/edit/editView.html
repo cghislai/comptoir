@@ -3,12 +3,14 @@
 
     <form #f="form"
           (ng-submit)="doSaveItem()"
+          [ng-form-model]="itemForm"
           *ng-if="item != null"
           enctype="multipart/form-data">
 
         <div class="table">
             <div>
                 <label for="picture">Image</label>
+
                 <div>
                     <img [src]="item.mainPicture.dataURI"
                          class="itemPicturePreview"
@@ -25,39 +27,64 @@
             </div>
             <div>
                 <label for="reference">Référence</label>
-                <input type="text" id="reference" required
-                       [(ng-model)]="item.reference">
+                <span>
+                    <input type="text" id="reference" required
+                           ng-control="reference" [ng-model]="item.reference"
+                           #reference="form">
+                    <formMessage [for]="reference.control"
+                                 check-error="required" message="Entrez une référence"></formMessage>
+                </span>
             </div>
             <div>
                 <label for="name">Nom</label>
-                <input type="text" id="name" required
-                       localized [language]="editLanguage"
-                       [locale-texts]="item.name">
+                <span>
+                    <input type="text" id="name" required
+                           localized [language]="editLanguage"
+                           [locale-texts]="itemNames"
+                           ng-control="name"
+                           #name="form">
+                    <formMessage [for]="name.control"
+                                 check-error="required" message="Entrez un nom"></formMessage>
+                </span>
             </div>
             <div>
                 <label for="description">Description</label>
-                <textarea type="text" id="description" rows="3"
-                          localized [language]="editLanguage"
-                          [locale-texts]="item.description"></textarea>
+                <span>
+                    <textarea type="text" id="description" rows="3"
+                              localized [language]="editLanguage"
+                              [locale-texts]="itemDescriptions"
+                              ng-control="description"
+                              #description="form"></textarea>
+                    <formMessage [for]="description.control"
+                                 check-error="required" message="Entrez une description"></formMessage>
+                </span>
             </div>
             <div>
                 <label for="price">Prix</label>
                 <span>
                     <input class="number" type="number" required
                            min="0" step="0.01" id="price" size="5"
-                           [ng-model]="item.vatExclusive | number:'.2-2'"
-                           (change)="onCurrentPriceChanged($event)">
+                           ng-control="vatExclusive"
+                            #vat-exclusive="form">
                     €
+                    <formMessage [for]="vatExclusive.control"
+                                 check-error="required" message="Entrez un prix"></formMessage>
                 </span>
             </div>
             <div>
                 <label for="vat">TVA</label>
+
                 <div>
                     <input class="number" type="number" required
-                           min="0" max="100" step="0.01" id="vat" size="5"
-                           [ng-model]="(item.vatRate * 100) | number:'.0'"
-                           (change)="onVatChanged($event)">
+                           min="0" max="100" step="1" id="vat" size="5"
+                           ng-control="vatPercentage"
+                            #vat-percentage-control="form">
                     %
+                    <formMessage [for]="vatPercentageControl.control"
+                                 check-error="required" message="Entrez un taux de TVA"></formMessage>
+                    <formMessage [for]="vatPercentageControl.control"
+                                 check-error="percentageOutOfRange"
+                                 message="Le taux de TVA doit être compris entre 0 et 100"></formMessage>
                 </div>
             </div>
         </div>

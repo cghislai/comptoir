@@ -19,7 +19,7 @@
                show-prev-next-link="true" show-first-last-link="true"
                (page-change)="onPageChanged($event)"></paginator>
 
-    <itemVariantList
+    <itemList
             *ng-if="searchResult != undefined"
             [items]="searchResult.list"
             [columns]="columns"
@@ -28,5 +28,5 @@
             (column-action)="onColumnAction($event)"
             (row-clicked)="doEditItem($event)">
 
-    </itemVariantList>
+    </itemList>
 </div>

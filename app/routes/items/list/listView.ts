@@ -13,7 +13,7 @@ import {Pagination} from 'client/utils/pagination';
 import {ErrorService} from 'services/error';
 import {ItemService} from 'services/item';
 
-import {ItemVariantList, ItemVariantColumn} from 'components/items/itemVariantList/itemList';
+import {ItemList, ItemColumn} from 'components/item/list/itemList';
 import {Paginator} from 'components/utils/paginator/paginator';
 
 @Component({
@@ -23,7 +23,7 @@ import {Paginator} from 'components/utils/paginator/paginator';
 @View({
     templateUrl: './routes/items/list/listView.html',
     styleUrls: ['./routes/items/list/listView.css'],
-    directives: [NgFor, NgIf, Paginator, FORM_DIRECTIVES, ItemVariantList]
+    directives: [NgFor, NgIf, Paginator, FORM_DIRECTIVES, ItemList]
 })
 
 export class ItemsListView {
@@ -34,7 +34,7 @@ export class ItemsListView {
     itemSearch:ItemSearch;
     pagination:Pagination;
     searchResult:SearchResult<LocalItem>;
-    columns:ItemVariantColumn[];
+    columns:ItemColumn[];
     itemsPerPage:number = 25;
 
     // Delay filter input keyevent for 200ms
@@ -50,13 +50,12 @@ export class ItemsListView {
         this.pagination = new Pagination(0, this.itemsPerPage);
 
         this.columns = [
-            ItemVariantColumn.REFERENCE,
-            ItemVariantColumn.PICTURE,
-            ItemVariantColumn.NAME,
-            ItemVariantColumn.MODEL,
-            ItemVariantColumn.TVA_EXCLUSIVE,
-            ItemVariantColumn.TVA_RATE,
-            ItemVariantColumn.ACTION_REMOVE
+            ItemColumn.REFERENCE,
+            ItemColumn.PICTURE,
+            ItemColumn.NAME,
+            ItemColumn.VAT_EXCLUSIVE,
+            ItemColumn.VAT_RATE,
+            ItemColumn.ACTION_REMOVE
         ];
         this.searchItems();
     }
@@ -77,8 +76,8 @@ export class ItemsListView {
 
     onColumnAction(event) {
         var item:LocalItem = event.itemVariant;
-        var column:ItemVariantColumn = event.column;
-        if (column == ItemVariantColumn.ACTION_REMOVE) {
+        var column:ItemColumn = event.column;
+        if (column == ItemColumn.ACTION_REMOVE) {
             this.doRemoveItem(item);
         }
     }

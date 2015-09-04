@@ -14,7 +14,7 @@ import {Pagination} from 'client/utils/pagination';
 import {ErrorService} from 'services/error';
 import {ItemVariantService} from 'services/itemVariant';
 
-import {ItemVariantList, ItemVariantColumn} from 'components/items/itemVariantList/itemList';
+import {ItemVariantList, ItemVariantColumn} from 'components/itemvariant/list/itemList';
 import {AutoFocusDirective} from 'directives/autoFocus';
 import {FocusableDirective} from 'directives/focusable';
 

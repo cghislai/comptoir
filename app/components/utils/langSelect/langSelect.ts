@@ -93,8 +93,7 @@ export class LocalizedDirective {
         }
 
         var text = this.localeTexts[this.language.locale];
-        if ((text == null || text.length == 0)
-            && placeHolderValue != null) {
+        if (text == null || text.length == 0) {
             this.elementRef.nativeElement.placeholder = placeHolderValue;
         }
         if (text == null) {
