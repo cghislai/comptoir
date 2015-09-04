@@ -29,3 +29,13 @@ div.pageContent {
 input, textarea, select, button {
   font-size: 1em;
 }
+
+
+.blueLink {
+  color: $onWhiteLinkColor;
+  &:hover {
+    text-decoration: underline;
+    color: black;
+    cursor: pointer;
+  }
+}

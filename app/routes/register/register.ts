@@ -33,6 +33,7 @@ export class RegisterView {
     router:Router;
 
     registerForm: ControlGroup;
+    companyNames: LocaleTexts;
     companyDescriptions: LocaleTexts;
 
     appLocale:string;
@@ -54,6 +55,7 @@ export class RegisterView {
 
     buildForm(formBuilder: FormBuilder) {
         this.companyDescriptions = new LocaleTexts();
+        this.companyNames = new LocaleTexts();
         this.registerForm = formBuilder.group({
             'companyName': [''],
             'companyDescription': [''],
@@ -69,7 +71,7 @@ export class RegisterView {
         var thisView = this;
         var registration = new Registration();
         var company = new Company();
-        company.name = this.registerForm.value.companyName;
+        company.name = this.companyNames;
         company.description = this.companyDescriptions;
         registration.company = company;
         var employee = new Employee();
@@ -81,7 +83,7 @@ export class RegisterView {
 
         this.authService.register(registration)
             .then((employee)=> {
-                thisView.router.navigate('/sales/active');
+                thisView.router.navigate('/sales/sale/active');
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });

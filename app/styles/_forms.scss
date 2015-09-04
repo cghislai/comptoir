@@ -52,10 +52,15 @@ form {
           font-size: .8em;
           font-weight: lighter;
           padding-right: .5em;
+          vertical-align: top;
+          padding-top: .3em;
         }
       }
 
     }
+  }
+  >div:not(.table) {
+    margin: .5em;
   }
   div.actions {
     display: block;

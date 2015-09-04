@@ -13,7 +13,9 @@
         </div>
         <div>
             <input ng-control="companyName" type="text" placeholder="Nom de la compagnie"
-                    #company-name="form" autofocus required>
+                   localized [language]="editLanguage"
+                   [locale-texts]="companyNames"
+                    #company-name="form" required>
             <formMessage [for]="companyName.control" [inline]="true"
                          check-error="required" message="Entrez un nom"></formMessage>
         </div>
@@ -63,8 +65,9 @@
             <formMessage [for]="password.control" [inline]="true"
                          check-error="passwordTooShort" message="Le mot de passe doit faire 8 caratères minimum"></formMessage>
         </div>
-        <div>
-            <button type="submit" [disabled]="!registerForm.valid">Créer un compte</button>
+        <div class="actions">
+            <button type="submit" [disabled]="!registerForm.valid"
+                    class="boxedLink">Créer un compte</button>
         </div>
     </form>
 </div>

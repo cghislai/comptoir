@@ -1,15 +1,10 @@
 div.formError {
   &:not([hidden]) {
     height: 1em;
-    font-size: .9em;
-    margin: .3em;
+    font-size: .8em;
+    margin: .2em;
     border: .1em solid;
-    padding: .3em;
-
-    display: inline-block;
-    &.inline-pos {
-      position: absolute;
-    }
+    padding: .2em;
 
     &.fatal {
       color: #D8000C;

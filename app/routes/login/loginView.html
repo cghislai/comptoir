@@ -2,31 +2,38 @@
 </appHeader>
 <div class="loginView pageContent">
     <h1 class="pageTitle">Création d'un nouveau compte</h1>
+
     <p [hidden]="introText == null">
         {{ introText }}
     </p>
 
     <form (^submit)="doLogin($event)" [ng-form-model]="loginForm">
-        <div>
-            <input ng-control="login" type="text" placeholder="Login" autofocus
-                    #login="form">
-            <formMessage [for]="login.control" [inline]="true"
-                         check-error="required" message="Entrez votre login"></formMessage>
-        </div>
-        <div>
-            <input ng-control="password" type="password" placeholder="Mot de passe"
-                    #password="form">
-            <formMessage [for]="password.control" [inline]="true"
-                         check-error="required" message="Entrez votre mot de passe"></formMessage>
-        </div>
-        <div>
+            <div>
+                <span>
+                    <input ng-control="login" id="login"
+                           type="text" placeholder="Login" autofocus
+                           #login="form">
+                    <formMessage [for]="login.control" [inline]="true"
+                                 check-error="required" message="Entrez votre login"></formMessage>
+                </span>
+            </div>
+            <div>
+                <span>
+                    <input ng-control="password" id="password"
+                           type="password" placeholder="Mot de passe"
+                           #password="form">
+                    <formMessage [for]="password.control" [inline]="true"
+                                 check-error="required" message="Entrez votre mot de passe"></formMessage>
+                </span>
+            </div>
+        <div class="actions">
             <button type="submit" [disabled]="!loginForm.valid">Se connecter</button>
+            <formMessage [inline]="false" [error]="true" [hidden]="!invalidCredentials"
+                         message="Login/mot de passe invalide."></formMessage>
         </div>
-        <formMessage [inline]="false" [error]="true" [hidden]="!invalidCredentials"
-                     message="Login/mot de passe invalide."></formMessage>
     </form>
     <div>
         <a [router-link]="['/register']"
-           class="lightBlueLink">Créer un compte</a>
+           class="blueLink">Créer un compte</a>
     </div>
 </div>

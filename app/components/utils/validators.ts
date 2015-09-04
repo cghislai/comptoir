@@ -17,7 +17,7 @@ export function passwordValidator(c: Control) {
         return null;
     }
     var password = c.value;
-    if (password.length < 8) {
+    if (password.length < 6) {
         return {passwordTooShort: true};
     }
     return null;
