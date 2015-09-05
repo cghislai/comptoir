@@ -3,7 +3,7 @@
  */
 
 import {AttributeDefinitionRef} from 'client/domain/attributeDefinition';
-import {ItemRef} from 'client/domain/item';
+import {ItemRef,ItemSearch } from 'client/domain/item';
 import {CompanyRef} from 'client/domain/company';
 import {ItemPictureRef} from 'client/domain/itemPicture';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
@@ -16,7 +16,7 @@ export enum Pricing{
 }
 
 export class AttributeValue {
-    id: number;
+    id:number;
     attributeDefinitionRef:AttributeDefinitionRef;
     value:LocaleTexts;
 }
@@ -33,11 +33,11 @@ export class ItemVariantRef {
 
 export class ItemVariant {
     id:number;
-    itemRef: ItemRef;
+    itemRef:ItemRef;
     variantReference:string;
 
     pricing:string;
-    pricingAmount: number;
+    pricingAmount:number;
 
     attributeValueRefs:AttributeValue[];
 
@@ -45,9 +45,10 @@ export class ItemVariant {
 }
 
 export class ItemVariantSearch {
-    companyRef:CompanyRef;
-    itemRef: ItemRef;
-    multiSearch:string;
+    itemSearch:ItemSearch;
+    itemRef:ItemRef;
+    variantReference:string;
+    variantReferenceContains:string;
 }
 
 export class ItemVariantFactory {

@@ -6,7 +6,7 @@ import {Inject} from 'angular2/angular2';
 
 import {AttributeDefinition, AttributeDefinitionFactory} from 'client/domain/attributeDefinition';
 import {ItemVariant, ItemVariantRef, ItemVariantSearch, ItemVariantFactory} from 'client/domain/itemVariant';
-import {Item, ItemRef, ItemFactory} from 'client/domain/item';
+import {Item, ItemRef, ItemSearch, ItemFactory} from 'client/domain/item';
 import {Picture, PictureRef, PictureFactory} from 'client/domain/picture';
 
 import {LocalItem, LocalItemFactory}from 'client/localDomain/item';
@@ -61,7 +61,10 @@ export class ItemVariantService {
     }
 
     public searchItemsVariant(itemVariantSearch:ItemVariantSearch, pagination:Pagination):Promise<SearchResult<ItemVariant>> {
-        itemVariantSearch.companyRef = this.authService.loggedEmployee.companyRef;
+        if (itemVariantSearch.itemSearch == null) {
+            itemVariantSearch.itemSearch = new ItemSearch();
+        }
+        itemVariantSearch.itemSearch.companyRef = this.authService.loggedEmployee.companyRef;
         var authToken = this.authService.authToken;
         return this.itemVariantClient.searchItemVariants(itemVariantSearch, pagination, authToken);
     }
