@@ -20,9 +20,8 @@ export class SearchResult<T> {
         if (isNaN(count)) {
             count = 0;
         }
-        var result = new SearchResult<T>();
-        result.list = list;
-        result.count = count;
-        return result;
+        this.list = list;
+        this.count = count;
+        return this;
     }
 }

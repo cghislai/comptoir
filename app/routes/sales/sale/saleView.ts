@@ -10,7 +10,6 @@ import {LocalItemVariant} from 'client/localDomain/itemVariant';
 
 import {Sale, SaleRef} from 'client/domain/sale';
 import {Item, ItemRef} from 'client/domain/item';
-import {ItemSale, ItemSaleSearch} from 'client/domain/itemSale';
 import {Pos} from 'client/domain/pos';
 
 import {ErrorService} from 'services/error';

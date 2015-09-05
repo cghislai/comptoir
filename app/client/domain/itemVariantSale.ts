@@ -8,7 +8,7 @@ import {SaleRef} from 'client/domain/sale';
 import {Price} from 'client/domain/price';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 
-export class ItemSale {
+export class ItemVariantSale {
     id: number;
     dateTime: Date;
     itemVariantRef: ItemVariantRef;
@@ -21,19 +21,19 @@ export class ItemSale {
     total: number;
 }
 
-export class ItemSaleRef {
+export class ItemVariantSaleRef {
     id: number;
     link: string;
 }
 
-export class ItemSaleSearch {
+export class ItemVariantSaleSearch {
     companyRef: CompanyRef;
     saleRef: SaleRef;
     itemVariantRef: ItemVariantRef;
 }
 
-export class ItemSaleFactory {
-    static fromJSONItemSaleReviver = (key, value)=>{
+export class ItemVariantSaleFactory {
+    static fromJSONItemVariantSaleReviver = (key, value)=>{
         if (key == 'comment') {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }

@@ -2,17 +2,18 @@
  * Created by cghislai on 14/08/15.
  */
 
-import {ItemSale, ItemSaleRef, ItemSaleSearch, ItemSaleFactory} from 'client/domain/itemSale';
+import {ItemVariantSale, ItemVariantSaleRef,
+    ItemVariantSaleSearch, ItemVariantSaleFactory} from 'client/domain/itemVariantSale';
 import {ServiceConfig} from 'client/utils/service';
 import {Pagination} from 'client/utils/pagination';
 import {SearchResult} from 'client/utils/search';
 import {ComptoirRequest, ComptoirResponse} from "client/utils/request";
 
-export class ItemSaleClient {
-    private static RESOURCE_PATH = "/itemSale";
+export class ItemVariantSaleClient {
+    private static RESOURCE_PATH = "/itemVariantSale";
 
     private getResourceUrl():string {
-        return ServiceConfig.URL + ItemSaleClient.RESOURCE_PATH;
+        return ServiceConfig.URL + ItemVariantSaleClient.RESOURCE_PATH;
     }
 
     private getItemSaleUrl(id:number):string {
@@ -34,7 +35,7 @@ export class ItemSaleClient {
     }
 
 
-    createItemSale(itemSale:ItemSale, authToken:string):Promise<ItemSaleRef> {
+    createItemSale(itemSale:ItemVariantSale, authToken:string):Promise<ItemVariantSaleRef> {
         var url = this.getResourceUrl();
         var request = new ComptoirRequest();
         return request.post(itemSale, url, authToken)
@@ -45,7 +46,7 @@ export class ItemSaleClient {
     }
 
 
-    getCreateItemSaleRequest(itemSale:ItemSale, authToken:string):ComptoirRequest{
+    getCreateItemSaleRequest(itemSale:ItemVariantSale, authToken:string):ComptoirRequest{
         var url = this.getResourceUrl();
         var request = new ComptoirRequest();
         request.setup('POST', url, authToken);
@@ -53,7 +54,7 @@ export class ItemSaleClient {
         return request;
     }
 
-    updateItemSale(itemSale:ItemSale, authToken:string):Promise<ItemSaleRef> {
+    updateItemSale(itemSale:ItemVariantSale, authToken:string):Promise<ItemVariantSaleRef> {
         var url = this.getItemSaleUrl(itemSale.id);
         var request = new ComptoirRequest();
         return request.put(itemSale, url, authToken)
@@ -63,7 +64,7 @@ export class ItemSaleClient {
             });
     }
 
-    getUpdateItemSaleRequest(itemSale:ItemSale, authToken:string):ComptoirRequest{
+    getUpdateItemSaleRequest(itemSale:ItemVariantSale, authToken:string):ComptoirRequest{
         var url = this.getItemSaleUrl(itemSale.id);
         var request = new ComptoirRequest();
         request.setup('PUT', url, authToken);
@@ -71,12 +72,12 @@ export class ItemSaleClient {
         return request;
     }
 
-    getItemSale(id:number, authToken:string):Promise<ItemSale> {
+    getItemSale(id:number, authToken:string):Promise<ItemVariantSale> {
         var url = this.getItemSaleUrl(id);
         var request = new ComptoirRequest();
         return request.get(url, authToken)
             .then(function (response) {
-                var itemSale = JSON.parse(response.text, ItemSaleFactory.fromJSONItemSaleReviver);
+                var itemSale = JSON.parse(response.text, ItemVariantSaleFactory.fromJSONItemVariantSaleReviver);
                 return itemSale;
             });
     }
@@ -89,17 +90,17 @@ export class ItemSaleClient {
 
 
 
-    searchItemSales(search:ItemSaleSearch, pagination:Pagination, authToken:string):Promise<SearchResult<ItemSale>> {
+    searchItemSales(search:ItemVariantSaleSearch, pagination:Pagination, authToken:string):Promise<SearchResult<ItemVariantSale>> {
         var url = this.getSearchUrl(pagination);
         var request = new ComptoirRequest();
         return request.post(search, url, authToken)
             .then(function (response) {
-                var result = new SearchResult<ItemSale>().parseResponse(response, ItemSaleFactory.fromJSONItemSaleReviver);
+                var result = new SearchResult<ItemVariantSale>().parseResponse(response, ItemVariantSaleFactory.fromJSONItemVariantSaleReviver);
                 return result;
             });
     }
 
-    getSearchItemSalesRequest(search:ItemSaleSearch, pagination:Pagination, authToken:string):ComptoirRequest {
+    getSearchItemSalesRequest(search:ItemVariantSaleSearch, pagination:Pagination, authToken:string):ComptoirRequest {
         var url = this.getSearchUrl(pagination);
         var request = new ComptoirRequest();
         request.setup('POST', url, authToken);

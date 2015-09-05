@@ -11,7 +11,7 @@ import {EmployeeService} from 'services/employee';
 import {ErrorService} from 'services/error';
 import {FileUploadService} from "services/fileUpload";
 import {ItemService} from 'services/item';
-import {ItemSaleService} from 'services/itemSale';
+import {ItemVariantSaleService} from 'services/itemVariantSale';
 import {ItemVariantService} from 'services/itemVariant';
 import {PosService} from 'services/pos';
 import {SaleService} from 'services/sale';
@@ -110,7 +110,7 @@ bootstrap(App, [
     ErrorService,
     FileUploadService,
     ItemService,
-    ItemSaleService,
+    ItemVariantSaleService,
     ItemVariantService,
     PosService,
     SaleService

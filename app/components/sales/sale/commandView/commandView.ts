@@ -5,7 +5,6 @@
 import {Component, View, NgFor, NgIf, EventEmitter, FORM_DIRECTIVES} from 'angular2/angular2';
 
 import {Sale, SaleRef} from 'client/domain/sale';
-import {ItemSale, ItemSaleSearch} from 'client/domain/itemSale';
 import {ItemVariant} from 'client/domain/itemVariant';
 import {LocalSale, LocalItemSale} from 'client/localDomain/sale';
 

@@ -17,7 +17,7 @@ import {Account} from 'client/domain/account';
 import {ItemVariant, ItemVariantRef} from 'client/domain/itemVariant';
 import {Sale, SaleRef} from 'client/domain/sale';
 import {Pos} from 'client/domain/pos';
-import {ItemSale} from 'client/domain/itemSale';
+import {ItemVariantSale} from 'client/domain/itemVariantSale';
 import {ComptoirRequest}  from 'client/utils/request';
 import {LocaleTexts} from 'client/utils/lang';
 
@@ -113,17 +113,15 @@ export class LocalSaleFactory {
         localSale.reference = sale.reference;
         localSale.vatAmount = sale.vatAmount;
         localSale.vatExclusiveAmount = sale.vatExclusiveAmount;
-
-        localSale.items = [];
     }
 
-    static fromLocalItemSale(localItemSale:LocalItemSale):ItemSale {
-        var itemSale = new ItemSale();
+    static fromLocalItemVariantSale(localItemSale:LocalItemSale):ItemVariantSale {
+        var itemSale = new ItemVariantSale();
         itemSale.comment = localItemSale.comment;
         itemSale.dateTime = localItemSale.dateTime;
         itemSale.discountRatio = localItemSale.discountRatio;
         itemSale.id = localItemSale.id;
-        itemSale.itemVariantRef = new ItemVariantRef(localItemSale.id);
+        itemSale.itemVariantRef = new ItemVariantRef(localItemSale.itemVariant.id);
         itemSale.quantity = localItemSale.quantity;
         itemSale.saleRef = new SaleRef(localItemSale.sale.id);
         itemSale.total = localItemSale.total;
@@ -132,13 +130,13 @@ export class LocalSaleFactory {
         return itemSale;
     }
 
-    static toLocalItemSale(itemSale:ItemSale):LocalItemSale {
+    static toLocalItemSale(itemSale:ItemVariantSale):LocalItemSale {
         var localItemSale = new LocalItemSale();
         LocalSaleFactory.updateLocalItemSale(localItemSale, itemSale);
         return localItemSale;
     }
 
-    static updateLocalItemSale(localItemSale:LocalItemSale, itemSale:ItemSale) {
+    static updateLocalItemSale(localItemSale:LocalItemSale, itemSale:ItemVariantSale) {
         localItemSale.comment = itemSale.comment;
         localItemSale.dateTime = itemSale.dateTime;
         localItemSale.discountRatio = itemSale.discountRatio;

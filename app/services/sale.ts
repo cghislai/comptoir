@@ -12,11 +12,12 @@ import {Account, AccountFactory} from 'client/domain/account';
 import {AccountingEntry, AccountingEntryRef, AccountingEntrySearch,  AccountingEntryFactory} from 'client/domain/accountingEntry';
 import {Sale, SaleRef, SaleSearch, SaleFactory} from 'client/domain/sale';
 import {ItemVariant, ItemVariantRef, ItemVariantFactory} from 'client/domain/itemVariant';
-import {ItemSale, ItemSaleRef, ItemSaleSearch, ItemSaleFactory} from 'client/domain/itemSale';
+import {ItemVariantSale, ItemVariantSaleRef,
+    ItemVariantSaleSearch, ItemVariantSaleFactory} from 'client/domain/itemVariantSale';
 
 import {AccountClient} from 'client/account';
 import {SaleClient} from 'client/sale';
-import {ItemSaleClient} from 'client/itemSale';
+import {ItemVariantSaleClient} from 'client/itemVariantSale';
 import {ItemVariantClient} from 'client/itemVariant';
 import {AccountingEntryClient} from 'client/accountingEntry';
 
@@ -32,7 +33,7 @@ import {ItemVariantService} from 'services/itemVariant';
 export class SaleService {
     accountClient:AccountClient;
     saleClient:SaleClient;
-    itemSaleClient:ItemSaleClient;
+    itemVariantSaleClient:ItemVariantSaleClient;
     itemVariantClient:ItemVariantClient;
     accountingEntryClient:AccountingEntryClient;
 
@@ -46,7 +47,7 @@ export class SaleService {
 
         this.accountClient = new AccountClient();
         this.saleClient = new SaleClient();
-        this.itemSaleClient = new ItemSaleClient();
+        this.itemVariantSaleClient = new ItemVariantSaleClient();
         this.itemVariantClient = new ItemVariantClient();
         this.accountingEntryClient = new AccountingEntryClient();
     }
@@ -190,17 +191,20 @@ export class SaleService {
         localItemSale.discountRatio = 0;
         localItemSale.itemVariant = itemVariant;
         localItemSale.quantity = 1;
+        localItemSale.vatExclusive = itemVariant.calcPrice();
+        localItemSale.vatRate = itemVariant.item.vatRate;
         localItemSale.sale = localSale;
+        localItemSale.comment = new LocaleTexts();
         localSale.items.push(localItemSale);
-        var itemSale = LocalSaleFactory.fromLocalItemSale(localItemSale);
+        var itemSale = LocalSaleFactory.fromLocalItemVariantSale(localItemSale);
         var authToken = this.authService.authToken;
 
         localSale.dirty = true;
         localItemSale.dirty = true;
-        localItemSale.itemSaleRequest = this.itemSaleClient.getCreateItemSaleRequest(itemSale, authToken);
+        localItemSale.itemSaleRequest = this.itemVariantSaleClient.getCreateItemSaleRequest(itemSale, authToken);
         return localItemSale.itemSaleRequest.run()
             .then((response:ComptoirResponse)=> {
-                var itemSaleRef:ItemSaleRef = JSON.parse(response.text);
+                var itemSaleRef:ItemVariantSaleRef = JSON.parse(response.text);
                 var itemSaleId = itemSaleRef.id;
                 localItemSale.id = itemSaleId;
 
@@ -230,10 +234,10 @@ export class SaleService {
         if (localItemSale.itemSaleRequest != null) {
             localItemSale.itemSaleRequest.discardRequest();
         }
-        var itemSale = LocalSaleFactory.fromLocalItemSale(localItemSale);
+        var itemSale = LocalSaleFactory.fromLocalItemVariantSale(localItemSale);
         var authToken = this.authService.authToken;
         localItemSale.dirty = true;
-        localItemSale.itemSaleRequest = this.itemSaleClient.getUpdateItemSaleRequest(itemSale, authToken);
+        localItemSale.itemSaleRequest = this.itemVariantSaleClient.getUpdateItemSaleRequest(itemSale, authToken);
         return localItemSale.itemSaleRequest.run()
             .then(()=> {
                 localItemSale.dirty = false;
@@ -389,19 +393,20 @@ export class SaleService {
         }
         var authToken = this.authService.authToken;
         var saleId = localSale.id;
-        var itemSaleSearch = new ItemSaleSearch();
+        var itemSaleSearch = new ItemVariantSaleSearch();
         itemSaleSearch.saleRef = new SaleRef(saleId);
+        itemSaleSearch.companyRef = this.authService.loggedEmployee.companyRef;
 
-        localSale.itemsRequest = this.itemSaleClient.getSearchItemSalesRequest(itemSaleSearch, null, authToken);
+        localSale.itemsRequest = this.itemVariantSaleClient.getSearchItemSalesRequest(itemSaleSearch, null, authToken);
         return localSale.itemsRequest.run()
             .then((response:ComptoirResponse)=> {
-                var result = new SearchResult<ItemSale>();
-                result.parseResponse(response, ItemSaleFactory.fromJSONItemSaleReviver);
+                var result = new SearchResult<ItemVariantSale>();
+                result = result.parseResponse(response, ItemVariantSaleFactory.fromJSONItemVariantSaleReviver);
                 return this.updateLocalSaleItemListAsync(localSale, result.list);
             });
     }
 
-    private updateLocalSaleItemListAsync(localSale:LocalSale, items:ItemSale[]):Promise<LocalSale> {
+    private updateLocalSaleItemListAsync(localSale:LocalSale, items:ItemVariantSale[]):Promise<LocalSale> {
         var currentItems = localSale.items;
         var newItems:LocalItemSale[] = [];
         var currentItemMap = {};
@@ -419,6 +424,7 @@ export class SaleService {
                 newItems.push(existingItem);
             } else {
                 var localItemSale = LocalSaleFactory.toLocalItemSale(itemSale);
+                localItemSale.sale = localSale;
                 newItems.push(localItemSale);
                 fetchItemTasks.push(this.fetchLocalItemSaleItemVariantAsync(localItemSale, itemSale.itemVariantRef.id));
             }
@@ -441,7 +447,7 @@ export class SaleService {
             .then((response:ComptoirResponse)=> {
                 var itemVariant = JSON.parse(response.text, ItemVariantFactory.fromJSONItemVariantReviver);
                 var localItemVariant = LocalItemVariantFactory.toLocalItemVariant(itemVariant);
-                localSaleItem.itemVariant = itemVariant;
+                localSaleItem.itemVariant = localItemVariant;
                 localSaleItem.itemVariantRequest = null;
                 return this.itemVariantService.refreshLocalItemVariantAsync(localItemVariant, itemVariant);
             });
@@ -465,7 +471,7 @@ export class SaleService {
         var itemSaleId = localItemSale.id;
         var authToken = this.authService.authToken;
         localItemSale.dirty = true;
-        localItemSale.itemSaleRequest = this.itemSaleClient.getRemoveItemSaleRequest(itemSaleId, authToken);
+        localItemSale.itemSaleRequest = this.itemVariantSaleClient.getRemoveItemSaleRequest(itemSaleId, authToken);
         return localItemSale.itemSaleRequest.run()
             .then(()=> {
                 return this.refreshLocalSaleAsync(localSale);

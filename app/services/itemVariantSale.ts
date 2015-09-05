@@ -4,24 +4,24 @@
 import {Inject} from 'angular2/angular2';
 
 import {Sale, SaleRef, SaleSearch} from 'client/domain/sale';
-import {ItemSale, ItemSaleRef, ItemSaleSearch, ItemSaleFactory} from 'client/domain/itemSale';
-import {ItemSaleClient} from 'client/itemSale';
+import {ItemVariantSale, ItemVariantSaleRef, ItemVariantSaleSearch, ItemVariantSaleFactory} from 'client/domain/itemVariantSale';
+import {ItemVariantSaleClient} from 'client/itemVariantSale';
 import {Pagination} from 'client/utils/pagination';
 import {SearchResult} from 'client/utils/search';
 
 import {AuthService} from 'services/auth';
 
-export class ItemSaleService {
-    client:ItemSaleClient;
+export class ItemVariantSaleService {
+    client:ItemVariantSaleClient;
     authService:AuthService;
 
     constructor(@Inject authService:AuthService) {
-        this.client = new ItemSaleClient();
+        this.client = new ItemVariantSaleClient();
         this.authService = authService;
     }
 
 
-    createItemSale(itemSale:ItemSale):Promise<ItemSaleRef> {
+    createItemSale(itemSale:ItemVariantSale):Promise<ItemVariantSaleRef> {
         if (itemSale.saleRef == null) {
             throw 'itemSale must have a saleRef';
         }
@@ -29,19 +29,19 @@ export class ItemSaleService {
         return this.client.createItemSale(itemSale, authToken);
     }
 
-    updateItemSale(itemSale:ItemSale):Promise<ItemSaleRef> {
+    updateItemSale(itemSale:ItemVariantSale):Promise<ItemVariantSaleRef> {
         var authToken = this.authService.authToken;
         return this.client.updateItemSale(itemSale, authToken);
     }
 
 
-    saveItemSale(itemSale:ItemSale):Promise<ItemSale> {
+    saveItemSale(itemSale:ItemVariantSale):Promise<ItemVariantSale> {
         var thisView = this;
 
         if (itemSale.id == undefined) {
 
             return this.createItemSale(itemSale)
-                .then((ref:ItemSaleRef)=> {
+                .then((ref:ItemVariantSaleRef)=> {
                     return thisView.getItemSale(ref.id);
                 });
         } else {
@@ -52,12 +52,12 @@ export class ItemSaleService {
         }
     }
 
-    searchItemSales(itemSearch:ItemSaleSearch, pagination:Pagination):Promise<SearchResult<ItemSale>> {
+    searchItemSales(itemSearch:ItemVariantSaleSearch, pagination:Pagination):Promise<SearchResult<ItemVariantSale>> {
         var authToken = this.authService.authToken;
         return this.client.searchItemSales(itemSearch, pagination, authToken);
     }
 
-    getItemSale(id:number):Promise<ItemSale> {
+    getItemSale(id:number):Promise<ItemVariantSale> {
         var authToken = this.authService.authToken;
         return this.client.getItemSale(id, authToken);
     }

@@ -62,13 +62,13 @@
             class="saleItem" [class.dirty]="saleItem.dirty">
 
             <td class="ref">
-                <span *ng-if="saleItem.item != null">
-                    {{ saleItem.item.reference }}
+                <span *ng-if="saleItem.itemVariant != null">
+                    {{ saleItem.itemVariant?.variantReference }}
                 </span>
             </td>
-            <td class="name" *ng-if="saleItem.item != null">
-                <div class="name">
-                    {{ saleItem.item.name[locale] }}
+            <td class="name">
+                <div class="name" *ng-if="saleItem.itemVariant?.item != null">
+                    {{ saleItem.itemVariant?.item?.name[locale] }}
                 </div>
                 <div class="comment">
                     <a class="commentLink"
