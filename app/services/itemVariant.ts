@@ -228,10 +228,12 @@ export class ItemVariantService {
         }
         var authToken = this.authService.authToken;
         var pictureExists = localPicture.id != null;
+        var picture = LocalPictureFactory.fromLocalPicture(localPicture);
         if (pictureExists) {
-            var picture = LocalPictureFactory.fromLocalPicture(localPicture);
             localItemVariant.mainPictureRequest = this.pictureClient.getUpdatePictureRequest(picture, authToken);
         } else {
+            picture.companyRef = this.authService.loggedEmployee.companyRef;
+            localPicture.companyRef = picture.companyRef;
             localItemVariant.mainPictureRequest = this.pictureClient.getCreatePictureRequest(picture, authToken);
         }
         return localItemVariant.mainPictureRequest.run()

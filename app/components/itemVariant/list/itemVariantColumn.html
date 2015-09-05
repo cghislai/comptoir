@@ -1,27 +1,27 @@
-<span class="id"
+<div class="id"
       *ng-if="column.name == 'id' ">
     {{ itemVariant.id }}
-</span>
-<span class="ref"
+</div>
+<div class="ref"
     *ng-if="column.name == 'variantReference' ">
     {{ itemVariant.variantReference }}
-</span>
-<span class="picture"
+</div>
+<div class="picture"
       *ng-if="column.name == 'picture' ">
     <img [src]="itemVariant.picture.dataURI" *ng-if="itemVariant.mainPicture?.dataURI != undefined">
     <div class="imagePlaceover" *ng-if="itemVariant.mainPicture?.dataURI == undefined">
         <i class="fi-book"></i>
     </div>
-</span>
-<span class="pricing"
+</div>
+<div class="pricing"
       *ng-if="column.name == 'pricing' ">
     {{ getPricingLabel(itemVariant.pricing)[lang] }}
-</span>
-<span class="pricingAmount"
+</div>
+<div class="pricingAmount"
       *ng-if="column.name == 'pricingAmount' ">
     {{ itemVariant.pricingAmount | currency:'EUR':true:'.2-2' }}
-</span>
-<span class="attributes"
+</div>
+<div class="attributes"
       *ng-if="column.name == 'attributes' ">
     <span class="attributeValue"
           *ng-for="#attr of itemVariant.attributeValues">
@@ -32,22 +32,22 @@
             {{ attr.value[lang] }}
         </span>
     </span>
-</span>
+</div>
 
 
-<span class="ref"
+<div class="ref"
     *ng-if="column.name == 'itemReference'">
     {{ itemVariant.item.reference }}
-</span>
-<span class="name"
+</div>
+<div class="name"
     *ng-if="column.name == 'itemName'">
     {{ itemVariant.item.name[lang] }}
-</span>
+</div>
 <span class="desc"
     *ng-if="column.name == 'itemDescription'">
      {{ itemVariant.item.description[lang] }}
 </span>
-<span class="name_attributes"
+<div class="name_attributes"
     *ng-if="column.name == 'itemNameVariantAttributes'">
     <div class="name">
         {{ itemVariant.item.name[lang] }}
@@ -63,23 +63,23 @@
         </span>
     </span>
     </div>
-</span>
-<span class="vatExslusive"
+</div>
+<div class="vatExslusive"
         *ng-if="column.name == 'itemVatExclusive'">
     {{ itemVariant.item.vatExclusive | currency:'EUR':true:'.2-2' }}
-</span>
-<span class="vatRate"
+</div>
+<div class="vatRate"
     *ng-if="column.name == 'itemVatRate'">
     {{ ( itemVariant.item.vatRate * 100 )| number:'.0' }} %
-</span>
-<span class="totalPrice"
+</div>
+<div class="totalPrice"
         *ng-if="column.name == 'totalPrice' ">
     {{ itemVariant.calcPrice() | currency:'EUR':true:'.2-2' }}
-</span>
-<span class="action remove"
+</div>
+<div class="action remove"
       *ng-if="column.name == 'action_remove' " >
     <a class="actionIcon "
        (^click)="onColumnAction(itemVariant, column, $event)">
     <i class="fi-minus red"></i>
     </a>
-</span>
+</div>

@@ -7,6 +7,7 @@ import {Component, View, NgFor, NgIf, EventEmitter} from 'angular2/angular2';
 import {LocalItemVariant} from 'client/localDomain/itemVariant';
 import {LocalPicture} from 'client/localDomain/picture';
 
+import {ItemSearch} from 'client/domain/item';
 import {ItemVariant, ItemVariantSearch} from 'client/domain/itemVariant';
 import {SearchResult} from 'client/utils/search';
 import {Pagination} from 'client/utils/pagination';
@@ -40,7 +41,8 @@ export class ItemListView {
     keyboardTimeoutSet:boolean;
     keyboardTimeout:number = 200;
     //
-    itemSearch:ItemVariantSearch;
+    itemSearch: ItemSearch;
+    itemVariantSearch:ItemVariantSearch;
     pagination:Pagination;
     loading:boolean = false;
     searchResult:SearchResult<LocalItemVariant>;
@@ -49,8 +51,10 @@ export class ItemListView {
         this.itemVariantService = itemVariantService;
         this.errorService = errorService;
 
-        this.itemSearch = new ItemVariantSearch();
+        this.itemSearch = new ItemSearch();
         this.itemSearch.multiSearch = null;
+        this.itemVariantSearch = new ItemVariantSearch();
+        this.itemVariantSearch.itemSearch = this.itemSearch;
         this.pagination = new Pagination(0, 20);
 
         this.columns = [
@@ -64,7 +68,7 @@ export class ItemListView {
 
     searchItems() {
         this.loading = true;
-        this.itemVariantService.searchLocalItemVariantsAsync(this.itemSearch, this.pagination)
+        this.itemVariantService.searchLocalItemVariantsAsync(this.itemVariantSearch, this.pagination)
             .then((result:SearchResult<LocalItemVariant>)=> {
                 this.searchResult = result;
                 this.loading = false;
