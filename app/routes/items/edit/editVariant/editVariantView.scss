@@ -10,7 +10,7 @@ div.pageContent {
     font-weight: normal;
     margin-top: .2em;
 
-    >span {
+    > span {
       border: .1em solid lightgray;
       padding: .1em;
     }
@@ -25,19 +25,26 @@ div.pageContent {
       width: 20em;
     }
 
-    div.attributeTable{
+    div.attributeTable {
       border-bottom: .1em solid lightgray;
     }
 
     div.form {
       margin-top: 1em;
+
+      &.disabled {
+        * {
+          color: lightgray;
+          pointer-events: none;
+        }
+      }
     }
 
     div.attribute {
       padding: .3em;
       width: 100%;
 
-      >* {
+      > * {
         display: inline-block;
       }
 

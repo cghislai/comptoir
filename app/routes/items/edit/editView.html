@@ -96,7 +96,7 @@
         </form>
     </div>
 
-    <div class="column right">
+    <div class="column right" *ng-if="item != null">
         <h3>Variantes</h3>
 
         <itemVariantList [items]="itemVariantList"
@@ -107,7 +107,7 @@
                          (column-action)="onVariantColumnAction($event)">
         </itemVariantList>
 
-        <a (^click)="doAddNewVariant()"
+        <a (^click)="doAddNewVariant()" [class.disabled]="item.id == null"
            class="newVariantLink blueLink">Ajouter une variante</a>
     </div>
 </div>
