@@ -120,7 +120,7 @@ export class ItemEditView {
         this.item.description = new LocaleTexts();
         this.item.name = new LocaleTexts();
         this.buildForm();
-        this.findItemVariants();
+        this.itemVariantList = [];
     }
 
     getItem(id:number) {

@@ -214,7 +214,9 @@ export class SaleService {
                 localSale.dirty = false;
                 localItemSale.dirty = false;
                 localItemSale.itemSaleRequest = null;
-                return this.refreshLocalSaleAsync(localSale);
+                return this.refreshLocalSaleItemAsync(localItemSale);
+            }).then(()=>{
+                return localItemSale.sale;
             });
     }
 
@@ -240,6 +242,26 @@ export class SaleService {
             .then(()=> {
                 localItemSale.dirty = false;
                 localItemSale.itemSaleRequest = null;
+                return this.refreshLocalSaleItemAsync(localItemSale);
+            }).then(()=>{
+                return localItemSale.sale;
+            });
+    }
+
+    public refreshLocalSaleItemAsync(localItemSale:LocalItemSale):Promise<LocalItemSale> {
+        if (localItemSale.itemSaleRequest != null) {
+            localItemSale.itemSaleRequest.discardRequest();
+        }
+        var itemSale = LocalSaleFactory.fromLocalItemVariantSale(localItemSale);
+        var authToken = this.authService.authToken;
+        localItemSale.dirty = true;
+        localItemSale.itemSaleRequest = this.itemVariantSaleClient.getGetItemSaleRequest(itemSale.id, authToken);
+        return localItemSale.itemSaleRequest.run()
+            .then((response:ComptoirResponse)=> {
+                var itemSale = JSON.parse(response.text, ItemVariantSaleFactory.fromJSONItemVariantSaleReviver);
+                localItemSale.dirty = false;
+                localItemSale.itemSaleRequest = null;
+                LocalSaleFactory.updateLocalItemSale(localItemSale, itemSale);
                 return this.refreshLocalSaleAsync(localItemSale.sale);
             });
     }

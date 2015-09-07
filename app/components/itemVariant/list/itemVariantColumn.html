@@ -8,9 +8,12 @@
 </div>
 <div class="picture"
       *ng-if="column.name == 'picture' ">
-    <img [src]="itemVariant.picture.dataURI" *ng-if="itemVariant.mainPicture?.dataURI != undefined">
-    <div class="imagePlaceover" *ng-if="itemVariant.mainPicture?.dataURI == undefined">
-        <i class="fi-book"></i>
+    <img [src]="itemVariant.mainPicture.dataURI" *ng-if="itemVariant.mainPicture?.dataURI != undefined">
+    <div *ng-if="itemVariant.mainPicture?.dataURI == null">
+        <img [src]="itemVariant.item.mainPicture.dataURI" *ng-if="itemVariant.item?.mainPicture?.dataURI != undefined">
+        <div class="imagePlaceover" *ng-if="itemVariant.item?.mainPicture?.dataURI == undefined">
+            <i class="fi-book"></i>
+        </div>
     </div>
 </div>
 <div class="pricing"

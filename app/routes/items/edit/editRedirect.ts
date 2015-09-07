@@ -17,7 +17,7 @@ import {ItemVariantEditView} from 'routes/items/edit/editVariant/editVariantView
 })
 @RouteConfig([
     {path: '/', redirectTo: '/new'},
-    {path: '/:itemId', component: ItemEditView, as:'edit'},
+    {path: '/:itemId', component: ItemEditView, as:'editItem'},
     {path: '/:itemId/variant/:variantId', component: ItemVariantEditView, as:'editVariant'}
 ])
 export class EditItemRedirect {

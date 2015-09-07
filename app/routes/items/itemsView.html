@@ -6,7 +6,7 @@
         <a [router-link]="['./import']">Importer</a>
     </appTab>
     <appTab [selectable]="true">
-        <a [router-link]="['./edit', {id: 'new'}]">Nouveau</a>
+        <a [router-link]="['./edit/editItem', {itemId: 'new'}]">Nouveau</a>
     </appTab>
     <appTab [selectable]="false" [active]="isActive('./edit')">
         <a>Édition</a>

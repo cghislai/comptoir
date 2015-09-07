@@ -88,10 +88,8 @@ export class ItemVariantService {
             var pictureId = itemVariant.mainPictureRef.id;
             tasks.push(this.fetchLocalItemVariantPictureAsync(localItemVariant, pictureId));
         }
-        if (itemVariant.itemRef != null) {
-            var itemId = itemVariant.itemRef.id;
-            tasks.push(this.fetchLocalItemVariantItemAsync(localItemVariant, itemId));
-        }
+        var itemId = itemVariant.itemRef.id;
+        tasks.push(this.fetchLocalItemVariantItemAsync(localItemVariant, itemId));
         if (itemVariant.attributeValueRefs != null) {
             var attributesTasks = [];
             localItemVariant.attributeValues = [];
@@ -104,10 +102,11 @@ export class ItemVariantService {
             var attributesTask = Promise.all(attributesTasks);
             tasks.push(attributesTask);
         }
-        return Promise.all(tasks)
+        Promise.all(tasks)
             .then(()=> {
                 return localItemVariant;
             });
+        return Promise.resolve(localItemVariant);
     }
 
 
@@ -119,7 +118,7 @@ export class ItemVariantService {
 
                 localValue.attributeDefinitionRequest = this.attributeDefinitiobClient.getGetAttributeDefinitionRequest(attributeValue.attributeDefinitionRef.id, authToken);
                 return localValue.attributeDefinitionRequest.run()
-                    .then((response: ComptoirResponse)=> {
+                    .then((response:ComptoirResponse)=> {
                         var attributeDefinition = JSON.parse(response.text, AttributeDefinitionFactory.fromJSONAttributeDefinitionReviver);
                         localValue.attributeDefinition = attributeDefinition;
                         localValue.attributeDefinitionRequest = null;
@@ -128,7 +127,7 @@ export class ItemVariantService {
             });
     }
 
-    public saveLocalItemVariantAttribute(localAttribute:LocalAttributeValue) : Promise<LocalAttributeValue> {
+    public saveLocalItemVariantAttribute(localAttribute:LocalAttributeValue):Promise<LocalAttributeValue> {
         var attributeDefinition = localAttribute.attributeDefinition;
         var definitionId = attributeDefinition.id;
 
@@ -264,6 +263,25 @@ export class ItemVariantService {
             });
     }
 
+    private fetchLocalItemPictureAsync(localItem:LocalItem, pictureId:number):Promise<LocalItem> {
+        if (localItem.mainPictureRequest != null) {
+            localItem.mainPictureRequest.discardRequest();
+        }
+
+        var authToken = this.authService.authToken;
+        var request = this.pictureClient.getGetPictureRequest(pictureId, authToken)
+        localItem.mainPictureRequest = request;
+
+        return localItem.mainPictureRequest.run()
+            .then((response:ComptoirResponse)=> {
+                var picture:Picture = JSON.parse(response.text, ItemVariantFactory.fromJSONItemVariantReviver);
+                var localPicture:LocalPicture = LocalPictureFactory.toLocalPicture(picture);
+                localItem.mainPicture = localPicture;
+                localItem.mainPictureRequest = null;
+                return localItem;
+            });
+    }
+
 
     private fetchLocalItemVariantItemAsync(localItemVariant:LocalItemVariant, itemId:number):Promise<LocalItemVariant> {
         if (localItemVariant.itemRequest != null) {
@@ -280,6 +298,17 @@ export class ItemVariantService {
                 var localItem:LocalItem = LocalItemFactory.toLocalItem(item);
                 localItemVariant.item = localItem;
                 localItemVariant.itemRequest = null;
+
+                if (localItemVariant.mainPicture == null) {
+                    var picRef = item.mainPictureRef;
+                    if (picRef != null) {
+                        var picId = picRef.id;
+                        return this.fetchLocalItemPictureAsync(localItem, picId)
+                            .then(()=>{
+                                return localItemVariant;
+                            });
+                    }
+                }
                 return localItemVariant;
             });
     }
