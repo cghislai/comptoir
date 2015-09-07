@@ -7,7 +7,6 @@ import {ApplicationService} from 'services/application';
 import {AuthService} from 'services/auth';
 import {BalanceService} from 'services/balance';
 import {CompanyService} from 'services/company';
-import {EmployeeService} from 'services/employee';
 import {ErrorService} from 'services/error';
 import {FileUploadService} from "services/fileUpload";
 import {ItemService} from 'services/item';
@@ -106,7 +105,6 @@ bootstrap(App, [
     ApplicationService,
     BalanceService,
     CompanyService,
-    EmployeeService,
     ErrorService,
     FileUploadService,
     ItemService,

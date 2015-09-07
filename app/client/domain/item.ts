@@ -4,9 +4,21 @@
 
 
 import {CompanyRef} from 'client/domain/company';
-import {ItemPictureRef} from 'client/domain/itemPicture';
+import {PictureRef} from 'client/domain/picture';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
-import {Pagination} from 'client/utils/pagination';
+import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+
+
+export class ItemClient extends BasicClient<Item> {
+
+    private static RESOURCE_PATH:string = "/item";
+    constructor() {
+        super({
+            resourcePath: ItemClient.RESOURCE_PATH,
+            jsonReviver: ItemFactory.fromJSONItemReviver
+        });
+    }
+}
 
 export class ItemRef {
     id: number;
@@ -27,7 +39,7 @@ export class Item {
     vatExclusive:number;
     vatRate:number;
 
-    mainPictureRef:ItemPictureRef;
+    mainPictureRef:PictureRef;
 }
 
 export class ItemSearch {

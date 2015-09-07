@@ -132,7 +132,7 @@ export class ItemVariantEditView {
     }
 
     getItemVariant(id:number) {
-        this.itemVariantService.getLocalItemVariantAsync(id)
+        this.itemVariantService.getLocalItemVariantAsync(id, {itemPictureFallback: false, item: true, attributes: true, picture: true})
             .then((itemVariant:LocalItemVariant)=> {
                 this.itemVariant = itemVariant;
                 this.buildForm();

@@ -7,6 +7,19 @@ import {AccountRef, AccountSearch} from 'client/domain/account';
 import {AccountingTransactionRef} from 'client/domain/accountingTransaction';
 import {CustomerRef} from 'client/domain/customer';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
+import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+
+
+export class AccountingEntryClient extends BasicClient<AccountingEntry> {
+
+    private static RESOURCE_PATH:string = "/accountingEntry";
+    constructor() {
+        super({
+            resourcePath: AccountingEntryClient.RESOURCE_PATH,
+            jsonReviver: AccountingEntryFactory.fromJSONAccountingEntryReviver
+        });
+    }
+}
 
 export class AccountingEntry {
     id: number;

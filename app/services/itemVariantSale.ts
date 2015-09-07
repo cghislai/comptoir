@@ -4,8 +4,7 @@
 import {Inject} from 'angular2/angular2';
 
 import {Sale, SaleRef, SaleSearch} from 'client/domain/sale';
-import {ItemVariantSale, ItemVariantSaleRef, ItemVariantSaleSearch, ItemVariantSaleFactory} from 'client/domain/itemVariantSale';
-import {ItemVariantSaleClient} from 'client/itemVariantSale';
+import {ItemVariantSaleClient, ItemVariantSale, ItemVariantSaleRef, ItemVariantSaleSearch, ItemVariantSaleFactory} from 'client/domain/itemVariantSale';
 import {Pagination} from 'client/utils/pagination';
 import {SearchResult} from 'client/utils/search';
 
@@ -26,12 +25,12 @@ export class ItemVariantSaleService {
             throw 'itemSale must have a saleRef';
         }
         var authToken = this.authService.authToken;
-        return this.client.createItemSale(itemSale, authToken);
+        return this.client.create(itemSale, authToken);
     }
 
     updateItemSale(itemSale:ItemVariantSale):Promise<ItemVariantSaleRef> {
         var authToken = this.authService.authToken;
-        return this.client.updateItemSale(itemSale, authToken);
+        return this.client.update(itemSale, authToken);
     }
 
 
@@ -54,16 +53,16 @@ export class ItemVariantSaleService {
 
     searchItemSales(itemSearch:ItemVariantSaleSearch, pagination:Pagination):Promise<SearchResult<ItemVariantSale>> {
         var authToken = this.authService.authToken;
-        return this.client.searchItemSales(itemSearch, pagination, authToken);
+        return this.client.search(itemSearch, pagination, authToken);
     }
 
     getItemSale(id:number):Promise<ItemVariantSale> {
         var authToken = this.authService.authToken;
-        return this.client.getItemSale(id, authToken);
+        return this.client.get(id, authToken);
     }
 
     removeItemSale(id: number) : Promise<any> {
         var authToken = this.authService.authToken;
-        return this.client.removeItemSale(id, authToken);
+        return this.client.remove(id, authToken);
     }
 }

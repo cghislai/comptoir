@@ -2,7 +2,6 @@
  * Created by cghislai on 25/08/15.
  */
 
-
 export class Country {
     code: string;
     defaultVatRate: number;

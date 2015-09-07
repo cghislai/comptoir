@@ -5,7 +5,20 @@
 import {CompanyRef} from 'client/domain/company';
 import {CustomerRef} from 'client/domain/customer';
 import {LocaleTexts,LocaleTextsFactory} from 'client/utils/lang';
+import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
 
+
+export class PosClient extends BasicClient<Pos> {
+
+    private static RESOURCE_PATH:string = "/pos";
+
+    constructor() {
+        super({
+            resourcePath: PosClient.RESOURCE_PATH,
+            jsonReviver: PosFactory.fromJSONPosReviver
+        });
+    }
+}
 export class Pos {
     id:number;
     companyRef:CompanyRef;
@@ -26,8 +39,6 @@ export class PosRef {
 export class PosSearch {
     companyRef:CompanyRef;
 }
-
-// TODO: PosWithClient ala PicturedItem
 
 export class PosFactory {
     static fromJSONPosReviver = (key, value)=> {

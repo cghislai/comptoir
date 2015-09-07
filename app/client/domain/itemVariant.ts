@@ -3,24 +3,30 @@
  */
 
 import {AttributeDefinitionRef} from 'client/domain/attributeDefinition';
+import {AttributeValue, AttributeValueRef} from 'client/domain/attributeValue';
 import {ItemRef,ItemSearch } from 'client/domain/item';
 import {CompanyRef} from 'client/domain/company';
-import {ItemPictureRef} from 'client/domain/itemPicture';
+import {PictureRef} from 'client/domain/picture';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
-import {Pagination} from 'client/utils/pagination';
+import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+
+
+export class ItemVariantClient extends BasicClient<ItemVariant> {
+
+    private static RESOURCE_PATH:string = "/itemVariant";
+    constructor() {
+        super({
+            resourcePath: ItemVariantClient.RESOURCE_PATH,
+            jsonReviver: ItemVariantFactory.fromJSONItemVariantReviver
+        });
+    }
+}
 
 export enum Pricing{
     ABSOLUTE,
     ADD_TO_BASE,
     PARENT_ITEM
 }
-
-export class AttributeValue {
-    id:number;
-    attributeDefinitionRef:AttributeDefinitionRef;
-    value:LocaleTexts;
-}
-
 
 export class ItemVariantRef {
     id:number;
@@ -39,9 +45,9 @@ export class ItemVariant {
     pricing:string;
     pricingAmount:number;
 
-    attributeValueRefs:AttributeValue[];
+    attributeValueRefs:AttributeValueRef[];
 
-    mainPictureRef:ItemPictureRef;
+    mainPictureRef:PictureRef;
 }
 
 export class ItemVariantSearch {
@@ -58,16 +64,6 @@ export class ItemVariantFactory {
         }
         return value;
     };
-
-    static fromJSONAttributeValueReviver = (key, value)=> {
-        if (key == 'value') {
-            return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
-        }
-        if (key == 'pricing') {
-            return ItemVariantFactory.fromJSONPricingReviver(value);
-        }
-        return value;
-    }
 
     static fromJSONPricingReviver = (value) => {
         return Pricing[Pricing[value]];

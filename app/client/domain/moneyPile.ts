@@ -4,6 +4,20 @@
 
 import {AccountRef} from 'client/domain/account';
 import {BalanceRef} from 'client/domain/balance';
+import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+
+
+export class MoneyPileClient extends BasicClient<MoneyPile> {
+
+    private static RESOURCE_PATH:string = "/moneyPile";
+
+    constructor() {
+        super({
+            resourcePath: MoneyPileClient.RESOURCE_PATH,
+            jsonReviver: MoneyPileFactory.fromJSONMoneyPileReviver
+        });
+    }
+}
 
 export class MoneyPile {
     id: number;

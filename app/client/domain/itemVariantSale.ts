@@ -7,6 +7,20 @@ import {ItemVariantRef} from 'client/domain/itemVariant';
 import {SaleRef} from 'client/domain/sale';
 import {Price} from 'client/domain/price';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
+import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+
+
+export class ItemVariantSaleClient extends BasicClient<ItemVariantSale> {
+
+    private static RESOURCE_PATH:string = "/itemVariantSale";
+
+    constructor() {
+        super({
+            resourcePath: ItemVariantSaleClient.RESOURCE_PATH,
+            jsonReviver: ItemVariantSaleFactory.fromJSONItemVariantSaleReviver
+        });
+    }
+}
 
 export class ItemVariantSale {
     id: number;

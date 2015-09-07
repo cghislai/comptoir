@@ -8,18 +8,12 @@ import {LocalItemSale, LocalSale,LocalSaleFactory} from 'client/localDomain/sale
 import {LocalItemVariant, LocalItemVariantFactory} from 'client/localDomain/itemVariant';
 import {LocalAccountingEntry, LocalAccountingEntryFactory} from 'client/localDomain/accountingEntry';
 
-import {Account, AccountFactory} from 'client/domain/account';
-import {AccountingEntry, AccountingEntryRef, AccountingEntrySearch,  AccountingEntryFactory} from 'client/domain/accountingEntry';
-import {Sale, SaleRef, SaleSearch, SaleFactory} from 'client/domain/sale';
-import {ItemVariant, ItemVariantRef, ItemVariantFactory} from 'client/domain/itemVariant';
-import {ItemVariantSale, ItemVariantSaleRef,
+import {AccountClient, Account, AccountFactory} from 'client/domain/account';
+import {AccountingEntryClient, AccountingEntry, AccountingEntryRef, AccountingEntrySearch,  AccountingEntryFactory} from 'client/domain/accountingEntry';
+import {SaleClient, Sale, SaleRef, SaleSearch, SaleFactory} from 'client/domain/sale';
+import {ItemVariantClient, ItemVariant, ItemVariantRef, ItemVariantFactory} from 'client/domain/itemVariant';
+import {ItemVariantSaleClient, ItemVariantSale, ItemVariantSaleRef,
     ItemVariantSaleSearch, ItemVariantSaleFactory} from 'client/domain/itemVariantSale';
-
-import {AccountClient} from 'client/account';
-import {SaleClient} from 'client/sale';
-import {ItemVariantSaleClient} from 'client/itemVariantSale';
-import {ItemVariantClient} from 'client/itemVariant';
-import {AccountingEntryClient} from 'client/accountingEntry';
 
 import {LocaleTexts} from 'client/utils/lang';
 import {SearchResult} from 'client/utils/search';
@@ -56,28 +50,28 @@ export class SaleService {
     createSale(sale:Sale):Promise<SaleRef> {
         var authToken = this.authService.authToken;
         sale.companyRef = this.authService.loggedEmployee.companyRef;
-        return this.saleClient.createSale(sale, authToken);
+        return this.saleClient.create(sale, authToken);
     }
 
     updateSale(sale:Sale):Promise<SaleRef> {
         var authToken = this.authService.authToken;
-        return this.saleClient.updateSale(sale, authToken);
+        return this.saleClient.update(sale, authToken);
     }
 
     getSale(id:number):Promise<Sale> {
         var authToken = this.authService.authToken;
-        return this.saleClient.getSale(id, authToken);
+        return this.saleClient.get(id, authToken);
     }
 
     searchSales(saleSearch:SaleSearch, pagination:Pagination):Promise<SearchResult<Sale>> {
         var authToken = this.authService.authToken;
         saleSearch.companyRef = this.authService.loggedEmployee.companyRef;
-        return this.saleClient.searchSales(saleSearch, pagination, authToken);
+        return this.saleClient.search(saleSearch, pagination, authToken);
     }
 
     removeSale(id:number):Promise<boolean> {
         var authToken = this.authService.authToken;
-        return this.saleClient.deleteSale(id, authToken)
+        return this.saleClient.remove(id, authToken)
             .then(()=> {
                 return true;
             });
@@ -107,7 +101,7 @@ export class SaleService {
         var sale = LocalSaleFactory.fromLocalSale(localSale);
         var authToken = this.authService.authToken;
         localSale.dirty = true;
-        localSale.saleRequest = this.saleClient.getUpdateSaleRequest(sale, authToken);
+        localSale.saleRequest = this.saleClient.getUpdateRequest(sale, authToken);
 
         return localSale.saleRequest.run()
             .then((response:ComptoirResponse)=> {
@@ -129,7 +123,7 @@ export class SaleService {
         var sale:Sale = LocalSaleFactory.fromLocalSale(localSale);
         sale.companyRef = this.authService.loggedEmployee.companyRef;
 
-        localSale.saleRequest = this.saleClient.getCreateSaleRequest(sale, authToken);
+        localSale.saleRequest = this.saleClient.getCreateRequest(sale, authToken);
 
         return localSale.saleRequest.run()
             .then((response:ComptoirResponse)=> {
@@ -146,7 +140,7 @@ export class SaleService {
 
         var authToken = this.authService.authToken;
         localSale.dirty = true;
-        localSale.saleRequest = this.saleClient.getGetSaleRequest(localSale.id, authToken);
+        localSale.saleRequest = this.saleClient.getGetRequest(localSale.id, authToken);
         return localSale.saleRequest.run()
             .then((response:ComptoirResponse)=> {
                 var sale = JSON.parse(response.text, SaleFactory.fromJSONSaleReviver);
@@ -204,7 +198,7 @@ export class SaleService {
 
         localSale.dirty = true;
         localItemSale.dirty = true;
-        localItemSale.itemSaleRequest = this.itemVariantSaleClient.getCreateItemSaleRequest(itemSale, authToken);
+        localItemSale.itemSaleRequest = this.itemVariantSaleClient.getCreateRequest(itemSale, authToken);
         return localItemSale.itemSaleRequest.run()
             .then((response:ComptoirResponse)=> {
                 var itemSaleRef:ItemVariantSaleRef = JSON.parse(response.text);
@@ -237,7 +231,7 @@ export class SaleService {
         var itemSale = LocalSaleFactory.fromLocalItemVariantSale(localItemSale);
         var authToken = this.authService.authToken;
         localItemSale.dirty = true;
-        localItemSale.itemSaleRequest = this.itemVariantSaleClient.getUpdateItemSaleRequest(itemSale, authToken);
+        localItemSale.itemSaleRequest = this.itemVariantSaleClient.getUpdateRequest(itemSale, authToken);
         return localItemSale.itemSaleRequest.run()
             .then(()=> {
                 localItemSale.dirty = false;
@@ -255,14 +249,15 @@ export class SaleService {
         var itemSale = LocalSaleFactory.fromLocalItemVariantSale(localItemSale);
         var authToken = this.authService.authToken;
         localItemSale.dirty = true;
-        localItemSale.itemSaleRequest = this.itemVariantSaleClient.getGetItemSaleRequest(itemSale.id, authToken);
+        localItemSale.itemSaleRequest = this.itemVariantSaleClient.getGetRequest(itemSale.id, authToken);
         return localItemSale.itemSaleRequest.run()
             .then((response:ComptoirResponse)=> {
                 var itemSale = JSON.parse(response.text, ItemVariantSaleFactory.fromJSONItemVariantSaleReviver);
                 localItemSale.dirty = false;
                 localItemSale.itemSaleRequest = null;
                 LocalSaleFactory.updateLocalItemSale(localItemSale, itemSale);
-                return this.refreshLocalSaleAsync(localItemSale.sale);
+                this.refreshLocalSaleAsync(localItemSale.sale);
+                return localItemSale;
             });
     }
 
@@ -296,7 +291,7 @@ export class SaleService {
         }
         var accountingEntry = LocalAccountingEntryFactory.fromLocalAccountingEntry(localAccountingEntry);
         localSale.dirty = true;
-        localSale.accountingEntriesRequest = this.accountingEntryClient.getCreateAccountingEntryRequest(accountingEntry, authToken);
+        localSale.accountingEntriesRequest = this.accountingEntryClient.getCreateRequest(accountingEntry, authToken);
         localSale.accountingEntries.push(localAccountingEntry);
 
         return localSale.accountingEntriesRequest.run()
@@ -318,7 +313,7 @@ export class SaleService {
         }
         var accountingEntry = LocalAccountingEntryFactory.fromLocalAccountingEntry(localAccountingEntry);
         localSale.dirty = true;
-        localSale.accountingEntriesRequest = this.accountingEntryClient.getUpdateAccountingEntryRequest(accountingEntry, authToken);
+        localSale.accountingEntriesRequest = this.accountingEntryClient.getUpdateRequest(accountingEntry, authToken);
 
         return localSale.accountingEntriesRequest.run()
             .then((response:ComptoirResponse)=> {
@@ -346,7 +341,7 @@ export class SaleService {
         localSale.accountingEntries = newEntries;
 
         localSale.dirty = true;
-        localSale.accountingEntriesRequest = this.accountingEntryClient.getDeleteAccountingEntryRequest(localAccountingEntry.id, authToken);
+        localSale.accountingEntriesRequest = this.accountingEntryClient.getRemoveRequest(localAccountingEntry.id, authToken);
 
         return localSale.accountingEntriesRequest.run()
             .then((response:ComptoirResponse)=> {
@@ -367,7 +362,7 @@ export class SaleService {
         entrySearch.companyRef = this.authService.loggedEmployee.companyRef;
 
         localSale.dirty = true;
-        localSale.accountingEntriesRequest = this.accountingEntryClient.getSearchAccountingEntriesRequest(entrySearch, null, authToken);
+        localSale.accountingEntriesRequest = this.accountingEntryClient.getSearchRequest(entrySearch, null, authToken);
 
         return localSale.accountingEntriesRequest.run()
             .then((response:ComptoirResponse)=> {
@@ -398,7 +393,7 @@ export class SaleService {
             return Promise.resolve(localAccountingEntry);
         }
         var authToken = this.authService.authToken;
-        localAccountingEntry.accountRequest = this.accountClient.getGetAccountRequest(accountId, authToken);
+        localAccountingEntry.accountRequest = this.accountClient.getGetRequest(accountId, authToken);
         return localAccountingEntry.accountRequest.run()
             .then((response:ComptoirResponse)=> {
                 var account = JSON.parse(response.text, AccountFactory.fromJSONAccountReviver);
@@ -420,7 +415,7 @@ export class SaleService {
         itemSaleSearch.saleRef = new SaleRef(saleId);
         itemSaleSearch.companyRef = this.authService.loggedEmployee.companyRef;
 
-        localSale.itemsRequest = this.itemVariantSaleClient.getSearchItemSalesRequest(itemSaleSearch, null, authToken);
+        localSale.itemsRequest = this.itemVariantSaleClient.getSearchRequest(itemSaleSearch, null, authToken);
         return localSale.itemsRequest.run()
             .then((response:ComptoirResponse)=> {
                 var result = new SearchResult<ItemVariantSale>();
@@ -465,7 +460,7 @@ export class SaleService {
             localSaleItem.itemVariantRequest.discardRequest();
         }
         var authToken = this.authService.authToken;
-        localSaleItem.itemVariantRequest = this.itemVariantClient.getGetItemVariantRequest(itemVariantId, authToken);
+        localSaleItem.itemVariantRequest = this.itemVariantClient.getGetRequest(itemVariantId, authToken);
         return localSaleItem.itemVariantRequest.run()
             .then((response:ComptoirResponse)=> {
                 var itemVariant = JSON.parse(response.text, ItemVariantFactory.fromJSONItemVariantReviver);
@@ -494,7 +489,7 @@ export class SaleService {
         var itemSaleId = localItemSale.id;
         var authToken = this.authService.authToken;
         localItemSale.dirty = true;
-        localItemSale.itemSaleRequest = this.itemVariantSaleClient.getRemoveItemSaleRequest(itemSaleId, authToken);
+        localItemSale.itemSaleRequest = this.itemVariantSaleClient.getRemoveRequest(itemSaleId, authToken);
         return localItemSale.itemSaleRequest.run()
             .then(()=> {
                 return this.refreshLocalSaleAsync(localSale);

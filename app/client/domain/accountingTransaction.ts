@@ -3,6 +3,20 @@
  */
 
 import {CompanyRef} from 'client/domain/company';
+import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+
+
+
+export class AccountingTransactionClient extends BasicClient<AccountingTransaction> {
+
+    private static RESOURCE_PATH:string = "/accountingTransaction";
+    constructor() {
+        super({
+            resourcePath: AccountingTransactionClient.RESOURCE_PATH,
+            jsonReviver: AccountingTransactionFactory.fromJSONAccountTransactionReviver
+        });
+    }
+}
 
 export enum AccountTransactionType {
     SALE,

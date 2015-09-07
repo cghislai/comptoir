@@ -100,6 +100,7 @@ export class ItemVariantColumn {
     static ID:ItemVariantColumn;
     static VARIANT_REFERENCE:ItemVariantColumn;
     static PICTURE:ItemVariantColumn;
+    static PICTURE_NO_ITEM_FALLBACK:ItemVariantColumn;
     static PRICING:ItemVariantColumn;
     static PRICING_AMOUNT:ItemVariantColumn;
     static ATTRIBUTES:ItemVariantColumn;
@@ -137,6 +138,12 @@ export class ItemVariantColumn {
         ItemVariantColumn.PICTURE = new ItemVariantColumn();
         ItemVariantColumn.PICTURE.name = 'picture';
         ItemVariantColumn.PICTURE.title = {
+            'fr': "Image"
+        };
+
+        ItemVariantColumn.PICTURE_NO_ITEM_FALLBACK = new ItemVariantColumn();
+        ItemVariantColumn.PICTURE_NO_ITEM_FALLBACK.name = 'pictureNoItemFallback';
+        ItemVariantColumn.PICTURE_NO_ITEM_FALLBACK.title = {
             'fr': "Image"
         };
 

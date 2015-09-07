@@ -3,6 +3,19 @@
  */
 
 import {CompanyRef} from 'client/domain/company';
+import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+
+
+export class EmployeeClient extends BasicClient<Employee> {
+
+    private static RESOURCE_PATH:string = "/employee";
+    constructor() {
+        super({
+            resourcePath: EmployeeClient.RESOURCE_PATH,
+            jsonReviver: EmployeeFactory.fromJSONEmployeeReviver
+        });
+    }
+}
 
 export class EmployeeRef {
     id: number;

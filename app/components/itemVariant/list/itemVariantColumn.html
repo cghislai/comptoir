@@ -1,31 +1,40 @@
 <div class="id"
-      *ng-if="column.name == 'id' ">
+     *ng-if="column.name == 'id' ">
     {{ itemVariant.id }}
 </div>
 <div class="ref"
-    *ng-if="column.name == 'variantReference' ">
+     *ng-if="column.name == 'variantReference' ">
     {{ itemVariant.variantReference }}
 </div>
 <div class="picture"
-      *ng-if="column.name == 'picture' ">
+     *ng-if="column.name == 'picture' ">
     <img [src]="itemVariant.mainPicture.dataURI" *ng-if="itemVariant.mainPicture?.dataURI != undefined">
+
     <div *ng-if="itemVariant.mainPicture?.dataURI == null">
         <img [src]="itemVariant.item.mainPicture.dataURI" *ng-if="itemVariant.item?.mainPicture?.dataURI != undefined">
+
         <div class="imagePlaceover" *ng-if="itemVariant.item?.mainPicture?.dataURI == undefined">
             <i class="fi-book"></i>
         </div>
     </div>
 </div>
+<div class="picture"
+     *ng-if="column.name == 'pictureNoItemFallback' ">
+    <img [src]="itemVariant.mainPicture.dataURI" *ng-if="itemVariant.mainPicture?.dataURI != undefined">
+    <div class="imagePlaceover" *ng-if="itemVariant.item?.mainPicture?.dataURI == undefined">
+        <i class="fi-book"></i>
+    </div>
+</div>
 <div class="pricing"
-      *ng-if="column.name == 'pricing' ">
+     *ng-if="column.name == 'pricing' ">
     {{ getPricingLabel(itemVariant.pricing)[lang] }}
 </div>
 <div class="pricingAmount"
-      *ng-if="column.name == 'pricingAmount' ">
+     *ng-if="column.name == 'pricingAmount' ">
     {{ itemVariant.pricingAmount | currency:'EUR':true:'.2-2' }}
 </div>
 <div class="attributes"
-      *ng-if="column.name == 'attributes' ">
+     *ng-if="column.name == 'attributes' ">
     <span class="attributeValue"
           *ng-for="#attr of itemVariant.attributeValues">
         <span class="def">
@@ -38,24 +47,26 @@
 </div>
 
 
-<div class="ref"
-    *ng-if="column.name == 'itemReference'">
-    {{ itemVariant.item.reference }}
-</div>
-<div class="name"
-    *ng-if="column.name == 'itemName'">
-    {{ itemVariant.item.name[lang] }}
-</div>
-<span class="desc"
-    *ng-if="column.name == 'itemDescription'">
-     {{ itemVariant.item.description[lang] }}
-</span>
-<div class="name_attributes"
-    *ng-if="column.name == 'itemNameVariantAttributes'">
-    <div class="name">
+<div *ng-if="itemVariant.item != null">
+    <div class="ref"
+         *ng-if="column.name == 'itemReference'">
+        {{ itemVariant.item.reference }}
+    </div>
+    <div class="name"
+         *ng-if="column.name == 'itemName'">
         {{ itemVariant.item.name[lang] }}
     </div>
-    <div>
+<span class="desc"
+      *ng-if="column.name == 'itemDescription'">
+     {{ itemVariant.item.description[lang] }}
+</span>
+
+    <div class="name_attributes"
+         *ng-if="column.name == 'itemNameVariantAttributes'">
+        <div class="name">
+            {{ itemVariant.item.name[lang] }}
+        </div>
+        <div>
         <span class="attributeValue"
               *ng-for="#attr of itemVariant.attributeValues">
         <span class="def">
@@ -65,24 +76,25 @@
             {{ attr.value[lang] }}
         </span>
     </span>
+        </div>
+    </div>
+    <div class="vatExslusive"
+         *ng-if="column.name == 'itemVatExclusive'">
+        {{ itemVariant.item.vatExclusive | currency:'EUR':true:'.2-2' }}
+    </div>
+    <div class="vatRate"
+         *ng-if="column.name == 'itemVatRate'">
+        {{ ( itemVariant.item.vatRate * 100 )| number:'.0' }} %
+    </div>
+    <div class="totalPrice"
+         *ng-if="column.name == 'totalPrice' ">
+        {{ itemVariant.calcPrice() | currency:'EUR':true:'.2-2' }}
     </div>
 </div>
-<div class="vatExslusive"
-        *ng-if="column.name == 'itemVatExclusive'">
-    {{ itemVariant.item.vatExclusive | currency:'EUR':true:'.2-2' }}
-</div>
-<div class="vatRate"
-    *ng-if="column.name == 'itemVatRate'">
-    {{ ( itemVariant.item.vatRate * 100 )| number:'.0' }} %
-</div>
-<div class="totalPrice"
-        *ng-if="column.name == 'totalPrice' ">
-    {{ itemVariant.calcPrice() | currency:'EUR':true:'.2-2' }}
-</div>
 <div class="action remove"
-      *ng-if="column.name == 'action_remove' " >
+     *ng-if="column.name == 'action_remove' ">
     <a class="actionIcon "
        (^click)="onColumnAction(itemVariant, column, $event)">
-    <i class="fi-minus red"></i>
+        <i class="fi-minus red"></i>
     </a>
 </div>

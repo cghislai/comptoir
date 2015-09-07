@@ -3,7 +3,7 @@
  */
 
 import {Item} from 'client/domain/item';
-import {ItemPicture, ItemPictureRef} from 'client/domain/itemPicture';
+import {Picture, PictureRef} from 'client/domain/picture';
 import {CompanyRef} from 'client/domain/company';
 import {LocalPicture} from 'client/localDomain/picture';
 import {LocaleTexts} from 'client/utils/lang';
@@ -37,7 +37,7 @@ export class LocalItemFactory {
         item.id = localItem.id;
         if (localItem.mainPicture != null) {
             var picId = localItem.mainPicture.id;
-            var picRef = new ItemPictureRef(picId)
+            var picRef = new PictureRef(picId)
             item.mainPictureRef = picRef;
         }
         item.name = localItem.name;

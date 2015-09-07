@@ -6,7 +6,7 @@ import {AttributeDefinition, AttributeDefinitionRef} from 'client/domain/attribu
 import {AttributeValue, AttributeValueRef} from 'client/domain/attributeValue';
 import {ItemVariant, Pricing} from 'client/domain/itemVariant';
 import {Item, ItemRef} from 'client/domain/item';
-import {ItemPicture, ItemPictureRef} from 'client/domain/itemPicture';
+import {Picture, PictureRef} from 'client/domain/picture';
 
 import {LocalItem} from 'client/localDomain/item';
 import {LocalPicture} from 'client/localDomain/picture';
@@ -92,18 +92,15 @@ export class LocalItemVariantFactory {
         var itemVariant:ItemVariant = new ItemVariant();
         itemVariant.attributeValueRefs = [];
         for (var localAttribute of localVariant.attributeValues) {
-            var attributeValue:AttributeValue = new AttributeValue();
-            attributeValue.attributeDefinitionRef = new AttributeDefinitionRef(localAttribute.id);
-            attributeValue.id = localAttribute.id;
-            attributeValue.value = localAttribute.value;
-            itemVariant.attributeValueRefs.push(attributeValue);
+            var attributeValueRef:AttributeValueRef = new AttributeValueRef(localAttribute.id);
+            itemVariant.attributeValueRefs.push(attributeValueRef);
         }
         itemVariant.id = localVariant.id;
         if (localVariant.item != null) {
             itemVariant.itemRef = new ItemRef(localVariant.item.id);
         }
         if (localVariant.mainPicture != null) {
-            itemVariant.mainPictureRef = new ItemPictureRef(localVariant.mainPicture.id);
+            itemVariant.mainPictureRef = new PictureRef(localVariant.mainPicture.id);
         }
         itemVariant.pricing = Pricing[localVariant.pricing];
         itemVariant.pricingAmount = localVariant.pricingAmount;

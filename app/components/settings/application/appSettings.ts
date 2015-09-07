@@ -8,7 +8,6 @@ import {Company} from 'client/domain/company';
 import {Employee} from 'client/domain/employee';
 import {Language} from 'client/utils/lang';
 import {ErrorService} from 'services/error';
-import {EmployeeService} from 'services/employee';
 import {CompanyService} from 'services/company';
 import {AuthService} from 'services/auth';
 
@@ -24,7 +23,6 @@ export class ApplicationSettingsView {
     errorService:ErrorService;
     companyService:CompanyService;
     authService:AuthService;
-    employeeService:EmployeeService;
 
     companyValue:Company;
     employeeValue:Employee;
@@ -32,12 +30,11 @@ export class ApplicationSettingsView {
     language:Language;
 
     constructor(errorService:ErrorService, companyService:CompanyService,
-                authService:AuthService, employeeService:EmployeeService) {
+                authService:AuthService) {
         this.errorService = errorService;
         this.companyService = companyService;
         this.authService = authService;
         this.employeeValue = this.authService.loggedEmployee;
-        this.employeeService = employeeService;
         this.language = authService.getEmployeeLanguage();
 
         this.searchCompany();
@@ -68,10 +65,10 @@ export class ApplicationSettingsView {
             this.employeeValue.locale = this.language.locale;
             this.authService.loggedEmployee = this.employeeValue;
             var thisView = this;
-            this.employeeService.updateEmployee(this.employeeValue)
+           /* this.employeeService.updateEmployee(this.employeeValue)
                 .catch((error)=> {
                     this.errorService.handleRequestError(error);
-                });
+                });*/
         }
     }
 }

@@ -4,8 +4,19 @@
 
 import {CompanyRef} from 'client/domain/company';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
+import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
 
 
+export class AttributeDefinitionClient extends BasicClient<AttributeDefinition> {
+
+    private static RESOURCE_PATH:string = "/attribute/definition";
+    constructor() {
+        super({
+            resourcePath: AttributeDefinitionClient.RESOURCE_PATH,
+            jsonReviver: AttributeDefinitionFactory.fromJSONAttributeDefinitionReviver
+        });
+    }
+}
 
 export class AttributeDefinition {
     id: number;

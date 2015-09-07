@@ -5,14 +5,13 @@ import {Inject} from 'angular2/angular2';
 
 import {Country, CountryFactory} from 'client/domain/country';
 import {Company, CompanyRef, CompanyFactory} from 'client/domain/company';
-import {EmployeeRef, Employee, EmployeeFactory} from 'client/domain/employee';
+import {EmployeeClient, EmployeeRef, Employee, EmployeeFactory} from 'client/domain/employee';
 import {Auth, Registration, AuthFactory} from 'client/domain/auth';
 import {Language} from 'client/utils/lang';
 import {JSONFactory} from 'client/utils/factory';
 import {ComptoirRequest,ComptoirResponse} from 'client/utils/request';
 
 import {AuthClient} from 'client/auth';
-import {EmployeeClient} from 'client/employee';
 import {CompanyClient} from 'client/company';
 import {CountryClient} from 'client/country';
 
@@ -119,7 +118,7 @@ export class AuthService {
         if (this.loadingRequest != null) {
             this.loadingRequest.discardRequest();
         }
-        this.loadingRequest = this.employeeClient.getGetEmployeeRequest(employeeId, this.authToken);
+        this.loadingRequest = this.employeeClient.getGetRequest(employeeId, this.authToken);
         return this.loadingRequest.run()
             .then((response:ComptoirResponse)=> {
                 var employee = JSON.parse(response.text, EmployeeFactory.fromJSONEmployeeReviver);

@@ -4,7 +4,19 @@
 
 import {CompanyRef} from 'client/domain/company';
 import {SaleRef} from 'client/domain/sale';
+import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
 
+
+export class InvoiceClient extends BasicClient<Invoice> {
+
+    private static RESOURCE_PATH:string = "/invoice";
+    constructor() {
+        super({
+            resourcePath: InvoiceClient.RESOURCE_PATH,
+            jsonReviver: InvoiceFactory.fromJSONInvoiceReviver
+        });
+    }
+}
 export class Invoice {
     id: number;
     companyRef: CompanyRef;

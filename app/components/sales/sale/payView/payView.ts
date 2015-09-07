@@ -211,6 +211,5 @@ export class PayView {
         total = NumberUtils.toFixedDecimals(total, 2);
         var paid = this.sale.totalPaid;
         this.toPay = total - paid;
-        console.log("paid "+paid+" of "+total+"( "+this.sale.vatExclusiveAmount+" + "+this.sale.vatAmount+"), missing "+this.toPay);
     }
 }

@@ -6,6 +6,19 @@ import {CompanyRef} from 'client/domain/company';
 import {PosRef} from 'client/domain/pos';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 
+import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+
+
+export class AccountClient extends BasicClient<Account> {
+
+    private static RESOURCE_PATH:string = "/account";
+    constructor() {
+        super({
+            resourcePath: AccountClient.RESOURCE_PATH,
+            jsonReviver: AccountFactory.fromJSONAccountReviver
+        });
+    }
+}
 
 export enum AccountType {
     PAYMENT,

@@ -4,10 +4,9 @@
 import {Inject} from 'angular2/angular2';
 
 import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
-import {Account,AccountType, AccountRef, AccountSearch} from 'client/domain/account';
+import {AccountClient, Account, AccountType, AccountRef, AccountSearch} from 'client/domain/account';
 import {LocaleTexts} from 'client/utils/lang';
 import {SearchResult} from 'client/utils/search';
-import {AccountClient} from 'client/account';
 import {Pagination} from 'client/utils/pagination';
 
 import {AuthService} from 'services/auth';
@@ -28,12 +27,12 @@ export class AccountService {
     createAccount(account:Account):Promise<AccountRef> {
         var authToken = this.authService.authToken;
         account.companyRef = this.authService.loggedEmployee.companyRef;
-        return this.client.createAccount(account, authToken);
+        return this.client.create(account, authToken);
     }
 
     updateAccount(account:Account):Promise<AccountRef> {
         var authToken = this.authService.authToken;
-        return this.client.updateAccount(account, authToken);
+        return this.client.update(account, authToken);
     }
 
 
@@ -52,22 +51,19 @@ export class AccountService {
 
     getAccount(id:number):Promise<Account> {
         var authToken = this.authService.authToken;
-        return this.client.getAccount(id, authToken);
+        return this.client.get(id, authToken);
     }
 
     searchAccounts(accountSearch:AccountSearch, pagination:Pagination):Promise<SearchResult<Account>> {
         var authToken = this.authService.authToken;
         accountSearch.companyRef = this.authService.loggedEmployee.companyRef;
-        return this.client.searchAccounts(accountSearch, pagination, authToken);
+        return this.client.search(accountSearch, pagination, authToken);
     }
 
 
     removeAccount(account:Account):Promise<boolean> {
         var authToken = this.authService.authToken;
-        // TODO
-        return new Promise((resolve, reject) => {
-            resolve(true);
-        });
+        return this.client.remove(account.id, authToken);
     }
 
     public getLocalAccountAsync(accountId:number) {

@@ -4,10 +4,11 @@
 
 import {Inject} from 'angular2/angular2';
 
-import {AttributeDefinition, AttributeDefinitionFactory} from 'client/domain/attributeDefinition';
-import {ItemVariant, ItemVariantRef, ItemVariantSearch, ItemVariantFactory} from 'client/domain/itemVariant';
-import {Item, ItemRef, ItemSearch, ItemFactory} from 'client/domain/item';
-import {Picture, PictureRef, PictureFactory} from 'client/domain/picture';
+import {AttributeDefinitionClient, AttributeDefinition, AttributeDefinitionFactory} from 'client/domain/attributeDefinition';
+import {AttributeValueClient, AttributeValue, AttributeValueRef, AttributeValueFactory} from 'client/domain/attributeValue';
+import {ItemVariantClient, ItemVariant, ItemVariantRef, ItemVariantSearch, ItemVariantFactory} from 'client/domain/itemVariant';
+import {ItemClient, Item, ItemRef, ItemSearch, ItemFactory} from 'client/domain/item';
+import {PictureClient, Picture, PictureRef, PictureFactory} from 'client/domain/picture';
 
 import {LocalItem, LocalItemFactory}from 'client/localDomain/item';
 import {LocalAttributeValue,  LocalItemVariant, LocalItemVariantFactory}from 'client/localDomain/itemVariant';
@@ -18,12 +19,6 @@ import {Pagination} from 'client/utils/pagination';
 import {SearchResult} from 'client/utils/search';
 import {ComptoirResponse} from'client/utils/request';
 
-import {ItemClient} from 'client/item';
-import {ItemVariantClient} from 'client/itemVariant';
-import {PictureClient} from 'client/picture'
-import {AttributeDefinitionClient} from 'client/attributeDefinition';
-import {AttributeValueClient} from 'client/attributeValue';
-
 import {AuthService} from 'services/auth';
 
 
@@ -32,7 +27,7 @@ export class ItemVariantService {
     private itemClient:ItemClient;
     private itemVariantClient:ItemVariantClient;
     private pictureClient:PictureClient;
-    private attributeDefinitiobClient:AttributeDefinitionClient;
+    private attributeDefinitionClient:AttributeDefinitionClient;
     private attributeValueClient:AttributeValueClient;
 
     constructor(@Inject authService:AuthService) {
@@ -40,24 +35,24 @@ export class ItemVariantService {
         this.itemClient = new ItemClient();
         this.itemVariantClient = new ItemVariantClient();
         this.pictureClient = new PictureClient();
-        this.attributeDefinitiobClient = new AttributeDefinitionClient();
+        this.attributeDefinitionClient = new AttributeDefinitionClient();
         this.attributeValueClient = new AttributeValueClient();
     }
 
 
     public createItemVariant(itemVariant:ItemVariant):Promise<ItemVariantRef> {
         var authToken = this.authService.authToken;
-        return this.itemVariantClient.createItemVariant(itemVariant, authToken);
+        return this.itemVariantClient.create(itemVariant, authToken);
     }
 
     public updateItemVariant(itemVariant:ItemVariant):Promise<ItemVariantRef> {
         var authToken = this.authService.authToken;
-        return this.itemVariantClient.updateItemvariant(itemVariant, authToken);
+        return this.itemVariantClient.update(itemVariant, authToken);
     }
 
     public getItemVariant(id:number):Promise<ItemVariant> {
         var authToken = this.authService.authToken;
-        return this.itemVariantClient.getItemVariant(id, authToken);
+        return this.itemVariantClient.get(id, authToken);
     }
 
     public searchItemsVariant(itemVariantSearch:ItemVariantSearch, pagination:Pagination):Promise<SearchResult<ItemVariant>> {
@@ -66,57 +61,71 @@ export class ItemVariantService {
         }
         itemVariantSearch.itemSearch.companyRef = this.authService.loggedEmployee.companyRef;
         var authToken = this.authService.authToken;
-        return this.itemVariantClient.searchItemVariants(itemVariantSearch, pagination, authToken);
+        return this.itemVariantClient.search(itemVariantSearch, pagination, authToken);
     }
 
 
     // Local items
 
-    public getLocalItemVariantAsync(id:number):Promise<LocalItemVariant> {
+    public getLocalItemVariantAsync(id:number, refreshConf?:any):Promise<LocalItemVariant> {
         var localItemVariant = new LocalItemVariant();
 
         return this.getItemVariant(id)
             .then((itemVariant:ItemVariant)=> {
-                return this.refreshLocalItemVariantAsync(localItemVariant, itemVariant);
+                return this.refreshLocalItemVariantAsync(localItemVariant, itemVariant, refreshConf);
             });
     }
 
-    public refreshLocalItemVariantAsync(localItemVariant:LocalItemVariant, itemVariant:ItemVariant):Promise<LocalItemVariant> {
+    public refreshLocalItemVariantAsync(localItemVariant:LocalItemVariant, itemVariant:ItemVariant, conf?:any):Promise<LocalItemVariant> {
         LocalItemVariantFactory.updateLocalItemVariant(localItemVariant, itemVariant);
         var tasks = [];
-        if (itemVariant.mainPictureRef != null) {
-            var pictureId = itemVariant.mainPictureRef.id;
-            tasks.push(this.fetchLocalItemVariantPictureAsync(localItemVariant, pictureId));
+        if (conf == null) {
+            conf = {
+                picture: true,
+                itemPictureFallback: true,
+                item: true,
+                attributes: true,
+            };
         }
-        var itemId = itemVariant.itemRef.id;
-        tasks.push(this.fetchLocalItemVariantItemAsync(localItemVariant, itemId));
-        if (itemVariant.attributeValueRefs != null) {
-            var attributesTasks = [];
-            localItemVariant.attributeValues = [];
-            for (var attributeValueRef of itemVariant.attributeValueRefs) {
-                attributesTasks.push(this.fetchLocalAttributeValueAsync(attributeValueRef.id)
-                    .then((localValue)=> {
-                        localItemVariant.attributeValues.push(localValue);
-                    }));
+        if (conf.picture) {
+            if (itemVariant.mainPictureRef != null) {
+                var pictureId = itemVariant.mainPictureRef.id;
+                tasks.push(this.fetchLocalItemVariantPictureAsync(localItemVariant, pictureId));
             }
-            var attributesTask = Promise.all(attributesTasks);
-            tasks.push(attributesTask);
         }
-        Promise.all(tasks)
+        if (conf.item) {
+            var itemId = itemVariant.itemRef.id;
+            var itemrefreshConf = { picture: conf.itemPictureFallback};
+            tasks.push(this.fetchLocalItemVariantItemAsync(localItemVariant, itemId, itemrefreshConf));
+        }
+        if (conf.attributes) {
+            if (itemVariant.attributeValueRefs != null) {
+                var attributesTasks = [];
+                localItemVariant.attributeValues = [];
+                for (var attributeValueRef of itemVariant.attributeValueRefs) {
+                    attributesTasks.push(this.fetchLocalAttributeValueAsync(attributeValueRef.id)
+                        .then((localValue)=> {
+                            localItemVariant.attributeValues.push(localValue);
+                        }));
+                }
+                var attributesTask = Promise.all(attributesTasks);
+                tasks.push(attributesTask);
+            }
+        }
+        return Promise.all(tasks)
             .then(()=> {
                 return localItemVariant;
             });
-        return Promise.resolve(localItemVariant);
     }
 
 
     private fetchLocalAttributeValueAsync(attributeDefinitionId:number):Promise<LocalAttributeValue> {
         var authToken = this.authService.authToken;
-        return this.attributeValueClient.getAttributeValue(attributeDefinitionId, authToken)
+        return this.attributeValueClient.get(attributeDefinitionId, authToken)
             .then((attributeValue)=> {
                 var localValue = LocalItemVariantFactory.toLocalAttributeValue(attributeValue);
 
-                localValue.attributeDefinitionRequest = this.attributeDefinitiobClient.getGetAttributeDefinitionRequest(attributeValue.attributeDefinitionRef.id, authToken);
+                localValue.attributeDefinitionRequest = this.attributeDefinitionClient.getGetRequest(attributeValue.attributeDefinitionRef.id, authToken);
                 return localValue.attributeDefinitionRequest.run()
                     .then((response:ComptoirResponse)=> {
                         var attributeDefinition = JSON.parse(response.text, AttributeDefinitionFactory.fromJSONAttributeDefinitionReviver);
@@ -135,7 +144,7 @@ export class ItemVariantService {
         var createDefinitionTask = Promise.resolve(attributeDefinition);
         if (definitionId == null) {
             attributeDefinition.companyRef = this.authService.loggedEmployee.companyRef;
-            createDefinitionTask = this.attributeDefinitiobClient.createAttributeDefinition(attributeDefinition, authToken)
+            createDefinitionTask = this.attributeDefinitionClient.create(attributeDefinition, authToken)
                 .then((definitionRef)=> {
                     attributeDefinition.id = definitionRef.id;
                     definitionId = definitionRef.id;
@@ -147,13 +156,13 @@ export class ItemVariantService {
             var valueId = localAttribute.id;
             var attributeValue = LocalItemVariantFactory.fromLocalAttributeValue(localAttribute);
             if (valueId == null) {
-                return this.attributeValueClient.createAttributeValue(attributeValue, authToken)
+                return this.attributeValueClient.create(attributeValue, authToken)
                     .then((attributeRef)=> {
                         localAttribute.id = attributeRef.id;
                         return localAttribute;
                     });
             } else {
-                return this.attributeValueClient.updateAttributeValue(attributeValue, authToken)
+                return this.attributeValueClient.update(attributeValue, authToken)
                     .then((attributeRef)=> {
                         return localAttribute;
                     });
@@ -183,22 +192,7 @@ export class ItemVariantService {
             });
     }
 
-    public searchLocalItemVariantsAsyncNoRefresh(itemVariantSearch:ItemVariantSearch, pagination:Pagination):Promise<SearchResult<LocalItemVariant>> {
-        return this.searchItemsVariant(itemVariantSearch, pagination)
-            .then((result)=> {
-                var localResult = new SearchResult<LocalItemVariant>();
-                localResult.count = result.count;
-                localResult.list = [];
-                for (var itemVariant of result.list) {
-                    var localItemVariant = LocalItemVariantFactory.toLocalItemVariant(itemVariant);
-                    localResult.list.push(localItemVariant);
-                }
-                return localResult;
-            });
-    }
-
-
-    public searchLocalItemVariantsAsync(itemVariantSearch:ItemVariantSearch, pagination:Pagination):Promise<SearchResult<LocalItemVariant>> {
+    public searchLocalItemVariantsAsync(itemVariantSearch:ItemVariantSearch, pagination:Pagination, refreshConfig?:any):Promise<SearchResult<LocalItemVariant>> {
         return this.searchItemsVariant(itemVariantSearch, pagination)
             .then((result)=> {
                 var localResult = new SearchResult<LocalItemVariant>();
@@ -208,12 +202,10 @@ export class ItemVariantService {
                 for (var itemVariant of result.list) {
                     var localItemVariant = LocalItemVariantFactory.toLocalItemVariant(itemVariant);
                     localResult.list.push(localItemVariant);
-                    taskList.push(this.refreshLocalItemVariantAsync(localItemVariant, itemVariant));
+                    taskList.push(this.refreshLocalItemVariantAsync(localItemVariant, itemVariant, refreshConfig));
                 }
-                return Promise.all(taskList)
-                    .then(()=> {
-                        return localResult;
-                    });
+                Promise.all(taskList);
+                return localResult;
             });
     }
 
@@ -229,11 +221,11 @@ export class ItemVariantService {
         var pictureExists = localPicture.id != null;
         var picture = LocalPictureFactory.fromLocalPicture(localPicture);
         if (pictureExists) {
-            localItemVariant.mainPictureRequest = this.pictureClient.getUpdatePictureRequest(picture, authToken);
+            localItemVariant.mainPictureRequest = this.pictureClient.getUpdateRequest(picture, authToken);
         } else {
             picture.companyRef = this.authService.loggedEmployee.companyRef;
             localPicture.companyRef = picture.companyRef;
-            localItemVariant.mainPictureRequest = this.pictureClient.getCreatePictureRequest(picture, authToken);
+            localItemVariant.mainPictureRequest = this.pictureClient.getCreateRequest(picture, authToken);
         }
         return localItemVariant.mainPictureRequest.run()
             .then((response)=> {
@@ -250,7 +242,7 @@ export class ItemVariantService {
         }
 
         var authToken = this.authService.authToken;
-        var request = this.pictureClient.getGetPictureRequest(pictureId, authToken)
+        var request = this.pictureClient.getGetRequest(pictureId, authToken)
         localItemVariant.mainPictureRequest = request;
 
         return localItemVariant.mainPictureRequest.run()
@@ -269,7 +261,7 @@ export class ItemVariantService {
         }
 
         var authToken = this.authService.authToken;
-        var request = this.pictureClient.getGetPictureRequest(pictureId, authToken)
+        var request = this.pictureClient.getGetRequest(pictureId, authToken)
         localItem.mainPictureRequest = request;
 
         return localItem.mainPictureRequest.run()
@@ -283,13 +275,15 @@ export class ItemVariantService {
     }
 
 
-    private fetchLocalItemVariantItemAsync(localItemVariant:LocalItemVariant, itemId:number):Promise<LocalItemVariant> {
+    private fetchLocalItemVariantItemAsync(localItemVariant:LocalItemVariant, itemId:number, conf?:any):Promise<LocalItemVariant> {
         if (localItemVariant.itemRequest != null) {
             localItemVariant.itemRequest.discardRequest();
         }
         var authToken = this.authService.authToken;
-
-        var request = this.itemClient.getGetItemRequest(itemId, authToken);
+        if (conf == null) {
+            conf = {picture: true};
+        }
+        var request = this.itemClient.getGetRequest(itemId, authToken);
         localItemVariant.itemRequest = request;
 
         return localItemVariant.itemRequest.run()
@@ -299,12 +293,12 @@ export class ItemVariantService {
                 localItemVariant.item = localItem;
                 localItemVariant.itemRequest = null;
 
-                if (localItemVariant.mainPicture == null) {
+                if (conf.picture && localItemVariant.mainPicture == null) {
                     var picRef = item.mainPictureRef;
                     if (picRef != null) {
                         var picId = picRef.id;
                         return this.fetchLocalItemPictureAsync(localItem, picId)
-                            .then(()=>{
+                            .then(()=> {
                                 return localItemVariant;
                             });
                     }

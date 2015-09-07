@@ -3,15 +3,12 @@
  */
 import {Inject} from 'angular2/angular2';
 
-import {Account, AccountRef} from 'client/domain/account';
-import {Balance, BalanceRef, BalanceSearch, BalanceFactory} from "client/domain/balance";
-import {MoneyPile, MoneyPileRef, MoneyPileFactory} from 'client/domain/moneyPile';
+import {AccountClient, Account, AccountRef} from 'client/domain/account';
+import {BalanceClient, Balance, BalanceRef, BalanceSearch, BalanceFactory} from "client/domain/balance";
+import {MoneyPileClient, MoneyPile, MoneyPileRef, MoneyPileFactory} from 'client/domain/moneyPile';
 
 import {ABalance, AMoneyPile, CashType} from 'client/utils/aBalance';
 import {Pagination} from 'client/utils/pagination';
-
-import {BalanceClient} from "client/balance";
-import {MoneyPileClient} from 'client/moneyPile';
 
 import {AuthService} from 'services/auth';
 
@@ -29,7 +26,7 @@ export class BalanceService {
     searchBalancesAsync(balanceSearch:BalanceSearch, pagination:Pagination) {
         var authToken = this.authService.authToken;
         balanceSearch.companyRef = this.authService.loggedEmployee.companyRef;
-        return this.balanceClient.searchBalances(balanceSearch, pagination, authToken);
+        return this.balanceClient.search(balanceSearch, pagination, authToken);
     }
 
     openABalanceAsync(aBalance:ABalance):Promise<ABalance> {
@@ -43,9 +40,9 @@ export class BalanceService {
         aBalance.dirty = true;
         this.calcABalance(aBalance);
 
-        return this.balanceClient.createBalance(balance, authToken)
+        return this.balanceClient.create(balance, authToken)
             .then((balanceRef)=> {
-                return this.balanceClient.getBalance(balanceRef.id, authToken);
+                return this.balanceClient.get(balanceRef.id, authToken);
             }).then((balance:Balance)=> {
                 aBalance.balance = balance;
                 aBalance.dirty = false;
@@ -59,9 +56,9 @@ export class BalanceService {
         aBalance.dirty = true;
         this.calcABalance(aBalance);
 
-        return this.balanceClient.updateBalance(aBalance.balance, authToken)
+        return this.balanceClient.update(aBalance.balance, authToken)
             .then((balanceRef)=> {
-                return this.balanceClient.getBalance(balanceRef.id, authToken);
+                return this.balanceClient.get(balanceRef.id, authToken);
             }).then((balance:Balance)=> {
                 aBalance.balance = balance;
                 aBalance.dirty = false;
@@ -90,14 +87,14 @@ export class BalanceService {
         this.calcABalance(aBalance);
 
         if (moneyPile.id == null) {
-            return this.moneyPileClient.createMoneyPile(moneyPile, authToken)
+            return this.moneyPileClient.create(moneyPile, authToken)
                 .then((pileRef)=> {
-                    return this.moneyPileClient.getMoneyPile(pileRef.id, authToken);
+                    return this.moneyPileClient.get(pileRef.id, authToken);
                 }).then((pile:MoneyPile)=> {
                     aMoneyPile.moneyPile = pile;
                     aMoneyPile.dirty = false;
                     var balanceId = aBalance.balance.id;
-                    return this.balanceClient.getBalance(balanceId, authToken);
+                    return this.balanceClient.get(balanceId, authToken);
                 }).then((balance: Balance)=>{
                     aBalance.balance = balance;
                     aBalance.dirty = false;
@@ -105,14 +102,14 @@ export class BalanceService {
                     return aBalance;
                 });
         } else {
-            return this.moneyPileClient.updateMoneyPile(moneyPile, authToken)
+            return this.moneyPileClient.update(moneyPile, authToken)
                 .then((pileRef)=> {
-                    return this.moneyPileClient.getMoneyPile(pileRef.id, authToken);
+                    return this.moneyPileClient.get(pileRef.id, authToken);
                 }).then((pile:MoneyPile)=> {
                     aMoneyPile.moneyPile = pile;
                     aMoneyPile.dirty =false;
                     var balanceId = aBalance.balance.id;
-                    return this.balanceClient.getBalance(balanceId, authToken);
+                    return this.balanceClient.get(balanceId, authToken);
                 }).then((balance: Balance)=>{
                     aBalance.balance = balance;
                     aBalance.dirty = false;
@@ -130,7 +127,7 @@ export class BalanceService {
 
         return this.balanceClient.closeBalance(id, authToken)
             .then((balanceRef)=> {
-                return this.balanceClient.getBalance(balanceRef.id, authToken)
+                return this.balanceClient.get(balanceRef.id, authToken)
             }).then((balance:Balance)=> {
                 aBalance.balance = balance;
                 aBalance.dirty = false;

@@ -4,8 +4,8 @@
 
 import {Inject} from 'angular2/angular2';
 
-import {Item, ItemRef, ItemSearch, ItemFactory} from 'client/domain/item';
-import {Picture, PictureRef} from 'client/domain/picture';
+import {ItemClient, Item, ItemRef, ItemSearch, ItemFactory} from 'client/domain/item';
+import {PictureClient, Picture, PictureRef} from 'client/domain/picture';
 
 import {LocalItem, LocalItemFactory} from 'client/localDomain/item';
 import {LocalPicture, LocalPictureFactory} from 'client/localDomain/picture';
@@ -13,9 +13,6 @@ import {LocalPicture, LocalPictureFactory} from 'client/localDomain/picture';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 import {Pagination} from 'client/utils/pagination';
 import {SearchResult} from 'client/utils/search';
-
-import {ItemClient} from 'client/item';
-import {PictureClient} from 'client/picture'
 import {ComptoirResponse} from 'client/utils/request';
 
 import {AuthService} from 'services/auth';
@@ -36,28 +33,28 @@ export class ItemService {
     public createItem(item:Item):Promise<ItemRef> {
         item.companyRef = this.authService.loggedEmployee.companyRef;
         var authToken = this.authService.authToken;
-        return this.itemClient.createItem(item, authToken);
+        return this.itemClient.create(item, authToken);
     }
 
     public updateItem(item:Item):Promise<ItemRef> {
         var authToken = this.authService.authToken;
-        return this.itemClient.updateItem(item, authToken);
+        return this.itemClient.update(item, authToken);
     }
 
     public getItem(id:number):Promise<Item> {
         var authToken = this.authService.authToken;
-        return this.itemClient.getItem(id, authToken);
+        return this.itemClient.get(id, authToken);
     }
 
     public searchItems(itemSearch:ItemSearch, pagination:Pagination):Promise<SearchResult<Item>> {
         itemSearch.companyRef = this.authService.loggedEmployee.companyRef;
         var authToken = this.authService.authToken;
-        return this.itemClient.searchItems(itemSearch, pagination, authToken);
+        return this.itemClient.search(itemSearch, pagination, authToken);
     }
 
     public deleteItem(id: number):Promise<any> {
         var authToken = this.authService.authToken;
-        return this.itemClient.deleteItem(id, authToken);
+        return this.itemClient.remove(id, authToken);
     }
 
     // Local items
@@ -78,24 +75,21 @@ export class ItemService {
     }
 
     public saveLocalItemAsync(localItem:LocalItem):Promise<LocalItem> {
-        return this.saveLocalItemPictureAsync(localItem)
-            .then(()=> {
-                var item = LocalItemFactory.fromLocalItem(localItem);
-                var authToken = this.authService.authToken;
-                var itemExists = item.id != null;
-                if (itemExists) {
-                    return this.updateItem(item)
-                        .then(()=> {
-                            return localItem;
-                        });
-                } else {
-                    return this.createItem(item)
-                        .then((itemRef)=> {
-                            localItem.id = itemRef.id;
-                            return localItem;
-                        });
-                }
-            });
+        var item = LocalItemFactory.fromLocalItem(localItem);
+        var authToken = this.authService.authToken;
+        var itemExists = item.id != null;
+        if (itemExists) {
+            return this.updateItem(item)
+                .then(()=> {
+                    return localItem;
+                });
+        } else {
+            return this.createItem(item)
+                .then((itemRef)=> {
+                    localItem.id = itemRef.id;
+                    return localItem;
+                });
+        }
     }
 
     public searchLocalItemsAsync(itemSearch:ItemSearch, pagination:Pagination):Promise<SearchResult<LocalItem>> {
@@ -127,7 +121,7 @@ export class ItemService {
         return this.deleteItem(localItem.id);
     }
 
-    private saveLocalItemPictureAsync(localItem:LocalItem):Promise<LocalItem> {
+    public saveLocalItemPictureAsync(localItem:LocalItem):Promise<LocalItem> {
         var localPicture = localItem.mainPicture;
         if (localPicture == null) {
             return Promise.resolve(localItem);
@@ -139,11 +133,11 @@ export class ItemService {
         var pictureExists = localPicture.id != null;
         var picture = LocalPictureFactory.fromLocalPicture(localPicture);
         if (pictureExists) {
-            localItem.mainPictureRequest = this.pictureClient.getUpdatePictureRequest(picture, authToken);
+            localItem.mainPictureRequest = this.pictureClient.getUpdateRequest(picture, authToken);
         } else {
             picture.companyRef = this.authService.loggedEmployee.companyRef;
             localPicture.companyRef = picture.companyRef;
-            localItem.mainPictureRequest = this.pictureClient.getCreatePictureRequest(picture, authToken);
+            localItem.mainPictureRequest = this.pictureClient.getCreateRequest(picture, authToken);
         }
         return localItem.mainPictureRequest.run()
             .then((response)=> {
@@ -154,13 +148,13 @@ export class ItemService {
     }
 
 
-    private fetchLocalItemPictureAsync(localItem:LocalItem, pictureId:number):Promise<LocalItem> {
+    public fetchLocalItemPictureAsync(localItem:LocalItem, pictureId:number):Promise<LocalItem> {
         if (localItem.mainPictureRequest != null) {
             localItem.mainPictureRequest.discardRequest();
         }
 
         var authToken = this.authService.authToken;
-        var request = this.pictureClient.getGetPictureRequest(pictureId, authToken)
+        var request = this.pictureClient.getGetRequest(pictureId, authToken)
         localItem.mainPictureRequest = request;
 
         return localItem.mainPictureRequest.run()

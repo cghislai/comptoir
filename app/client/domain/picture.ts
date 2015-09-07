@@ -5,6 +5,20 @@
 import {CompanyRef} from 'client/domain/company';
 import {ItemRef} from 'client/domain/item';
 import {ItemVariantRef} from 'client/domain/itemVariant';
+import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+
+
+export class PictureClient extends BasicClient<Picture> {
+
+    private static RESOURCE_PATH:string = "/picture";
+
+    constructor() {
+        super({
+            resourcePath: PictureClient.RESOURCE_PATH,
+            jsonReviver: PictureFactory.fromJSONPictureReviver
+        });
+    }
+}
 
 export class PictureRef {
     id:number;

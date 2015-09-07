@@ -48,6 +48,7 @@ export class ItemEditView {
     itemNames:LocaleTexts;
     itemDescriptions:LocaleTexts;
     itemForm:ControlGroup;
+    itemPictureTouched:boolean;
     appLocale:string;
     editLanguage:Language;
 
@@ -71,7 +72,7 @@ export class ItemEditView {
         this.itemVariantList = [];
         this.itemVariantListColumns = [
             ItemVariantColumn.VARIANT_REFERENCE,
-            ItemVariantColumn.PICTURE,
+            ItemVariantColumn.PICTURE_NO_ITEM_FALLBACK,
             ItemVariantColumn.ATTRIBUTES,
             ItemVariantColumn.TOTAL_PRICE,
             ItemVariantColumn.ACTION_REMOVE
@@ -146,12 +147,19 @@ export class ItemEditView {
         variantSearch.itemSearch = new ItemSearch();
         variantSearch.itemSearch.companyRef = this.authService.loggedEmployee.companyRef;
 
-        this.itemVariantService.searchLocalItemVariantsAsync(variantSearch, null)
-            .then((result)=> {
-                this.itemVariantList = result.list;
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
+        this.itemVariantService.searchLocalItemVariantsAsync(variantSearch, null, {
+            item: false,
+            itemPictureFallback: false,
+            picture: true,
+            attributes: true
+        }).then((result)=> {
+            this.itemVariantList = result.list;
+            for (var variant of result.list) {
+                variant.item = this.item;
+            }
+        }).catch((error)=> {
+            this.errorService.handleRequestError(error);
+        });
     }
 
 
@@ -161,7 +169,8 @@ export class ItemEditView {
                 this.router.navigate('/items/list');
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
-            });;
+            });
+        ;
     }
 
     private saveItem():Promise<LocalItem> {
@@ -174,6 +183,12 @@ export class ItemEditView {
         var vatPecentage = parseInt(this.itemForm.value.vatPercentage);
         item.vatRate = NumberUtils.toFixedDecimals(vatPecentage / 100, 2);
 
+        if (this.itemPictureTouched) {
+            return this.itemService.saveLocalItemPictureAsync(item)
+                .then(()=>{
+                    return this.itemService.saveLocalItemAsync(item);
+                });
+        }
         return this.itemService.saveLocalItemAsync(item);
     }
 
@@ -198,21 +213,29 @@ export class ItemEditView {
                     thisView.item.mainPicture = new LocalPicture();
                 }
                 thisView.item.mainPicture.dataURI = data;
+                thisView.itemPictureTouched = true;
             });
     }
 
     doAddNewVariant() {
-        this.saveItem().then((item)=>{
-            this.router.navigate('/items/edit/'+item.id+'/variant/new');
+        this.saveItem().then((item)=> {
+            this.router.navigate('/items/edit/' + item.id + '/variant/new');
         }).catch((error)=> {
             this.errorService.handleRequestError(error);
         });
     }
 
-    onVariantRowSelected(localVariant: LocalItemVariant) {
+    onVariantRowSelected(localVariant:LocalItemVariant) {
         var variantId = localVariant.id;
-        this.saveItem().then((item)=>{
-            this.router.navigate('/items/edit/'+item.id+'/variant/'+variantId);
+        var itemId = this.item.id;
+        var nextTask = Promise.resolve();
+        if (itemId == null) {
+            nextTask.then(()=>{
+                this.itemService.saveLocalItemAsync(this.item)
+            });
+        }
+        nextTask.then(()=>{
+            this.router.navigate('/items/edit/' + itemId + '/variant/' + variantId);
         }).catch((error)=> {
             this.errorService.handleRequestError(error);
         });
