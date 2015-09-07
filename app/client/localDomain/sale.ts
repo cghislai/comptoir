@@ -20,6 +20,7 @@ import {Pos} from 'client/domain/pos';
 import {ItemVariantSale} from 'client/domain/itemVariantSale';
 import {ComptoirRequest}  from 'client/utils/request';
 import {LocaleTexts} from 'client/utils/lang';
+import {NumberUtils} from 'client/utils/number';
 
 
 export class LocalItemSale {

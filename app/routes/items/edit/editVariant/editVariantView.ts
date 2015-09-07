@@ -245,7 +245,8 @@ export class ItemVariantEditView {
         this.itemVariantService.saveLocalItemVariantAttribute(newAttribute)
             .then((attributeValue)=> {
                 this.itemVariant.attributeValues.push(newAttribute);
-                this.resetNewAttributeValue()
+                this.resetNewAttributeValue();
+                return this.itemVariantService.saveLocalItemVariantAsync(this.itemVariant);
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });

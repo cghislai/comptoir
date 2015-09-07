@@ -12,7 +12,7 @@ import {ServiceConfig} from 'client/utils/service';
 
 export class AttributeValueClient {
 
-    private static RESOURCE_PATH:string = "/attribute/definition";
+    private static RESOURCE_PATH:string = "/attribute/value";
 
     private getAttributeValueUrl(id?:number) {
         var url = ServiceConfig.URL + AttributeValueClient.RESOURCE_PATH;

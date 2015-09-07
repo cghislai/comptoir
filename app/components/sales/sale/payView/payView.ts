@@ -46,6 +46,7 @@ export class PayView {
     noInput:boolean;
 
     paid = new EventEmitter();
+    toPay: number;
 
     allAccounts:LocalAccount[];
 
@@ -56,7 +57,7 @@ export class PayView {
         this.saleService = saleService;
         this.errorService = errorService;
         this.locale = authService.getEmployeeLanguage().locale;
-
+        this.toPay = 0;
     }
 
     set saleProp(value:LocalSale) {
@@ -87,6 +88,9 @@ export class PayView {
                 this.errorService.handleRequestError(error);
             });
         this.saleService.updateLocalSalePaidAmountAsync(this.sale)
+            .then(()=>{
+                this.checkToPayAmount();
+            })
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -163,11 +167,17 @@ export class PayView {
             var entryExists = this.editingEntry.id != null;
             if (entryExists) {
                 this.saleService.updateLocalSaleAccountingEntry(this.sale, this.editingEntry)
+                    .then(()=>{
+                        this.checkToPayAmount();
+                    })
                     .catch((error)=> {
                         this.errorService.handleRequestError(error);
                     });
             } else {
                 this.saleService.addAccountingEntryToLocalSaleAsync(this.sale, this.editingEntry)
+                    .then(()=>{
+                        this.checkToPayAmount();
+                    })
                     .catch((error)=> {
                         this.errorService.handleRequestError(error);
                     });
@@ -183,6 +193,9 @@ export class PayView {
 
     removeEntry(entry:LocalAccountingEntry) {
         return this.saleService.removeLocalSaleAccountingEntry(this.sale, entry)
+            .then(()=>{
+                this.checkToPayAmount();
+            })
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -191,5 +204,13 @@ export class PayView {
     onValidateClicked() {
         this.paid.next(true);
         this.cancelEditEntry();
+    }
+
+    checkToPayAmount(){
+        var total = this.sale.vatExclusiveAmount + this.sale.vatAmount;
+        total = NumberUtils.toFixedDecimals(total, 2);
+        var paid = this.sale.totalPaid;
+        this.toPay = total - paid;
+        console.log("paid "+paid+" of "+total+"( "+this.sale.vatExclusiveAmount+" + "+this.sale.vatAmount+"), missing "+this.toPay);
     }
 }

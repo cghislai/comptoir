@@ -121,7 +121,11 @@ export class SaleView {
         this.saleService.getLocalSaleAsync(id)
             .then((sale)=> {
                 this.sale = sale;
-                this.saleService.activeSale = sale;
+                if (sale.closed) {
+                    this.payStep = true;
+                } else {
+                    this.saleService.activeSale = sale;
+                }
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });

@@ -2,7 +2,7 @@
     <div>
         <div class="toPayHeader coloredHeader"
              [class.inactive]="noInput"
-             [hidden]="sale.totalPaid >= sale.vatExclusiveAmount + sale.vatAmount">
+             [hidden]="toPay <= 0">
             <h1>À payer</h1>
             <span class="busy">
                 <span class="valignAnchor"></span>
@@ -19,7 +19,7 @@
 
         <div class="toPayHeader coloredHeader"
              [class.inactive]="noInput"
-             [hidden]="sale.totalPaid < sale.vatExclusiveAmount + sale.vatAmount">
+             [hidden]="toPay > 0">
             <h1 [hidden]="noInput">À rendre</h1>
             <h1 [hidden]="!noInput">Rendu</h1>
             <span class="busy">
@@ -31,9 +31,9 @@
             <span class="actions">
                 <span class="valignAnchor"></span>
                 <span class="total"
-                      [class.negative]="sale.totalPaid > sale.vatExclusiveAmount + sale.vatAmount"
-                      [class.exact]="sale.totalPaid == sale.vatExclusiveAmount + sale.vatAmount">
-                    {{ sale.totalPaid - (sale.vatExclusiveAmount + sale.vatAmount)  | currency:'EUR':true:'.2-2'}}
+                      [class.negative]="toPay < 0"
+                      [class.exact]="toPay == 0">
+                    {{ -toPay  | currency:'EUR':true:'.2-2'}}
                 </span>
                 <span class="action validateLink"
                       [hidden]="noInput"
