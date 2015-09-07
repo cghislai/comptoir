@@ -104,14 +104,17 @@ export class SaleService {
             localSale.saleRequest.discardRequest();
         }
 
+        var sale = LocalSaleFactory.fromLocalSale(localSale);
         var authToken = this.authService.authToken;
         localSale.dirty = true;
-        localSale.saleRequest = this.saleClient.getUpdateSaleRequest(localSale, authToken);
+        localSale.saleRequest = this.saleClient.getUpdateSaleRequest(sale, authToken);
 
         return localSale.saleRequest.run()
             .then((response:ComptoirResponse)=> {
                 var saleRef = JSON.parse(response.text);
                 localSale.id = saleRef.id;
+                localSale.saleRequest = null;
+                localSale.dirty = false;
                 return this.refreshLocalSaleAsync(localSale);
             });
     }
@@ -219,12 +222,7 @@ export class SaleService {
         for (var existingItem of localSale.items) {
             var itemId = existingItem.itemVariant.id;
             if (itemId == itemVariant.id) {
-                existingItem.quantity = existingItem.quantity - 1;
-                if (existingItem.quantity <= 0) {
-                    return this.removeLocalItemSaleAsync(existingItem);
-                } else {
-                    return this.updateLocalSaleItemAsync(existingItem);
-                }
+                return this.removeLocalItemSaleAsync(existingItem);
             }
         }
     }
@@ -267,6 +265,8 @@ export class SaleService {
     public addAccountingEntryToLocalSaleAsync(localSale:LocalSale, localAccountingEntry:LocalAccountingEntry):Promise<LocalSale> {
         localAccountingEntry.accountingTransactionRef = localSale.accountingTransactionRef;
         localAccountingEntry.companyRef = this.authService.loggedEmployee.companyRef;
+        localAccountingEntry.dateTime = new Date();
+
         var authToken = this.authService.authToken;
 
         if (localSale.accountingEntriesRequest != null) {
@@ -342,6 +342,7 @@ export class SaleService {
         var entrySearch = new AccountingEntrySearch();
         var authToken = this.authService.authToken;
         entrySearch.accountingTransactionRef = localSale.accountingTransactionRef;
+        entrySearch.companyRef = this.authService.loggedEmployee.companyRef;
 
         localSale.dirty = true;
         localSale.accountingEntriesRequest = this.accountingEntryClient.getSearchAccountingEntriesRequest(entrySearch, null, authToken);

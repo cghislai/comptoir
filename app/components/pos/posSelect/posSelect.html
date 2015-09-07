@@ -1,14 +1,13 @@
 
-<form id="posSelectForm" *ng-if="allPosList != null">
-    Point de vente :
-    <select [value]="posId" [hidden]="allPosList.length <= 1"
+<form id="posSelectForm" style="display: inline-block;">
+    <select [value]="posId" [hidden]="allPosList.length <= 1 || !editable"
             (change)="onPosChanged($event)">
         <option *ng-for="#posOption of allPosList"
                 [value]="posOption.id">
             {{ posOption.description[language.locale] }}
         </option>
     </select>
-    <span *ng-if="allPosList.length <=1 && pos != null">
-        <strong>{{ pos.description[language.locale] }}</strong>
+    <span [hidden]="allPosList.length >1 || pos == null">
+        <strong *ng-if="pos != null">{{ pos.description[language.locale] }}</strong>
     </span>
 </form>

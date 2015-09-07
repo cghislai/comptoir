@@ -98,7 +98,7 @@ export class FastInput {
     }
 
     doCancel() {
-        this.elementRef.nativeElement.value = this.initialValue;
-        this.fastChange.next(this.initialValue);
+        //this.elementRef.nativeElement.value = this.initialValue;
+        this.fastChange.next(null);
     }
 }

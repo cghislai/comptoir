@@ -1,40 +1,39 @@
 <div class="payView" *ng-if="hasSale()">
-
     <div>
         <div class="toPayHeader coloredHeader"
              [class.inactive]="noInput"
-             [hidden]="aSalePay.missingAmount <= 0">
+             [hidden]="sale.totalPaid >= sale.vatExclusiveAmount + sale.vatAmount">
             <h1>À payer</h1>
             <span class="busy">
                 <span class="valignAnchor"></span>
                 <img src="res/img/spinner-2-white.gif"
-                     [hidden]="!aSalePay.dirty"/>
+                     [hidden]="!sale.dirty"/>
             </span>
             <span class="actions">
                 <span class="valignAnchor"></span>
                 <span class="total single">
-                    {{ aSalePay.missingAmount | currency:'EUR':true:'.2-2' }}
+                    {{  (sale.vatExclusiveAmount + sale.vatAmount) - sale.totalPaid | currency:'EUR':true:'.2-2' }}
                 </span>
             </span>
         </div>
 
         <div class="toPayHeader coloredHeader"
              [class.inactive]="noInput"
-             [hidden]="aSalePay.missingAmount > 0">
+             [hidden]="sale.totalPaid < sale.vatExclusiveAmount + sale.vatAmount">
             <h1 [hidden]="noInput">À rendre</h1>
             <h1 [hidden]="!noInput">Rendu</h1>
             <span class="busy">
                 <span class="valignAnchor"></span>
                 <img src="res/img/spinner-2-white.gif"
-                     [hidden]="!aSalePay.dirty"/>
+                     [hidden]="!sale.dirty"/>
             </span>
 
             <span class="actions">
                 <span class="valignAnchor"></span>
                 <span class="total"
-                      [class.negative]="aSalePay.missingAmount < 0"
-                      [class.exact]="aSalePay.missingAmount == 0">
-                    {{ -aSalePay.missingAmount | currency:'EUR':true:'.2-2'}}
+                      [class.negative]="sale.totalPaid > sale.vatExclusiveAmount + sale.vatAmount"
+                      [class.exact]="sale.totalPaid == sale.vatExclusiveAmount + sale.vatAmount">
+                    {{ sale.totalPaid - (sale.vatExclusiveAmount + sale.vatAmount)  | currency:'EUR':true:'.2-2'}}
                 </span>
                 <span class="action validateLink"
                       [hidden]="noInput"
@@ -45,7 +44,7 @@
         </div>
     </div>
 
-    <table class="payItems dataTable" [hidden]="aSalePay.payItems.length == 0">
+    <table class="payItems dataTable" [hidden]="sale.accountingEntries.length == 0">
         <thead>
         <tr>
             <th>Compte</th>
@@ -54,20 +53,20 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ng-for="#pay of aSalePay.payItems" class="payItem">
+        <tr *ng-for="#entry of sale.accountingEntries" class="payItem">
             <td>
-                <span *ng-if="pay.account != null">
-                    {{ pay.account.description[locale] }}
+                <span *ng-if="entry.account != null">
+                    {{ entry.account.description[locale] }}
                 </span>
             </td>
             <td class="number total">
                 <a class="edit actionlink"
-                   (^click)="startEditPayItem(pay)"
+                   (^click)="startEditEntry(entry)"
                    [hidden]="noInput">
-                    {{ pay.amount | currency:'EUR':true:'.2-2' }}
+                    {{ entry.amount | currency:'EUR':true:'.2-2' }}
                 </a>
                 <span [hidden]="!noInput">
-                     {{ pay.amount | currency:'EUR':true:'.2-2' }}
+                     {{ entry.amount | currency:'EUR':true:'.2-2' }}
                 </span>
             </td>
 
@@ -82,21 +81,21 @@
         <tr>
             <th class="right">Total</th>
             <th class="number total">
-                {{ aSalePay.totalPayed | currency:'EUR':true:'.2-2' }}
+                {{ sale.totalPaid | currency:'EUR':true:'.2-2' }}
             </th>
         </tr>
 
         </tfoot>
     </table>
 
-    <div class="editMethod" *ng-if="editingPayItem != null"  [hidden]="noInput">
-        <span class="method">{{ editingPayItem.account.description[locale] }}</span>
+    <div class="editMethod" *ng-if="editingEntry != null"  [hidden]="noInput">
+        <span class="method">{{ editingEntry.account.description[locale] }}</span>
         <span class="amount">
             Montant: <input #amount
-                            [value]="editingPayItem.amount"
+                            [value]="editingEntry.amount"
                             type="number" min="0.01" step="0.01"
-                            [validator]="validatePayAmount"
-                            (fast-change)="onEditingPayItemChange($event)"
+                            [validator]="validateEntryAmount"
+                            (fast-change)="applyEditingEntry($event)"
                             fast-input> €
         </span>
     </div>
@@ -104,7 +103,7 @@
     <div class="addMethod" [hidden]="noInput">
         <div *ng-for="#account of allAccounts"
              class="boxedHoverableLink"
-             (^click)="startEditPay(account)">
+             (^click)="startEditNewEntry(account)">
             {{ account.description[locale] }}
         </div>
     </div>

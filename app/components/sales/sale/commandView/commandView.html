@@ -2,7 +2,8 @@
 
     <header class="coloredHeader"
             [class.inactive]="noInput">
-        <h1 <span>Vente</span>
+        <h1>
+            <span>Vente</span>
             <span class="saleRef" [hidden]="sale.id == null">
                 #{{ sale.id}}
             </span>
@@ -28,7 +29,6 @@
                 </span>
                 <span *ng-if="editingSaleDiscount" class="editDiscount">
                     <input #discount
-                           [value]="(sale.discountRatio * 100)"
                            [validator]="validateDiscount"
                            (fast-change)="onSaleDiscountChange($event)"
                            type="number" min="0" max="100" step="1"
@@ -80,8 +80,7 @@
                         {{ saleItem.comment[locale] }}
                     </a>
                     <span *ng-if="editingItem == saleItem && editingItemComment">
-                        <input #activeInput
-                               [value]="saleItem.comment[locale]"
+                        <input [(ng-model)]="editingValue"
                                (fast-change)="onItemCommentChange($event)"
                                type="text"
                                size="14" fast-input/>
@@ -110,21 +109,17 @@
                 </span>
                 <span class="editQuantity"
                       *ng-if="editingItemQuantity && editingItem == saleItem">
-                    <input #activeInput
-                           [value]="saleItem.quantity"
-                           [validator]="validateQuantity"
+                    <input [validator]="validateQuantity"
                            (fast-change)="onItemQuantityChange($event)"
                            type="number" min="1" step="1"
-                           size="4" fast-input >
+                           size="4" fast-input>
                 </span>
                 <span class="editPrice"
                       *ng-if="editingItemPrice && editingItem == saleItem">
-                    <input #activeInput
-                           [value]="saleItem.vatExclusive"
-                           [validator]="validatePrice"
+                    <input [validator]="validatePrice"
                            (fast-change)="onItemPriceChange($event)"
                            type="number" min="0.01" step="0.01"
-                           size="6" fast-input > €
+                           size="6" fast-input> €
                 </span>
             </td>
             <td class="price number">
@@ -137,9 +132,7 @@
                 </a>
                 <span class="setReduction"
                       *ng-if="editingItem == saleItem && editingItemDiscount">
-                    <input #activeInput
-                           [value]="saleItem.discountPercentage"
-                           [validator]="validateDiscount"
+                    <input [validator]="validateDiscount"
                            (fast-change)="onItemDiscountChange($event)"
                            type="number" min="1" max="100" step="1"
                            size="2" fast-input/>
@@ -189,7 +182,7 @@
         </tr>
         <tr class="details">
             <th colspan="3" class="saleFooter">Total HTVA</th>
-            <th class="saleFooter number">{{ sale.vatExclusive | currency:'EUR':true:'.2-2'}}</th>
+            <th class="saleFooter number">{{ sale.vatExclusiveAmount | currency:'EUR':true:'.2-2'}}</th>
         </tr>
         <tr class="details">
             <th colspan="3" class="saleFooter">TVA</th>
@@ -199,7 +192,7 @@
         <tr>
             <th colspan="3" class="total saleFooter">Total</th>
             <th class="total price number saleFooter">
-                {{ sale.total | currency:'EUR':true:'.2-2' }}
+                {{ (sale.vatExclusiveAmount + sale.vatAmount) | currency:'EUR':true:'.2-2' }}
             </th>
         </tr>
         </tfoot>

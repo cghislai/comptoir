@@ -14,7 +14,7 @@
             </div>
         </div>
     </header>
-    <div class="scrollPane" *ng-if="searchResult != undefined">
+    <div class="scrollPane"  *ng-if="searchResult != null">
         <itemVariantList
                 [columns]="columns"
                 [items]="searchResult.list"

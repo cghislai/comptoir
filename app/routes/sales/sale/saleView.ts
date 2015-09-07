@@ -163,7 +163,9 @@ export class SaleView {
 
     onCommandValidated(validated:boolean, payView:PayView) {
         this.payStep = validated;
-        payView.start();
+        if (validated) {
+            payView.start();
+        }
     }
 
     onCommandPaid() {
@@ -172,6 +174,7 @@ export class SaleView {
                 this.errorService.handleRequestError(error);
             });
 
+        this.sale = null;
         this.saleService.activeSale = null;
         this.payStep = false;
 

@@ -9,7 +9,7 @@ import {LocalPicture, LocalPictureFactory} from 'client/localDomain/picture';
 import {LocalItem} from 'client/localDomain/item';
 import {LocalItemVariant} from 'client/localDomain/itemVariant';
 
-import {Item, ItemRef} from 'client/domain/item';
+import {Item, ItemRef, ItemSearch} from 'client/domain/item';
 import {ItemVariant, ItemVariantSearch} from 'client/domain/itemVariant';
 import {Language, LocaleTexts} from 'client/utils/lang';
 import {NumberUtils} from 'client/utils/number';
@@ -143,6 +143,8 @@ export class ItemEditView {
         var variantSearch = new ItemVariantSearch();
         var itemRef = new ItemRef(itemId);
         variantSearch.itemRef = itemRef;
+        variantSearch.itemSearch = new ItemSearch();
+        variantSearch.itemSearch.companyRef = this.authService.loggedEmployee.companyRef;
 
         this.itemVariantService.searchLocalItemVariantsAsync(variantSearch, null)
             .then((result)=> {

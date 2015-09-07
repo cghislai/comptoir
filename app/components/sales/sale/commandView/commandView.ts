@@ -8,7 +8,7 @@ import {Sale, SaleRef} from 'client/domain/sale';
 import {ItemVariant} from 'client/domain/itemVariant';
 import {LocalSale, LocalItemSale} from 'client/localDomain/sale';
 
-import {LocaleTexts} from 'client/utils/lang';
+import {LocaleTexts, Language} from 'client/utils/lang';
 import {NumberUtils} from 'client/utils/number';
 
 import {SaleService} from 'services/sale';
@@ -17,6 +17,7 @@ import {AuthService} from 'services/auth';
 
 import {AutoFocusDirective} from 'directives/autoFocus';
 import {FastInput} from 'directives/fastInput';
+import {LangSelect, LocalizedDirective} from 'components/utils/langSelect/langSelect';
 
 
 // The component
@@ -29,7 +30,7 @@ import {FastInput} from 'directives/fastInput';
 @View({
     templateUrl: './components/sales/sale/commandView/commandView.html',
     styleUrls: ['./components/sales/sale/commandView/commandView.css'],
-    directives: [AutoFocusDirective, FastInput, NgFor, NgIf, FORM_DIRECTIVES]
+    directives: [AutoFocusDirective, LocalizedDirective, FastInput, NgFor, NgIf, FORM_DIRECTIVES]
 })
 
 export class CommandView {
@@ -37,6 +38,7 @@ export class CommandView {
     errorService:ErrorService;
 
     sale:LocalSale;
+    language: Language;
     locale:string;
     noInput:boolean;
 
@@ -45,6 +47,7 @@ export class CommandView {
     editingItemPrice:boolean;
     editingItemComment:boolean;
     editingItemDiscount:boolean;
+    editingValue: any;
 
     editingSaleDiscount:boolean = false;
     validate = new EventEmitter();
@@ -55,6 +58,7 @@ export class CommandView {
                 errorService:ErrorService) {
         this.saleService = saleService;
         this.errorService = errorService;
+        this.language = authService.getEmployeeLanguage();
         this.locale = authService.getEmployeeLanguage().locale;
     }
 
@@ -140,6 +144,7 @@ export class CommandView {
         if (this.editingItem.comment[this.locale] == null) {
             this.editingItem.comment[this.locale] = '';
         }
+        this.editingValue = localItemSale.comment[this.locale];
     }
 
     onItemCommentChange(event) {
@@ -167,6 +172,7 @@ export class CommandView {
 
     doEditItemDiscount(localItemSale:LocalItemSale) {
         this.cancelEdits();
+        this.editingValue = localItemSale.discountRatio;
         this.editingItem = localItemSale;
         this.editingItemDiscount = true;
     }
@@ -189,6 +195,7 @@ export class CommandView {
 
     doEditItemQuantity(localItemSale:LocalItemSale) {
         this.cancelEdits();
+        this.editingValue = localItemSale.quantity;
         this.editingItem = localItemSale;
         this.editingItemQuantity = true;
     }
@@ -213,6 +220,7 @@ export class CommandView {
 
     doEditItemPrice(localItemSale:LocalItemSale) {
         this.cancelEdits();
+        this.editingValue = localItemSale.vatExclusive;
         this.editingItem = localItemSale;
         this.editingItemPrice = true;
     }
@@ -237,17 +245,22 @@ export class CommandView {
     doEditSaleDiscount() {
         this.cancelEdits();
         this.editingSaleDiscount = true;
+        this.editingValue = this.sale.discountRatio * 100;
     }
 
 
     onSaleDiscountChange(newValue:string) {
         var discountPercentage = parseInt(newValue);
         if (isNaN(discountPercentage)) {
-            discountPercentage = 0;
+            discountPercentage = null;
         }
-        var discountRatio = NumberUtils.toFixedDecimals(discountPercentage / 100, 2);
-        this.editingItem.discountRatio = discountRatio;
-        this.saleService.updateLocalSaleItemAsync(this.editingItem)
+        if (discountPercentage != null) {
+            var discountRatio = NumberUtils.toFixedDecimals(discountPercentage / 100, 2);
+            this.sale.discountRatio = discountRatio;
+        } else {
+            this.sale.discountRatio = null;
+        }
+        this.saleService.updateLocalSaleAsync(this.sale)
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });

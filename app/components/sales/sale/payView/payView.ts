@@ -13,6 +13,7 @@ import {AccountingEntry} from 'client/domain/accountingEntry';
 import {Account, AccountRef,AccountSearch} from 'client/domain/account';
 import {Pos, PosRef} from 'client/domain/pos';
 import {SearchResult} from 'client/utils/search';
+import {NumberUtils} from 'client/utils/number';
 
 import {ErrorService} from 'services/error';
 import {AccountService} from 'services/account';
@@ -69,7 +70,7 @@ export class PayView {
     }
 
     private hasSale():boolean {
-        return this.sale != null;
+        return this.sale != null && this.sale.id != null;
     }
 
     start() {
@@ -123,11 +124,23 @@ export class PayView {
             });
     }
 
+    startEditNewEntry(account:LocalAccount) {
+        var accountingEntry = new LocalAccountingEntry();
+        accountingEntry.accountingTransactionRef = this.sale.accountingTransactionRef;
+        accountingEntry.account = account;
+        this.startEditEntry(accountingEntry);
+    }
+
     startEditEntry(localAccountingEntry:LocalAccountingEntry) {
         if (this.editingEntry != null) {
             this.cancelEditEntry();
         }
         this.editingEntry = localAccountingEntry;
+        if (this.editingEntry.amount == null || this.editingEntry.amount <= 0) {
+            var toPayAmount = this.sale.vatAmount + this.sale.vatExclusiveAmount - this.sale.totalPaid;
+            toPayAmount = NumberUtils.toFixedDecimals(toPayAmount, 2);
+            this.editingEntry.amount = toPayAmount;
+        }
     }
 
     validateEntryAmount(value:string) {
@@ -143,12 +156,23 @@ export class PayView {
 
     applyEditingEntry(event) {
         var amount = parseFloat(event);
+        amount = NumberUtils.toFixedDecimals(amount, 2);
+        this.editingEntry.amount = amount;
 
         if (!isNaN(amount)) {
-            this.saleService.updateLocalSaleAccountingEntry(this.sale, this.editingEntry)
-                .catch((error)=> {
-                    this.errorService.handleRequestError(error);
-                });
+            var entryExists = this.editingEntry.id != null;
+            if (entryExists) {
+                this.saleService.updateLocalSaleAccountingEntry(this.sale, this.editingEntry)
+                    .catch((error)=> {
+                        this.errorService.handleRequestError(error);
+                    });
+            } else {
+                this.saleService.addAccountingEntryToLocalSaleAsync(this.sale, this.editingEntry)
+                    .catch((error)=> {
+                        this.errorService.handleRequestError(error);
+                    });
+            }
+
         }
         this.cancelEditEntry();
     }

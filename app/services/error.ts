@@ -28,7 +28,9 @@ export class ErrorService {
             }
         }
         this.errorHeader = "Une erreur est survenue lors de l'envoi d'une requete au server:";
-        this.errorContent = "Request: " + error.request.getDebugString();
+        if (error.request != null) {
+            this.errorContent = "Request: " + error.request.getDebugString();
+        }
         this.errorContent = "Response code:" + error.code + "\n";
         this.errorContent += "Message: " + error.text;
         this.errorFooter = "Essayez de répéter l'action que vous venez de commettre.<br/>";

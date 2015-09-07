@@ -14,7 +14,8 @@ import {ErrorService} from 'services/error';
 
 @Component({
     selector: 'posSelect',
-    events: ['posChanged']
+    events: ['posChanged'],
+    properties: ['editable']
 })
 @View({
     templateUrl: './components/pos/posSelect/posSelect.html',
@@ -22,36 +23,36 @@ import {ErrorService} from 'services/error';
 })
 export class PosSelect {
     posService:PosService;
-    authService: AuthService;
-    errorService: ErrorService;
+    authService:AuthService;
+    errorService:ErrorService;
 
     allPosList:Pos[];
     pos:Pos;
     posId:number;
-    language: Language;
+    language:Language;
 
+    editable: boolean;
     posChanged = new EventEmitter();
 
-    constructor(posService: PosService, authService: AuthService, errorService: ErrorService) {
+    constructor(posService:PosService, authService:AuthService, errorService:ErrorService) {
         this.posService = posService;
         this.authService = authService;
         this.errorService = errorService;
 
         this.language = authService.getEmployeeLanguage();
+        this.allPosList = [];
         this.searchPos();
     }
+
     searchPos() {
-        var lastUsedPos = this.posService.lastUsedPos;
-        if (lastUsedPos != null) {
-            this.pos = lastUsedPos;
-            this.posId = lastUsedPos.id;
-            return;
-        }
         var posSearch = new PosSearch();
         this.posService.searchPos(posSearch, null)
             .then((result:SearchResult<Pos>)=> {
                 this.allPosList = result.list;
-                if (result.list.length > 0 && this.pos == null) {
+                var lastUsedPos = this.posService.lastUsedPos;
+                if (lastUsedPos != null) {
+                    this.setPos(lastUsedPos);
+                } else if (result.list.length > 0) {
                     var pos = result.list[0];
                     this.setPos(pos);
                 }
@@ -72,7 +73,7 @@ export class PosSelect {
         }
     }
 
-    setPos(pos: Pos) {
+    setPos(pos:Pos) {
         this.pos = pos;
         this.posId = pos.id;
         this.posService.lastUsedPos = this.pos;
