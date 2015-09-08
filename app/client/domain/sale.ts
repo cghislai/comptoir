@@ -16,7 +16,8 @@ export class SaleClient extends BasicClient<Sale> {
     constructor() {
         super({
             resourcePath: SaleClient.RESOURCE_PATH,
-            jsonReviver: SaleFactory.fromJSONSaleReviver
+            jsonReviver: SaleFactory.fromJSONSaleReviver,
+            cache: SaleFactory.cache
         });
     }
 
@@ -94,6 +95,27 @@ export class SaleFactory {
             return date;
         }
        return value;
+    }
+
+    static cache: {[id: number] : Sale} = {};
+    static putInCache(sale: Sale) {
+        var saleId = sale.id;
+        if (saleId == null) {
+            throw 'no id';
+        }
+        SaleFactory.cache[saleId] = sale;
+    }
+
+    static getFromCache(id: number) {
+        return SaleFactory.cache[id];
+    }
+
+    static clearFromCache(id: number) {
+        delete SaleFactory.cache[id];
+    }
+
+    static clearCache() {
+        SaleFactory.cache = {};
     }
 
 }

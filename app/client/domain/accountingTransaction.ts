@@ -13,7 +13,8 @@ export class AccountingTransactionClient extends BasicClient<AccountingTransacti
     constructor() {
         super({
             resourcePath: AccountingTransactionClient.RESOURCE_PATH,
-            jsonReviver: AccountingTransactionFactory.fromJSONAccountTransactionReviver
+            jsonReviver: AccountingTransactionFactory.fromJSONAccountTransactionReviver,
+            cache: AccountingTransactionFactory.cache
         });
     }
 }
@@ -33,7 +34,10 @@ export class AccountingTransaction {
 
 export class AccountingTransactionRef {
     id: number;
-    link
+    link: string;
+    constructor(id?: number) {
+        this.id = id;
+    }
 }
 
 export class AccountingTransactionFactory {
@@ -41,4 +45,24 @@ export class AccountingTransactionFactory {
         return value;
     }
 
+    static cache: {[id: number] : AccountingTransaction} = {};
+    static putInCache(accountingTransaction: AccountingTransaction) {
+        var accountingTransactionId = accountingTransaction.id;
+        if (accountingTransactionId == null) {
+            throw 'no id';
+        }
+        AccountingTransactionFactory.cache[accountingTransactionId] = accountingTransaction;
+    }
+
+    static getFromCache(id: number) {
+        return AccountingTransactionFactory.cache[id];
+    }
+
+    static clearFromCache(id: number) {
+        delete AccountingTransactionFactory.cache[id];
+    }
+
+    static clearCache() {
+        AccountingTransactionFactory.cache = {};
+    }
 }

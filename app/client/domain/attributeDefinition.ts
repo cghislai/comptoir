@@ -13,7 +13,8 @@ export class AttributeDefinitionClient extends BasicClient<AttributeDefinition> 
     constructor() {
         super({
             resourcePath: AttributeDefinitionClient.RESOURCE_PATH,
-            jsonReviver: AttributeDefinitionFactory.fromJSONAttributeDefinitionReviver
+            jsonReviver: AttributeDefinitionFactory.fromJSONAttributeDefinitionReviver,
+            cache: AttributeDefinitionFactory.cache
         });
     }
 }
@@ -49,4 +50,24 @@ export class AttributeDefinitionFactory {
         return value;
     }
 
+    static cache: {[id: number] : AttributeDefinition} = {};
+    static putInCache(attributeDefinition: AttributeDefinition) {
+        var attributeDefinitionId = attributeDefinition.id;
+        if (attributeDefinitionId == null) {
+            throw 'no id';
+        }
+        AttributeDefinitionFactory.cache[attributeDefinitionId] = attributeDefinition;
+    }
+
+    static getFromCache(id: number) {
+        return AttributeDefinitionFactory.cache[id];
+    }
+
+    static clearFromCache(id: number) {
+        delete AttributeDefinitionFactory.cache[id];
+    }
+
+    static clearCache() {
+        AttributeDefinitionFactory.cache = {};
+    }
 }

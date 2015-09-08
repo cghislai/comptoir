@@ -15,7 +15,8 @@ export class PosClient extends BasicClient<Pos> {
     constructor() {
         super({
             resourcePath: PosClient.RESOURCE_PATH,
-            jsonReviver: PosFactory.fromJSONPosReviver
+            jsonReviver: PosFactory.fromJSONPosReviver,
+            cache: PosFactory.cache
         });
     }
 }
@@ -46,6 +47,27 @@ export class PosFactory {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
         return value;
+    }
+
+    static cache: {[id: number] : Pos} = {};
+    static putInCache(pos: Pos) {
+        var posId = pos.id;
+        if (posId == null) {
+            throw 'no id';
+        }
+        PosFactory.cache[posId] = pos;
+    }
+
+    static getFromCache(id: number) {
+        return PosFactory.cache[id];
+    }
+
+    static clearFromCache(id: number) {
+        delete PosFactory.cache[id];
+    }
+
+    static clearCache() {
+        PosFactory.cache = {};
     }
 
 }

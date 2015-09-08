@@ -13,7 +13,8 @@ export class InvoiceClient extends BasicClient<Invoice> {
     constructor() {
         super({
             resourcePath: InvoiceClient.RESOURCE_PATH,
-            jsonReviver: InvoiceFactory.fromJSONInvoiceReviver
+            jsonReviver: InvoiceFactory.fromJSONInvoiceReviver,
+            cache: InvoiceFactory.cache
         });
     }
 }
@@ -28,6 +29,9 @@ export class Invoice {
 export class InvoiceRef {
     id: number;
     link: string;
+    constructor(id?: number) {
+        this.id = id;
+    }
 }
 
 export class InvoiceSearch {
@@ -39,4 +43,24 @@ export class InvoiceFactory {
         return value;
     }
 
+    static cache: {[id: number] : Invoice} = {};
+    static putInCache(invoice: Invoice) {
+        var invoiceId = invoice.id;
+        if (invoiceId == null) {
+            throw 'no id';
+        }
+        InvoiceFactory.cache[invoiceId] = invoice;
+    }
+
+    static getFromCache(id: number) {
+        return InvoiceFactory.cache[id];
+    }
+
+    static clearFromCache(id: number) {
+        delete InvoiceFactory.cache[id];
+    }
+
+    static clearCache() {
+        InvoiceFactory.cache = {};
+    }
 }

@@ -6,11 +6,13 @@ import {LocalItem} from 'client/localDomain/item';
 import {LocalPicture} from 'client/localDomain/picture';
 import {LocalItemVariant, LocalItemVariantFactory} from 'client/localDomain/itemvariant';
 import {LocalAccountingEntry} from 'client/localDomain/accountingEntry';
+import {LocalCompany, LocalCompanyFactory} from 'client/localDomain/company';
 
-import {CompanyRef} from 'client/domain/company';
-import {CustomerRef} from 'client/domain/customer';
-import {InvoiceRef} from 'client/domain/invoice';
-import {AccountingTransactionRef} from 'client/domain/accountingTransaction'
+import {CompanyRef, Company, CompanyClient, CompanyFactory} from 'client/domain/company';
+import {CustomerRef, Customer, CustomerClient, CustomerFactory} from 'client/domain/customer';
+import {InvoiceRef, Invoice, InvoiceFactory, InvoiceClient} from 'client/domain/invoice';
+import {AccountingTransactionRef, AccountingTransaction,
+    AccountingTransactionClient, AccountingTransactionFactory} from 'client/domain/accountingTransaction'
 
 
 import {Account} from 'client/domain/account';
@@ -23,129 +25,113 @@ import {LocaleTexts} from 'client/utils/lang';
 import {NumberUtils} from 'client/utils/number';
 
 
-export class LocalItemSale {
-    id:number;
-    dateTime:Date;
-    quantity:number;
-    comment:LocaleTexts;
-    vatExclusive:number;
-    vatRate:number;
-    discountRatio:number;
-    total:number;
-
-    itemSaleRequest: ComptoirRequest;
-
-    itemVariant:LocalItemVariant;
-    itemVariantRequest:ComptoirRequest;
-
-    sale:LocalSale;
-    dirty: boolean;
-}
-
 export class LocalSale {
     id:number;
-    companyRef:CompanyRef;
-    customerRef:CustomerRef;
+    company:LocalCompany;
+    customer:Customer;
     dateTime:Date;
-    invoiceRef:InvoiceRef;
+    invoice:Invoice;
     vatExclusiveAmount:number;
     vatAmount:number;
     closed:boolean;
     reference:string;
-    accountingTransactionRef:AccountingTransactionRef;
+    accountingTransaction:AccountingTransaction;
     discountRatio:number;
     discountAmount:number;
 
-    saleRequest: ComptoirRequest;
-
-    items:LocalItemSale[];
-    itemsRequest:ComptoirRequest;
-
-    totalPaid: number;
-    totalPaidRequest: ComptoirRequest;
-
-    accountingEntries: LocalAccountingEntry[];
-    accountingEntriesRequest: ComptoirRequest;
-
-    dirty:boolean;
-
-    constructor() {
-        this.items = [];
-        this.accountingEntries = [];
-    }
+    totalPaid:number;
+    totalPaidRequest:ComptoirRequest;
 }
 
 export class LocalSaleFactory {
 
-    static fromLocalSale(localSale:LocalSale) :Sale{
+    static fromLocalSale(localSale:LocalSale):Sale {
         var sale = new Sale();
         sale.id = localSale.id;
-        sale.accountingTransactionRef = localSale.accountingTransactionRef;
+        if (localSale.accountingTransaction != null) {
+            sale.accountingTransactionRef = new AccountingTransactionRef(localSale.accountingTransaction.id);
+        }
         sale.closed = localSale.closed;
-        sale.companyRef = localSale.companyRef;
-        sale.customerRef = localSale.customerRef;
+        sale.companyRef = new CompanyRef(localSale.company.id);
+        if (localSale.customer != null) {
+            sale.customerRef = new CustomerRef(localSale.customer.id);
+        }
         sale.dateTime = localSale.dateTime;
         sale.discountAmount = localSale.discountAmount;
         sale.discountRatio = localSale.discountRatio;
-        sale.invoiceRef = localSale.invoiceRef;
+        if (localSale.invoice != null) {
+            sale.invoiceRef = new InvoiceRef(localSale.invoice.id);
+        }
         sale.reference = localSale.reference;
         sale.vatAmount = localSale.vatAmount;
         sale.vatExclusiveAmount = localSale.vatExclusiveAmount;
         return sale;
     }
 
-    static toLocalSale(sale:Sale):LocalSale {
+    static toLocalSale(sale:Sale, authToken:string):Promise<LocalSale> {
         var localSale = new LocalSale();
-        LocalSaleFactory.updateLocalSale(localSale, sale);
-        return localSale;
+        return LocalSaleFactory.updateLocalSale(localSale, sale, authToken);
     }
 
-    static updateLocalSale(localSale:LocalSale, sale:Sale) : void{
+    static updateLocalSale(localSale:LocalSale, sale:Sale, authToken:string):Promise<LocalSale> {
         localSale.id = sale.id;
-
-        localSale.accountingTransactionRef = sale.accountingTransactionRef;
         localSale.closed = sale.closed;
-        localSale.companyRef = sale.companyRef;
-        localSale.customerRef = sale.customerRef;
         localSale.dateTime = sale.dateTime;
         localSale.discountAmount = sale.discountAmount;
         localSale.discountRatio = sale.discountRatio;
-        localSale.invoiceRef = sale.invoiceRef;
         localSale.reference = sale.reference;
         localSale.vatAmount = sale.vatAmount;
         localSale.vatExclusiveAmount = sale.vatExclusiveAmount;
+
+        var taskList = [];
+        var accountingTransactionRef = sale.accountingTransactionRef;
+        if (accountingTransactionRef != null) {
+            var transactionid = accountingTransactionRef.id;
+            var transactionClient = new AccountingTransactionClient();
+            taskList.push(
+                transactionClient.getFromCacheOrServer(transactionid, authToken)
+                    .then((transaction)=> {
+                        localSale.accountingTransaction = transaction;
+                    })
+            );
+        }
+
+        var companyRef = sale.companyRef;
+        var companyClient = new CompanyClient();
+        taskList.push(
+            companyClient.getFromCacheOrServer(companyRef.id, authToken)
+                .then((company)=> {
+                    return LocalCompanyFactory.toLocalCompany(company, authToken);
+                }).then((localCompany:LocalCompany) => {
+                    localSale.company = localCompany;
+                })
+        );
+        var customerRef = sale.customerRef;
+        if (customerRef != null) {
+            var customerClient = new CustomerClient();
+            taskList.push(
+                customerClient.getFromCacheOrServer(customerRef.id, authToken)
+                    .then((customer)=> {
+                        localSale.customer = customer;
+                    })
+            );
+        }
+        var invoiceRef = sale.invoiceRef;
+        if (invoiceRef != null) {
+            var invoiceClient = new InvoiceClient();
+            taskList.push(
+                invoiceClient.getFromCacheOrServer(invoiceRef.id, authToken)
+                    .then((invoice)=> {
+                        localSale.invoice = invoice;
+                    })
+            );
+        }
+
+        return Promise.all(taskList)
+            .then(()=> {
+                return localSale;
+            });
     }
 
-    static fromLocalItemVariantSale(localItemSale:LocalItemSale):ItemVariantSale {
-        var itemSale = new ItemVariantSale();
-        itemSale.comment = localItemSale.comment;
-        itemSale.dateTime = localItemSale.dateTime;
-        itemSale.discountRatio = localItemSale.discountRatio;
-        itemSale.id = localItemSale.id;
-        itemSale.itemVariantRef = new ItemVariantRef(localItemSale.itemVariant.id);
-        itemSale.quantity = localItemSale.quantity;
-        itemSale.saleRef = new SaleRef(localItemSale.sale.id);
-        itemSale.total = localItemSale.total;
-        itemSale.vatExclusive = localItemSale.vatExclusive;
-        itemSale.vatRate = localItemSale.vatRate;
-        return itemSale;
-    }
 
-    static toLocalItemSale(itemSale:ItemVariantSale):LocalItemSale {
-        var localItemSale = new LocalItemSale();
-        LocalSaleFactory.updateLocalItemSale(localItemSale, itemSale);
-        return localItemSale;
-    }
-
-    static updateLocalItemSale(localItemSale:LocalItemSale, itemSale:ItemVariantSale) {
-        localItemSale.comment = itemSale.comment;
-        localItemSale.dateTime = itemSale.dateTime;
-        localItemSale.discountRatio = itemSale.discountRatio;
-        localItemSale.id = itemSale.id;
-        localItemSale.quantity = itemSale.quantity;
-        localItemSale.total = itemSale.total;
-        localItemSale.vatExclusive = itemSale.vatExclusive;
-        localItemSale.vatRate = itemSale.vatRate;
-        return localItemSale;
-    }
 }

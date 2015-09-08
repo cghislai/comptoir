@@ -14,7 +14,8 @@ export class MoneyPileClient extends BasicClient<MoneyPile> {
     constructor() {
         super({
             resourcePath: MoneyPileClient.RESOURCE_PATH,
-            jsonReviver: MoneyPileFactory.fromJSONMoneyPileReviver
+            jsonReviver: MoneyPileFactory.fromJSONMoneyPileReviver,
+            cache: MoneyPileFactory.cache
         });
     }
 }
@@ -48,4 +49,25 @@ export class MoneyPileFactory {
         }
         return value;
     };
+
+    static cache: {[id: number] : MoneyPile} = {};
+    static putInCache(moneyPile: MoneyPile) {
+        var moneyPileId = moneyPile.id;
+        if (moneyPileId == null) {
+            throw 'no id';
+        }
+        MoneyPileFactory.cache[moneyPileId] = moneyPile;
+    }
+
+    static getFromCache(id: number) {
+        return MoneyPileFactory.cache[id];
+    }
+
+    static clearFromCache(id: number) {
+        delete MoneyPileFactory.cache[id];
+    }
+
+    static clearCache() {
+        MoneyPileFactory.cache = {};
+    }
 }

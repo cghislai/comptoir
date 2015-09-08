@@ -17,7 +17,8 @@ export class ItemVariantClient extends BasicClient<ItemVariant> {
     constructor() {
         super({
             resourcePath: ItemVariantClient.RESOURCE_PATH,
-            jsonReviver: ItemVariantFactory.fromJSONItemVariantReviver
+            jsonReviver: ItemVariantFactory.fromJSONItemVariantReviver,
+            cache: ItemVariantFactory.cache
         });
     }
 }
@@ -67,5 +68,26 @@ export class ItemVariantFactory {
 
     static fromJSONPricingReviver = (value) => {
         return Pricing[Pricing[value]];
+    }
+
+    static cache: {[id: number] : ItemVariant} = {};
+    static putInCache(itemVariant: ItemVariant) {
+        var itemVariantId = itemVariant.id;
+        if (itemVariantId == null) {
+            throw 'no id';
+        }
+        ItemVariantFactory.cache[itemVariantId] = itemVariant;
+    }
+
+    static getFromCache(id: number) {
+        return ItemVariantFactory.cache[id];
+    }
+
+    static clearFromCache(id: number) {
+        delete ItemVariantFactory.cache[id];
+    }
+
+    static clearCache() {
+        ItemVariantFactory.cache = {};
     }
 }

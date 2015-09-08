@@ -16,7 +16,8 @@ export class AccountingEntryClient extends BasicClient<AccountingEntry> {
     constructor() {
         super({
             resourcePath: AccountingEntryClient.RESOURCE_PATH,
-            jsonReviver: AccountingEntryFactory.fromJSONAccountingEntryReviver
+            jsonReviver: AccountingEntryFactory.fromJSONAccountingEntryReviver,
+            cache: AccountingEntryFactory.cache
         });
     }
 }
@@ -37,6 +38,9 @@ export class AccountingEntry {
 export class AccountingEntryRef {
     id: number;
     link: string;
+    constructor(id?: number) {
+        this.id = id;
+    }
 }
 
 
@@ -54,5 +58,26 @@ export class AccountingEntryFactory {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
         return value;
+    }
+
+    static cache: {[id: number] : AccountingEntry} = {};
+    static putInCache(accountingEntry: AccountingEntry) {
+        var accountingEntryId = accountingEntry.id;
+        if (accountingEntryId == null) {
+            throw 'no id';
+        }
+        AccountingEntryFactory.cache[accountingEntryId] = accountingEntry;
+    }
+
+    static getFromCache(id: number) {
+        return AccountingEntryFactory.cache[id];
+    }
+
+    static clearFromCache(id: number) {
+        delete AccountingEntryFactory.cache[id];
+    }
+
+    static clearCache() {
+        AccountingEntryFactory.cache = {};
     }
 }

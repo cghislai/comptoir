@@ -396,7 +396,7 @@ export class SaleService {
         localAccountingEntry.accountRequest = this.accountClient.getGetRequest(accountId, authToken);
         return localAccountingEntry.accountRequest.run()
             .then((response:ComptoirResponse)=> {
-                var account = JSON.parse(response.text, AccountFactory.fromJSONAccountReviver);
+                var account = JSON.parse(response.text, AccountFactory.fromJSONReviver);
                 var localAccount = LocalAccountFactory.toLocalAccount(account);
                 localAccountingEntry.account = localAccount;
                 localAccountingEntry.accountRequest = null;

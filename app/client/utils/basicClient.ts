@@ -11,14 +11,15 @@ import {SearchResult} from 'client/utils/search';
 export interface WithId {
     id: number;
 }
-export interface BasicClientResourceInfo {
+export interface BasicClientResourceInfo<T> {
     resourcePath: string;
     jsonReviver: (key, value)=>any;
+    cache: {[id:number]: T};
 }
 export class BasicClient<T extends WithId> {
-    protected resourceInfo:BasicClientResourceInfo;
+    protected resourceInfo:BasicClientResourceInfo<T>;
 
-    constructor(resourceInfo:BasicClientResourceInfo) {
+    constructor(resourceInfo:BasicClientResourceInfo<T>) {
         this.resourceInfo = resourceInfo;
     }
 
@@ -40,6 +41,15 @@ export class BasicClient<T extends WithId> {
             url += pagination.pageSize;
         }
         return url;
+    }
+
+    getFromCacheOrServer(id: number, authToken:string) : Promise<T> {
+        var entityFromCache = this.resourceInfo.cache[id];
+        if (entityFromCache != null) {
+            return Promise.resolve(entityFromCache);
+        } else {
+            return this.get(id, authToken);
+        }
     }
 
     getCreateRequest(entity:T, authToken:string):ComptoirRequest {
@@ -74,6 +84,9 @@ export class BasicClient<T extends WithId> {
             .run()
             .then(function (response) {
                 var entity:T = JSON.parse(response.text, reviver);
+                if (this.resourceInfo.cache != null) {
+                    this.resourceInfo.cache[id] = entity;
+                }
                 return entity;
             });
     }

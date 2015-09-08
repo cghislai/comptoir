@@ -2,32 +2,51 @@
  * Created by cghislai on 01/09/15.
  */
 
-import {CompanyRef} from 'client/domain/company';
-import {Picture} from 'client/domain/picture';
+import {Picture, PictureRef} from 'client/domain/picture';
+import {Company, CompanyRef, CompanyClient, CompanyFactory} from 'client/domain/company';
+import {LocalCompany, LocalCompanyFactory} from 'client/localDomain/company';
 
 export class LocalPicture {
-    id: number;
-    companyRef: CompanyRef;
+    id:number;
+    company:LocalCompany;
     data:string;
     contentType:string;
-    dataURI: string;
+    dataURI:string;
 }
 
 export class LocalPictureFactory {
-    static toLocalPicture(picture: Picture):LocalPicture {
+    static toLocalPicture(picture:Picture, authToken:string):Promise<LocalPicture> {
         var localPicture = new LocalPicture();
+        return LocalPictureFactory.updateLocalPicture(localPicture, picture, authToken);
+    }
+
+    static updateLocalPicture(localPicture:LocalPicture, picture:Picture, authToken:string):Promise<LocalPicture> {
         localPicture.id = picture.id;
-        localPicture.companyRef = picture.companyRef;
         localPicture.data = picture.data;
         localPicture.contentType = picture.contentType;
         localPicture.dataURI = LocalPictureFactory.toDataURI(picture);
-        return localPicture;
+
+        var taskList = [];
+        var companyRef = picture.companyRef;
+        var companyClient = new CompanyClient();
+        taskList.push(
+            companyClient.getFromCacheOrServer(companyRef.id, authToken)
+                .then((company)=> {
+                    return LocalCompanyFactory.toLocalCompany(company, authToken);
+                }).then((localCompany: LocalCompany)=>{
+                    localPicture.company = localCompany;
+                })
+        );
+        return Promise.all(taskList)
+            .then(()=> {
+                return localPicture;
+            });
     }
 
-    static fromLocalPicture(localPicture: LocalPicture):Picture {
-       var picture = new Picture();
+    static fromLocalPicture(localPicture:LocalPicture):Picture {
+        var picture = new Picture();
         picture.id = localPicture.id;
-        picture.companyRef = localPicture.companyRef;
+        picture.companyRef = new CompanyRef(localPicture.company.id);
         picture.data = localPicture.data;
         picture.contentType = localPicture.contentType;
         if (localPicture.dataURI != null) {

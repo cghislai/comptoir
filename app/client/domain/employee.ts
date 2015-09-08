@@ -12,7 +12,8 @@ export class EmployeeClient extends BasicClient<Employee> {
     constructor() {
         super({
             resourcePath: EmployeeClient.RESOURCE_PATH,
-            jsonReviver: EmployeeFactory.fromJSONEmployeeReviver
+            jsonReviver: EmployeeFactory.fromJSONEmployeeReviver,
+            cache: EmployeeFactory.cache
         });
     }
 }
@@ -20,6 +21,9 @@ export class EmployeeClient extends BasicClient<Employee> {
 export class EmployeeRef {
     id: number;
     link: string;
+    constructor(id?: number) {
+        this.id = id;
+    }
 }
 
 export class Employee {
@@ -43,5 +47,26 @@ export class EmployeeSearch {
 export class EmployeeFactory {
     static fromJSONEmployeeReviver = (key,value)=>{
         return value;
+    }
+
+    static cache: {[id: number] : Employee} = {};
+    static putInCache(employee: Employee) {
+        var employeeId = employee.id;
+        if (employeeId == null) {
+            throw 'no id';
+        }
+        EmployeeFactory.cache[employeeId] = employee;
+    }
+
+    static getFromCache(id: number) {
+        return EmployeeFactory.cache[id];
+    }
+
+    static clearFromCache(id: number) {
+        delete EmployeeFactory.cache[id];
+    }
+
+    static clearCache() {
+        EmployeeFactory.cache = {};
     }
 }

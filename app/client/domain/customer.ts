@@ -3,8 +3,22 @@
  */
 
 import {CompanyRef} from 'client/domain/company';
+import {BasicClient} from 'client/utils/basicClient';
 
+export class CustomerClient extends BasicClient<Customer> {
+
+    private static RESOURCE_PATH:string = "/customer";
+
+    constructor() {
+        super({
+            resourcePath: CustomerClient.RESOURCE_PATH,
+            jsonReviver: CustomerFactory.fromJSONCustomerReviver,
+            cache: CustomerFactory.cache
+        });
+    }
+}
 export class Customer {
+    id: number;
     companyRef:CompanyRef;
     firsName:string;
     lastName:string;
@@ -21,6 +35,10 @@ export class Customer {
 export class CustomerRef {
     id:number;
     link:string;
+
+    constructor(id?: number) {
+        this.id = id;
+    }
 }
 
 export class CustomerSearch {
@@ -30,6 +48,27 @@ export class CustomerSearch {
 export class CustomerFactory {
     static fromJSONCustomerReviver = (key, value)=> {
         return value;
+    }
+
+    static cache: {[id: number] : Customer} = {};
+    static putInCache(custromer: Customer) {
+        var custromerId = custromer.id;
+        if (custromerId == null) {
+            throw 'no id';
+        }
+        CustomerFactory.cache[custromerId] = custromer;
+    }
+
+    static getFromCache(id: number) {
+        return CustomerFactory.cache[id];
+    }
+
+    static clearFromCache(id: number) {
+        delete CustomerFactory.cache[id];
+    }
+
+    static clearCache() {
+        CustomerFactory.cache = {};
     }
 
 }

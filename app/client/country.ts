@@ -20,6 +20,15 @@ export class CountryClient {
         return url;
     }
 
+    getFromCacheOrServer(code: string, authToken:string) : Promise<Country> {
+        var entityFromCache = CountryFactory.cache[code];
+        if (entityFromCache != null) {
+            return Promise.resolve(entityFromCache);
+        } else {
+            return this.getCountry(code, authToken);
+        }
+    }
+
     getCountry(code:string, authToken:string):Promise<Country> {
         var request = new ComptoirRequest();
         var url = this.getCountryUrl(code);

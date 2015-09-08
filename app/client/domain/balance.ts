@@ -14,7 +14,8 @@ export class BalanceClient extends BasicClient<Balance> {
     constructor() {
         super({
             resourcePath: BalanceClient.RESOURCE_PATH,
-            jsonReviver: BalanceFactory.fromJSONBalanceReviver
+            jsonReviver: BalanceFactory.fromJSONBalanceReviver,
+            cache: BalanceFactory.cache
         });
     }
     closeBalance(id: number, authToken: string) : Promise<BalanceRef> {
@@ -63,11 +64,25 @@ export class BalanceFactory {
         }
         return value;
     };
-    static fromJSONBalanceSearchReviver=(key,value)=>{
-        if (key == 'fromDateTime' || key == 'toDateTime') {
-            var date = new Date(value);
-            return date;
+
+    static cache: {[id: number] : Balance} = {};
+    static putInCache(balance: Balance) {
+        var balanceId = balance.id;
+        if (balanceId == null) {
+            throw 'no id';
         }
-        return value;
-    };
+        BalanceFactory.cache[balanceId] = balance;
+    }
+
+    static getFromCache(id: number) {
+        return BalanceFactory.cache[id];
+    }
+
+    static clearFromCache(id: number) {
+        delete BalanceFactory.cache[id];
+    }
+
+    static clearCache() {
+        BalanceFactory.cache = {};
+    }
 }

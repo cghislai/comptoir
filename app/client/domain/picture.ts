@@ -15,7 +15,8 @@ export class PictureClient extends BasicClient<Picture> {
     constructor() {
         super({
             resourcePath: PictureClient.RESOURCE_PATH,
-            jsonReviver: PictureFactory.fromJSONPictureReviver
+            jsonReviver: PictureFactory.fromJSONPictureReviver,
+            cache: PictureFactory.cache
         });
     }
 }
@@ -47,5 +48,24 @@ export class PictureFactory {
         return value;
     }
 
+    static cache: {[id: number] : Picture} = {};
+    static putInCache(picture: Picture) {
+        var pictureId = picture.id;
+        if (pictureId == null) {
+            throw 'no id';
+        }
+        PictureFactory.cache[pictureId] = picture;
+    }
 
+    static getFromCache(id: number) {
+        return PictureFactory.cache[id];
+    }
+
+    static clearFromCache(id: number) {
+        delete PictureFactory.cache[id];
+    }
+
+    static clearCache() {
+        PictureFactory.cache = {};
+    }
 }

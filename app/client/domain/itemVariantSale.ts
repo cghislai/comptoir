@@ -17,7 +17,8 @@ export class ItemVariantSaleClient extends BasicClient<ItemVariantSale> {
     constructor() {
         super({
             resourcePath: ItemVariantSaleClient.RESOURCE_PATH,
-            jsonReviver: ItemVariantSaleFactory.fromJSONItemVariantSaleReviver
+            jsonReviver: ItemVariantSaleFactory.fromJSONItemVariantSaleReviver,
+            cache: ItemVariantSaleFactory.cache
         });
     }
 }
@@ -52,5 +53,26 @@ export class ItemVariantSaleFactory {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
         return value;
+    }
+
+    static cache: {[id: number] : ItemVariantSale} = {};
+    static putInCache(itemVariantSale: ItemVariantSale) {
+        var itemVariantSaleId = itemVariantSale.id;
+        if (itemVariantSaleId == null) {
+            throw 'no id';
+        }
+        ItemVariantSaleFactory.cache[itemVariantSaleId] = itemVariantSale;
+    }
+
+    static getFromCache(id: number) {
+        return ItemVariantSaleFactory.cache[id];
+    }
+
+    static clearFromCache(id: number) {
+        delete ItemVariantSaleFactory.cache[id];
+    }
+
+    static clearCache() {
+        ItemVariantSaleFactory.cache = {};
     }
 }

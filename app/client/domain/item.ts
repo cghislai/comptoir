@@ -15,7 +15,8 @@ export class ItemClient extends BasicClient<Item> {
     constructor() {
         super({
             resourcePath: ItemClient.RESOURCE_PATH,
-            jsonReviver: ItemFactory.fromJSONItemReviver
+            jsonReviver: ItemFactory.fromJSONItemReviver,
+            cache: ItemFactory.cache
         });
     }
 }
@@ -58,4 +59,25 @@ export class ItemFactory {
         }
         return value;
     };
+
+    static cache: {[id: number] : Item} = {};
+    static putInCache(item: Item) {
+        var itemId = item.id;
+        if (itemId == null) {
+            throw 'no id';
+        }
+        ItemFactory.cache[itemId] = item;
+    }
+
+    static getFromCache(id: number) {
+        return ItemFactory.cache[id];
+    }
+
+    static clearFromCache(id: number) {
+        delete ItemFactory.cache[id];
+    }
+
+    static clearCache() {
+        ItemFactory.cache = {};
+    }
 }

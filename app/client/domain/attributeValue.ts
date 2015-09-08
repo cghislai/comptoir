@@ -15,7 +15,8 @@ export class AttributeValueClient extends BasicClient<AttributeValue> {
     constructor() {
         super({
             resourcePath: AttributeValueClient.RESOURCE_PATH,
-            jsonReviver: AttributeValueFactory.fromJSONAttributeValueReviver
+            jsonReviver: AttributeValueFactory.fromJSONAttributeValueReviver,
+            cache: AttributeValueFactory.cache
         });
     }
 }
@@ -45,4 +46,24 @@ export class AttributeValueFactory {
         return value;
     }
 
+    static cache: {[id: number] : AttributeValue} = {};
+    static putInCache(attributeValue: AttributeValue) {
+        var attributeValueId = attributeValue.id;
+        if (attributeValueId == null) {
+            throw 'no id';
+        }
+        AttributeValueFactory.cache[attributeValueId] = attributeValue;
+    }
+
+    static getFromCache(id: number) {
+        return AttributeValueFactory.cache[id];
+    }
+
+    static clearFromCache(id: number) {
+        delete AttributeValueFactory.cache[id];
+    }
+
+    static clearCache() {
+        AttributeValueFactory.cache = {};
+    }
 }

@@ -2,24 +2,17 @@
  * Created by cghislai on 01/09/15.
  */
 
-import {AttributeDefinition, AttributeDefinitionRef} from 'client/domain/attributeDefinition';
-import {AttributeValue, AttributeValueRef} from 'client/domain/attributeValue';
+import {AttributeValue, AttributeValueRef, AttributeValueClient, AttributeValueFactory} from 'client/domain/attributeValue';
 import {ItemVariant, Pricing} from 'client/domain/itemVariant';
-import {Item, ItemRef} from 'client/domain/item';
-import {Picture, PictureRef} from 'client/domain/picture';
+import {Item, ItemRef, ItemClient, ItemFactory} from 'client/domain/item';
+import {Picture, PictureRef, PictureClient, PictureFactory} from 'client/domain/picture';
 
-import {LocalItem} from 'client/localDomain/item';
-import {LocalPicture} from 'client/localDomain/picture';
+import {LocalItem, LocalItemFactory} from 'client/localDomain/item';
+import {LocalAttributeValue, LocalAttributeValueFactory} from 'client/localDomain/attributeValue';
+import {LocalPicture, LocalPictureFactory} from 'client/localDomain/picture';
 import {LocaleTexts} from 'client/utils/lang';
 import {ComptoirRequest} from 'client/utils/request';
 
-export class LocalAttributeValue {
-    id:number;
-    value:LocaleTexts;
-
-    attributeDefinition:AttributeDefinition;
-    attributeDefinitionRequest:ComptoirRequest;
-}
 
 export class LocalItemVariant {
     id:number;
@@ -29,11 +22,9 @@ export class LocalItemVariant {
 
     attributeValues:LocalAttributeValue[];
     mainPicture:LocalPicture;
-    mainPictureRequest:ComptoirRequest;
     item:LocalItem;
-    itemRequest:ComptoirRequest;
 
-    calcPrice(): number {
+    calcPrice():number {
         switch (this.pricing) {
             case Pricing.ABSOLUTE:
             {
@@ -82,10 +73,64 @@ export class LocalItemVariantFactory {
         return null;
     }
 
-    static toLocalItemVariant(itemVariant:ItemVariant) {
+    static toLocalItemVariant(itemVariant:ItemVariant, authToken):Promise<LocalItemVariant> {
         var localVariant = new LocalItemVariant();
-        LocalItemVariantFactory.updateLocalItemVariant(localVariant, itemVariant);
-        return localVariant;
+        return LocalItemVariantFactory.updateLocalItemVariant(localVariant, itemVariant, authToken);
+    }
+
+
+    static updateLocalItemVariant(localItemVariant:LocalItemVariant, itemVariant:ItemVariant, authToken:string):Promise<LocalItemVariant> {
+        localItemVariant.id = itemVariant.id;
+        localItemVariant.variantReference = itemVariant.variantReference;
+        localItemVariant.pricing = Pricing[itemVariant.pricing];
+        localItemVariant.pricingAmount = itemVariant.pricingAmount;
+
+        localItemVariant.attributeValues = [];
+        var taskList = [];
+        var attributeValueRefList = itemVariant.attributeValueRefs;
+        var attributeValueClient = new AttributeValueClient();
+        for (var attributeValueRef of attributeValueRefList) {
+            var atributeId = attributeValueRef.id;
+            taskList.push(
+                attributeValueClient.getFromCacheOrServer(atributeId, authToken)
+                    .then((attrValue)=> {
+                        return LocalAttributeValueFactory.toLocalAttributeValue(attrValue, authToken);
+                    }).then((localValue)=> {
+                        localItemVariant.attributeValues.push(localValue);
+                    })
+            );
+        }
+
+        var itemRef = itemVariant.itemRef;
+        var itemClient = new ItemClient();
+        taskList.push(
+            itemClient.getFromCacheOrServer(itemRef.id, authToken)
+                .then((item)=> {
+                    return LocalItemFactory.toLocalItem(item, authToken);
+                }).then((localItem: LocalItem)=> {
+                    localItemVariant.item = localItem;
+                })
+        );
+
+        var mainPictureRef = itemVariant.mainPictureRef;
+        if (mainPictureRef != null) {
+            var picId = mainPictureRef.id;
+            var pictureClient = new PictureClient();
+            taskList.push(
+                pictureClient.getFromCacheOrServer(picId, authToken)
+                    .then((picture)=> {
+                        return LocalPictureFactory.toLocalPicture(picture, authToken);
+                    }).then((localPicture: LocalPicture)=> {
+                        localItemVariant.mainPicture = localPicture;
+                    })
+            );
+        }
+
+
+        return Promise.all(taskList)
+            .then(()=> {
+                return localItemVariant;
+            })
     }
 
     static fromLocalItemVariant(localVariant:LocalItemVariant) {
@@ -108,30 +153,5 @@ export class LocalItemVariantFactory {
         return itemVariant;
     }
 
-    static updateLocalItemVariant(localItemVariant:LocalItemVariant, itemVariant:ItemVariant) {
-        localItemVariant.id = itemVariant.id;
-        localItemVariant.variantReference = itemVariant.variantReference;
-        localItemVariant.pricing = Pricing[itemVariant.pricing];
-        localItemVariant.pricingAmount = itemVariant.pricingAmount;
-        return localItemVariant;
-    }
-
-    static toLocalAttributeValue(attributevalue:AttributeValue):LocalAttributeValue {
-        var localValue = new LocalAttributeValue();
-        localValue.id = attributevalue.id;
-        localValue.value = attributevalue.value;
-        return localValue;
-    }
-
-
-    static fromLocalAttributeValue(localValue:LocalAttributeValue):AttributeValue {
-    var attrValue = new AttributeValue();
-        attrValue.id = localValue.id;
-        attrValue.value = localValue.value;
-        if (localValue.attributeDefinition != null) {
-            attrValue.attributeDefinitionRef = new AttributeDefinitionRef(localValue.attributeDefinition.id);
-        }
-        return attrValue;
-    }
 
 }

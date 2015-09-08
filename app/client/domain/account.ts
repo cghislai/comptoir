@@ -15,7 +15,8 @@ export class AccountClient extends BasicClient<Account> {
     constructor() {
         super({
             resourcePath: AccountClient.RESOURCE_PATH,
-            jsonReviver: AccountFactory.fromJSONAccountReviver
+            jsonReviver: AccountFactory.fromJSONReviver,
+            cache: AccountFactory.cache
         });
     }
 }
@@ -60,11 +61,32 @@ export class AccountSearch {
 
 export class AccountFactory {
 
-    static fromJSONAccountReviver = (key, value)=>{
+    static fromJSONReviver = (key, value)=>{
         if (key == 'description') {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
         return value;
+    }
+
+    static cache: {[id: number] : Account} = {};
+    static putInCache(account: Account) {
+        var accountId = account.id;
+        if (accountId == null) {
+            throw 'no id';
+        }
+        AccountFactory.cache[accountId] = account;
+    }
+
+    static getFromCache(id: number) {
+        return AccountFactory.cache[id];
+    }
+
+    static clearFromCache(id: number) {
+        delete AccountFactory.cache[id];
+    }
+
+    static clearCache() {
+        AccountFactory.cache = {};
     }
 
 }
