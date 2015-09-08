@@ -4,7 +4,7 @@
 
 import {CompanyRef} from 'client/domain/company';
 import {SaleRef} from 'client/domain/sale';
-import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {BasicClient,BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
 
 
 export class InvoiceClient extends BasicClient<Invoice> {
@@ -14,7 +14,7 @@ export class InvoiceClient extends BasicClient<Invoice> {
         super({
             resourcePath: InvoiceClient.RESOURCE_PATH,
             jsonReviver: InvoiceFactory.fromJSONInvoiceReviver,
-            cache: InvoiceFactory.cache
+            cacheHandler: InvoiceFactory.cacheHandler
         });
     }
 }
@@ -39,28 +39,9 @@ export class InvoiceSearch {
 }
 
 export class InvoiceFactory {
+    static cacheHandler = new BasicCacheHandler<Invoice>();
     static fromJSONInvoiceReviver = (key, value)=>{
         return value;
     }
 
-    static cache: {[id: number] : Invoice} = {};
-    static putInCache(invoice: Invoice) {
-        var invoiceId = invoice.id;
-        if (invoiceId == null) {
-            throw 'no id';
-        }
-        InvoiceFactory.cache[invoiceId] = invoice;
-    }
-
-    static getFromCache(id: number) {
-        return InvoiceFactory.cache[id];
-    }
-
-    static clearFromCache(id: number) {
-        delete InvoiceFactory.cache[id];
-    }
-
-    static clearCache() {
-        InvoiceFactory.cache = {};
-    }
 }

@@ -6,17 +6,18 @@ import {CompanyRef} from 'client/domain/company';
 import {PosRef} from 'client/domain/pos';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 
-import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
 
 
 export class AccountClient extends BasicClient<Account> {
 
     private static RESOURCE_PATH:string = "/account";
+
     constructor() {
         super({
             resourcePath: AccountClient.RESOURCE_PATH,
             jsonReviver: AccountFactory.fromJSONReviver,
-            cache: AccountFactory.cache
+            cacheHandler: AccountFactory.cacheHandler
         });
     }
 }
@@ -61,32 +62,13 @@ export class AccountSearch {
 
 export class AccountFactory {
 
+    static cacheHandler = new BasicCacheHandler<Account>();
+
     static fromJSONReviver = (key, value)=>{
         if (key == 'description') {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
         return value;
-    }
-
-    static cache: {[id: number] : Account} = {};
-    static putInCache(account: Account) {
-        var accountId = account.id;
-        if (accountId == null) {
-            throw 'no id';
-        }
-        AccountFactory.cache[accountId] = account;
-    }
-
-    static getFromCache(id: number) {
-        return AccountFactory.cache[id];
-    }
-
-    static clearFromCache(id: number) {
-        delete AccountFactory.cache[id];
-    }
-
-    static clearCache() {
-        AccountFactory.cache = {};
     }
 
 }

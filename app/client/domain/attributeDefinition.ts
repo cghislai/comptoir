@@ -4,7 +4,7 @@
 
 import {CompanyRef} from 'client/domain/company';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
-import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
 
 
 export class AttributeDefinitionClient extends BasicClient<AttributeDefinition> {
@@ -14,7 +14,7 @@ export class AttributeDefinitionClient extends BasicClient<AttributeDefinition> 
         super({
             resourcePath: AttributeDefinitionClient.RESOURCE_PATH,
             jsonReviver: AttributeDefinitionFactory.fromJSONAttributeDefinitionReviver,
-            cache: AttributeDefinitionFactory.cache
+            cacheHandler: AttributeDefinitionFactory.cacheHandler
         });
     }
 }
@@ -49,25 +49,5 @@ export class AttributeDefinitionFactory {
         }
         return value;
     }
-
-    static cache: {[id: number] : AttributeDefinition} = {};
-    static putInCache(attributeDefinition: AttributeDefinition) {
-        var attributeDefinitionId = attributeDefinition.id;
-        if (attributeDefinitionId == null) {
-            throw 'no id';
-        }
-        AttributeDefinitionFactory.cache[attributeDefinitionId] = attributeDefinition;
-    }
-
-    static getFromCache(id: number) {
-        return AttributeDefinitionFactory.cache[id];
-    }
-
-    static clearFromCache(id: number) {
-        delete AttributeDefinitionFactory.cache[id];
-    }
-
-    static clearCache() {
-        AttributeDefinitionFactory.cache = {};
-    }
+    static cacheHandler = new BasicCacheHandler<AttributeDefinition>();
 }

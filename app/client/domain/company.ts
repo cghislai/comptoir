@@ -5,7 +5,7 @@
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 import {CountryRef} from 'client/domain/country';
 import {ComptoirRequest} from 'client/utils/request';
-import {BasicClient} from 'client/utils/basicClient';
+import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
 
 export class CompanyClient extends BasicClient<Company> {
 
@@ -14,7 +14,7 @@ export class CompanyClient extends BasicClient<Company> {
         super({
             resourcePath: CompanyClient.RESOURCE_PATH,
             jsonReviver: CompanyFactory.fromJSONCompanyReviver,
-            cache: CompanyFactory.cache
+            cacheHandler: CompanyFactory.cacheHandler
         });
     }
     uploadImportDataFile(data:any, companyRef: CompanyRef, authToken: string,
@@ -78,6 +78,7 @@ export class CompanyRef {
 }
 
 export class CompanyFactory {
+    static cacheHandler = new BasicCacheHandler<Company>();
     static fromJSONCompanyReviver=(key,value)=>{
       if (key == 'name' || key == "description") {
           return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
@@ -85,24 +86,4 @@ export class CompanyFactory {
         return value;
     };
 
-    static cache: {[id: number] : Company} = {};
-    static putInCache(company: Company) {
-        var companyId = company.id;
-        if (companyId == null) {
-            throw 'no id';
-        }
-        CompanyFactory.cache[companyId] = company;
-    }
-
-    static getFromCache(id: number) {
-        return CompanyFactory.cache[id];
-    }
-
-    static clearFromCache(id: number) {
-        delete CompanyFactory.cache[id];
-    }
-
-    static clearCache() {
-        CompanyFactory.cache = {};
-    }
 }

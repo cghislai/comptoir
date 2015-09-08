@@ -3,7 +3,7 @@
  */
 
 import {CompanyRef} from 'client/domain/company';
-import {BasicClient} from 'client/utils/basicClient';
+import {BasicClient, BasicCacheHandler} from 'client/utils/basicClient';
 
 export class CustomerClient extends BasicClient<Customer> {
 
@@ -13,7 +13,7 @@ export class CustomerClient extends BasicClient<Customer> {
         super({
             resourcePath: CustomerClient.RESOURCE_PATH,
             jsonReviver: CustomerFactory.fromJSONCustomerReviver,
-            cache: CustomerFactory.cache
+            cacheHandler: CustomerFactory.cacheHandler
         });
     }
 }
@@ -46,29 +46,9 @@ export class CustomerSearch {
 }
 
 export class CustomerFactory {
+    static cacheHandler = new BasicCacheHandler<Customer>();
     static fromJSONCustomerReviver = (key, value)=> {
         return value;
-    }
-
-    static cache: {[id: number] : Customer} = {};
-    static putInCache(custromer: Customer) {
-        var custromerId = custromer.id;
-        if (custromerId == null) {
-            throw 'no id';
-        }
-        CustomerFactory.cache[custromerId] = custromer;
-    }
-
-    static getFromCache(id: number) {
-        return CustomerFactory.cache[id];
-    }
-
-    static clearFromCache(id: number) {
-        delete CustomerFactory.cache[id];
-    }
-
-    static clearCache() {
-        CustomerFactory.cache = {};
     }
 
 }

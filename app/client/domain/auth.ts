@@ -12,7 +12,7 @@ export class Registration {
 }
 
 export class Auth {
-    id: number
+    id: number;
     employeeRef:EmployeeRef;
     token:string;
     refreshToken: string;

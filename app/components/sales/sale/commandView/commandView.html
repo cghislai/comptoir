@@ -1,5 +1,4 @@
 <div class="commandView" *ng-if="sale != null">
-
     <header class="coloredHeader"
             [class.inactive]="noInput">
         <h1>
@@ -11,11 +10,11 @@
         <span class="busy">
             <span class="valignAnchor"></span>
             <img src="res/img/spinner-2-white.gif"
-                 [hidden]="!sale.dirty"/>
+                 [hidden]="saleItemsRequest.request == null"/>
         </span>
 
         <div class="actions"
-             [hidden]="noInput || sale.items.length <= 0">
+             [hidden]="noInput || saleItemsResult?.list?.length < 1">
             <div class="action reduction"
                  [hidden]="validated"
                  (^click)="doEditSaleDiscount()"
@@ -45,7 +44,7 @@
         </div>
     </header>
 
-    <table class="dataTable" [hidden]="sale.items ==  null">
+    <table class="dataTable" [hidden]="saleItemsResult ==  null">
         <thead>
         <tr>
             <th>Ref</th>
@@ -57,7 +56,7 @@
         </thead>
 
         <tbody>
-        <tr *ng-for="#saleItem of sale.items"
+        <tr *ng-for="#saleItem of saleItemsResult.list"
             #row
             class="saleItem" [class.dirty]="saleItem.dirty">
 
@@ -170,7 +169,7 @@
         </tr>
 
         </tbody>
-        <tfoot [hidden]="sale.items.length <= 0">
+        <tfoot [hidden]="saleItemsResult?.list?.length <= 0">
         <tr [hidden]="sale.discountRatio == null"
             class="details">
             <th colspan="3" class="saleFooter reduction">

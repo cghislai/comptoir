@@ -3,7 +3,7 @@
  */
 
 import {CompanyRef} from 'client/domain/company';
-import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
 
 
 
@@ -14,7 +14,7 @@ export class AccountingTransactionClient extends BasicClient<AccountingTransacti
         super({
             resourcePath: AccountingTransactionClient.RESOURCE_PATH,
             jsonReviver: AccountingTransactionFactory.fromJSONAccountTransactionReviver,
-            cache: AccountingTransactionFactory.cache
+            cacheHandler: AccountingTransactionFactory.cacheHandler
         });
     }
 }
@@ -41,28 +41,8 @@ export class AccountingTransactionRef {
 }
 
 export class AccountingTransactionFactory {
+    static cacheHandler = new BasicCacheHandler<AccountingTransaction>();
     static fromJSONAccountTransactionReviver = (key, value)=>{
         return value;
-    }
-
-    static cache: {[id: number] : AccountingTransaction} = {};
-    static putInCache(accountingTransaction: AccountingTransaction) {
-        var accountingTransactionId = accountingTransaction.id;
-        if (accountingTransactionId == null) {
-            throw 'no id';
-        }
-        AccountingTransactionFactory.cache[accountingTransactionId] = accountingTransaction;
-    }
-
-    static getFromCache(id: number) {
-        return AccountingTransactionFactory.cache[id];
-    }
-
-    static clearFromCache(id: number) {
-        delete AccountingTransactionFactory.cache[id];
-    }
-
-    static clearCache() {
-        AccountingTransactionFactory.cache = {};
     }
 }

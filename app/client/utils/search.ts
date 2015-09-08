@@ -2,8 +2,14 @@
  * Created by cghislai on 11/08/15.
  */
 
-import {ComptoirResponse} from 'client/utils/request';
+import {ComptoirRequest, ComptoirResponse} from 'client/utils/request';
+import {Pagination} from 'client/utils/pagination';
 
+export class SearchRequest<T> {
+    search: any;
+    pagination: Pagination
+    request: ComptoirRequest;
+}
 export class SearchResult<T> {
 
     count:number;

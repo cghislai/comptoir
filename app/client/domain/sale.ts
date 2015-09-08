@@ -7,7 +7,7 @@ import {CustomerRef} from 'client/domain/customer';
 import {InvoiceRef} from 'client/domain/invoice';
 import {AccountingTransactionRef} from 'client/domain/accountingTransaction'
 
-import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
 import {ComptoirRequest} from 'client/utils/request';
 
 export class SaleClient extends BasicClient<Sale> {
@@ -17,7 +17,7 @@ export class SaleClient extends BasicClient<Sale> {
         super({
             resourcePath: SaleClient.RESOURCE_PATH,
             jsonReviver: SaleFactory.fromJSONSaleReviver,
-            cache: SaleFactory.cache
+            cacheHandler: SaleFactory.cacheHandler
         });
     }
 
@@ -89,6 +89,8 @@ export class SaleSearch {
 }
 
 export class SaleFactory {
+    static cacheHandler = new BasicCacheHandler<Sale>();
+
     static fromJSONSaleReviver = (key, value)=> {
         if (key == 'dateTime') {
             var date = new Date(value);
@@ -97,25 +99,5 @@ export class SaleFactory {
        return value;
     }
 
-    static cache: {[id: number] : Sale} = {};
-    static putInCache(sale: Sale) {
-        var saleId = sale.id;
-        if (saleId == null) {
-            throw 'no id';
-        }
-        SaleFactory.cache[saleId] = sale;
-    }
-
-    static getFromCache(id: number) {
-        return SaleFactory.cache[id];
-    }
-
-    static clearFromCache(id: number) {
-        delete SaleFactory.cache[id];
-    }
-
-    static clearCache() {
-        SaleFactory.cache = {};
-    }
 
 }

@@ -5,7 +5,7 @@
 import {CompanyRef} from 'client/domain/company';
 import {CustomerRef} from 'client/domain/customer';
 import {LocaleTexts,LocaleTextsFactory} from 'client/utils/lang';
-import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {BasicClient,BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
 
 
 export class PosClient extends BasicClient<Pos> {
@@ -16,7 +16,7 @@ export class PosClient extends BasicClient<Pos> {
         super({
             resourcePath: PosClient.RESOURCE_PATH,
             jsonReviver: PosFactory.fromJSONPosReviver,
-            cache: PosFactory.cache
+            cacheHandler: PosFactory.cacheHandler
         });
     }
 }
@@ -42,32 +42,12 @@ export class PosSearch {
 }
 
 export class PosFactory {
+    static cacheHandler = new BasicCacheHandler<Pos>();
     static fromJSONPosReviver = (key, value)=> {
         if (key == 'description') {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
         return value;
-    }
-
-    static cache: {[id: number] : Pos} = {};
-    static putInCache(pos: Pos) {
-        var posId = pos.id;
-        if (posId == null) {
-            throw 'no id';
-        }
-        PosFactory.cache[posId] = pos;
-    }
-
-    static getFromCache(id: number) {
-        return PosFactory.cache[id];
-    }
-
-    static clearFromCache(id: number) {
-        delete PosFactory.cache[id];
-    }
-
-    static clearCache() {
-        PosFactory.cache = {};
     }
 
 }

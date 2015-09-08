@@ -5,7 +5,7 @@
 import {AttributeDefinitionRef} from 'client/domain/attributeDefinition';
 import {CompanyRef} from 'client/domain/company';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
-import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {BasicClient,BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
 
 
 export class AttributeValueClient extends BasicClient<AttributeValue> {
@@ -16,7 +16,7 @@ export class AttributeValueClient extends BasicClient<AttributeValue> {
         super({
             resourcePath: AttributeValueClient.RESOURCE_PATH,
             jsonReviver: AttributeValueFactory.fromJSONAttributeValueReviver,
-            cache: AttributeValueFactory.cache
+            cacheHandler: AttributeValueFactory.cacheHandler
         });
     }
 }
@@ -46,24 +46,5 @@ export class AttributeValueFactory {
         return value;
     }
 
-    static cache: {[id: number] : AttributeValue} = {};
-    static putInCache(attributeValue: AttributeValue) {
-        var attributeValueId = attributeValue.id;
-        if (attributeValueId == null) {
-            throw 'no id';
-        }
-        AttributeValueFactory.cache[attributeValueId] = attributeValue;
-    }
-
-    static getFromCache(id: number) {
-        return AttributeValueFactory.cache[id];
-    }
-
-    static clearFromCache(id: number) {
-        delete AttributeValueFactory.cache[id];
-    }
-
-    static clearCache() {
-        AttributeValueFactory.cache = {};
-    }
+    static cacheHandler = new BasicCacheHandler<AttributeValue>();
 }

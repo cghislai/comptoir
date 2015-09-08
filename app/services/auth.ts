@@ -3,17 +3,15 @@
  */
 import {Inject} from 'angular2/angular2';
 
-import {Country, CountryFactory} from 'client/domain/country';
-import {Company, CompanyRef, CompanyFactory} from 'client/domain/company';
-import {EmployeeClient, EmployeeRef, Employee, EmployeeFactory} from 'client/domain/employee';
 import {Auth, Registration, AuthFactory} from 'client/domain/auth';
+import {LocalAuth, LocalAuthFactory} from 'client/localDomain/auth';
+import {LocalEmployee} from 'client/localDomain/employee';
+
 import {Language} from 'client/utils/lang';
 import {JSONFactory} from 'client/utils/factory';
 import {ComptoirRequest,ComptoirResponse} from 'client/utils/request';
 
 import {AuthClient} from 'client/auth';
-import {CompanyClient} from 'client/company';
-import {CountryClient} from 'client/country';
 
 import {ErrorService} from 'services/error';
 
@@ -28,19 +26,11 @@ export class AuthService {
     static STORAGE_AUTH_KEY = "Auth";
 
     client:AuthClient;
-    employeeClient:EmployeeClient;
     errorService:ErrorService;
-    companyClient:CompanyClient;
-    countryClient:CountryClient;
 
     authToken:string;
-    auth:Auth;
-    loggedEmployee:Employee;
-    employeeCompany:Company;
-    companyCountry:Country;
-    loaded: boolean;
-    loadingRequest:ComptoirRequest;
-    registrationRequest: ComptoirRequest;
+    auth:LocalAuth;
+    registrationRequest:ComptoirRequest;
 
     loginRequired:boolean;
     loginRequiredReason:LoginRequiredReason;
@@ -48,25 +38,22 @@ export class AuthService {
     constructor(@Inject errorService:ErrorService) {
         this.errorService = errorService;
         this.client = new AuthClient();
-        this.employeeClient = new EmployeeClient();
-        this.companyClient = new CompanyClient();
-        this.countryClient = new CountryClient();
 
         this.loadFromStorage();
     }
 
-    login(login:string, hashedPassword:string):Promise<any> {
-        var thisService = this;
+    login(login:string, hashedPassword:string):Promise<LocalEmployee> {
         return this.client.login(login, hashedPassword)
             .then((response:Auth) => {
                 this.saveAuth(response);
-                var employeeRef = response.employeeRef;
-                return this.fetchEmployeeData(employeeRef);
+                return LocalAuthFactory.toLocalAuth(response, response.token);
+            }).then((localAuth: LocalAuth)=>{
+                return localAuth.employee;
             });
     }
 
     // Register then log in
-    register(registration:Registration):Promise<Employee> {
+    register(registration:Registration):Promise<LocalEmployee> {
         if (this.registrationRequest != null) {
             console.log("Registration already running");
             return;
@@ -80,19 +67,21 @@ export class AuthService {
                 var password = registration.employeePassword;
                 var hashedPassword = MD5.encode(password);
                 return this.login(login, hashedPassword);
-            }).then(()=>{
-                return this.loggedEmployee;
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
                 return null;
             });
     }
 
-    public getEmployeeLanguage(): Language {
-        if (this.loggedEmployee == null) {
+    public getEmployeeLanguage():Language {
+        if (this.auth == null) {
+            return null;
+        }
+        var employee = this.auth.employee;
+        if (employee == null) {
             return Language.DEFAULT_LANGUAGE;
         }
-        var locale = this.loggedEmployee.locale;
+        var locale = employee.locale;
         var language = Language.fromLanguage(locale);
         if (language != undefined) {
             return language;
@@ -100,61 +89,8 @@ export class AuthService {
         return Language.DEFAULT_LANGUAGE;
     }
 
-    private fetchEmployeeData(employeeRef:EmployeeRef) {
-        return this.fetchEmployee(employeeRef.id)
-            .then(()=> {
-                var companyId = this.loggedEmployee.companyRef.id;
-                return this.fetchCompany(companyId);
-            }).then(()=> {
-                var countryCode = this.employeeCompany.countryRef.code;
-                return this.fetchCountry(countryCode);
-            }).then(()=>{
-                this.loaded = true;
-                return this.loggedEmployee;
-            });
-    }
-
-    private fetchEmployee(employeeId:number) {
-        if (this.loadingRequest != null) {
-            this.loadingRequest.discardRequest();
-        }
-        this.loadingRequest = this.employeeClient.getGetRequest(employeeId, this.authToken);
-        return this.loadingRequest.run()
-            .then((response:ComptoirResponse)=> {
-                var employee = JSON.parse(response.text, EmployeeFactory.fromJSONEmployeeReviver);
-                this.loadingRequest = null;
-                this.loggedEmployee = employee;
-            });
-    }
-
-    private fetchCompany(companyId:number) {
-        if (this.loadingRequest != null) {
-            this.loadingRequest.discardRequest();
-        }
-        this.loadingRequest = this.companyClient.getGetCompanyRequest(companyId, this.authToken);
-        return this.loadingRequest.run()
-            .then((response:ComptoirResponse)=> {
-                var company = JSON.parse(response.text, CompanyFactory.fromJSONCompanyReviver);
-                this.loadingRequest = null;
-                this.employeeCompany = company;
-            });
-    }
-
-    private fetchCountry(countryCode:string) {
-        if (this.loadingRequest != null) {
-            this.loadingRequest.discardRequest();
-        }
-        this.loadingRequest = this.countryClient.getGetCountryrequest(countryCode, this.authToken);
-        return this.loadingRequest.run()
-            .then((response:ComptoirResponse) => {
-                var country = JSON.parse(response.text, CountryFactory.fromJSONCountryReviver);
-                this.loadingRequest = null;
-                this.companyCountry = country;
-            });
-    }
 
     private saveAuth(auth:Auth) {
-        this.auth = auth;
         if (auth != null) {
             this.authToken = auth.token;
             var jsonString = JSON.stringify(auth, JSONFactory.toJSONReplacer);
@@ -162,9 +98,6 @@ export class AuthService {
         } else {
             this.authToken = null;
             localStorage.setItem(AuthService.STORAGE_AUTH_KEY, null);
-            this.loggedEmployee = null;
-            this.employeeCompany = null;
-            this.companyCountry = null;
         }
     }
 
@@ -178,7 +111,6 @@ export class AuthService {
             return;
         }
         var auth:Auth = JSON.parse(authJSON, AuthFactory.fromJSONAuthReviver);
-
         if (auth == null) {
             this.saveAuth(null);
             return;
@@ -188,15 +120,14 @@ export class AuthService {
             this.saveAuth(null);
             return;
         }
-        this.auth = auth;
-        this.authToken = auth.token;
-        var employeeRef = this.auth.employeeRef;
 
-        this.fetchEmployeeData(employeeRef)
-        .catch((error)=>{
+        LocalAuthFactory.toLocalAuth(auth, auth.token)
+            .then((localAuth:LocalAuth)=> {
+                this.auth = localAuth;
+                this.checkRefreshToken();
+            }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
-        this.checkRefreshToken();
     }
 
     isExpireDateValid(date:Date) {

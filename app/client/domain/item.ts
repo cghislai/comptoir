@@ -6,7 +6,7 @@
 import {CompanyRef} from 'client/domain/company';
 import {PictureRef} from 'client/domain/picture';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
-import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
 
 
 export class ItemClient extends BasicClient<Item> {
@@ -16,7 +16,7 @@ export class ItemClient extends BasicClient<Item> {
         super({
             resourcePath: ItemClient.RESOURCE_PATH,
             jsonReviver: ItemFactory.fromJSONItemReviver,
-            cache: ItemFactory.cache
+            cacheHandler: ItemFactory.cacheHandler
         });
     }
 }
@@ -53,31 +53,11 @@ export class ItemSearch {
 }
 
 export class ItemFactory {
+    static cacheHandler = new BasicCacheHandler<Item>();
     static fromJSONItemReviver = (key, value)=> {
         if (key == 'name' || key == "description") {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
         return value;
-    };
-
-    static cache: {[id: number] : Item} = {};
-    static putInCache(item: Item) {
-        var itemId = item.id;
-        if (itemId == null) {
-            throw 'no id';
-        }
-        ItemFactory.cache[itemId] = item;
-    }
-
-    static getFromCache(id: number) {
-        return ItemFactory.cache[id];
-    }
-
-    static clearFromCache(id: number) {
-        delete ItemFactory.cache[id];
-    }
-
-    static clearCache() {
-        ItemFactory.cache = {};
     }
 }

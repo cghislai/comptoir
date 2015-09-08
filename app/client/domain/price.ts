@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 14/08/15.
  */
-
+import {BasicCacheHandler} from 'client/utils/basicClient';
 
 export class Price {
     id: number;
@@ -17,28 +17,8 @@ export class PriceRef {
 }
 
 export class PriceFactory {
+    static cacheHandler = new BasicCacheHandler<Price>();
     static fromJSONPriceReviver = (key, value)=>{
         return value;
-    }
-
-    static cache: {[id: number] : Price} = {};
-    static putInCache(price: Price) {
-        var priceId = price.id;
-        if (priceId == null) {
-            throw 'no id';
-        }
-        PriceFactory.cache[priceId] = price;
-    }
-
-    static getFromCache(id: number) {
-        return PriceFactory.cache[id];
-    }
-
-    static clearFromCache(id: number) {
-        delete PriceFactory.cache[id];
-    }
-
-    static clearCache() {
-        PriceFactory.cache = {};
     }
 }

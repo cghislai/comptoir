@@ -4,7 +4,7 @@
 
 import {AccountRef, AccountSearch} from 'client/domain/account';
 import {CompanyRef} from 'client/domain/company';
-import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {BasicClient,BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
 import {ComptoirRequest} from 'client/utils/request';
 
 
@@ -15,7 +15,7 @@ export class BalanceClient extends BasicClient<Balance> {
         super({
             resourcePath: BalanceClient.RESOURCE_PATH,
             jsonReviver: BalanceFactory.fromJSONBalanceReviver,
-            cache: BalanceFactory.cache
+            cacheHandler: BalanceFactory.cacheHandler
         });
     }
     closeBalance(id: number, authToken: string) : Promise<BalanceRef> {
@@ -57,6 +57,7 @@ export class BalanceSearch {
 }
 
 export class BalanceFactory {
+    static cacheHandler = new BasicCacheHandler<Balance>();
     static fromJSONBalanceReviver=(key,value)=>{
         if (key == 'dateTime') {
             var date = new Date(value);
@@ -65,24 +66,4 @@ export class BalanceFactory {
         return value;
     };
 
-    static cache: {[id: number] : Balance} = {};
-    static putInCache(balance: Balance) {
-        var balanceId = balance.id;
-        if (balanceId == null) {
-            throw 'no id';
-        }
-        BalanceFactory.cache[balanceId] = balance;
-    }
-
-    static getFromCache(id: number) {
-        return BalanceFactory.cache[id];
-    }
-
-    static clearFromCache(id: number) {
-        delete BalanceFactory.cache[id];
-    }
-
-    static clearCache() {
-        BalanceFactory.cache = {};
-    }
 }

@@ -4,7 +4,7 @@
             <input #filter id="itemListFilterInput"
                    (keyup)="onFilterKeyUp($event)"
                    (change)="onFilterChange($event)"
-                   [value]="itemSearch.multiSearch"
+                   [value]="searchRequest?.search?.itemSearch?.multiSearch"
                    placeholder="Filtrer les produits" autofocusselect/>
 
             <div class="busy">

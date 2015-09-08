@@ -7,7 +7,7 @@ import {ItemVariantRef} from 'client/domain/itemVariant';
 import {SaleRef} from 'client/domain/sale';
 import {Price} from 'client/domain/price';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
-import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
 
 
 export class ItemVariantSaleClient extends BasicClient<ItemVariantSale> {
@@ -18,7 +18,7 @@ export class ItemVariantSaleClient extends BasicClient<ItemVariantSale> {
         super({
             resourcePath: ItemVariantSaleClient.RESOURCE_PATH,
             jsonReviver: ItemVariantSaleFactory.fromJSONItemVariantSaleReviver,
-            cache: ItemVariantSaleFactory.cache
+            cacheHandler: ItemVariantSaleFactory.cacheHandler
         });
     }
 }
@@ -48,6 +48,7 @@ export class ItemVariantSaleSearch {
 }
 
 export class ItemVariantSaleFactory {
+    static cacheHandler = new BasicCacheHandler<ItemVariantSale>();
     static fromJSONItemVariantSaleReviver = (key, value)=>{
         if (key == 'comment') {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
@@ -55,24 +56,4 @@ export class ItemVariantSaleFactory {
         return value;
     }
 
-    static cache: {[id: number] : ItemVariantSale} = {};
-    static putInCache(itemVariantSale: ItemVariantSale) {
-        var itemVariantSaleId = itemVariantSale.id;
-        if (itemVariantSaleId == null) {
-            throw 'no id';
-        }
-        ItemVariantSaleFactory.cache[itemVariantSaleId] = itemVariantSale;
-    }
-
-    static getFromCache(id: number) {
-        return ItemVariantSaleFactory.cache[id];
-    }
-
-    static clearFromCache(id: number) {
-        delete ItemVariantSaleFactory.cache[id];
-    }
-
-    static clearCache() {
-        ItemVariantSaleFactory.cache = {};
-    }
 }

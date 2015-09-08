@@ -1,8 +1,8 @@
 <div class="listPage">
     <h1>Historique des ventes</h1>
 
-    <div class="busy" [hidden]="!loading">
-        <img src="../../../../res/img/ajax-loader.white.gif">
+    <div class="busy" [hidden]="salesRequest.request == null">
+        <img src="../../../../res/img/spinner-2-white.gif">
     </div>
 
 

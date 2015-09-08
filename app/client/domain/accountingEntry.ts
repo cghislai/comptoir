@@ -7,7 +7,7 @@ import {AccountRef, AccountSearch} from 'client/domain/account';
 import {AccountingTransactionRef} from 'client/domain/accountingTransaction';
 import {CustomerRef} from 'client/domain/customer';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
-import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {BasicClient,BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
 
 
 export class AccountingEntryClient extends BasicClient<AccountingEntry> {
@@ -17,7 +17,7 @@ export class AccountingEntryClient extends BasicClient<AccountingEntry> {
         super({
             resourcePath: AccountingEntryClient.RESOURCE_PATH,
             jsonReviver: AccountingEntryFactory.fromJSONAccountingEntryReviver,
-            cache: AccountingEntryFactory.cache
+            cacheHandler: AccountingEntryFactory.cacheHandler
         });
     }
 }
@@ -53,31 +53,11 @@ export class AccountingEntrySearch {
 }
 
 export class AccountingEntryFactory {
+    static cacheHandler = new BasicCacheHandler<AccountingEntry>();
     static fromJSONAccountingEntryReviver = (key, value)=>{
         if (key == 'description') {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
         return value;
-    }
-
-    static cache: {[id: number] : AccountingEntry} = {};
-    static putInCache(accountingEntry: AccountingEntry) {
-        var accountingEntryId = accountingEntry.id;
-        if (accountingEntryId == null) {
-            throw 'no id';
-        }
-        AccountingEntryFactory.cache[accountingEntryId] = accountingEntry;
-    }
-
-    static getFromCache(id: number) {
-        return AccountingEntryFactory.cache[id];
-    }
-
-    static clearFromCache(id: number) {
-        delete AccountingEntryFactory.cache[id];
-    }
-
-    static clearCache() {
-        AccountingEntryFactory.cache = {};
     }
 }

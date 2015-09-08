@@ -4,7 +4,7 @@
 
 import {AccountRef} from 'client/domain/account';
 import {BalanceRef} from 'client/domain/balance';
-import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
 
 
 export class MoneyPileClient extends BasicClient<MoneyPile> {
@@ -15,7 +15,7 @@ export class MoneyPileClient extends BasicClient<MoneyPile> {
         super({
             resourcePath: MoneyPileClient.RESOURCE_PATH,
             jsonReviver: MoneyPileFactory.fromJSONMoneyPileReviver,
-            cache: MoneyPileFactory.cache
+            cacheHandler: MoneyPileFactory.cacheHandler
         });
     }
 }
@@ -42,6 +42,7 @@ export class MoneyPileSearch {
 }
 
 export class MoneyPileFactory {
+    static cacheHandler = new BasicCacheHandler<MoneyPile>();
     static fromJSONMoneyPileReviver=(key,value)=>{
         if (key == 'dateTime') {
             var date = new Date(value);
@@ -50,24 +51,4 @@ export class MoneyPileFactory {
         return value;
     };
 
-    static cache: {[id: number] : MoneyPile} = {};
-    static putInCache(moneyPile: MoneyPile) {
-        var moneyPileId = moneyPile.id;
-        if (moneyPileId == null) {
-            throw 'no id';
-        }
-        MoneyPileFactory.cache[moneyPileId] = moneyPile;
-    }
-
-    static getFromCache(id: number) {
-        return MoneyPileFactory.cache[id];
-    }
-
-    static clearFromCache(id: number) {
-        delete MoneyPileFactory.cache[id];
-    }
-
-    static clearCache() {
-        MoneyPileFactory.cache = {};
-    }
 }

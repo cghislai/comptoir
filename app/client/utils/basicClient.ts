@@ -11,13 +11,38 @@ import {SearchResult} from 'client/utils/search';
 export interface WithId {
     id: number;
 }
-export interface BasicClientResourceInfo<T> {
+
+export class BasicCacheHandler<T extends WithId> {
+    cache:{[id: number] : T} = {};
+
+    putInCache(entity:T) {
+        var id = entity.id;
+        if (id == null) {
+            throw 'no id';
+        }
+        this.cache[id] = entity;
+    }
+
+    getFromCache(id:number) {
+        return this.cache[id];
+    }
+
+    clearFromCache(id:number) {
+        delete this.cache[id];
+    }
+
+    clearCache() {
+        this.cache = {};
+    }
+}
+
+export interface BasicClientResourceInfo<T extends WithId> {
     resourcePath: string;
     jsonReviver: (key, value)=>any;
-    cache: {[id:number]: T};
+    cacheHandler: BasicCacheHandler<T>;
 }
 export class BasicClient<T extends WithId> {
-    protected resourceInfo:BasicClientResourceInfo<T>;
+    resourceInfo:BasicClientResourceInfo<T>;
 
     constructor(resourceInfo:BasicClientResourceInfo<T>) {
         this.resourceInfo = resourceInfo;
@@ -43,8 +68,8 @@ export class BasicClient<T extends WithId> {
         return url;
     }
 
-    getFromCacheOrServer(id: number, authToken:string) : Promise<T> {
-        var entityFromCache = this.resourceInfo.cache[id];
+    getFromCacheOrServer(id:number, authToken:string):Promise<T> {
+        var entityFromCache = this.resourceInfo.cacheHandler.getFromCache(id);
         if (entityFromCache != null) {
             return Promise.resolve(entityFromCache);
         } else {

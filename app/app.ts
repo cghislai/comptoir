@@ -26,8 +26,6 @@ import {AccountsView} from 'routes/accounts/accountsView';
 import {CashView} from 'routes/cash/cashView';
 import {PosView} from 'routes/pos/posView';
 
-import {ApplicationSettingsView} from 'components/settings/application/appSettings';
-
 
 @Component({
     selector: 'app'

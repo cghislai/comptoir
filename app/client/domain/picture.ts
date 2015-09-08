@@ -5,7 +5,7 @@
 import {CompanyRef} from 'client/domain/company';
 import {ItemRef} from 'client/domain/item';
 import {ItemVariantRef} from 'client/domain/itemVariant';
-import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
 
 
 export class PictureClient extends BasicClient<Picture> {
@@ -16,7 +16,7 @@ export class PictureClient extends BasicClient<Picture> {
         super({
             resourcePath: PictureClient.RESOURCE_PATH,
             jsonReviver: PictureFactory.fromJSONPictureReviver,
-            cache: PictureFactory.cache
+            cacheHandler: PictureFactory.cacheHandler
         });
     }
 }
@@ -44,28 +44,10 @@ export class PictureSearch {
 }
 
 export class PictureFactory {
+    static cacheHandler = new BasicCacheHandler<Picture>();
     static fromJSONPictureReviver = (key, value)=> {
         return value;
     }
 
-    static cache: {[id: number] : Picture} = {};
-    static putInCache(picture: Picture) {
-        var pictureId = picture.id;
-        if (pictureId == null) {
-            throw 'no id';
-        }
-        PictureFactory.cache[pictureId] = picture;
-    }
 
-    static getFromCache(id: number) {
-        return PictureFactory.cache[id];
-    }
-
-    static clearFromCache(id: number) {
-        delete PictureFactory.cache[id];
-    }
-
-    static clearCache() {
-        PictureFactory.cache = {};
-    }
 }

@@ -8,8 +8,8 @@ import {LocalItemVariant} from 'client/localDomain/itemVariant';
 import {LocalPicture} from 'client/localDomain/picture';
 
 import {ItemSearch} from 'client/domain/item';
-import {ItemVariant, ItemVariantSearch} from 'client/domain/itemVariant';
-import {SearchResult} from 'client/utils/search';
+import {ItemVariantSearch} from 'client/domain/itemVariant';
+import {SearchResult, SearchRequest} from 'client/utils/search';
 import {Pagination} from 'client/utils/pagination';
 
 import {ErrorService} from 'services/error';
@@ -41,21 +41,21 @@ export class ItemListView {
     keyboardTimeoutSet:boolean;
     keyboardTimeout:number = 200;
     //
-    itemSearch: ItemSearch;
-    itemVariantSearch:ItemVariantSearch;
-    pagination:Pagination;
-    loading:boolean = false;
+    searchRequest:SearchRequest<LocalItemVariant>;
     searchResult:SearchResult<LocalItemVariant>;
 
     constructor(errorService:ErrorService, itemVariantService:ItemVariantService) {
         this.itemVariantService = itemVariantService;
         this.errorService = errorService;
 
-        this.itemSearch = new ItemSearch();
-        this.itemSearch.multiSearch = null;
-        this.itemVariantSearch = new ItemVariantSearch();
-        this.itemVariantSearch.itemSearch = this.itemSearch;
-        this.pagination = new Pagination(0, 20);
+        var itemSearch = new ItemSearch();
+        itemSearch.multiSearch = null;
+        var itemVariantSearch = new ItemVariantSearch();
+        itemVariantSearch.itemSearch = itemSearch;
+        var pagination = new Pagination(0, 20);
+        this.searchRequest = new SearchRequest<LocalItemVariant>();
+        this.searchRequest.search = itemVariantSearch;
+        this.searchRequest.pagination = pagination;
 
         this.columns = [
             ItemVariantColumn.VARIANT_REFERENCE,
@@ -67,11 +67,9 @@ export class ItemListView {
     }
 
     searchItems() {
-        this.loading = true;
-        this.itemVariantService.searchLocalItemVariantsAsync(this.itemVariantSearch, this.pagination)
+        this.itemVariantService.searchItemVariants(this.searchRequest)
             .then((result:SearchResult<LocalItemVariant>)=> {
                 this.searchResult = result;
-                this.loading = false;
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -94,14 +92,15 @@ export class ItemListView {
     }
 
     applyFilter(filterValue:string) {
-        if (this.itemSearch.multiSearch == filterValue) {
+        var itemSearch = this.searchRequest.search.itemSearch;
+        if (itemSearch.multiSearch == filterValue) {
             return;
         }
-        this.itemSearch.multiSearch = filterValue;
+        itemSearch.multiSearch = filterValue;
         this.searchItems();
     }
 
-    onItemClicked(item:ItemVariant) {
+    onItemClicked(item:LocalItemVariant) {
         this.itemClicked.next(item);
     }
 

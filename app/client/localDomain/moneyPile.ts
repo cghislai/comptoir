@@ -61,7 +61,7 @@ export class LocalMoneyPileFactory {
             });
     }
 
-    static fromLocalMoneyPil(localMoneyPile:LocalMoneyPile):MoneyPile {
+    static fromLocalMoneyPile(localMoneyPile:LocalMoneyPile):MoneyPile {
         var moneyPile = new MoneyPile();
         moneyPile.accountRef = new AccountRef(localMoneyPile.account.id);
         moneyPile.balanceRef = new BalanceRef(localMoneyPile.balance.id);

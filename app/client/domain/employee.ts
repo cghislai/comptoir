@@ -3,7 +3,7 @@
  */
 
 import {CompanyRef} from 'client/domain/company';
-import {BasicClient, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
 
 
 export class EmployeeClient extends BasicClient<Employee> {
@@ -13,7 +13,7 @@ export class EmployeeClient extends BasicClient<Employee> {
         super({
             resourcePath: EmployeeClient.RESOURCE_PATH,
             jsonReviver: EmployeeFactory.fromJSONEmployeeReviver,
-            cache: EmployeeFactory.cache
+            cacheHandler: EmployeeFactory.cacheHandler
         });
     }
 }
@@ -45,28 +45,9 @@ export class EmployeeSearch {
 }
 
 export class EmployeeFactory {
+    static cacheHandler = new BasicCacheHandler<Employee>();
     static fromJSONEmployeeReviver = (key,value)=>{
         return value;
     }
 
-    static cache: {[id: number] : Employee} = {};
-    static putInCache(employee: Employee) {
-        var employeeId = employee.id;
-        if (employeeId == null) {
-            throw 'no id';
-        }
-        EmployeeFactory.cache[employeeId] = employee;
-    }
-
-    static getFromCache(id: number) {
-        return EmployeeFactory.cache[id];
-    }
-
-    static clearFromCache(id: number) {
-        delete EmployeeFactory.cache[id];
-    }
-
-    static clearCache() {
-        EmployeeFactory.cache = {};
-    }
 }

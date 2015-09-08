@@ -4,14 +4,19 @@
 
 import {Component, View, NgFor, NgIf, EventEmitter, FORM_DIRECTIVES} from 'angular2/angular2';
 
-import {Sale, SaleRef} from 'client/domain/sale';
-import {ItemVariant} from 'client/domain/itemVariant';
-import {LocalSale, LocalItemSale} from 'client/localDomain/sale';
+import {CompanyRef} from 'client/domain/company';
+import {SaleRef} from 'client/domain/sale';
+import {ItemVariantSaleSearch} from 'client/domain/itemVariantSale';
+
+import {LocalSale} from 'client/localDomain/sale';
+import {LocalItemVariantSale} from 'client/localDomain/itemVariantSale';
 
 import {LocaleTexts, Language} from 'client/utils/lang';
 import {NumberUtils} from 'client/utils/number';
+import {SearchRequest, SearchResult} from 'client/utils/search';
 
 import {SaleService} from 'services/sale';
+import {ItemVariantSaleService} from 'services/itemVariantSale';
 import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
 
@@ -24,7 +29,7 @@ import {LangSelect, LocalizedDirective} from 'components/utils/langSelect/langSe
 @Component({
     selector: 'commandView',
     events: ['validate', 'saleInvalidated'],
-    properties: ['sale', 'validated', 'noInput']
+    properties: ['salePorp: sale', 'validated', 'noInput']
 })
 
 @View({
@@ -35,42 +40,55 @@ import {LangSelect, LocalizedDirective} from 'components/utils/langSelect/langSe
 
 export class CommandView {
     saleService:SaleService;
+    itemVariantSaleService:ItemVariantSaleService;
     errorService:ErrorService;
 
     sale:LocalSale;
-    language: Language;
+    saleItemsRequest:SearchRequest<LocalItemVariantSale>;
+    saleItemsResult:SearchResult<LocalItemVariantSale>;
+
+    language:Language;
     locale:string;
     noInput:boolean;
 
-    editingItem:LocalItemSale = null;
+    editingItem:LocalItemVariantSale = null;
     editingItemQuantity:boolean;
     editingItemPrice:boolean;
     editingItemComment:boolean;
     editingItemDiscount:boolean;
-    editingValue: any;
+    editingValue:any;
 
     editingSaleDiscount:boolean = false;
     validate = new EventEmitter();
     validated:boolean = false;
     saleInvalidated = new EventEmitter();
 
-    constructor(saleService:SaleService, authService:AuthService,
+    constructor(saleService:SaleService, itemVariantSaleService:ItemVariantSaleService,
+                authService:AuthService,
                 errorService:ErrorService) {
         this.saleService = saleService;
+        this.itemVariantSaleService = itemVariantSaleService;
         this.errorService = errorService;
         this.language = authService.getEmployeeLanguage();
         this.locale = authService.getEmployeeLanguage().locale;
+
+        this.saleItemsRequest = new SearchRequest<LocalItemVariantSale>();
+        var search = new ItemVariantSaleSearch();
+        search.companyRef = new CompanyRef(authService.auth.employee.company.id);
+        this.saleItemsRequest.search = search;
     }
 
-    doRemoveItem(localItemSale:LocalItemSale) {
-        var localSale = localItemSale.sale;
-        var saleToBeRemoved = localSale.items.length == 1;
+    set saleProp(value:LocalSale) {
+        this.sale = value;
+        var search = this.saleItemsRequest.search;
+        search.saleRef = new SaleRef(value.id);
+        this.searchItems();
+    }
 
-        this.saleService.removeItemFromLocalSaleAsync(localSale, localItemSale.itemVariant)
-            .then(()=> {
-                if (saleToBeRemoved) {
-                    this.saleInvalidated.next(null);
-                }
+    searchItems() {
+        this.itemVariantSaleService.searchItemVariantSales(this.saleItemsRequest)
+            .then((result)=> {
+                this.saleItemsResult = result;
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -84,6 +102,19 @@ export class CommandView {
     doUnvalidate() {
         this.validated = false;
         this.validate.next(this.validated);
+    }
+
+
+    doRemoveItem(localItemVariantSale:LocalItemVariantSale) {
+        var localSale = localItemVariantSale.sale;
+
+        this.itemVariantSaleService.removeItemVariantSale(localItemVariantSale)
+            .then(()=> {
+                this.searchItems();
+                this.saleService.refreshSale(this.sale);
+            }).catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });
     }
 
     // Validators
@@ -137,31 +168,35 @@ export class CommandView {
 
     // Item comment
 
-    doEditItemComment(localItemSale:LocalItemSale) {
+    doEditItemComment(localItemVariantSale:LocalItemVariantSale) {
         this.cancelEdits();
-        this.editingItem = localItemSale;
+        this.editingItem = localItemVariantSale;
         this.editingItemComment = true;
         if (this.editingItem.comment[this.locale] == null) {
             this.editingItem.comment[this.locale] = '';
         }
-        this.editingValue = localItemSale.comment[this.locale];
+        this.editingValue = localItemVariantSale.comment[this.locale];
     }
 
     onItemCommentChange(event) {
         var commentTexts = this.editingItem.comment;
         commentTexts[this.locale] = event;
-        this.saleService.updateLocalSaleItemAsync(this.editingItem)
-            .catch((error)=> {
+        var item = this.editingItem;
+        this.itemVariantSaleService.updateItemVariantSale(item)
+            .then(()=> {
+                this.itemVariantSaleService.refreshItemVariantSale(item);
+                this.saleService.refreshSale(this.sale);
+            }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
         this.cancelEdits();
     }
 
-    hasComment(localItemSale:LocalItemSale) {
-        if (localItemSale.comment == null) {
+    hasComment(localItemVariantSale:LocalItemVariantSale) {
+        if (localItemVariantSale.comment == null) {
             return false;
         }
-        var text = localItemSale.comment[this.locale];
+        var text = localItemVariantSale.comment[this.locale];
         if (text != null && text.trim().length > 0) {
             return true;
         }
@@ -170,10 +205,10 @@ export class CommandView {
 
     // Item discount
 
-    doEditItemDiscount(localItemSale:LocalItemSale) {
+    doEditItemDiscount(localItemVariantSale:LocalItemVariantSale) {
         this.cancelEdits();
-        this.editingValue = localItemSale.discountRatio;
-        this.editingItem = localItemSale;
+        this.editingValue = localItemVariantSale.discountRatio;
+        this.editingItem = localItemVariantSale;
         this.editingItemDiscount = true;
     }
 
@@ -183,9 +218,13 @@ export class CommandView {
             discountPercentage = 0;
         }
         var discountRatio = NumberUtils.toFixedDecimals(discountPercentage / 100, 2);
-        this.editingItem.discountRatio = discountRatio;
-        this.saleService.updateLocalSaleItemAsync(this.editingItem)
-            .catch((error)=> {
+        var item = this.editingItem;
+        item.discountRatio = discountRatio;
+        this.itemVariantSaleService.updateItemVariantSale(item)
+            .then(()=> {
+                this.itemVariantSaleService.refreshItemVariantSale(item);
+                this.saleService.refreshSale(this.sale);
+            }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
         this.cancelEdits();
@@ -193,10 +232,10 @@ export class CommandView {
 
     // Item quantity
 
-    doEditItemQuantity(localItemSale:LocalItemSale) {
+    doEditItemQuantity(localItemVariantSale:LocalItemVariantSale) {
         this.cancelEdits();
-        this.editingValue = localItemSale.quantity;
-        this.editingItem = localItemSale;
+        this.editingValue = localItemVariantSale.quantity;
+        this.editingItem = localItemVariantSale;
         this.editingItemQuantity = true;
     }
 
@@ -208,9 +247,13 @@ export class CommandView {
         } else if (quantity < 1) {
             quantity = 1;
         }
-        this.editingItem.quantity = quantity;
-        this.saleService.updateLocalSaleItemAsync(this.editingItem)
-            .catch((error)=> {
+        var item = this.editingItem;
+        item.quantity = quantity;
+        this.itemVariantSaleService.updateItemVariantSale(item)
+            .then(()=> {
+                this.itemVariantSaleService.refreshItemVariantSale(item);
+                this.saleService.refreshSale(this.sale);
+            }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
         this.cancelEdits();
@@ -218,10 +261,10 @@ export class CommandView {
 
     // Item price
 
-    doEditItemPrice(localItemSale:LocalItemSale) {
+    doEditItemPrice(localItemVariantSale:LocalItemVariantSale) {
         this.cancelEdits();
-        this.editingValue = localItemSale.vatExclusive;
-        this.editingItem = localItemSale;
+        this.editingValue = localItemVariantSale.vatExclusive;
+        this.editingItem = localItemVariantSale;
         this.editingItemPrice = true;
     }
 
@@ -232,9 +275,13 @@ export class CommandView {
             price = this.editingItem.itemVariant.calcPrice();
         }
         var vatExclusive = NumberUtils.toFixedDecimals(price, 2);
-        this.editingItem.vatExclusive = vatExclusive;
-        this.saleService.updateLocalSaleItemAsync(this.editingItem)
-            .catch((error)=> {
+        var item = this.editingItem;
+        item.vatExclusive = vatExclusive;
+        this.itemVariantSaleService.updateItemVariantSale(item)
+            .then(()=> {
+                this.itemVariantSaleService.refreshItemVariantSale(item);
+                this.saleService.refreshSale(this.sale);
+            }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
         this.cancelEdits();
@@ -260,8 +307,10 @@ export class CommandView {
         } else {
             this.sale.discountRatio = null;
         }
-        this.saleService.updateLocalSaleAsync(this.sale)
-            .catch((error)=> {
+        this.saleService.updateSale(this.sale)
+            .then(()=> {
+                this.saleService.refreshSale(this.sale);
+            }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
         this.cancelEdits();
@@ -289,4 +338,5 @@ export class CommandView {
             return inputList[0];
         }
     }
+
 }
