@@ -25,6 +25,7 @@ export class ComptoirError {
 
 export class ComptoirRequest {
 
+    static REQUEST_TIMEOUT:number = 60000;
     static JSON_MIME:string = "application/json";
     static UTF8_CHARSET:string = "UTF-8";
     static HEADER_OAUTH_TOKEN = "Authorisation";
@@ -132,7 +133,7 @@ export class ComptoirRequest {
                 reject(error);
                 return;
             };
-            xmlRequest.timeout = 3000;
+            xmlRequest.timeout = ComptoirRequest.REQUEST_TIMEOUT;
             xmlRequest.open(thisRequest.method, thisRequest.url);
             xmlRequest.setRequestHeader('Accept', thisRequest.acceptContentType);
             xmlRequest.setRequestHeader('Content-Type', thisRequest.contentType + '; charset=' + thisRequest.charset);
