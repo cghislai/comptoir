@@ -17,6 +17,9 @@ export class LocalMoneyPile {
     count:number;
     total:number;
     balance:LocalBalance;
+
+    //
+    label: LocaleTexts;
 }
 
 export class LocalMoneyPileFactory {

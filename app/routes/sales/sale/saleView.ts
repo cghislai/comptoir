@@ -5,7 +5,8 @@
 import {Component, View, NgIf, NgFor} from 'angular2/angular2';
 import {Router, RouteParams, Location} from 'angular2/router';
 
-import {LocalSale, LocalItemSale} from 'client/localDomain/sale';
+import {LocalSale} from 'client/localDomain/sale';
+import {LocalItemVariantSale} from 'client/localDomain/itemVariantSale';
 import {LocalItemVariant} from 'client/localDomain/itemVariant';
 
 import {Sale, SaleRef} from 'client/domain/sale';
@@ -14,6 +15,7 @@ import {Pos} from 'client/domain/pos';
 
 import {ErrorService} from 'services/error';
 import {SaleService} from 'services/sale';
+import {ItemVariantSaleService} from 'services/itemVariantSale';
 
 import {ItemListView} from 'components/sales/sale/itemList/listView';
 import {CommandView} from 'components/sales/sale/commandView/commandView';
@@ -31,6 +33,7 @@ import {PosSelect} from 'components/pos/posSelect/posSelect';
 
 export class SaleView {
     saleService:SaleService;
+    itemVariantSaleService: ItemVariantSaleService;
     errorService:ErrorService;
 
     routeParams:RouteParams;
@@ -45,9 +48,10 @@ export class SaleView {
 
     language:string;
 
-    constructor(saleService:SaleService, errorService:ErrorService,
+    constructor(saleService:SaleService, errorService:ErrorService, itemVariantSaleService: ItemVariantSaleService,
                 routeParams:RouteParams, router:Router, location:Location) {
         this.saleService = saleService;
+        this.itemVariantSaleService = itemVariantSaleService;
         this.errorService = errorService;
 
         this.routeParams = routeParams;
@@ -118,7 +122,7 @@ export class SaleView {
                 return;
             }
         }
-        this.saleService.getLocalSaleAsync(id)
+        this.saleService.get(id)
             .then((sale)=> {
                 this.sale = sale;
                 if (sale.closed) {
@@ -132,7 +136,7 @@ export class SaleView {
     }
 
     onSaleEmptied() {
-        this.saleService.removeLocalSaleAsync(this.sale)
+        this.saleService.remove(this.sale)
             .then(()=> {
                 this.sale = null;
                 this.saleService.activeSale = null;
@@ -149,12 +153,19 @@ export class SaleView {
         var nextTask = Promise.resolve(this.sale);
         var newSale = this.sale.id == null;
         if (this.sale.id == null) {
-            nextTask = this.saleService.createLocalSaleAsync(this.sale);
+            nextTask = this.saleService.save(this.sale);
         }
         nextTask.then((sale)=> {
-            return this.saleService.addItemToLocalSaleAsync(this.sale, item);
-        }).then((sale)=> {
+            var localItemSale = new LocalItemVariantSale();
+            localItemSale.discountRatio = 0;
+            localItemSale.itemVariant = item;
+            localItemSale.quantity = 1;
+            localItemSale.sale = sale;
+            localItemSale.vatExclusive = item.item.vatExclusive;
+            return this.itemVariantSaleService.save(localItemSale);
+        }).then((localItemSale: LocalItemVariantSale)=> {
             if (newSale) {
+                var sale = localItemSale.sale;
                 this.saleService.activeSale = sale;
                 this.navigatingWithinSale = true;
                 this.router.navigate('/sales/sale/' + sale.id);
@@ -173,7 +184,7 @@ export class SaleView {
     }
 
     onCommandPaid() {
-        this.saleService.closeLocalSaleAsync(this.sale)
+        this.saleService.closeSale(this.sale)
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });

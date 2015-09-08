@@ -89,7 +89,7 @@ export class BasicClient<T extends WithId> {
         var request = this.getCreateRequest(entity, authToken);
         return request
             .run()
-            .then(function (response) {
+            .then((response) => {
                 var ref:WithId = JSON.parse(response.text);
                 return ref;
             });
@@ -107,10 +107,10 @@ export class BasicClient<T extends WithId> {
         var reviver = this.resourceInfo.jsonReviver;
         return request
             .run()
-            .then(function (response) {
+            .then((response) => {
                 var entity:T = JSON.parse(response.text, reviver);
-                if (this.resourceInfo.cache != null) {
-                    this.resourceInfo.cache[id] = entity;
+                if (this.resourceInfo.cacheHandler != null) {
+                    this.resourceInfo.cacheHandler.putInCache(entity);
                 }
                 return entity;
             });
@@ -129,7 +129,7 @@ export class BasicClient<T extends WithId> {
         var reviver = this.resourceInfo.jsonReviver;
         return request
             .run()
-            .then(function (response) {
+            .then((response)=> {
                 var entity:T = JSON.parse(response.text, reviver);
                 return entity;
             });

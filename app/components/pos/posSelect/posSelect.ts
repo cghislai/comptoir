@@ -5,7 +5,7 @@
 import {Component, View, NgIf, NgFor, EventEmitter} from 'angular2/angular2';
 
 import {Pos, PosRef, PosSearch} from 'client/domain/pos';
-import {SearchResult} from 'client/utils/search';
+import {SearchResult, SearchRequest} from 'client/utils/search';
 import {Language} from 'client/utils/lang';
 
 import {PosService} from 'services/pos';
@@ -26,12 +26,13 @@ export class PosSelect {
     authService:AuthService;
     errorService:ErrorService;
 
-    allPosList:Pos[];
+    searchRequest:SearchRequest<Pos>;
+    searchResult:SearchResult<Pos>;
     pos:Pos;
     posId:number;
     language:Language;
 
-    editable: boolean;
+    editable:boolean;
     posChanged = new EventEmitter();
 
     constructor(posService:PosService, authService:AuthService, errorService:ErrorService) {
@@ -40,15 +41,18 @@ export class PosSelect {
         this.errorService = errorService;
 
         this.language = authService.getEmployeeLanguage();
-        this.allPosList = [];
+
+        this.searchRequest = new SearchRequest<Pos>();
+        var posSearch = new PosSearch();
+        this.searchRequest.search = posSearch;
+
         this.searchPos();
     }
 
     searchPos() {
-        var posSearch = new PosSearch();
-        this.posService.searchPos(posSearch, null)
+        this.posService.search(this.searchRequest)
             .then((result:SearchResult<Pos>)=> {
-                this.allPosList = result.list;
+                this.searchResult = result;
                 var lastUsedPos = this.posService.lastUsedPos;
                 if (lastUsedPos != null) {
                     this.setPos(lastUsedPos);
@@ -65,7 +69,7 @@ export class PosSelect {
     onPosChanged(event) {
         this.pos = null;
         this.posId = event.target.value;
-        for (var posItem of this.allPosList) {
+        for (var posItem of this.searchResult.list) {
             if (posItem.id == this.posId) {
                 this.setPos(posItem);
                 return;

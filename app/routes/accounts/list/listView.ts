@@ -4,10 +4,11 @@
 import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
+import {CompanyRef} from 'client/domain/company';
 
 import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
 import {Account, AccountType, AccountSearch} from 'client/domain/account';
-import {SearchResult} from 'client/utils/search';
+import {SearchResult, SearchRequest} from 'client/utils/search';
 import {LocaleTexts, Language} from 'client/utils/lang';
 import {Pagination} from 'client/utils/pagination';
 
@@ -32,14 +33,11 @@ export class AccountsListView {
     errorService:ErrorService;
     router:Router;
 
-    accountSearch:AccountSearch;
-    pagination:Pagination;
-    accountSearchResult:SearchResult<Account>;
-    accountCount:number;
+    searchRequest:SearchRequest<LocalAccount>
+    searchResult:SearchResult<LocalAccount>;
     accountsPerPage:number = 25;
 
     locale:string;
-    loading:boolean;
 
     constructor(accountService:AccountService, errorService:ErrorService,
                 authService:AuthService, router:Router) {
@@ -47,28 +45,23 @@ export class AccountsListView {
         this.errorService = errorService;
         this.router = router;
 
-        this.accountSearch = new AccountSearch();
-        this.accountSearch.companyRef = authService.loggedEmployee.companyRef;
-        this.pagination = new Pagination(0, this.accountsPerPage);
+        this.searchRequest = new SearchRequest<LocalAccount>();
+        var accountSearch = new AccountSearch();
+        accountSearch.companyRef = new CompanyRef(authService.auth.employee.company.id);
+
+        var pagination = new Pagination(0, this.accountsPerPage);
+        this.searchRequest.search = accountSearch;
+        this.searchRequest.pagination = pagination;
 
         this.locale = authService.getEmployeeLanguage().locale;
         this.searchAccounts();
     }
 
     searchAccounts() {
-        // TODO: cancel existing promises;
-        if (this.loading) {
-            console.log('Already loading');
-            return;
-        }
-        this.loading = true;
-        var thisView = this;
         this.accountService
-            .searchAccounts(this.accountSearch, this.pagination)
-            .then(function (result:SearchResult<Account>) {
-                thisView.accountSearchResult = result;
-                thisView.accountCount = result.count;
-                thisView.loading = false;
+            .search(this.searchRequest)
+            .then((result:SearchResult<LocalAccount>)=> {
+                this.searchResult = result;
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -84,21 +77,21 @@ export class AccountsListView {
     }
 
     onPageChanged(pagination:Pagination) {
-        this.pagination = pagination;
+        this.searchRequest.pagination = pagination;
         this.searchAccounts();
     }
 
-    doEditAccount(account:Account) {
+    doEditAccount(account:LocalAccount) {
         var id = account.id;
         var url = '/accounts/edit/' + id;
         this.router.navigate(url);
     }
 
-    doRemoveAccount(account:Account) {
+    doRemoveAccount(account:LocalAccount) {
         var thisView = this;
         this.accountService
-            .removeAccount(account)
-            .then(function (result) {
+            .remove(account)
+            .then(()=> {
                 thisView.searchAccounts();
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);

@@ -12,6 +12,7 @@ import {LocalAccountingEntry} from 'client/localDomain/accountingEntry';
 import {AccountingEntry, AccountingEntrySearch} from 'client/domain/accountingEntry';
 import {Account, AccountRef,AccountSearch} from 'client/domain/account';
 import {Pos, PosRef} from 'client/domain/pos';
+import {SaleClient} from 'client/domain/sale';
 import {CompanyRef} from 'client/domain/company';
 import {AccountingTransactionRef} from 'client/domain/accountingTransaction';
 import {SearchRequest, SearchResult} from 'client/utils/search';
@@ -113,7 +114,7 @@ export class PayView {
         accountSearch.posRef = posRef;
         this.accountsSearchRequest.search = accountSearch;
 
-        this.accountService.searchAccounts(this.accountsSearchRequest)
+        this.accountService.search(this.accountsSearchRequest)
             .then((result:SearchResult<LocalAccount>)=> {
                 this.accountsSearchResult = result;
             }).catch((error)=> {
@@ -131,7 +132,7 @@ export class PayView {
         accountingEntriesSearch.accountingTransactionRef = new AccountingTransactionRef(this.sale.id);
         this.accountingEntriesSearchRequest.search = accountingEntriesSearch;
 
-        this.accountingEntryService.searchAccountingEntrys(this.accountingEntriesSearchRequest)
+        this.accountingEntryService.search(this.accountingEntriesSearchRequest)
             .then((result:SearchResult<LocalAccountingEntry>)=> {
                 this.accountingEntriesSearchResult = result;
             }).catch((error)=> {
@@ -143,7 +144,7 @@ export class PayView {
         if (this.totalPaidRequest != null) {
             this.totalPaidRequest.discardRequest();
         }
-        var client = this.saleService.client;
+        var client:SaleClient = new SaleClient();
         var saleId = this.sale.id;
         var authToken = this.saleService.authService.authToken;
         this.totalPaidRequest = client.getGetTotalPayedRequest(saleId, authToken);
@@ -166,7 +167,7 @@ export class PayView {
         localAccountingEntry.amount = this.toPayAmount;
 
         this.startEditEntry(localAccountingEntry);
-        this.accountingEntryService.createAccountingEntry(localAccountingEntry)
+        this.accountingEntryService.save(localAccountingEntry)
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -201,19 +202,9 @@ export class PayView {
         }
         amount = NumberUtils.toFixedDecimals(amount, 2);
         this.editingEntry.amount = amount;
-        var nextTask = Promise.resolve(true);
 
-        var entryExists = this.editingEntry.id != null;
-        if (entryExists) {
-            nextTask.then(()=> {
-                return this.accountingEntryService.createAccountingEntry(this.editingEntry);
-            });
-        } else {
-            nextTask.then(()=> {
-                return this.accountingEntryService.updateAccountingEntry(this.editingEntry);
-            });
-        }
-        nextTask.then(()=> {
+        this.accountingEntryService.save(this.editingEntry)
+        .then(()=> {
             this.searchTotalPaid();
         }).catch((error)=> {
             this.errorService.handleRequestError(error);
@@ -226,7 +217,7 @@ export class PayView {
     }
 
     removeEntry(entry:LocalAccountingEntry) {
-        return this.accountingEntryService.removeAccountingEntry(entry.id   )
+        return this.accountingEntryService.remove(entry)
             .then(()=> {
                 this.searchAccountingEntries();
                 this.searchTotalPaid();

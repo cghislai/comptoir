@@ -12,7 +12,7 @@
             </span>
             </div>
         </div>
-        <div class="dataTableBody" *ng-if="sales != undefined">
+        <div class="dataTableBody" *ng-if="sales != null">
             <div *ng-for="#sale of sales"
                  class="dataTableRow sale"
                  [class.selectable]="selectable"

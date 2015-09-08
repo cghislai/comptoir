@@ -86,7 +86,7 @@ export class CommandView {
     }
 
     searchItems() {
-        this.itemVariantSaleService.searchItemVariantSales(this.saleItemsRequest)
+        this.itemVariantSaleService.search(this.saleItemsRequest)
             .then((result)=> {
                 this.saleItemsResult = result;
             }).catch((error)=> {
@@ -108,10 +108,10 @@ export class CommandView {
     doRemoveItem(localItemVariantSale:LocalItemVariantSale) {
         var localSale = localItemVariantSale.sale;
 
-        this.itemVariantSaleService.removeItemVariantSale(localItemVariantSale)
+        this.itemVariantSaleService.remove(localItemVariantSale)
             .then(()=> {
                 this.searchItems();
-                this.saleService.refreshSale(this.sale);
+                this.saleService.refresh(this.sale);
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -182,10 +182,10 @@ export class CommandView {
         var commentTexts = this.editingItem.comment;
         commentTexts[this.locale] = event;
         var item = this.editingItem;
-        this.itemVariantSaleService.updateItemVariantSale(item)
+        this.itemVariantSaleService.save(item)
             .then(()=> {
-                this.itemVariantSaleService.refreshItemVariantSale(item);
-                this.saleService.refreshSale(this.sale);
+                this.itemVariantSaleService.refresh(item);
+                this.saleService.refresh(this.sale);
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -220,10 +220,10 @@ export class CommandView {
         var discountRatio = NumberUtils.toFixedDecimals(discountPercentage / 100, 2);
         var item = this.editingItem;
         item.discountRatio = discountRatio;
-        this.itemVariantSaleService.updateItemVariantSale(item)
+        this.itemVariantSaleService.save(item)
             .then(()=> {
-                this.itemVariantSaleService.refreshItemVariantSale(item);
-                this.saleService.refreshSale(this.sale);
+                this.itemVariantSaleService.refresh(item);
+                this.saleService.refresh(this.sale);
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -249,10 +249,10 @@ export class CommandView {
         }
         var item = this.editingItem;
         item.quantity = quantity;
-        this.itemVariantSaleService.updateItemVariantSale(item)
+        this.itemVariantSaleService.save(item)
             .then(()=> {
-                this.itemVariantSaleService.refreshItemVariantSale(item);
-                this.saleService.refreshSale(this.sale);
+                this.itemVariantSaleService.refresh(item);
+                this.saleService.refresh(this.sale);
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -277,10 +277,10 @@ export class CommandView {
         var vatExclusive = NumberUtils.toFixedDecimals(price, 2);
         var item = this.editingItem;
         item.vatExclusive = vatExclusive;
-        this.itemVariantSaleService.updateItemVariantSale(item)
+        this.itemVariantSaleService.save(item)
             .then(()=> {
-                this.itemVariantSaleService.refreshItemVariantSale(item);
-                this.saleService.refreshSale(this.sale);
+                this.itemVariantSaleService.refresh(item);
+                this.saleService.refresh(this.sale);
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -307,9 +307,9 @@ export class CommandView {
         } else {
             this.sale.discountRatio = null;
         }
-        this.saleService.updateSale(this.sale)
+        this.saleService.save(this.sale)
             .then(()=> {
-                this.saleService.refreshSale(this.sale);
+                this.saleService.refresh(this.sale);
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });

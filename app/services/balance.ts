@@ -14,16 +14,26 @@ import {AuthService} from 'services/auth';
 
 export class BalanceService extends BasicLocalService<Balance, LocalBalance> {
 
+    balanceClient:BalanceClient;
 
     constructor(@Inject authService:AuthService) {
-        var client:BasicClient<Balance> = new BalanceClient();
+        this.balanceClient = new BalanceClient();
         super({
-            client: client,
+            client: this.balanceClient,
             authService: authService,
             fromLocalConverter: LocalBalanceFactory.fromLocalBalance,
             toLocalConverter: LocalBalanceFactory.toLocalBalance,
             updateLocal: LocalBalanceFactory.updateLocalBalance
-        } );
+        });
+
+    }
+
+    closeBalance(localBalance:LocalBalance): Promise<LocalBalance> {
+        var authToken = this.authService.authToken;
+        return this.balanceClient.closeBalance(localBalance.id, authToken)
+            .then(()=> {
+                return this.refresh(localBalance);
+            })
     }
 
 }

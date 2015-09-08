@@ -14,12 +14,14 @@ import {AuthService} from 'services/auth';
 
 export class SaleService extends BasicLocalService<Sale, LocalSale> {
 
+    saleClient:SaleClient;
+
     activeSale:LocalSale;
 
     constructor(@Inject authService:AuthService) {
-        var client:BasicClient<Sale> = new SaleClient();
+        this.saleClient = new SaleClient();
         super({
-            client: client,
+            client: this.saleClient,
             authService: authService,
             fromLocalConverter: LocalSaleFactory.fromLocalSale,
             toLocalConverter: LocalSaleFactory.toLocalSale,
@@ -27,4 +29,11 @@ export class SaleService extends BasicLocalService<Sale, LocalSale> {
         });
     }
 
+    closeSale(localSale:LocalSale):Promise<LocalSale> {
+        var authToken = this.authService.authToken;
+        return this.saleClient.closeSale(localSale.id, authToken)
+            .then(()=> {
+                return this.refresh(localSale);
+            });
+    }
 }

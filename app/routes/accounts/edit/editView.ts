@@ -7,7 +7,7 @@ import {RouteParams, Router, RouterLink} from 'angular2/router';
 import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
 
 import {Account, AccountType, ALL_ACCOUNT_TYPES} from 'client/domain/account';
-import {LocaleText} from 'client/domain/lang';
+import {CompanyRef} from 'client/domain/company';
 
 import {Language, LocaleTexts} from 'client/utils/lang';
 
@@ -91,7 +91,7 @@ export class AccountsEditView {
             return;
         }
         var thisView = this;
-        this.accountService.getLocalAccountAsync(this.accountId)
+        this.accountService.get(this.accountId)
             .then(function (account:LocalAccount) {
                 thisView.accountModel = new AccountFormModel(account, this.language);
             }).catch((error)=> {
@@ -105,16 +105,15 @@ export class AccountsEditView {
 
     doSaveEdit() {
         var localAccount = this.accountModel.account;
-        var account = LocalAccountFactory.fromLocalAccount(localAccount);
-        account.accountType = AccountType[this.accountModel.accountType];
-        account.accountingNumber = this.accountModel.accountingNumber;
-        account.bic = this.accountModel.bic;
-        account.companyRef = this.authService.loggedEmployee.companyRef;
-        account.description = this.accountModel.description;
-        account.iban = this.accountModel.iban;
-        account.name = this.accountModel.name;
-        this.accountService.saveAccount(account)
-            .then((accountRef)=> {
+        localAccount.accountType = this.accountModel.accountType;
+        localAccount.accountingNumber = this.accountModel.accountingNumber;
+        localAccount.bic = this.accountModel.bic;
+        localAccount.company = this.authService.auth.employee.company;
+        localAccount.description = this.accountModel.description;
+        localAccount.iban = this.accountModel.iban;
+        localAccount.name = this.accountModel.name;
+        this.accountService.save(localAccount)
+            .then(()=> {
                 this.router.navigate('/accounts/list');
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);

@@ -145,6 +145,9 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
                 for (var entity of result.list) {
                     taskList.push(
                         this.serviceInfo.toLocalConverter(entity, authToken)
+                            .then((localEntity:U)=> {
+                                localResult.list.push(localEntity);
+                            })
                     );
                 }
                 return Promise.all(taskList)

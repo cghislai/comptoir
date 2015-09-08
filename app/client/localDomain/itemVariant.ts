@@ -95,7 +95,7 @@ export class LocalItemVariantFactory {
                 attributeValueClient.getFromCacheOrServer(atributeId, authToken)
                     .then((attrValue)=> {
                         return LocalAttributeValueFactory.toLocalAttributeValue(attrValue, authToken);
-                    }).then((localValue)=> {
+                    }).then((localValue: LocalAttributeValue)=> {
                         localItemVariant.attributeValues.push(localValue);
                     })
             );

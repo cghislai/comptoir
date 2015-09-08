@@ -1,18 +1,20 @@
 <div class="pageContent">
     <h1 class="pageTitle">Liste des comptes</h1>
 
-    <img class="busy" src="../../../res/img/spinner-2-black.gif" [hidden]="!loading">
+    <img class="busy"
+         src="../../../res/img/spinner-2-black.gif"
+         [hidden]="searchRequest.request == null">
 
     <div class="topActions">
     </div>
 
-    <paginator *ng-if="accountSearchResult != undefined"
-               [total-count]="accountCount"
+    <paginator *ng-if="searchResult != null"
+               [total-count]="searchResult.count"
                [page-size]="accountsPerPage"
                show-prev-next="true" show-first-last="true"
                (page-change)="onPageChanged($event)"></paginator>
 
-    <table class="dataTable" *ng-if="accountSearchResult != undefined">
+    <table class="dataTable" *ng-if="searchResult != null">
         <thead>
         <tr>
             <th>Type</th>
@@ -22,7 +24,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ng-for="#account of accountSearchResult.list" class="account selectable">
+        <tr *ng-for="#account of searchResult.list" class="account selectable">
             <td class="type" (^click)="doEditAccount(account)">{{ getAccountTypeLabel(account.accountType) }}</td>
             <td class="name" (^click)="doEditAccount(account)">{{ account.name }}</td>
             <td class="desc" (^click)="doEditAccount(account)">{{ account.description[locale] }}</td>

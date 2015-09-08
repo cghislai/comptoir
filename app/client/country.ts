@@ -37,6 +37,7 @@ export class CountryClient {
             .get(url, authToken)
             .then(function (response) {
                 var country = JSON.parse(response.text, CountryFactory.fromJSONCountryReviver);
+                CountryFactory.cache[country.code] = country;
                 return country;
             });
     }

@@ -4,10 +4,13 @@
 
 import {Component, View, NgFor, NgIf} from 'angular2/angular2';
 
-import {Balance, BalanceSearch} from 'client/domain/balance';
+import {CompanyRef} from 'client/domain/company';
+import {LocalBalance} from 'client/localDomain/balance';
+import {BalanceSearch} from 'client/domain/balance';
 import {Pagination} from 'client/utils/pagination';
-import {SearchResult} from 'client/utils/search';
+import {SearchResult, SearchRequest} from 'client/utils/search';
 
+import {AuthService} from 'services/auth';
 import {ErrorService} from 'services/error';
 import {BalanceService} from 'services/balance';
 
@@ -25,30 +28,35 @@ export class CashHistoryView {
     balanceService:BalanceService;
     errorService: ErrorService;
 
-    balanceSearch:BalanceSearch;
-    pagination:Pagination;
+    searchRequest: SearchRequest<LocalBalance>;
+    serachResult: SearchResult<LocalBalance>;
     itemsPerPage:number = 25;
-    searchResult:SearchResult<Balance>;
 
-    constructor(balanceService:BalanceService, errorService:ErrorService) {
+    constructor(balanceService:BalanceService, errorService:ErrorService, authService: AuthService) {
         this.errorService = errorService;
         this.balanceService = balanceService;
-        this.balanceSearch = new BalanceSearch();
-        this.pagination = new Pagination(0, this.itemsPerPage);
+
+        this.searchRequest = new SearchRequest<LocalBalance>();
+        var balanceSearch = new BalanceSearch();
+        balanceSearch.companyRef = new CompanyRef(authService.auth.employee.company.id);
+        var pagination = new Pagination(0, this.itemsPerPage);
+        this.searchRequest.pagination = pagination;
+        this.searchRequest.search = balanceSearch;
+
         this.searchBalances();
     }
 
     searchBalances() {
-        this.balanceService.searchBalancesAsync(this.balanceSearch, this.pagination)
-            .then((result)=> {
-                this.searchResult = result;
+        this.balanceService.search(this.searchRequest)
+            .then((result: SearchResult<LocalBalance>)=> {
+                this.serachResult = result;
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }
 
     onPageChanged(pagination:Pagination) {
-        this.pagination = pagination;
+        this.searchRequest.pagination = pagination;
         this.searchBalances();
     }
 }

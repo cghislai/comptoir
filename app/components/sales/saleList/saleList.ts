@@ -5,7 +5,7 @@
 import {Component, View, NgFor, NgIf,
     EventEmitter, Attribute, ViewEncapsulation} from 'angular2/angular2';
 
-import {Sale, SaleSearch} from 'client/domain/sale';
+import {LocalSale} from 'client/localDomain/sale';
 import {LocaleTexts} from 'client/utils/lang';
 
 import {AuthService} from 'services/auth';
@@ -32,7 +32,7 @@ import {FocusableDirective} from 'directives/focusable';
 export class SaleColumnComponent {
     action = new EventEmitter();
 
-    onColumnAction(sale:Sale, column:SaleColumn, event) {
+    onColumnAction(sale:LocalSale, column:SaleColumn, event) {
         this.action.next({sale: sale, column: column});
         //  event.stopPropagation();
     }
@@ -58,7 +58,7 @@ export class SaleColumnComponent {
 
 export class SaleListComponent {
     // properties
-    sales:Sale[];
+    sales:LocalSale[];
     columns:SaleColumn[];
     selectable:boolean;
     headers:boolean;
@@ -79,7 +79,7 @@ export class SaleListComponent {
         this.selectable = value != 'false';
     }
 
-    onSaleClick(sale: Sale, col: SaleColumn) {
+    onSaleClick(sale: LocalSale, col: SaleColumn) {
         if (col == SaleColumn.ACTION_REMOVE) {
             return;
         }

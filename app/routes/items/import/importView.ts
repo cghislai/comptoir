@@ -4,7 +4,7 @@
 import {Component, View, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Router, RouterLink} from 'angular2/router';
 
-import {CompanyClient} from 'client/company';
+import {CompanyRef, CompanyClient} from 'client/domain/company';
 import {Language, LocaleTexts} from 'client/utils/lang';
 
 import {ErrorService} from 'services/error';
@@ -83,7 +83,7 @@ export class ItemsImportView {
         var thisView = this;
         this.uploadInProgress = true;
         var authToken = this.authService.authToken;
-        var companyRef = this.authService.loggedEmployee.companyRef;
+        var companyRef = new CompanyRef(this.authService.auth.employee.company.id);
         this.companyClient
             .uploadImportDataFile(this.toUploadData, companyRef, authToken,
             (percentage:number)=> {

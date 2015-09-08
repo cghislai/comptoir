@@ -1,8 +1,8 @@
 <div class="listPage">
     <h1>Historique des ventes</h1>
 
-    <div class="busy" [hidden]="!loading">
-        <img src="../../../../res/img/ajax-loader.white.gif">
+    <div class="busy" [hidden]="searchRequest.request == null">
+        <img src="../../../../res/img/ajax-loader.black.gif">
     </div>
 
 
@@ -10,16 +10,16 @@
 
     </div>
 
-    <paginator  *ng-if="salesResult != null"
-                [total-count]="salesResult.count"
+    <paginator  *ng-if="searchResult != null"
+                [total-count]="searchResult.count"
                 [page-size]="salesPerPage"
                 show-prev-next="true" show-first-last="true"
                 (page-change)="onPageChanged($event)"></paginator>
-    <saleList *ng-if="salesResult != null"
-              [sales]="salesResult.list"
+    <saleList *ng-if="searchResult != null"
+              [sales]="searchResult.list"
               [columns]="columns"
-              selectable="true"
-              headers="true"
+              [selectable]="true"
+              [headers]="true"
               (sale-clicked)="onSaleClicked($event)"
               (column-action)="onColumnAction($event)">
     </saleList>

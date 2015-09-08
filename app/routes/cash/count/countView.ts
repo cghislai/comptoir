@@ -3,22 +3,28 @@
  */
 import {Component, View, FormBuilder, FORM_DIRECTIVES, NgFor, NgIf} from 'angular2/angular2';
 
-import {Account,AccountType, AccountSearch} from 'client/domain/account';
-import {Balance, BalanceSearch} from 'client/domain/balance';
-import {MoneyPile} from 'client/domain/moneyPile';
+import {LocalAccount} from 'client/localDomain/account';
+import {LocalBalance} from 'client/localDomain/balance';
+import {LocalMoneyPile, CashType, ALL_CASH_TYPES, LocalMoneyPileFactory} from 'client/localDomain/moneyPile';
+
+import {CompanyRef} from 'client/domain/company';
+import {AccountSearch, AccountType, AccountFactory} from 'client/domain/account';
+import {BalanceSearch} from 'client/domain/balance';
 import {Pos, PosRef, PosSearch} from 'client/domain/pos';
 
-import {ABalance, AMoneyPile, CashType} from 'client/utils/aBalance';
-import {Pagination} from 'client/utils/pagination';
+import {SearchRequest, SearchResult} from 'client/utils/search';
 import {NumberUtils} from 'client/utils/number';
+import {Pagination} from 'client/utils/pagination';
 
 import {BalanceService} from 'services/balance';
+import {MoneyPileService} from 'services/moneyPile';
 import {PosService} from 'services/pos';
 import {AccountService} from 'services/account';
 import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
 
 import {Paginator} from 'components/utils/paginator/paginator';
+import {PosSelect} from 'components/pos/posSelect/posSelect';
 import {FastInput} from 'directives/fastInput'
 
 @Component({
@@ -27,112 +33,98 @@ import {FastInput} from 'directives/fastInput'
 @View({
     templateUrl: './routes/cash/count/countView.html',
     styleUrls: ['./routes/cash/count/countView.css'],
-    directives: [NgFor, NgIf, FastInput]
+    directives: [NgFor, NgIf, FastInput, PosSelect]
 })
 
 export class CountCashView {
     balanceService:BalanceService;
+    moneyPileService:MoneyPileService;
     posService:PosService;
     accountService:AccountService;
     errorService:ErrorService;
+    authService:AuthService;
 
-    aBalance:ABalance;
+    balance:LocalBalance;
     editingTotal:boolean;
+    moneyPileList: LocalMoneyPile[];
 
-    posList:Pos[];
     pos:Pos;
-    posId:number = -1;
-    accountSearch:AccountSearch;
-    accountList:Account[];
-    account:Account;
+
+    accountSearchRequest:SearchRequest<LocalAccount>;
+    accountSearchResult:SearchResult<LocalAccount>;
+    account:LocalAccount;
     accountId:number = -1;
-    lastBalance:Balance;
+
+    balanceSearchRequest:SearchRequest<LocalBalance>;
+    balanceSearchResult:SearchResult<LocalBalance>;
+    lastBalance:LocalBalance;
+
     locale:string;
 
-    constructor(errorService:ErrorService, balanceService:BalanceService,
-                posService:PosService, accountService:AccountService, authService: AuthService) {
+    constructor(errorService:ErrorService, balanceService:BalanceService, moneyPileservice:MoneyPileService,
+                posService:PosService, accountService:AccountService, authService:AuthService) {
         this.balanceService = balanceService;
+        this.moneyPileService = moneyPileservice;
         this.posService = posService;
         this.accountService = accountService;
-        this.errorService=errorService;
+        this.errorService = errorService;
+        this.authService = authService;
 
-        this.aBalance = new ABalance();
+        this.balance = new LocalBalance();
+        this.moneyPileList = [];
+        for (var cashType of ALL_CASH_TYPES) {
+            var moneyPile: LocalMoneyPile = new LocalMoneyPile();
+            moneyPile.unitAmount = LocalMoneyPileFactory.getCashTypeUnitValue(cashType);
+            moneyPile.balance = this.balance;
+            moneyPile.label = LocalMoneyPileFactory.getCashTypeLabel(cashType);
+            this.moneyPileList.push(moneyPile);
+        }
+
+        this.accountSearchRequest = new SearchRequest<LocalAccount>();
+        this.balanceSearchRequest = new SearchRequest<LocalBalance>();
+
         this.locale = authService.getEmployeeLanguage().locale;
-
-        this.searchPosList();
         this.searchPaymentAccounts();
         this.searchLastBalance();
     }
 
 
-    searchPosList() {
-        this.setPos(this.posService.lastUsedPos);
+    searchPaymentAccounts() {
+        var accountSearch = new AccountSearch();
+        accountSearch.type = AccountType[AccountType.PAYMENT];
+        if (this.pos != null) {
+            accountSearch.posRef = new PosRef(this.pos.id);
+        }
+        this.accountSearchRequest.search = accountSearch;
 
-        var posSearch = new PosSearch();
-        this.posService.searchPos(posSearch, null)
-            .then((result)=> {
-                this.posList = result.list;
-                if (this.pos == null && this.posList.length == 1) {
-                    this.setPos(this.posList[0]);
+        this.accountService.search(this.accountSearchRequest)
+            .then((result:SearchResult<LocalAccount>)=> {
+                this.accountSearchResult = result;
+                if (this.account == null && result.count == 1) {
+                    this.setAccount(result.list[0]);
                 }
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }
 
-    setPos(pos:Pos) {
+    onPosChanged(pos:Pos) {
         if (this.pos == pos) {
             return;
         }
         this.pos = pos;
-        this.posService.lastUsedPos = this.pos;
-        if (pos == null) {
-            this.posId = null;
-            return;
-        }
-        this.posId = pos.id;
         this.searchPaymentAccounts();
         this.searchLastBalance();
     }
 
-    onPosChanged(event) {
-        var pos = null;
-        var posId = event.target.value;
-        for (var posItem of this.posList) {
-            if (posItem.id == posId) {
-                pos = posItem;
-                break;
-            }
-        }
-        this.setPos(pos);
-    }
 
-    searchPaymentAccounts() {
-        this.setAccount(this.accountService.lastUsedBalanceAccount);
-
-        this.accountSearch = new AccountSearch();
-        this.accountSearch.type = AccountType[AccountType.PAYMENT];
-        if (this.pos != null) {
-            this.accountSearch.posRef = new PosRef(this.pos.id);
-        }
-        this.accountService.searchAccounts(this.accountSearch, null)
-            .then((result)=> {
-                this.accountList = result.list;
-                if (this.account == null && this.accountList.length == 1) {
-                    this.setAccount(this.accountList[0]);
-                }
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
-    }
-
-    setAccount(account:Account) {
+    setAccount(account:LocalAccount) {
         if (this.account == account) {
             return;
         }
         this.account = account;
         this.accountService.lastUsedBalanceAccount = account;
-        this.aBalance.account = account;
+        this.balance.account = account;
         if (account == null) {
             this.accountId = null;
             return;
@@ -145,7 +137,10 @@ export class CountCashView {
     onAccountChanged(event) {
         var account = null;
         var accountId = event.target.value;
-        for (var accountItem of this.accountList) {
+        if (this.accountSearchResult == null) {
+            return;
+        }
+        for (var accountItem of this.accountSearchResult.list) {
             if (accountItem.id == accountId) {
                 account = accountItem;
                 break;
@@ -160,29 +155,38 @@ export class CountCashView {
             return;
         }
         var balanceSearch = new BalanceSearch();
-        balanceSearch.accountSearch = this.accountSearch
+        balanceSearch.accountSearch = this.accountSearchRequest.search;
+        balanceSearch.companyRef = new CompanyRef(this.authService.auth.employee.company.id);
         var pagination = new Pagination();
         pagination.firstIndex = 0;
         pagination.pageSize = 1;
         pagination.sorts = {
             'DATETIME': 'desc'
         };
-        this.balanceService.searchBalancesAsync(balanceSearch, pagination)
-            .then((result)=> {
-                this.lastBalance = result[0];
+        this.balanceSearchRequest.search = balanceSearch;
+        this.balanceSearchRequest.pagination = pagination;
+        this.balanceService.search(this.balanceSearchRequest)
+            .then((result:SearchResult<LocalBalance>)=> {
+                this.balanceSearchResult = result;
+                this.lastBalance = result.list[0];
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }
 
-    onCashInputChanged(aMoneyPile:AMoneyPile, event) {
+    onCashInputChanged(moneyPile:LocalMoneyPile, event) {
         var amount = parseInt(event);
         if (isNaN(amount)) {
             amount = 0;
         }
-        aMoneyPile.moneyPile.count = amount;
-        this.balanceService.updateAMoneyPileAsync(aMoneyPile)
-            .catch((error)=> {
+        moneyPile.count = amount;
+        moneyPile.account = this.account;
+        moneyPile.balance = this.balance;
+
+        this.moneyPileService.save(moneyPile)
+            .then(()=> {
+                this.balanceService.refresh(this.balance);
+            }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }
@@ -194,26 +198,21 @@ export class CountCashView {
 
     onTotalChanged(event) {
         var total = parseFloat(event);
-        if (!isNaN(total)) {
-            total = NumberUtils.toFixedDecimals(total, 2);
-            this.aBalance.total = total;
-            if (this.aBalance.balance == null || this.aBalance.balance.id == null) {
-                this.balanceService.openABalanceAsync(this.aBalance)
-                    .catch((error)=> {
-                        this.errorService.handleRequestError(error);
-                    });
-            } else {
-                this.balanceService.updateABalanceAsync(this.aBalance)
-                    .catch((error)=> {
-                        this.errorService.handleRequestError(error);
-                    });
-            }
+        if (isNaN(total)) {
+            this.editingTotal = false;
+            return;
         }
+        total = NumberUtils.toFixedDecimals(total, 2);
+        this.balance.balance = total;
+        this.balanceService.save(this.balance)
+            .catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });
         this.editingTotal = false;
     }
 
     closeBalance() {
-        this.balanceService.closeABalanceAsync(this.aBalance)
+        this.balanceService.closeBalance(this.balance)
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });

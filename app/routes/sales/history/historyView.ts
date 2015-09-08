@@ -4,17 +4,22 @@
 import {Component, View, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
-import {Sale, SaleSearch} from 'client/domain/sale';
+import {LocalSale} from 'client/localDomain/sale';
+import {SaleSearch} from 'client/domain/sale';
+import {CompanyRef} from 'client/domain/company';
+
+import {Pagination} from 'client/utils/pagination';
+import {SearchRequest, SearchResult} from 'client/utils/search';
+
 import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
 import {SaleService} from 'services/sale';
-import {Pagination} from 'client/utils/pagination';
-import {SearchResult} from 'client/utils/search';
+
 import {Paginator} from 'components/utils/paginator/paginator';
 import {SaleListComponent, SaleColumn} from 'components/sales/saleList/saleList';
 
 @Component({
-    selector: "activeSalesView"
+    selector: "salesHistoryView"
 })
 
 @View({
@@ -28,10 +33,9 @@ export class SaleHistoryView {
     errorService:ErrorService;
     router:Router;
 
-    saleSearch:SaleSearch;
-    pagination:Pagination;
+    searchRequest:SearchRequest<LocalSale>;
+    searchResult:SearchResult<LocalSale>;
 
-    salesResult:SearchResult<Sale>;
     columns:SaleColumn[];
     salesPerPage:number = 25;
 
@@ -43,13 +47,19 @@ export class SaleHistoryView {
         this.saleService = saleService;
         this.errorService = errorService;
         this.router = router;
-        this.saleSearch = new SaleSearch();
-        this.saleSearch.companyRef = authService.loggedEmployee.companyRef;
-        this.saleSearch.closed = true;
-        this.pagination = new Pagination(0, this.salesPerPage);
-        this.pagination.sorts = {
+
+
+        this.searchRequest = new SearchRequest<LocalSale>();
+        var saleSearch = new SaleSearch();
+        saleSearch.companyRef = new CompanyRef(authService.auth.employee.company.id);
+        saleSearch.closed = true;
+        var pagination = new Pagination(0, this.salesPerPage);
+        pagination.sorts = {
             'DATETIME': 'desc'
         };
+        this.searchRequest.pagination = pagination;
+        this.searchRequest.search = saleSearch;
+
         this.columns = [
             SaleColumn.ID,
             SaleColumn.REFERENCE,
@@ -61,29 +71,26 @@ export class SaleHistoryView {
     }
 
     searchSales() {
-        this.loading = true;
-        var thisView = this;
         this.saleService
-            .searchSales(this.saleSearch, this.pagination)
-            .then(function (result) {
-                thisView.salesResult = result;
-                thisView.loading = false;
+            .search(this.searchRequest)
+            .then((result) => {
+                this.searchResult = result;
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }
 
     onPageChanged(pagination:Pagination) {
-        this.pagination = pagination;
+        this.searchRequest.pagination = pagination;
         this.searchSales();
     }
 
-    onSaleClicked(sale:Sale) {
+    onSaleClicked(sale:LocalSale) {
         var saleId = sale.id;
         this.router.navigate('/sales/sale/'+saleId);
     }
 
-    onColumnAction(sale:Sale, col:SaleColumn) {
+    onColumnAction(sale:LocalSale, col:SaleColumn) {
     }
 
 

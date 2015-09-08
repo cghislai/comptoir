@@ -9,15 +9,18 @@ import {LocalPicture, LocalPictureFactory} from 'client/localDomain/picture';
 import {LocalItem} from 'client/localDomain/item';
 import {LocalItemVariant} from 'client/localDomain/itemVariant';
 
+import {CompanyRef} from 'client/domain/company';
 import {Item, ItemRef, ItemSearch} from 'client/domain/item';
 import {ItemVariant, ItemVariantSearch} from 'client/domain/itemVariant';
 import {Language, LocaleTexts} from 'client/utils/lang';
 import {NumberUtils} from 'client/utils/number';
+import {SearchRequest, SearchResult} from 'client/utils/search';
 
 import {ItemService} from 'services/item';
 import {ItemVariantService} from 'services/itemVariant';
 import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
+import {PictureService} from 'services/picture';
 
 import {LangSelect, LocalizedDirective} from 'components/utils/langSelect/langSelect';
 import {FormMessage} from 'components/utils/formMessage/formMessage';
@@ -42,6 +45,7 @@ export class ItemEditView {
     itemVariantService:ItemVariantService;
     errorService:ErrorService;
     authService:AuthService;
+    pictureService: PictureService;
     router:Router;
 
     item:LocalItem;
@@ -54,10 +58,11 @@ export class ItemEditView {
 
     formBuilder:FormBuilder;
 
-    itemVariantList:LocalItemVariant[];
+    itemVariantSearchRequest:SearchRequest<LocalItemVariant>;
+    itemVariantSearchResult:SearchResult<LocalItemVariant>;
     itemVariantListColumns:ItemVariantColumn[];
 
-    constructor(itemService:ItemService, errorService:ErrorService,
+    constructor(itemService:ItemService, errorService:ErrorService, pictureService: PictureService,
                 authService:AuthService, itemVariantService:ItemVariantService,
                 routeParams:RouteParams, router:Router, formBuilder:FormBuilder) {
         this.router = router;
@@ -65,25 +70,28 @@ export class ItemEditView {
         this.itemVariantService = itemVariantService;
         this.errorService = errorService;
         this.authService = authService;
+        this.pictureService = pictureService;
+
         this.formBuilder = formBuilder;
         this.appLocale = authService.getEmployeeLanguage().locale;
         this.editLanguage = authService.getEmployeeLanguage();
 
-        this.itemVariantList = [];
         this.itemVariantListColumns = [
             ItemVariantColumn.VARIANT_REFERENCE,
             ItemVariantColumn.PICTURE_NO_ITEM_FALLBACK,
             ItemVariantColumn.ATTRIBUTES,
             ItemVariantColumn.TOTAL_PRICE,
             ItemVariantColumn.ACTION_REMOVE
-        ]
+        ];
+        this.itemVariantSearchRequest = new SearchRequest<LocalItemVariant>();
+
         this.findItem(routeParams);
     }
 
     buildForm() {
         var vatRate = this.item.vatRate;
         if (vatRate == null || vatRate == 0) {
-            var country = this.authService.companyCountry;
+            var country = this.authService.auth.employee.company.country;
             vatRate = country.defaultVatRate;
         }
         var vatPercentage = NumberUtils.toInt(vatRate * 100);
@@ -120,12 +128,13 @@ export class ItemEditView {
         this.item = new LocalItem();
         this.item.description = new LocaleTexts();
         this.item.name = new LocaleTexts();
+        this.itemVariantSearchResult = new SearchResult<LocalItemVariant>();
+        this.itemVariantSearchResult.list = [];
         this.buildForm();
-        this.itemVariantList = [];
     }
 
     getItem(id:number) {
-        this.itemService.getLocalItemAsync(id)
+        this.itemService.get(id)
             .then((item:LocalItem)=> {
                 this.item = item;
                 this.buildForm();
@@ -138,28 +147,21 @@ export class ItemEditView {
     findItemVariants() {
         var itemId = this.item.id;
         if (itemId == null) {
-            this.itemVariantList = [];
             return;
         }
         var variantSearch = new ItemVariantSearch();
         var itemRef = new ItemRef(itemId);
         variantSearch.itemRef = itemRef;
         variantSearch.itemSearch = new ItemSearch();
-        variantSearch.itemSearch.companyRef = this.authService.loggedEmployee.companyRef;
+        variantSearch.itemSearch.companyRef = new CompanyRef(this.authService.auth.employee.company.id);
+        this.itemVariantSearchRequest.search = variantSearch;
 
-        this.itemVariantService.searchLocalItemVariantsAsync(variantSearch, null, {
-            item: false,
-            itemPictureFallback: false,
-            picture: true,
-            attributes: true
-        }).then((result)=> {
-            this.itemVariantList = result.list;
-            for (var variant of result.list) {
-                variant.item = this.item;
-            }
-        }).catch((error)=> {
-            this.errorService.handleRequestError(error);
-        });
+        this.itemVariantService.search(this.itemVariantSearchRequest)
+            .then((result)=> {
+                this.itemVariantSearchResult = result;
+            }).catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });
     }
 
 
@@ -184,12 +186,15 @@ export class ItemEditView {
         item.vatRate = NumberUtils.toFixedDecimals(vatPecentage / 100, 2);
 
         if (this.itemPictureTouched) {
-            return this.itemService.saveLocalItemPictureAsync(item)
-                .then(()=>{
-                    return this.itemService.saveLocalItemAsync(item);
+            var picture = item.mainPicture;
+            return this.pictureService.save(picture)
+            .then((localPic: LocalPicture)=>{
+                   item.mainPicture = localPic;
+                    return this.itemService.save(item);
                 });
+        } else {
+            return this.itemService.save(item);
         }
-        return this.itemService.saveLocalItemAsync(item);
     }
 
 
@@ -230,11 +235,11 @@ export class ItemEditView {
         var itemId = this.item.id;
         var nextTask = Promise.resolve();
         if (itemId == null) {
-            nextTask.then(()=>{
-                this.itemService.saveLocalItemAsync(this.item)
+            nextTask.then(()=> {
+                this.itemService.save(this.item)
             });
         }
-        nextTask.then(()=>{
+        nextTask.then(()=> {
             this.router.navigate('/items/edit/' + itemId + '/variant/' + variantId);
         }).catch((error)=> {
             this.errorService.handleRequestError(error);

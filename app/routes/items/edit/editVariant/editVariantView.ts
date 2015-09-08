@@ -6,7 +6,8 @@ import {Component, View, NgFor, NgIf,
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
 import {LocalPicture, LocalPictureFactory} from 'client/localDomain/picture';
-import {LocalItemVariant, LocalAttributeValue, LocalItemVariantFactory} from 'client/localDomain/itemVariant';
+import {LocalAttributeValue, LocalAttributeValueFactory} from 'client/localDomain/attributeValue';
+import {LocalItemVariant, LocalItemVariantFactory} from 'client/localDomain/itemVariant';
 import {LocalItem} from 'client/localDomain/item';
 import {AttributeDefinition} from 'client/domain/attributeDefinition';
 
@@ -16,6 +17,7 @@ import {NumberUtils} from 'client/utils/number';
 
 import {ItemService} from 'services/item';
 import {ItemVariantService} from 'services/itemVariant';
+import {AttributeValueService} from 'services/attributeValue';
 import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
 
@@ -34,6 +36,7 @@ import {FormMessage} from 'components/utils/formMessage/formMessage';
 export class ItemVariantEditView {
     itemService:ItemService;
     itemVariantService:ItemVariantService;
+    attributeValueService:AttributeValueService;
     errorService:ErrorService;
     authService:AuthService;
     router:Router;
@@ -54,11 +57,12 @@ export class ItemVariantEditView {
     allPricings:Pricing[];
 
     constructor(itemVariantService:ItemVariantService, itemService:ItemService,
-                errorService:ErrorService, authService:AuthService,
+                errorService:ErrorService, authService:AuthService, attributeValueService:AttributeValueService,
                 routeParams:RouteParams, router:Router, formBuilder:FormBuilder) {
         this.router = router;
         this.itemService = itemService;
         this.itemVariantService = itemVariantService;
+        this.attributeValueService = attributeValueService;
         this.errorService = errorService;
         this.authService = authService;
         this.formBuilder = formBuilder;
@@ -98,7 +102,7 @@ export class ItemVariantEditView {
     }
 
     getItem(id:number) {
-        this.itemService.getLocalItemAsync(id)
+        this.itemService.get(id)
             .then((item)=> {
                 this.item = item;
             }).catch((error)=> {
@@ -132,7 +136,7 @@ export class ItemVariantEditView {
     }
 
     getItemVariant(id:number) {
-        this.itemVariantService.getLocalItemVariantAsync(id, {itemPictureFallback: false, item: true, attributes: true, picture: true})
+        this.itemVariantService.get(id)
             .then((itemVariant:LocalItemVariant)=> {
                 this.itemVariant = itemVariant;
                 this.buildForm();
@@ -152,7 +156,7 @@ export class ItemVariantEditView {
         this.itemVariant.variantReference = this.itemVariantForm.value.variantReference;
         this.itemVariant.item = this.item;
 
-        this.itemVariantService.saveLocalItemVariantAsync(this.itemVariant)
+        this.itemVariantService.save(this.itemVariant)
             .then(() => {
                 this.router.navigate('/items/edit/' + this.item.id);
             }).catch((error)=> {
@@ -242,16 +246,17 @@ export class ItemVariantEditView {
         newAttribute.attributeDefinition.name = this.newAttributeDefinitions;
         newAttribute.value = this.newAttributeValues;
 
-        this.itemVariantService.saveLocalItemVariantAttribute(newAttribute)
+        this.attributeValueService.save(newAttribute)
             .then((attributeValue)=> {
                 this.itemVariant.attributeValues.push(newAttribute);
                 this.resetNewAttributeValue();
+                return this.itemVariantService.save(this.itemVariant)
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }
 
-    doRemoveAttribute(attr) {
+    doRemoveAttribute(attr:LocalAttributeValue) {
         var newAttributes = [];
         for (var existingAttribute of this.itemVariant.attributeValues) {
             if (existingAttribute == attr) {
@@ -261,7 +266,10 @@ export class ItemVariantEditView {
         }
         this.itemVariant.attributeValues = newAttributes;
 
-        this.itemVariantService.saveLocalItemVariantAsync(this.itemVariant)
+        this.attributeValueService.remove(attr)
+            .then(()=> {
+                return this.itemVariantService.save(this.itemVariant);
+            })
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });

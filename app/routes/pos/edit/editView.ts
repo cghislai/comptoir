@@ -4,6 +4,7 @@
 import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
+import {CompanyRef} from 'client/domain/company';
 import {Pos, PosRef} from 'client/domain/pos';
 import {LocaleText} from 'client/domain/lang';
 import {Customer, CustomerRef} from 'client/domain/customer';
@@ -81,7 +82,7 @@ export class EditPosView {
             return;
         }
         var thisView = this;
-        this.posService.getPos(this.posId)
+        this.posService.get(this.posId)
             .then(function (pos:Pos) {
                 thisView.posModel = new PosFormModel(pos, lastEditLanguage);
             }).catch((error)=> {
@@ -91,10 +92,10 @@ export class EditPosView {
 
     doSaveEdit() {
         var pos = this.posModel.pos;
-        pos.companyRef = this.authService.loggedEmployee.companyRef;
+        pos.companyRef = new CompanyRef(this.authService.auth.employee.company.id);
         pos.name = this.posModel.name;
         pos.description = this.posModel.description;
-        this.posService.savePos(pos)
+        this.posService.save(pos)
             .then((posRef)=> {
                 this.router.navigate('/pos/list');
             }).catch((error)=> {

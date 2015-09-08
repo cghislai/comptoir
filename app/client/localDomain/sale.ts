@@ -35,7 +35,7 @@ export class LocalSale {
     vatAmount:number;
     closed:boolean;
     reference:string;
-    accountingTransaction:AccountingTransaction;
+    accountingTransactionRef:AccountingTransactionRef;
     discountRatio:number;
     discountAmount:number;
 
@@ -48,9 +48,7 @@ export class LocalSaleFactory {
     static fromLocalSale(localSale:LocalSale):Sale {
         var sale = new Sale();
         sale.id = localSale.id;
-        if (localSale.accountingTransaction != null) {
-            sale.accountingTransactionRef = new AccountingTransactionRef(localSale.accountingTransaction.id);
-        }
+        sale.accountingTransactionRef = localSale.accountingTransactionRef;
         sale.closed = localSale.closed;
         sale.companyRef = new CompanyRef(localSale.company.id);
         if (localSale.customer != null) {
@@ -74,6 +72,7 @@ export class LocalSaleFactory {
     }
 
     static updateLocalSale(localSale:LocalSale, sale:Sale, authToken:string):Promise<LocalSale> {
+        localSale.accountingTransactionRef = sale.accountingTransactionRef;
         localSale.id = sale.id;
         localSale.closed = sale.closed;
         localSale.dateTime = sale.dateTime;
@@ -84,17 +83,6 @@ export class LocalSaleFactory {
         localSale.vatExclusiveAmount = sale.vatExclusiveAmount;
 
         var taskList = [];
-        var accountingTransactionRef = sale.accountingTransactionRef;
-        if (accountingTransactionRef != null) {
-            var transactionid = accountingTransactionRef.id;
-            var transactionClient = new AccountingTransactionClient();
-            taskList.push(
-                transactionClient.getFromCacheOrServer(transactionid, authToken)
-                    .then((transaction)=> {
-                        localSale.accountingTransaction = transaction;
-                    })
-            );
-        }
 
         var companyRef = sale.companyRef;
         var companyClient = new CompanyClient();

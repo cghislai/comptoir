@@ -3,15 +3,20 @@ import {Component, View,  bootstrap, NgIf} from 'angular2/angular2';
 import {RouteConfig, Router, RouterOutlet, RouterLink, routerInjectables, Location} from 'angular2/router';
 
 import {AccountService} from 'services/account';
+import {AccountingEntryService} from 'services/accountingEntry';
 import {ApplicationService} from 'services/application';
+import {AttributeValueService} from 'services/attributeValue';
 import {AuthService} from 'services/auth';
 import {BalanceService} from 'services/balance';
 import {CompanyService} from 'services/company';
+import {EmployeeService} from 'services/employee';
 import {ErrorService} from 'services/error';
 import {FileUploadService} from "services/fileUpload";
 import {ItemService} from 'services/item';
-import {ItemVariantSaleService} from 'services/itemVariantSale';
 import {ItemVariantService} from 'services/itemVariant';
+import {ItemVariantSaleService} from 'services/itemVariantSale';
+import {MoneyPileService} from 'services/moneyPile';
+import {PictureService} from 'services/picture';
 import {PosService} from 'services/pos';
 import {SaleService} from 'services/sale';
 
@@ -100,14 +105,19 @@ bootstrap(App, [
     AuthService,
 
     AccountService,
+    AccountingEntryService,
     ApplicationService,
+    AttributeValueService,
     BalanceService,
     CompanyService,
+    EmployeeService,
     ErrorService,
     FileUploadService,
     ItemService,
-    ItemVariantSaleService,
     ItemVariantService,
+    ItemVariantSaleService,
+    MoneyPileService,
+    PictureService,
     PosService,
     SaleService
 ]);

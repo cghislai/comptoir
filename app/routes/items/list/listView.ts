@@ -6,7 +6,7 @@ import {Router} from 'angular2/router';
 
 import {LocalItem} from 'client/localDomain/item';
 import {ItemSearch} from 'client/domain/item';
-import {SearchResult} from 'client/utils/search';
+import {SearchResult, SearchRequest} from 'client/utils/search';
 import {LocaleTexts} from 'client/utils/lang';
 import {Pagination} from 'client/utils/pagination';
 
@@ -31,8 +31,7 @@ export class ItemsListView {
     errorService:ErrorService;
     router:Router;
 
-    itemSearch:ItemSearch;
-    pagination:Pagination;
+    searchRequest: SearchRequest<LocalItem>;
     searchResult:SearchResult<LocalItem>;
     columns:ItemColumn[];
     itemsPerPage:number = 25;
@@ -46,8 +45,11 @@ export class ItemsListView {
         this.itemService = itemService;
         this.errorService = appService;
 
-        this.itemSearch = new ItemSearch();
-        this.pagination = new Pagination(0, this.itemsPerPage);
+        this.searchRequest = new SearchRequest<LocalItem>();
+        var itemSearch = new ItemSearch();
+        var pagination = new Pagination(0, this.itemsPerPage);
+        this.searchRequest.search = itemSearch;
+        this.searchRequest.pagination = pagination;
 
         this.columns = [
             ItemColumn.REFERENCE,
@@ -61,7 +63,7 @@ export class ItemsListView {
     }
 
     searchItems() {
-        this.itemService.searchLocalItemsAsync(this.itemSearch, this.pagination)
+        this.itemService.search(this.searchRequest)
             .then((result:SearchResult<LocalItem>)=> {
                 this.searchResult = result;
             }).catch((error)=> {
@@ -70,7 +72,7 @@ export class ItemsListView {
     }
 
     onPageChanged(pagination:Pagination) {
-        this.pagination = pagination;
+        this.searchRequest.pagination = pagination;
         this.searchItems();
     }
 
@@ -89,7 +91,7 @@ export class ItemsListView {
     }
 
     doRemoveItem(item:LocalItem) {
-        this.itemService.removeLocalItemAsync(item)
+        this.itemService.remove(item)
             .then(()=> {
                 this.searchItems();
             }).catch((error)=> {
