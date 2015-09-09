@@ -87,7 +87,7 @@ export class BasicClient<T extends WithId> {
         if (entityFromCache != null) {
             return Promise.resolve(entityFromCache);
         } else {
-            console.log("Fetching " + this.debugString(id));
+            //console.log("Fetching " + this.debugString(id));
             return this.get(id, authToken);
         }
     }
