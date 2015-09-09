@@ -6,6 +6,8 @@ import {Inject} from 'angular2/angular2';
 import {Auth, Registration, AuthFactory} from 'client/domain/auth';
 import {LocalAuth, LocalAuthFactory} from 'client/localDomain/auth';
 import {LocalEmployee} from 'client/localDomain/employee';
+import {LocalCompany} from 'client/localDomain/company';
+import {CompanyRef} from 'client/domain/company';
 
 import {Language} from 'client/utils/lang';
 import {JSONFactory} from 'client/utils/factory';
@@ -35,6 +37,8 @@ export class AuthService {
     loginRequired:boolean;
     loginRequiredReason:LoginRequiredReason;
 
+    loadingPromise: Promise<any>;
+
     constructor(@Inject errorService:ErrorService) {
         this.errorService = errorService;
         this.client = new AuthClient();
@@ -45,10 +49,13 @@ export class AuthService {
     login(login:string, hashedPassword:string):Promise<LocalEmployee> {
         return this.client.login(login, hashedPassword)
             .then((response:Auth) => {
-                this.saveAuth(response);
                 return LocalAuthFactory.toLocalAuth(response, response.token);
-            }).then((localAuth: LocalAuth)=>{
+            }).then((localAuth:LocalAuth)=> {
+                this.saveAuth(localAuth);
                 return localAuth.employee;
+            }).catch((error)=> {
+                this.errorService.handleRequestError(error);
+                return null;
             });
     }
 
@@ -82,18 +89,37 @@ export class AuthService {
             return Language.DEFAULT_LANGUAGE;
         }
         var locale = employee.locale;
-        var language = Language.fromLanguage(locale);
+        var language = Language.fromLocale(locale);
         if (language != undefined) {
             return language;
         }
         return Language.DEFAULT_LANGUAGE;
     }
 
+    public getEmployeeCompany():LocalCompany {
+        if (this.auth == null) {
+            return null;
+        }
+        var employee = this.auth.employee;
+        if (employee == null) {
+            return null;
+        }
+        return employee.company;
+    }
 
-    private saveAuth(auth:Auth) {
+    public getEmployeeCompanyRef():CompanyRef{
+        var company = this.getEmployeeCompany();
+        if (company == null) {
+            return null;
+        }
+        return new CompanyRef(company.id);
+    }
+
+
+    private saveAuth(auth:LocalAuth) {
         if (auth != null) {
-            this.authToken = auth.token;
-            var jsonString = JSON.stringify(auth, JSONFactory.toJSONReplacer);
+            var wsAuth = LocalAuthFactory.fromLocalAuth(auth);
+            var jsonString = JSON.stringify(wsAuth, JSONFactory.toJSONReplacer);
             localStorage.setItem(AuthService.STORAGE_AUTH_KEY, jsonString);
         } else {
             this.authToken = null;
@@ -108,6 +134,7 @@ export class AuthService {
 
         var authJSON = localStorage.getItem(AuthService.STORAGE_AUTH_KEY);
         if (authJSON == null) {
+            this.saveAuth(null);
             return;
         }
         var auth:Auth = JSON.parse(authJSON, AuthFactory.fromJSONAuthReviver);
@@ -120,11 +147,16 @@ export class AuthService {
             this.saveAuth(null);
             return;
         }
-
-        LocalAuthFactory.toLocalAuth(auth, auth.token)
+        this.auth = new LocalAuth();
+        this.auth.id = auth.id;
+        this.auth.token = auth.token;
+        this.auth.refreshToken = auth.refreshToken;
+        this.auth.expirationDateTime = auth.expirationDateTime;
+        this.loadingPromise = LocalAuthFactory.toLocalAuth(auth, auth.token)
             .then((localAuth:LocalAuth)=> {
                 this.auth = localAuth;
-                this.checkRefreshToken();
+                this.loadingPromise = null;
+                return this.checkRefreshToken();
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -150,39 +182,51 @@ export class AuthService {
         return remainingMs < tenMinutesMs;
     }
 
-    checkRefreshToken() {
+    checkRefreshToken() : Promise<any>{
+        if (this.loadingPromise != null) {
+            return this.loadingPromise;
+        }
         if (this.auth == null) {
-            return;
+            return Promise.resolve();
         }
         var expireDate = this.auth.expirationDateTime;
         if (!this.isExpireDateGettingClose(expireDate)) {
-            return;
+            return Promise.resolve();
         }
         var refreshToken = this.auth.refreshToken;
-        this.client.refreshToken(refreshToken)
+        return this.client.refreshToken(refreshToken)
             .then((auth)=> {
-                this.saveAuth(auth);
+                return LocalAuthFactory.toLocalAuth(auth, auth.token)
+            }).then((localAuth:LocalAuth)=> {
+                this.saveAuth(localAuth);
+            }).catch((error)=> {
+                this.errorService.handleRequestError(error);
             });
     }
 
-    checkLoggedIn():boolean {
+    checkLoggedIn():Promise<boolean> {
+        if (this.loadingPromise != null) {
+            return this.loadingPromise.then(()=>{
+                return this.checkLoggedIn();
+            });
+        }
         if (this.auth == null) {
             this.loginRequired = true;
             this.loginRequiredReason = LoginRequiredReason.NO_SESSION;
-            return false;
+            return Promise.resolve(false);
         }
         var expireDate = this.auth.expirationDateTime;
         if (!this.isExpireDateValid(expireDate)) {
             this.loginRequired = true;
             this.loginRequiredReason = LoginRequiredReason.SESSION_EXPIRED;
-            return false;
+            return Promise.resolve(false);
         }
 
         this.loginRequired = false;
         this.loginRequiredReason = null;
 
         this.checkRefreshToken();
-        return true;
+        return Promise.resolve(true);
     }
 
 }

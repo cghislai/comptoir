@@ -1,7 +1,6 @@
 /**
  * Created by cghislai on 29/07/15.
  */
-/// <reference path="../typings/_custom.d.ts" />
 import {Directive, ElementRef} from 'angular2/angular2';
 
 @Directive({

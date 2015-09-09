@@ -44,6 +44,7 @@ export class PosSelect {
 
         this.searchRequest = new SearchRequest<Pos>();
         var posSearch = new PosSearch();
+        posSearch.companyRef = authService.getEmployeeCompanyRef();
         this.searchRequest.search = posSearch;
 
         this.searchPos();

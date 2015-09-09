@@ -21,7 +21,7 @@ export class LocalAccountingEntry {
     vatRate:number = 0;
     dateTime:Date;
     description:LocaleTexts = new LocaleTexts();
-    accountingTransaction:AccountingTransaction;
+    accountingTransactionRef:AccountingTransactionRef;
     vatAccountingEntry:LocalAccountingEntry;
     customer:Customer;
 
@@ -40,20 +40,10 @@ export class LocalAccountingEntryFactory {
         localAccountingEntry.description = accountingEntry.description;
         localAccountingEntry.id = accountingEntry.id;
         localAccountingEntry.vatRate = accountingEntry.vatRate;
+        localAccountingEntry.accountingTransactionRef = accountingEntry.accountingTransactionRef;
 
         var taskList = [];
 
-        var accountingTransactionRef = accountingEntry.accountingTransactionRef;
-        if (accountingTransactionRef != null) {
-            var accountingTransactionId = accountingTransactionRef.id;
-            var accountingTransactionClient = new AccountingTransactionClient();
-            taskList.push(
-                accountingTransactionClient.getFromCacheOrServer(accountingTransactionId, authToken)
-                    .then((transaction)=> {
-                        localAccountingEntry.accountingTransaction = transaction;
-                    })
-            );
-        }
         var companyRef = accountingEntry.companyRef;
         var companyId = companyRef.id;
         var companyClient = new CompanyClient();
@@ -99,9 +89,7 @@ export class LocalAccountingEntryFactory {
 
     static fromLocalAccountingEntry(localAccountingEntry:LocalAccountingEntry) {
         var accountingEntry = new AccountingEntry();
-        if (localAccountingEntry.accountingTransaction != null) {
-            accountingEntry.accountingTransactionRef = new AccountingTransactionRef(localAccountingEntry.accountingTransaction.id);
-        }
+        accountingEntry.accountingTransactionRef = localAccountingEntry.accountingTransactionRef;
         accountingEntry.accountRef = new AccountRef(localAccountingEntry.account.id);
         accountingEntry.amount = localAccountingEntry.amount;
         accountingEntry.companyRef = new CompanyRef(localAccountingEntry.company.id);

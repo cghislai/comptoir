@@ -5,6 +5,7 @@ import {RouteConfig, Router, RouterOutlet, RouterLink, routerInjectables, Locati
 import {AccountService} from 'services/account';
 import {AccountingEntryService} from 'services/accountingEntry';
 import {ApplicationService} from 'services/application';
+import {AttributeDefinitionService} from 'services/attributeDefinition';
 import {AttributeValueService} from 'services/attributeValue';
 import {AuthService} from 'services/auth';
 import {BalanceService} from 'services/balance';
@@ -42,36 +43,36 @@ import {PosView} from 'routes/pos/posView';
 })
 
 @RouteConfig([
-    {path: '/', redirectTo:'/sales/sale/new'},
-    {path: '/login', component: LoginView, as:'login'},
-    {path: '/register', component: RegisterView, as:'register'},
+    {path: '/', redirectTo: '/sales/sale/new'},
+    {path: '/login', component: LoginView, as: 'login'},
+    {path: '/register', component: RegisterView, as: 'register'},
 
-    {path: '/sales/...', component: SalesView, as:'sales'},
-    {path: '/items/...', component: ItemsView, as:'items'},
-    {path: '/accounts/...', component: AccountsView, as:'accounts'},
-    {path: '/cash/...', component: CashView, as:'cash'},
-    {path: '/pos/...', component: PosView, as:'pos'}
+    {path: '/sales/...', component: SalesView, as: 'sales'},
+    {path: '/items/...', component: ItemsView, as: 'items'},
+    {path: '/accounts/...', component: AccountsView, as: 'accounts'},
+    {path: '/cash/...', component: CashView, as: 'cash'},
+    {path: '/pos/...', component: PosView, as: 'pos'}
 ])
 export class App {
     appService:ApplicationService;
-    authService: AuthService;
-    errorService: ErrorService;
+    authService:AuthService;
+    errorService:ErrorService;
 
-    loginRequired: boolean;
-    loggedIn: boolean;
-    router: Router;
+    loginRequired:boolean;
+    loggedIn:boolean;
+    router:Router;
 
-    constructor(appService:ApplicationService,authService: AuthService,
-                errorService: ErrorService,
-                router: Router, location: Location) {
+    constructor(appService:ApplicationService, authService:AuthService,
+                errorService:ErrorService,
+                router:Router, location:Location) {
         this.appService = appService;
         this.appService.appName = "Comptoir";
         this.appService.appVersion = "0.1";
         this.authService = authService;
         this.errorService = errorService;
         this.router = router;
-        router.subscribe((path)=>{
-           this.checkLoginRequired(path);
+        router.subscribe((path)=> {
+            this.checkLoginRequired(path);
         });
         this.checkLoginRequired(location.path());
     }
@@ -87,11 +88,13 @@ export class App {
         }
         this.loginRequired = true;
         // Check if logged-in
-        var loggedIn:boolean = this.authService.checkLoggedIn();
-        this.loggedIn = loggedIn;
-        if (!loggedIn) {
-            this.router.navigate('/login');
-        }
+        this.authService.checkLoggedIn()
+            .then((loggedIn)=> {
+                this.loggedIn = loggedIn;
+                if (!loggedIn) {
+                    this.router.navigate('/login');
+                }
+            });
 
     }
 
@@ -107,6 +110,7 @@ bootstrap(App, [
     AccountService,
     AccountingEntryService,
     ApplicationService,
+    AttributeDefinitionService,
     AttributeValueService,
     BalanceService,
     CompanyService,

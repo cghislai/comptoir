@@ -14,9 +14,9 @@ export class ComptoirError {
     text:string;
     code:number;
     response:string;
-    request: ComptoirRequest;
+    request:ComptoirRequest;
 
-    constructor(message?: string) {
+    constructor(message?:string) {
         if (message != null) {
             this.text = message;
         }
@@ -40,7 +40,9 @@ export class ComptoirRequest {
     private acceptContentType:string;
     private charset:string;
     private failed:boolean;
-    private discarded: boolean;
+    private discarded:boolean;
+
+    private runPromise:Promise<any>;
 
     constructor() {
         this.request = new XMLHttpRequest();
@@ -73,6 +75,9 @@ export class ComptoirRequest {
 
     discardRequest() {
         this.discarded = true;
+        if (this.request) {
+            this.request.abort();
+        }
     }
 
     setup(method:string, url:string, authToken:string) {
@@ -86,13 +91,13 @@ export class ComptoirRequest {
     }
 
     getDebugString() {
-        var string = this.method+" "+this.url+" ";
+        var string = this.method + " " + this.url + " ";
     }
 
     run():Promise<ComptoirResponse> {
         var xmlRequest = this.request;
         var thisRequest = this;
-        return new Promise((resolve, reject)=> {
+        this.runPromise = new Promise((resolve, reject)=> {
             xmlRequest.onreadystatechange = function () {
                 if (thisRequest.discarded) {
                     reject(ComptoirError.DISCARDED_ERROR);
@@ -147,6 +152,11 @@ export class ComptoirRequest {
             } else {
                 xmlRequest.send();
             }
-        });
+        }).then((response)=> {
+                return response;
+            });
+        return this.runPromise;
     }
+
+
 }

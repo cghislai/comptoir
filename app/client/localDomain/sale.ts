@@ -50,7 +50,9 @@ export class LocalSaleFactory {
         sale.id = localSale.id;
         sale.accountingTransactionRef = localSale.accountingTransactionRef;
         sale.closed = localSale.closed;
-        sale.companyRef = new CompanyRef(localSale.company.id);
+        if (localSale.company != null) {
+            sale.companyRef = new CompanyRef(localSale.company.id);
+        }
         if (localSale.customer != null) {
             sale.customerRef = new CustomerRef(localSale.customer.id);
         }

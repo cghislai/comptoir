@@ -1,44 +1,10 @@
 /**
- * Created by cghislai on 20/08/15.
+ * Created by cghislai on 08/09/15.
  */
 
-import {Component, View, Directive,
-    EventEmitter, NgFor, ElementRef} from 'angular2/angular2';
+import {Directive,ElementRef} from 'angular2/angular2';
+
 import {Language, LocaleTexts} from 'client/utils/lang';
-import {AuthService} from 'services/auth';
-
-/**
- * A language selection component.
- */
-@Component({
-    selector: 'langSelect',
-    properties: ['displayLocale', 'selectedLanguage'],
-    events: ['languageChanged']
-})
-@View({
-    templateUrl: './components/utils/langSelect/langSelect.html',
-    styleUrls: ['./components/utils/langSelect/langSelect.html'],
-    directives: [NgFor]
-})
-export class LangSelect {
-     displayLocale: string;
-    selectedLanguage: Language;
-    allLanguages: Language[];
-    languageChanged: EventEmitter;
-
-    constructor(authService: AuthService) {
-        this.allLanguages = Language.ALL_LANGUAGES;
-        this.selectedLanguage = authService.getEmployeeLanguage();
-        this.languageChanged = new EventEmitter();
-    }
-
-    onLanguageSelected(lang : Language) {
-        this.selectedLanguage = lang;
-        this.languageChanged.next(lang);
-    }
-}
-
-
 /**
  * A localized input directive. Add the 'localized' attribute on a input/textarea field to use.
  * Bind the 'language' property to a Language instance.
@@ -53,19 +19,19 @@ export class LangSelect {
     }
 })
 export class LocalizedDirective {
-    language: Language;
-    previousLanguage: Language;
-    localeTexts: LocaleTexts;
-    elementRef: ElementRef;
+    language:Language;
+    previousLanguage:Language;
+    localeTexts:LocaleTexts;
+    elementRef:ElementRef;
 
     // attribute set on the element
-    requiredAttribute: boolean;
+    requiredAttribute:boolean;
     // field to update the actual attribute
-    required: boolean;
+    required:boolean;
 
-    placeHolderAttribute: string;
+    placeHolderAttribute:string;
 
-    constructor(elementRef: ElementRef) {
+    constructor(elementRef:ElementRef) {
         this.elementRef = elementRef;
         this.placeHolderAttribute = this.elementRef.nativeElement.placeholder;
     }
@@ -136,18 +102,18 @@ export class LocalizedDirective {
         this.updateRequired();
     }
 
-    set languageProp(value: Language) {
+    set languageProp(value:Language) {
         this.previousLanguage = this.language;
         this.language = value;
         this.update();
     }
 
-    set localeTextsProp(value: LocaleTexts) {
+    set localeTextsProp(value:LocaleTexts) {
         this.localeTexts = value;
         this.update();
     }
 
-    set requiredProp(value: any) {
+    set requiredProp(value:any) {
         this.requiredAttribute = value;
         this.updateRequired();
     }

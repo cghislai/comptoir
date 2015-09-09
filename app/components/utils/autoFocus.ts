@@ -1,12 +1,14 @@
 /**
  * Created by cghislai on 29/07/15.
  */
-/// <reference path="../typings/_custom.d.ts" />
 import {Directive, ElementRef} from 'angular2/angular2';
 
 // Autofocus the input field
 @Directive({
-    selector: 'input[autofocusselect]'
+    selector: '[select-on-focus]',
+    host: {
+        '(focus)': "doSelect()"
+    }
 })
 export class AutoFocusDirective {
     element: HTMLInputElement;
@@ -16,13 +18,14 @@ export class AutoFocusDirective {
         if ( this.element == null) {
             return;
         }
-        if (this.element != null) {
-            this.doFocus();
-        }
     }
 
     doFocus() {
         this.element.focus();
+        this.doSelect();
+    }
+
+    doSelect() {
         var element = this.element;
         setTimeout(function () {
             element.select();

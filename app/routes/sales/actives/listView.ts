@@ -16,7 +16,7 @@ import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
 import {SaleService} from 'services/sale';
 
-import {SaleListComponent, SaleColumn} from 'components/sales/saleList/saleList';
+import {SaleListComponent, SaleColumn} from 'components/sales/list/saleList';
 
 @Component({
     selector: "salesActiveView"
@@ -72,7 +72,7 @@ export class ActiveSalesView {
     searchSales() {
         this.saleService
             .search(this.searchRequest)
-            .then(function (result) {
+            .then((result) => {
                 this.searchResult = result;
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);

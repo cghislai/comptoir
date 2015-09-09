@@ -4,8 +4,15 @@
 import {Inject} from 'angular2/angular2';
 
 import {LocalSale, LocalSaleFactory} from 'client/localDomain/sale';
-import {SaleClient, Sale, SaleRef, SaleSearch} from 'client/domain/sale';
+import {LocalItemVariant} from 'client/localDomain/itemVariant';
+import {LocalItemVariantSale, LocalItemVariantSaleFactory} from 'client/localDomain/itemVariantSale';
 
+import {CompanyRef} from 'client/domain/company';
+import {SaleClient, Sale, SaleRef, SaleSearch} from 'client/domain/sale';
+import {ItemVariantRef} from 'client/domain/itemVariant';
+import {ItemVariantSale, ItemVariantSaleRef, ItemVariantSaleClient, ItemVariantSaleFactory, ItemVariantSaleSearch} from 'client/domain/itemVariantSale';
+
+import {LocaleTexts} from 'client/utils/lang';
 import {BasicClient} from 'client/utils/basicClient';
 import {SearchRequest, SearchResult} from 'client/utils/search';
 
@@ -29,11 +36,8 @@ export class SaleService extends BasicLocalService<Sale, LocalSale> {
         });
     }
 
-    closeSale(localSale:LocalSale):Promise<LocalSale> {
+    closeSale(localSale:LocalSale):Promise<any> {
         var authToken = this.authService.authToken;
-        return this.saleClient.closeSale(localSale.id, authToken)
-            .then(()=> {
-                return this.refresh(localSale);
-            });
+        return this.saleClient.closeSale(localSale.id, authToken);
     }
 }

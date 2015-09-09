@@ -3,71 +3,105 @@
 <div class="registerView pageContent">
     <h1 class="pageTitle">Création d'un nouveau compte</h1>
 
-    <form (^submit)="doRegister($event)" [ng-form-model]="registerForm"
-          class="formTable">
+    <form (^submit)="doRegister($event)">
         <h2>Compagnie</h2>
-        <div>
-            <langSelect [display-locale]="appLocale"
-                    [selected-language]="editLanguage"
-                    (language-changed)="editLanguage = $event"></langSelect>
-        </div>
-        <div>
-            <input ng-control="companyName" type="text" placeholder="Nom de la compagnie"
-                   localized [language]="editLanguage"
-                   [locale-texts]="companyNames"
-                    #company-name="form" required>
-            <formMessage [for]="companyName.control" [inline]="true"
-                         check-error="required" message="Entrez un nom"></formMessage>
-        </div>
-        <div>
-            <input  ng-control="companyDescription" type="text" placeholder="Description de la compagnie"
-                    localized [language]="editLanguage"
-                    [locale-texts]="companyDescriptions"
-                    #company-description="form" required>
-            <formMessage [for]="companyDescription.control" [inline]="true"
-                         check-error="required" message="Entrez une description"></formMessage>
+
+        <div class="table">
+            <div>
+                <label for="editLanguage">Langue</label>
+                <langSelect id="editLanguage"
+                            [display-locale]="appLocale"
+                            [selected-language]="editLanguage"
+                            (language-changed)="editLanguage = $event"></langSelect>
+            </div>
+            <div>
+                <label for="companyName">Nom</label>
+                <span>
+                    <input type="text" id="companyName"
+                           localized [language]="editLanguage"
+                           [locale-texts]="editingCompany.name"
+                           ng-control="companyName"
+                           validate-required>
+                    <formMessage for="companyName" check-errors="['required']"></formMessage>
+                </span>
+            </div>
+            <div>
+                <label for="companyDescription">Description</label>
+                <span>
+                    <input type="text" id="companyDescription"
+                           localized [language]="editLanguage"
+                           [locale-texts]="editingCompany.description"
+                           ng-control="companyDescription"
+                           validate-required>
+                    <formMessage for="companyDescription" check-errors="['required']"></formMessage>
+                </span>
+            </div>
         </div>
 
         <h2>Employé</h2>
-        <div>
-            <select ng-control="employeeLanguage" required>
-                <option *ng-for="#language of allLanguages"
-                        [value]="language.locale">
-                    {{ language.label[appLocale] }}
-                </option>
-            </select>
-        </div>
-        <div>
-            <input ng-control="employeeFirstName" type="text" placeholder="Prénom"
-                   #employee-first-name="form" required>
-            <formMessage [for]="employeeFirstName.control" [inline]="true"
-                         check-error="required" message="Entrez votre prénom"></formMessage>
-        </div>
-        <div>
-            <input ng-control="employeeLastName" type="text" placeholder="Nom"
-                   #employee-last-name="form" required>
-            <formMessage [for]="employeeLastName.control" [inline]="true"
-                         check-error="required" message="Entrez votre nom"></formMessage>
+
+        <div class="table">
+
+
+            <div>
+                <label for="employeeLanguage">Langue</label>
+                <span>
+                    <langSelect id="employeeLanguage"
+                                [display-locale]="appLocale"
+                                [selected-language]="getLanguage(editingEmployee.locale)"
+                                (language-changed)="editingEmployee.locale = $event.locale"
+                                ng-control="employeeLanguage" validate-required></langSelect>
+                    <formMessage for="employeeLanguage" check-errors="['required']"></formMessage>
+                </span>
+            </div>
+            <div>
+                <label for="firstName">Prénom</label>
+                <span>
+                    <input type="text" id="firstName"
+                           [(ng-model)]="editingEmployee.firstName"
+                           ng-contorl="firstName" validate-required>
+                    <formMessage for="firstName" check-errors="['required']"></formMessage>
+                </span>
+            </div>
+            <div>
+                <label for="lastName">Nom</label>
+                <span>
+                    <input type="text" id="lastName"
+                           [(ng-model)]="editingEmployee.lastName"
+                           ng-contorl="lastName" validate-required>
+                    <formMessage for="lastName" check-errors="['required']"></formMessage>
+                </span>
+            </div>
         </div>
 
         <h2>Identifiants</h2>
-        <div>
-            <input ng-control="login" type="text" placeholder="Login"
-                   #login="form" required>
-            <formMessage [for]="login.control" [inline]="true"
-                         check-error="required" message="Entrez un login"></formMessage>
+        <div class="table">
+            <div>
+                <label for="login">Login</label>
+                <span>
+                    <input type="text" id="login"
+                           [(ng-model)]="editingEmployee.login"
+                           ng-contorl="login" validate-required>
+                    <formMessage for="login" check-errors="['required']"></formMessage>
+                </span>
+            </div>
+
+            <div>
+                <label for="password">Mot de passe</label>
+                <span>
+                    <input type="text" id="password"
+                           [(ng-model)]="password"
+                           ng-contorl="password" validate-required>
+                    <formMessage for="password" check-errors="['required', 'passwordTooShort']"></formMessage>
+                </span>
+            </div>
         </div>
-        <div>
-            <input ng-control="password" type="password" placeholder="Mot de passe"
-                   #password="form" required>
-            <formMessage [for]="password.control" [inline]="true"
-                         check-error="required" message="Entrez un mot de passe"></formMessage>
-            <formMessage [for]="password.control" [inline]="true"
-                         check-error="passwordTooShort" message="Le mot de passe doit faire 8 caratères minimum"></formMessage>
-        </div>
+
         <div class="actions">
             <button type="submit" [disabled]="!registerForm.valid"
-                    class="boxedLink">Créer un compte</button>
+                    class="boxedLink">
+                Créer un compte
+            </button>
         </div>
     </form>
 </div>

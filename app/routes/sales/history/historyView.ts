@@ -16,7 +16,7 @@ import {AuthService} from 'services/auth';
 import {SaleService} from 'services/sale';
 
 import {Paginator} from 'components/utils/paginator/paginator';
-import {SaleListComponent, SaleColumn} from 'components/sales/saleList/saleList';
+import {SaleListComponent, SaleColumn} from 'components/sales/list/saleList';
 
 @Component({
     selector: "salesHistoryView"

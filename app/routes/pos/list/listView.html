@@ -1,18 +1,18 @@
 <div class="pageContent">
     <h1 class="pageTitle">Liste des points de vente</h1>
 
-    <img class="busy" src="../../../res/img/spinner-2-black.gif" [hidden]="!loading">
+    <img class="busy" src="../../../res/img/spinner-2-black.gif" [hidden]="searchRequest.request == null">
 
     <div class="topActions">
     </div>
 
-    <paginator *ng-if="posSearchResult != undefined"
-               [total-count]="posCount"
+    <paginator *ng-if="searchResult != null"
+               [total-count]="searchResult.count"
                [page-size]="posPerPage"
                show-prev-next="true" show-first-last="true"
                (page-change)="onPageChanged($event)"></paginator>
 
-    <table class="dataTable" *ng-if="posSearchResult != undefined">
+    <table class="dataTable" *ng-if="searchResult != null">
         <thead>
         <tr>
             <th>Nom</th>
@@ -21,7 +21,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ng-for="#pos of posSearchResult.list"
+        <tr *ng-for="#pos of searchResult.list"
             (^click)="doEditPos(pos)"
             class="selectable">
             <td class="name">{{ pos.name }}</td>

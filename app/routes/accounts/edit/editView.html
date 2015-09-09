@@ -2,50 +2,57 @@
     <h1 class="pageTitle">Édition du compte</h1>
 
     <form #f="form" (ng-submit)="doSaveEdit()"
-          *ng-if="accountModel != undefined"
-          class="table">
+          *ng-if="editingAccount != null">
         <div class="table">
             <div>
                 <label>Langue</label>
-                <langSelect [display-locale]="language.locale"
-                            [selected-language]="accountModel.language"
-                            (language-changed)="accountModel.language = $event"></langSelect>
+                <langSelect [display-locale]="appLocale"
+                            [selected-language]="editingLanguage"
+                            (language-changed)="editingLanguage = $event"></langSelect>
             </div>
             <div>
                 <label for="type">Type</label>
-                <select id="type" required
-                        [(ng-model)]="accountModel.accountType">
-                    <option *ng-for="#accountType of allAccountTypes"
-                            [value]="accountType">
-                        {{ getAccountTypeLabel(accountType)[language.locale] }}
-                    </option>
-                </select>
+                <span>
+                    <select id="type" validate-required
+                            ng-control="accountType"
+                            [(ng-model)]="editingAccount.accountType">
+                        <option *ng-for="#accountType of allAccountTypes"
+                                [value]="accountType">
+                            {{ getAccountTypeLabel(accountType)[appLocale] }}
+                        </option>
+                    </select>
+                    <formMessage for="accountType" check-errors="['required']"></formMessage>
+                </span>
             </div>
             <div>
                 <label for="name">Nom</label>
-                <input id="name" type="text" required
-                       [(ng-model)]="accountModel.name">
+                <span>
+                    <input id="name" type="text" validate-required
+                           [(ng-model)]="editingAccount.name"
+                           ng-control="name">
+                    <formMessage for="name" check-errors="['required']"></formMessage>
+                </span>
             </div>
             <div>
                 <label for="description">Description</label>
              <textarea type="text" id="description" rows="3"
-                       localized [language]="accountModel.language"
-                       [locale-texts]="accountModel.description"></textarea>
+                       localized [language]="editingLanguage"
+                       [locale-texts]="editingAccount.description"></textarea>
             </div>
             <div>
                 <label for="number">Numéro de comptabilité</label>
                 <input type="text" id="number"
-                       [(ng-model)]="accountModel.accountingNumber">
+                       [(ng-model)]="editingAccount.accountingNumber">
             </div>
             <div>
                 <label for="iban">IBAN</label>
                 <input type="text" id="iban"
-                       [(ng-model)]="accountModel.iban">
+                       [(ng-model)]="editingAccount.iban">
             </div>
             <div>
                 <label for="bic">BIC</label>
                 <input type="text" id="bic"
-                       [(ng-model)]="accountModel.bic">
+                       [(ng-model)]="editingAccount.bic">
             </div>
 
         </div>

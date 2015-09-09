@@ -6,17 +6,18 @@ import {Component, View, EventEmitter, NgFor, NgIf} from 'angular2/angular2';
 
 import {LocalSale} from 'client/localDomain/sale';
 import {LocalAccount} from 'client/localDomain/account';
-import {LocalAccountingEntry} from 'client/localDomain/accountingEntry';
+import {LocalAccountingEntry,LocalAccountingEntryFactory } from 'client/localDomain/accountingEntry';
 
 
 import {AccountingEntry, AccountingEntrySearch} from 'client/domain/accountingEntry';
-import {Account, AccountRef,AccountSearch} from 'client/domain/account';
+import {Account, AccountRef, AccountType, AccountSearch} from 'client/domain/account';
 import {Pos, PosRef} from 'client/domain/pos';
 import {SaleClient} from 'client/domain/sale';
 import {CompanyRef} from 'client/domain/company';
 import {AccountingTransactionRef} from 'client/domain/accountingTransaction';
 import {SearchRequest, SearchResult} from 'client/utils/search';
 import {NumberUtils} from 'client/utils/number';
+import {LocaleTexts} from 'client/utils/lang';
 import {ComptoirRequest, ComptoirResponse} from 'client/utils/request';
 
 import {AccountService} from 'services/account';
@@ -25,7 +26,7 @@ import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
 import {SaleService} from 'services/sale';
 
-import {FastInput} from 'directives/fastInput'
+import {FastInput} from 'components/utils/fastInput'
 
 
 @Component({
@@ -70,7 +71,16 @@ export class PayView {
         this.errorService = errorService;
 
         this.accountsSearchRequest = new SearchRequest<LocalAccount>();
+        var accountSearch = new AccountSearch();
+        accountSearch.companyRef = authService.getEmployeeCompanyRef();
+        accountSearch.type = AccountType[AccountType.PAYMENT];
+        this.accountsSearchRequest.search = accountSearch;
+
         this.accountingEntriesSearchRequest = new SearchRequest<LocalAccountingEntry>();
+        var accountingEntriesSearch = new AccountingEntrySearch();
+        accountingEntriesSearch.companyRef = authService.getEmployeeCompanyRef();
+        this.accountingEntriesSearchRequest.search = accountingEntriesSearch;
+
         this.totalPaidAmount = 0;
 
         this.locale = authService.getEmployeeLanguage().locale;
@@ -109,10 +119,10 @@ export class PayView {
         if (this.sale.closed) {
             return;
         }
-        var posRef = new PosRef(this.pos.id);
-        var accountSearch = new AccountSearch();
-        accountSearch.posRef = posRef;
-        this.accountsSearchRequest.search = accountSearch;
+        if (this.pos != null) {
+            var posRef = new PosRef(this.pos.id);
+            this.accountsSearchRequest.search.posRef = posRef;
+        }
 
         this.accountService.search(this.accountsSearchRequest)
             .then((result:SearchResult<LocalAccount>)=> {
@@ -123,19 +133,11 @@ export class PayView {
     }
 
     searchAccountingEntries() {
-        var posRef = new PosRef(this.pos.id);
-        var accountSearch = new AccountSearch();
-        accountSearch.posRef = posRef;
-        var accountingEntriesSearch = new AccountingEntrySearch();
-        accountingEntriesSearch.companyRef = new CompanyRef(this.sale.company.id);
-        accountingEntriesSearch.accountSearch = accountSearch;
-        accountingEntriesSearch.accountingTransactionRef = new AccountingTransactionRef(this.sale.id);
-        this.accountingEntriesSearchRequest.search = accountingEntriesSearch;
+        var accountingEntriesSearch = this.accountingEntriesSearchRequest.search;
+        accountingEntriesSearch.accountingTransactionRef = this.sale.accountingTransactionRef;
 
-        this.accountingEntryService.search(this.accountingEntriesSearchRequest)
-            .then((result:SearchResult<LocalAccountingEntry>)=> {
-                this.accountingEntriesSearchResult = result;
-            }).catch((error)=> {
+        this.accountingEntryService.search(this.accountingEntriesSearchRequest, this.accountingEntriesSearchResult)
+            .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }
@@ -151,13 +153,17 @@ export class PayView {
         this.totalPaidRequest.run()
             .then((response:ComptoirResponse)=> {
                 var valueJSON = JSON.parse(response.text);
-                this.totalPaidAmount = valueJSON.value;
+                var totalPaidAmount = NumberUtils.toFixedDecimals(valueJSON.value, 2);
+                if (totalPaidAmount == null) {
+                    totalPaidAmount = 0;
+                }
                 this.totalPaidRequest = null;
 
                 var totalToPay = this.sale.vatExclusiveAmount;
                 totalToPay += this.sale.vatAmount;
 
-                this.toPayAmount = totalToPay - this.totalPaidAmount;
+                this.totalPaidAmount = totalPaidAmount;
+                this.toPayAmount = NumberUtils.toFixedDecimals(totalToPay - totalPaidAmount, 2);
             });
     }
 
@@ -165,12 +171,13 @@ export class PayView {
         var localAccountingEntry = new LocalAccountingEntry();
         localAccountingEntry.account = account;
         localAccountingEntry.amount = this.toPayAmount;
+        localAccountingEntry.company = account.company;
+        localAccountingEntry.accountingTransactionRef = this.sale.accountingTransactionRef;
+        localAccountingEntry.customer = this.sale.customer;
+        localAccountingEntry.description = new LocaleTexts();
+        localAccountingEntry.dateTime = new Date();
 
         this.startEditEntry(localAccountingEntry);
-        this.accountingEntryService.save(localAccountingEntry)
-            .catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
     }
 
     startEditEntry(localAccountingEntry:LocalAccountingEntry) {
@@ -204,11 +211,12 @@ export class PayView {
         this.editingEntry.amount = amount;
 
         this.accountingEntryService.save(this.editingEntry)
-        .then(()=> {
-            this.searchTotalPaid();
-        }).catch((error)=> {
-            this.errorService.handleRequestError(error);
-        });
+            .then(()=> {
+                this.searchTotalPaid();
+                this.searchAccountingEntries();
+            }).catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });
         this.cancelEditEntry();
     }
 

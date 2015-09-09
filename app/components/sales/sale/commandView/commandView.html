@@ -20,10 +20,10 @@
                  (^click)="doEditSaleDiscount()"
                  [class.editing]="editingSaleDiscount"
                  [class.has-reduction]="sale.discountRatio > 0">
-                <span [hidden]="editingSaleDiscount || sale.discountRatio != null">
+                <span [hidden]="editingSaleDiscount || sale.discountRatio > 0">
                     Réduction
                 </span>
-                <span [hidden]="editingSaleDiscount || sale.discountRatio == null">
+                <span [hidden]="editingSaleDiscount || sale.discountRatio == null || sale.discountRatio <= 0">
                     -{{ (sale.discountRatio * 100) | number:'.0' }} %
                 </span>
                 <span *ng-if="editingSaleDiscount" class="editDiscount">
@@ -44,7 +44,8 @@
         </div>
     </header>
 
-    <table class="dataTable" [hidden]="saleItemsResult ==  null">
+    <table class="dataTable" *ng-if="saleItemsResult != null"
+           [hidden]="saleItemsResult.count == 0">
         <thead>
         <tr>
             <th>Ref</th>
@@ -123,11 +124,11 @@
             </td>
             <td class="price number">
                 <a class="reduction green"
-                   [class.unneeded]="saleItem.discountPercentage == null || saleItem.discountPercentage <= 0 || (editingItem == saleItem && editingItemDiscount)"
+                   [class.unneeded]="saleItem.discountRatio == null || saleItem.discountRatio <= 0 || (editingItem == saleItem && editingItemDiscount)"
                    [class.nolink]="validated"
                    [class.actionLink]="!validated"
                    (^click)="doEditItemDiscount(saleItem)">
-                    -{{ ( saleItem.discountPercentage) | number:'.0' }}%
+                    -{{ ( saleItem.discountRatio * 100) | number:'.0' }}%
                 </a>
                 <span class="setReduction"
                       *ng-if="editingItem == saleItem && editingItemDiscount">

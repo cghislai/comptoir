@@ -1,7 +1,6 @@
 <div class="formError"
      [class.fatal]="error"
      [class.info]="!error"
-     [class.inline-pos]="inlinePos"
-     [hidden]="!shouldDisplay()">
+     [hidden]="errorMessage == null">
           {{ message }}
 </div>

@@ -67,12 +67,14 @@ export class AccountsListView {
             });
     }
 
-    getAccountTypeLabel(accountTypeName:string):any {
-        if (accountTypeName == undefined) {
+    getAccountTypeLabel(accountType:AccountType):any {
+        if (accountType == null) {
             return null;
         }
-        var accountType:AccountType = AccountType[accountTypeName];
         var label = LocalAccountFactory.getAccountTypeLabel(accountType);
+        if (label == null) {
+            return null;
+        }
         return label[this.locale];
     }
 

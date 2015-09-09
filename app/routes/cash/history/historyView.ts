@@ -29,7 +29,7 @@ export class CashHistoryView {
     errorService: ErrorService;
 
     searchRequest: SearchRequest<LocalBalance>;
-    serachResult: SearchResult<LocalBalance>;
+    searchResult: SearchResult<LocalBalance>;
     itemsPerPage:number = 25;
 
     constructor(balanceService:BalanceService, errorService:ErrorService, authService: AuthService) {
@@ -49,7 +49,7 @@ export class CashHistoryView {
     searchBalances() {
         this.balanceService.search(this.searchRequest)
             .then((result: SearchResult<LocalBalance>)=> {
-                this.serachResult = result;
+                this.searchResult = result;
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });

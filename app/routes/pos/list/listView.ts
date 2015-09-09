@@ -16,8 +16,8 @@ import {Pagination} from 'client/utils/pagination';
 import {SearchResult, SearchRequest} from 'client/utils/search';
 
 import {Paginator} from 'components/utils/paginator/paginator';
-import {AutoFocusDirective} from 'directives/autoFocus'
-import {FocusableDirective} from 'directives/focusable'
+import {AutoFocusDirective} from 'components/utils/autoFocus'
+import {FocusableDirective} from 'components/utils/focusable'
 
 @Component({
     selector: "possList"
@@ -61,7 +61,7 @@ export class PosListView {
     searchPosList() {
         this.posService
             .search(this.searchRequest)
-            .then(function (result:SearchResult<Pos>) {
+            .then((result:SearchResult<Pos>) => {
                 this.searchResult = result;
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);

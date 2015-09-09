@@ -18,8 +18,8 @@ import {ErrorService} from 'services/error';
 import {ItemVariantService} from 'services/itemVariant';
 
 import {ItemVariantList, ItemVariantColumn} from 'components/itemVariant/list/itemVariantList';
-import {AutoFocusDirective} from 'directives/autoFocus';
-import {FocusableDirective} from 'directives/focusable';
+import {AutoFocusDirective} from 'components/utils/autoFocus';
+import {FocusableDirective} from 'components/utils/focusable';
 
 
 @Component({

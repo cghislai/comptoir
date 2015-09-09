@@ -1,8 +1,7 @@
 /**
  * Created by cghislai on 05/08/15.
  */
-import {Component, View, NgFor, NgIf,
-    FORM_DIRECTIVES, FormBuilder, ControlGroup, Control} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
 import {LocalPicture, LocalPictureFactory} from 'client/localDomain/picture';
@@ -22,49 +21,45 @@ import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
 import {PictureService} from 'services/picture';
 
-import {LangSelect, LocalizedDirective} from 'components/utils/langSelect/langSelect';
+import {LangSelect} from 'components/lang/langSelect/langSelect';
 import {FormMessage} from 'components/utils/formMessage/formMessage';
-import {percentageValidator} from 'components/utils/validators';
+import {RequiredValidator} from 'components/utils/validators';
+import {LocalizedDirective} from 'components/utils/localizedInput';
 import {ItemVariantList, ItemVariantColumn} from 'components/itemVariant/list/itemVariantList';
 
 import {ItemVariantEditView} from 'routes/items/edit/editVariant/editVariantView';
 
 @Component({
-    selector: 'editItem',
-    viewBindings: [FormBuilder]
+    selector: 'editItem'
 })
 @View({
     templateUrl: './routes/items/edit/editView.html',
     styleUrls: ['./routes/items/edit/editView.css'],
     directives: [NgFor, NgIf, FORM_DIRECTIVES,
         RouterLink, LangSelect, LocalizedDirective, FormMessage,
-        ItemVariantList]
+        ItemVariantList, RequiredValidator]
 })
 export class ItemEditView {
     itemService:ItemService;
     itemVariantService:ItemVariantService;
     errorService:ErrorService;
     authService:AuthService;
-    pictureService: PictureService;
+    pictureService:PictureService;
     router:Router;
 
     item:LocalItem;
-    itemNames:LocaleTexts;
-    itemDescriptions:LocaleTexts;
-    itemForm:ControlGroup;
     itemPictureTouched:boolean;
+    itemVatPercentage: number;
     appLocale:string;
     editLanguage:Language;
-
-    formBuilder:FormBuilder;
 
     itemVariantSearchRequest:SearchRequest<LocalItemVariant>;
     itemVariantSearchResult:SearchResult<LocalItemVariant>;
     itemVariantListColumns:ItemVariantColumn[];
 
-    constructor(itemService:ItemService, errorService:ErrorService, pictureService: PictureService,
+    constructor(itemService:ItemService, errorService:ErrorService, pictureService:PictureService,
                 authService:AuthService, itemVariantService:ItemVariantService,
-                routeParams:RouteParams, router:Router, formBuilder:FormBuilder) {
+                routeParams:RouteParams, router:Router) {
         this.router = router;
         this.itemService = itemService;
         this.itemVariantService = itemVariantService;
@@ -72,7 +67,6 @@ export class ItemEditView {
         this.authService = authService;
         this.pictureService = pictureService;
 
-        this.formBuilder = formBuilder;
         this.appLocale = authService.getEmployeeLanguage().locale;
         this.editLanguage = authService.getEmployeeLanguage();
 
@@ -86,24 +80,6 @@ export class ItemEditView {
         this.itemVariantSearchRequest = new SearchRequest<LocalItemVariant>();
 
         this.findItem(routeParams);
-    }
-
-    buildForm() {
-        var vatRate = this.item.vatRate;
-        if (vatRate == null || vatRate == 0) {
-            var country = this.authService.auth.employee.company.country;
-            vatRate = country.defaultVatRate;
-        }
-        var vatPercentage = NumberUtils.toInt(vatRate * 100);
-        this.itemForm = this.formBuilder.group({
-            'reference': [this.item.reference],
-            'name': [this.item.name[this.editLanguage.locale]],
-            'description': [this.item.description[this.editLanguage.locale]],
-            'vatExclusive': [this.item.vatExclusive],
-            'vatPercentage': [vatPercentage, percentageValidator]
-        });
-        this.itemNames = this.item.name;
-        this.itemDescriptions = this.item.description;
     }
 
     findItem(routeParams:RouteParams) {
@@ -130,14 +106,15 @@ export class ItemEditView {
         this.item.name = new LocaleTexts();
         this.itemVariantSearchResult = new SearchResult<LocalItemVariant>();
         this.itemVariantSearchResult.list = [];
-        this.buildForm();
+        this.itemVatPercentage = 0;
+        this.findItemVariants();
     }
 
     getItem(id:number) {
         this.itemService.get(id)
             .then((item:LocalItem)=> {
                 this.item = item;
-                this.buildForm();
+                this.itemVatPercentage = NumberUtils.toInt(this.item.vatRate * 100);
                 this.findItemVariants();
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
@@ -166,6 +143,7 @@ export class ItemEditView {
 
 
     public doSaveItem() {
+        this.item.vatRate = NumberUtils.toFixedDecimals(this.itemVatPercentage, 2);
         this.saveItem()
             .then(()=> {
                 this.router.navigate('/items/list');
@@ -176,24 +154,15 @@ export class ItemEditView {
     }
 
     private saveItem():Promise<LocalItem> {
-        var item = this.item;
-        item.description = this.itemDescriptions;
-        item.name = this.itemNames;
-        item.reference = this.itemForm.value.reference;
-        var vatExclusive = parseFloat(this.itemForm.value.vatExclusive);
-        item.vatExclusive = NumberUtils.toFixedDecimals(vatExclusive, 2);
-        var vatPecentage = parseInt(this.itemForm.value.vatPercentage);
-        item.vatRate = NumberUtils.toFixedDecimals(vatPecentage / 100, 2);
-
         if (this.itemPictureTouched) {
-            var picture = item.mainPicture;
+            var picture = this.item.mainPicture;
             return this.pictureService.save(picture)
-            .then((localPic: LocalPicture)=>{
-                   item.mainPicture = localPic;
-                    return this.itemService.save(item);
+                .then((localPic:LocalPicture)=> {
+                    this.item.mainPicture = localPic;
+                    return this.itemService.save(this.item);
                 });
         } else {
-            return this.itemService.save(item);
+            return this.itemService.save(this.item);
         }
     }
 

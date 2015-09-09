@@ -14,6 +14,7 @@ export interface WithId {
 
 export class BasicCacheHandler<T extends WithId> {
     cache:{[id: number] : T} = {};
+    requestCache:{[id: number] : ComptoirRequest} = {};
 
     putInCache(entity:T) {
         var id = entity.id;
@@ -33,6 +34,19 @@ export class BasicCacheHandler<T extends WithId> {
 
     clearCache() {
         this.cache = {};
+    }
+
+    cancelRequest(id: number) {
+        var request = this.requestCache[id];
+        if (request != null) {
+            request.discardRequest();
+        }
+    }
+    setRequest(id: number, request: ComptoirRequest) {
+        this.requestCache[id] = request;
+    }
+    unsetRequest(id: number) {
+        delete this.requestCache[id];
     }
 }
 
@@ -73,11 +87,12 @@ export class BasicClient<T extends WithId> {
         if (entityFromCache != null) {
             return Promise.resolve(entityFromCache);
         } else {
+            console.log("Fetching " + this.debugString(id));
             return this.get(id, authToken);
         }
     }
 
-    getCreateRequest(entity:T, authToken:string):ComptoirRequest {
+    private getCreateRequest(entity:T, authToken:string):ComptoirRequest {
         var request = new ComptoirRequest();
         var url = this.getResourceUrl();
         request.setup('POST', url, authToken);
@@ -95,42 +110,48 @@ export class BasicClient<T extends WithId> {
             });
     }
 
-    getGetRequest(id:number, authToken:string):ComptoirRequest {
+    private getGetRequest(id:number, authToken:string):ComptoirRequest {
         var request = new ComptoirRequest();
         var url = this.getResourceUrl(id);
         request.setup('GET', url, authToken);
+
         return request;
     }
 
     get(id:number, authToken:string):Promise<T> {
         var request = this.getGetRequest(id, authToken);
         var reviver = this.resourceInfo.jsonReviver;
+
         return request
             .run()
             .then((response) => {
                 var entity:T = JSON.parse(response.text, reviver);
-                if (this.resourceInfo.cacheHandler != null) {
-                    this.resourceInfo.cacheHandler.putInCache(entity);
-                }
+                this.resourceInfo.cacheHandler.putInCache(entity);
                 return entity;
             });
     }
 
-    getUpdateRequest(entity:T, authToken:string):ComptoirRequest {
+    private getUpdateRequest(entity:T, authToken:string):ComptoirRequest {
         var request = new ComptoirRequest();
         var url = this.getResourceUrl(entity.id);
         request.setup('PUT', url, authToken);
         request.setupData(entity);
+
         return request;
     }
 
     update(entity:T, authToken:string):Promise<WithId> {
+        var id = entity.id;
+        this.resourceInfo.cacheHandler.cancelRequest(id);
         var request = this.getUpdateRequest(entity, authToken);
         var reviver = this.resourceInfo.jsonReviver;
+        this.resourceInfo.cacheHandler.setRequest(id, request);
+
         return request
             .run()
             .then((response)=> {
                 var entity:T = JSON.parse(response.text, reviver);
+                this.resourceInfo.cacheHandler.unsetRequest(id);
                 return entity;
             });
     }
@@ -154,7 +175,7 @@ export class BasicClient<T extends WithId> {
             });
     }
 
-    getRemoveRequest(id:number, authToken:string):ComptoirRequest {
+    private getRemoveRequest(id:number, authToken:string):ComptoirRequest {
         var request = new ComptoirRequest();
         var url = this.getResourceUrl(id);
         request.setup('DELETE', url, authToken);
@@ -162,7 +183,17 @@ export class BasicClient<T extends WithId> {
     }
 
     remove(id:number, authToken:string):Promise<any> {
+        this.resourceInfo.cacheHandler.cancelRequest(id);
         var request = this.getRemoveRequest(id, authToken);
-        return request.run();
+        this.resourceInfo.cacheHandler.setRequest(id, request);
+        return request.run().then(()=>{
+            this.resourceInfo.cacheHandler.unsetRequest(id);
+        });
+    }
+
+    private debugString(id:number) {
+        var constructorString:string = this.constructor.toString();
+        var className:string = constructorString.match(/\w+/g)[1];
+        return '' + (className) + ' id:' + id;
     }
 }

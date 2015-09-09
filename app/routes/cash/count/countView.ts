@@ -25,7 +25,7 @@ import {AuthService} from 'services/auth';
 
 import {Paginator} from 'components/utils/paginator/paginator';
 import {PosSelect} from 'components/pos/posSelect/posSelect';
-import {FastInput} from 'directives/fastInput'
+import {FastInput} from 'components/utils/fastInput'
 
 @Component({
     selector: 'editCashView'
@@ -46,7 +46,7 @@ export class CountCashView {
 
     balance:LocalBalance;
     editingTotal:boolean;
-    moneyPileList: LocalMoneyPile[];
+    moneyPileList:LocalMoneyPile[];
 
     pos:Pos;
 
@@ -73,7 +73,7 @@ export class CountCashView {
         this.balance = new LocalBalance();
         this.moneyPileList = [];
         for (var cashType of ALL_CASH_TYPES) {
-            var moneyPile: LocalMoneyPile = new LocalMoneyPile();
+            var moneyPile:LocalMoneyPile = new LocalMoneyPile();
             moneyPile.unitAmount = LocalMoneyPileFactory.getCashTypeUnitValue(cashType);
             moneyPile.balance = this.balance;
             moneyPile.label = LocalMoneyPileFactory.getCashTypeLabel(cashType);
@@ -95,6 +95,7 @@ export class CountCashView {
         if (this.pos != null) {
             accountSearch.posRef = new PosRef(this.pos.id);
         }
+        accountSearch.companyRef = this.authService.getEmployeeCompanyRef();
         this.accountSearchRequest.search = accountSearch;
 
         this.accountService.search(this.accountSearchRequest)
@@ -156,7 +157,7 @@ export class CountCashView {
         }
         var balanceSearch = new BalanceSearch();
         balanceSearch.accountSearch = this.accountSearchRequest.search;
-        balanceSearch.companyRef = new CompanyRef(this.authService.auth.employee.company.id);
+        balanceSearch.companyRef = this.authService.getEmployeeCompanyRef();
         var pagination = new Pagination();
         pagination.firstIndex = 0;
         pagination.pageSize = 1;
@@ -183,12 +184,19 @@ export class CountCashView {
         moneyPile.account = this.account;
         moneyPile.balance = this.balance;
 
-        this.moneyPileService.save(moneyPile)
-            .then(()=> {
-                this.balanceService.refresh(this.balance);
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
+        var balanceTask = Promise.resolve(this.balance);
+        if (this.balance.id == null) {
+            balanceTask = this.balanceService.save(this.balance);
+        }
+        balanceTask.then((balance)=> {
+            moneyPile.balance = balance;
+            return this.moneyPileService.save(moneyPile)
+        }).then(()=> {
+            this.moneyPileService.refresh(moneyPile);
+            this.balanceService.refresh(this.balance);
+        }).catch((error)=> {
+            this.errorService.handleRequestError(error);
+        });
     }
 
     startEditTotal() {

@@ -13,8 +13,8 @@ import {LocaleTexts} from 'client/utils/lang';
 
 import {AuthService} from 'services/auth';
 
-import {AutoFocusDirective} from 'directives/autoFocus';
-import {FocusableDirective} from 'directives/focusable';
+import {AutoFocusDirective} from 'components/utils/autoFocus';
+import {FocusableDirective} from 'components/utils/focusable';
 
 
 /****

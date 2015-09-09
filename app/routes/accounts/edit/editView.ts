@@ -15,39 +15,10 @@ import {AuthService} from 'services/auth';
 import {AccountService} from 'services/account';
 import {ErrorService} from 'services/error';
 
-import {LangSelect, LocalizedDirective} from 'components/utils/langSelect/langSelect';
-
-
-class AccountFormModel {
-    language:Language;
-    accountingNumber:string;
-    iban:string;
-    bic:string;
-    name:string;
-    description:LocaleTexts;
-    accountType:AccountType;
-
-    account:LocalAccount;
-
-    constructor();
-    constructor(account:LocalAccount, lang:Language);
-    constructor(account?:LocalAccount, lang?:Language) {
-        if (account == undefined) {
-            this.account = new LocalAccount();
-            this.description = new LocaleTexts();
-            return;
-        }
-        this.language = lang;
-        this.account = account;
-        this.accountingNumber = account.accountingNumber;
-        this.iban = account.iban;
-        this.bic = account.bic;
-        this.name = account.name;
-        this.description = account.description;
-        this.accountType = account.accountType;
-    }
-}
-
+import {LangSelect} from 'components/lang/langSelect/langSelect';
+import {LocalizedDirective} from 'components/utils/localizedInput';
+import {RequiredValidator} from 'components/utils/validators';
+import {FormMessage} from 'components/utils/formMessage/formMessage';
 
 @Component({
     selector: 'editAccount'
@@ -55,7 +26,8 @@ class AccountFormModel {
 @View({
     templateUrl: './routes/accounts/edit/editView.html',
     styleUrls: ['./routes/accounts/edit/editView.css'],
-    directives: [NgFor, NgIf, FORM_DIRECTIVES, RouterLink, LangSelect, LocalizedDirective]
+    directives: [NgFor, NgIf, FORM_DIRECTIVES, RouterLink, LangSelect, LocalizedDirective,
+        RequiredValidator, FormMessage]
 })
 export class AccountsEditView {
     accountId:number;
@@ -64,11 +36,13 @@ export class AccountsEditView {
     authService:AuthService;
     router:Router;
 
-    language:Language;
-    accountModel:AccountFormModel;
+    editingAccount:LocalAccount;
+    editingLanguage:Language;
+    appLocale:string;
+
     allAccountTypes = ALL_ACCOUNT_TYPES;
 
-    constructor(accountService:AccountService, authService:AuthService, errorService: ErrorService,
+    constructor(accountService:AccountService, authService:AuthService, errorService:ErrorService,
                 routeParams:RouteParams, router:Router) {
         var itemIdParam = routeParams.get('id');
         this.accountId = parseInt(itemIdParam);
@@ -79,40 +53,32 @@ export class AccountsEditView {
         this.accountService = accountService;
         this.authService = authService;
         this.errorService = errorService;
-        this.language = authService.getEmployeeLanguage();
+        var language = authService.getEmployeeLanguage();
+        this.editingLanguage = language;
+        this.appLocale = language.locale;
 
-        this.buildFormModel();
+        this.findAccount();
     }
 
-    buildFormModel() {
+    findAccount() {
         if (this.accountId == null) {
-            this.accountModel = new AccountFormModel();
-            this.accountModel.language = this.language;
+            this.editingAccount = new LocalAccount();
             return;
         }
-        var thisView = this;
         this.accountService.get(this.accountId)
-            .then(function (account:LocalAccount) {
-                thisView.accountModel = new AccountFormModel(account, this.language);
+            .then((account:LocalAccount)=> {
+                this.editingAccount = account;
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }
 
-    getAccountTypeLabel(accountType: AccountType) {
+    getAccountTypeLabel(accountType:AccountType) {
         return LocalAccountFactory.getAccountTypeLabel(accountType);
     }
 
     doSaveEdit() {
-        var localAccount = this.accountModel.account;
-        localAccount.accountType = this.accountModel.accountType;
-        localAccount.accountingNumber = this.accountModel.accountingNumber;
-        localAccount.bic = this.accountModel.bic;
-        localAccount.company = this.authService.auth.employee.company;
-        localAccount.description = this.accountModel.description;
-        localAccount.iban = this.accountModel.iban;
-        localAccount.name = this.accountModel.name;
-        this.accountService.save(localAccount)
+        this.accountService.save(this.editingAccount)
             .then(()=> {
                 this.router.navigate('/accounts/list');
             }).catch((error)=> {

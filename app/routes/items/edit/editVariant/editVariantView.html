@@ -3,7 +3,6 @@
 
     <form #f="form" class="left"
           (ng-submit)="doSaveItemVariant()"
-          [ng-form-model]="itemVariantForm"
           *ng-if="itemVariant != undefined && item != undefined"
           enctype="multipart/form-data">
 
@@ -22,38 +21,36 @@
             <div>
                 <label for="reference">Référence</label>
                 <span>
-                    <input type="text" id="reference" required
-                           ng-control="variantReference"
+                    <input type="text" id="reference"
                            [placeholder]="item.reference"
-                           #reference="form">
-                    <formMessage [for]="reference.control"
-                                 check-error="required" message="Entrez une référence"></formMessage>
+                           [(ng-model)]="itemVariant.variantReference"
+                           ng-control="variantReference" validate-required>
+                    <formMessage for="variantReference"
+                                 check-errors=" ['required']"></formMessage>
                 </span>
             </div>
             <div>
                 <label for="pricing">Type de tarification</label>
                 <span>
                     <select id="pricing" required
-                            ng-control="pricing"
-                            (change)="onPricingChanged()"
-                            #pricing-control="form">
+                            [(ng-model)]="itemVariant.pricing"
+                            ng-control="pricing" validate-required>
                         <option *ng-for="#pricing of allPricings"
                                 [value]="pricing">
                             {{ getPricingLabel(pricing)[appLocale] }}
                         </option>
                     </select>
-                    <formMessage [for]="pricingControl.control"
-                                 check-error="required" message="Entrez une tarification"></formMessage>
+                    <formMessage for="pricing"
+                                 check-errors="['required']"></formMessage>
                 </span>
             </div>
             <div>
-                <label for="pricing">Tarif</label>
+                <label for="pricingAmount">Tarif</label>
                 <span>
                     <span [hidden]="!pricingAmountRequired">
-                        <input class="number" type="number" [attr.required]="pricingAmountRequired"
+                        <input class="number" type="number" [attr.validate-required]="pricingAmountRequired"
                                min="0" step="0.01" id="pricingAmount" size="5"
-                               ng-control="pricingAmount"
-                               #pricing-amount="form">
+                               ng-control="pricingAmount">
                         €
                     </span>
                     <div class="totalPreview">
@@ -61,8 +58,8 @@
                             Total: {{ getPricingTotalAmount() | currency:'EUR':true:'.2-2' }}
                         </span>
                     </div>
-                    <formMessage [for]="pricingAmount.control"
-                                 check-error="required" message="Entrez un tarif"></formMessage>
+                    <formMessage for="pricingAmount"
+                                 check-errors="['required']"></formMessage>
                 </span>
             </div>
         </div>
@@ -74,7 +71,6 @@
 
     <form #f="form" class="right"
           (ng-submit)="doAddAttribute()"
-          [ng-form-model]="newAttributeForm"
           *ng-if="itemVariant != undefined">
         <h3>Attributs</h3>
 
@@ -104,23 +100,21 @@
                        ng-control="definition"
                        placeholder="Clef"
                        localized [language]="editLanguage"
-                       [locale-texts]="newAttributeDefinitions"
+                       [locale-texts]="newAttributeValue.attributeDefinition.name"
                        #definition="form">
                 <input class="value" required
                        ng-control="value"
                        placeholder="Valeur"
                        localized [language]="editLanguage"
-                       [locale-texts]="newAttributeValues"
+                       [locale-texts]="newAttributeValue.value"
                        #value="form">
                 <button type="submit" [disabled]="!f.form.valid"
                         class="boxedLink">
                     <i class="fi-plus"></i>
                 </button>
             </div>
-            <formMessage [for]="definition.control"
-                         check-error="required" message="Entrez une clef"></formMessage>
-            <formMessage [for]="value.control"
-                         check-error="required" message="Entrez une valeur"></formMessage>
+            <formMessage for="definition" check-errors="['required']"></formMessage>
+            <formMessage for="value" check-errors="['required']"></formMessage>
         </div>
     </form>
 </div>

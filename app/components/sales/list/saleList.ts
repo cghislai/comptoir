@@ -10,8 +10,8 @@ import {LocaleTexts} from 'client/utils/lang';
 
 import {AuthService} from 'services/auth';
 
-import {AutoFocusDirective} from 'directives/autoFocus';
-import {FocusableDirective} from 'directives/focusable';
+import {AutoFocusDirective} from 'components/utils/autoFocus';
+import {FocusableDirective} from 'components/utils/focusable';
 
 
 /****
@@ -23,8 +23,8 @@ import {FocusableDirective} from 'directives/focusable';
     events: ['action']
 })
 @View({
-    templateUrl: './components/sales/saleList/saleColumn.html',
-    styleUrls: ['./components/sales/saleList/saleList.css'],
+    templateUrl: './components/sales/list/saleColumn.html',
+    styleUrls: ['./components/sales/list/saleList.css'],
     directives: [NgIf],
     // eases styling
     encapsulation: ViewEncapsulation.NONE
@@ -51,8 +51,8 @@ export class SaleColumnComponent {
 })
 
 @View({
-    templateUrl: './components/sales/saleList/saleList.html',
-    styleUrls: ['./components/sales/saleList/saleList.css'],
+    templateUrl: './components/sales/list/saleList.html',
+    styleUrls: ['./components/sales/list/saleList.css'],
     directives: [NgFor, NgIf, AutoFocusDirective, FocusableDirective, SaleColumnComponent]
 })
 

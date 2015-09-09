@@ -53,7 +53,7 @@ export class Language {
         this.label = labelMap;
     }
 
-    static fromLanguage(lang:string):Language {
+    static fromLocale(lang:string):Language {
         for (var language of Language.ALL_LANGUAGES) {
             if (language.locale == lang) {
                 return language

@@ -2,7 +2,7 @@
     <div>
         <div class="toPayHeader coloredHeader"
              [class.inactive]="noInput"
-             [hidden]="toPay <= 0">
+             [hidden]="toPayAmount <= 0">
             <h1>À payer</h1>
             <span class="busy">
                 <span class="valignAnchor"></span>
@@ -12,14 +12,14 @@
             <span class="actions">
                 <span class="valignAnchor"></span>
                 <span class="total single">
-                    {{  (sale.vatExclusiveAmount + sale.vatAmount) - sale.totalPaid | currency:'EUR':true:'.2-2' }}
+                    {{  toPayAmount | currency:'EUR':true:'.2-2' }}
                 </span>
             </span>
         </div>
 
         <div class="toPayHeader coloredHeader"
              [class.inactive]="noInput"
-             [hidden]="toPay > 0">
+             [hidden]="toPayAmount > 0">
             <h1 [hidden]="noInput">À rendre</h1>
             <h1 [hidden]="!noInput">Rendu</h1>
             <span class="busy">
@@ -31,9 +31,9 @@
             <span class="actions">
                 <span class="valignAnchor"></span>
                 <span class="total"
-                      [class.negative]="toPay < 0"
-                      [class.exact]="toPay == 0">
-                    {{ -toPay  | currency:'EUR':true:'.2-2'}}
+                      [class.negative]="toPayAmount < 0"
+                      [class.exact]="toPayAmount == 0">
+                    {{ -toPayAmount  | currency:'EUR':true:'.2-2'}}
                 </span>
                 <span class="action validateLink"
                       [hidden]="noInput"
@@ -44,7 +44,8 @@
         </div>
     </div>
 
-    <table class="payItems dataTable" [hidden]="sale.accountingEntries.length == 0">
+    <table class="payItems dataTable" *ng-if="accountingEntriesSearchResult != null"
+           [hidden]="accountingEntriesSearchResult.count == 0">
         <thead>
         <tr>
             <th>Compte</th>
@@ -53,7 +54,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ng-for="#entry of sale.accountingEntries" class="payItem">
+        <tr *ng-for="#entry of accountingEntriesSearchResult.list" class="payItem">
             <td>
                 <span *ng-if="entry.account != null">
                     {{ entry.account.description[locale] }}
@@ -81,7 +82,7 @@
         <tr>
             <th class="right">Total</th>
             <th class="number total">
-                {{ sale.totalPaid | currency:'EUR':true:'.2-2' }}
+                {{ (sale.vatExclusiveAmount + sale.vatAmount) | currency:'EUR':true:'.2-2' }}
             </th>
         </tr>
 
@@ -100,10 +101,10 @@
         </span>
     </div>
 
-    <div class="addMethod" [hidden]="noInput">
-        <div *ng-for="#account of allAccounts"
+    <div class="addMethod" [hidden]="noInput" *ng-if="accountsSearchResult != null">
+        <div *ng-for="#account of accountsSearchResult.list"
              class="boxedHoverableLink"
-             (^click)="startEditNewEntry(account)">
+             (^click)="addAccountingEntry(account)">
             {{ account.description[locale] }}
         </div>
     </div>

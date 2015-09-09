@@ -12,6 +12,7 @@ import {Pagination} from 'client/utils/pagination';
 
 import {ErrorService} from 'services/error';
 import {ItemService} from 'services/item';
+import {AuthService} from 'services/auth';
 
 import {ItemList, ItemColumn} from 'components/item/list/itemList';
 import {Paginator} from 'components/utils/paginator/paginator';
@@ -40,13 +41,15 @@ export class ItemsListView {
     keyboardTimeoutSet:boolean;
     keyboardTimeout:number = 200;
 
-    constructor(appService:ErrorService, itemService:ItemService, router:Router) {
+    constructor(appService:ErrorService, authService: AuthService,
+                itemService:ItemService, router:Router) {
         this.router = router;
         this.itemService = itemService;
         this.errorService = appService;
 
         this.searchRequest = new SearchRequest<LocalItem>();
         var itemSearch = new ItemSearch();
+        itemSearch.companyRef = authService.getEmployeeCompanyRef();
         var pagination = new Pagination(0, this.itemsPerPage);
         this.searchRequest.search = itemSearch;
         this.searchRequest.pagination = pagination;

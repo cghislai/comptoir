@@ -1,8 +1,8 @@
-<div class="listPage">
-    <h1>Historique des ventes</h1>
+<div class="pageContent">
+    <h1 class="pageTitle">Historique des ventes</h1>
 
     <div class="busy" [hidden]="searchRequest.request == null">
-        <img src="../../../../res/img/ajax-loader.black.gif">
+        <img src="../../../../res/img/spinner-2-black.gif">
     </div>
 
 
@@ -10,11 +10,11 @@
 
     </div>
 
-    <paginator  *ng-if="searchResult != null"
-                [total-count]="searchResult.count"
-                [page-size]="salesPerPage"
-                show-prev-next="true" show-first-last="true"
-                (page-change)="onPageChanged($event)"></paginator>
+    <paginator *ng-if="searchResult != null"
+               [total-count]="searchResult.count"
+               [page-size]="salesPerPage"
+               [show-prev-next-link]="true" [show-first-last-link]="true"
+               (page-change)="onPageChanged($event)"></paginator>
     <saleList *ng-if="searchResult != null"
               [sales]="searchResult.list"
               [columns]="columns"

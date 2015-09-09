@@ -12,9 +12,11 @@ import {LocalItemVariant} from 'client/localDomain/itemVariant';
 import {Sale, SaleRef} from 'client/domain/sale';
 import {Item, ItemRef} from 'client/domain/item';
 import {Pos} from 'client/domain/pos';
+import {LocaleTexts} from 'client/utils/lang';
 
 import {ErrorService} from 'services/error';
 import {SaleService} from 'services/sale';
+import {AuthService} from 'services/auth';
 import {ItemVariantSaleService} from 'services/itemVariantSale';
 
 import {ItemListView} from 'components/sales/sale/itemList/listView';
@@ -33,8 +35,9 @@ import {PosSelect} from 'components/pos/posSelect/posSelect';
 
 export class SaleView {
     saleService:SaleService;
-    itemVariantSaleService: ItemVariantSaleService;
+    itemVariantSaleService:ItemVariantSaleService;
     errorService:ErrorService;
+    authService:AuthService;
 
     routeParams:RouteParams;
     router:Router;
@@ -48,9 +51,11 @@ export class SaleView {
 
     language:string;
 
-    constructor(saleService:SaleService, errorService:ErrorService, itemVariantSaleService: ItemVariantSaleService,
+    constructor(saleService:SaleService, errorService:ErrorService, itemVariantSaleService:ItemVariantSaleService,
+                authService:AuthService,
                 routeParams:RouteParams, router:Router, location:Location) {
         this.saleService = saleService;
+        this.authService = authService;
         this.itemVariantSaleService = itemVariantSaleService;
         this.errorService = errorService;
 
@@ -146,35 +151,27 @@ export class SaleView {
             });
     }
 
-    onItemClicked(item:LocalItemVariant) {
+    onItemClicked(item:LocalItemVariant, commandView:CommandView) {
         var itemList = document.getElementById('saleItemList');
         itemList.focus();
 
-        var nextTask = Promise.resolve(this.sale);
         var newSale = this.sale.id == null;
-        if (this.sale.id == null) {
-            nextTask = this.saleService.save(this.sale);
-        }
-        nextTask.then((sale)=> {
-            var localItemSale = new LocalItemVariantSale();
-            localItemSale.discountRatio = 0;
-            localItemSale.itemVariant = item;
-            localItemSale.quantity = 1;
-            localItemSale.sale = sale;
-            localItemSale.vatExclusive = item.item.vatExclusive;
-            return this.itemVariantSaleService.save(localItemSale);
-        }).then((localItemSale: LocalItemVariantSale)=> {
-            if (newSale) {
-                var sale = localItemSale.sale;
-                this.saleService.activeSale = sale;
-                this.navigatingWithinSale = true;
-                this.router.navigate('/sales/sale/' + sale.id);
-            }
-        }).catch((error)=> {
-            this.errorService.handleRequestError(error);
-        });
-    }
+        if (newSale) {
+            this.sale.company = this.authService.auth.employee.company;
+            this.sale.discountRatio = 0;
 
+            return this.saleService.save(this.sale)
+                .then((sale)=> {
+                    this.saleService.activeSale = sale;
+                    this.navigatingWithinSale = true;
+                    this.sale = sale;
+                    return commandView.doAddItem(item);
+                }).then(()=>{
+                    this.router.navigate('/sales/sale/' + this.sale.id);
+                });
+        }
+        commandView.doAddItem(item);
+    }
 
     onCommandValidated(validated:boolean, payView:PayView) {
         this.payStep = validated;

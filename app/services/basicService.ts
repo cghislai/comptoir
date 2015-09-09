@@ -110,14 +110,17 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
             nextTask = this.client.update(entity, authToken);
         }
         return nextTask.then((ref:WithId)=> {
-            this.client.resourceInfo.cacheHandler.clearFromCache(ref.id);
-            return this.get(ref.id)
+            localEntity.id = ref.id;
+            return localEntity;
         });
     }
 
     refresh(entity:U):Promise<U> {
-        this.client.resourceInfo.cacheHandler.clearFromCache(entity.id);
-        return this.get(entity.id);
+        var authToken = this.authService.authToken;
+        return this.client.get(entity.id, authToken)
+            .then((wsEntity:T)=> {
+                return this.serviceInfo.updateLocal(entity, wsEntity, authToken);
+            });
     }
 
     remove(entity:U):Promise<any> {
@@ -125,7 +128,7 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
         return this.client.remove(entity.id, authToken);
     }
 
-    search(searchRequest:SearchRequest<U>):Promise<SearchResult<U>> {
+    search(searchRequest:SearchRequest<U>, existingResult?:SearchResult<U>):Promise<SearchResult<U>> {
         if (searchRequest.request != null) {
             searchRequest.request.discardRequest();
         }
@@ -138,6 +141,10 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
                 result.parseResponse(response, this.client.resourceInfo.jsonReviver);
                 return result;
             }).then((result:SearchResult<T>)=> {
+                if (existingResult) {
+                    searchRequest.request = null;
+                    return this.updateResult(existingResult, result);
+                }
                 var taskList = [];
                 var localResult = new SearchResult<U>();
                 localResult.count = result.count;
@@ -155,6 +162,45 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
                         searchRequest.request = null;
                         return localResult;
                     });
+            });
+    }
+
+    updateResult(result:SearchResult<U>, newResult:SearchResult<T>):Promise<SearchResult<U>> {
+        var taskList = [];
+        var authToken = this.authService.authToken;
+
+        var newItems = [];
+        var existingItemMap = {};
+        for (var item of result.list) {
+            existingItemMap[item.id] = item;
+        }
+        for (var newItem of newResult.list) {
+            var oldItem = existingItemMap[newItem.id];
+            if (oldItem == null) {
+                taskList.push(
+                    this.serviceInfo.toLocalConverter(newItem, authToken)
+                        .then((newLocalItem)=> {
+                            newItems.push(newLocalItem);
+                        })
+                );
+                continue;
+            }
+            taskList.push(
+                this.serviceInfo.updateLocal(oldItem, newItem, authToken)
+                    .then((newLocalItem)=> {
+                        newItems.push(newLocalItem);
+                    })
+            );
+            delete existingItemMap[oldItem.id];
+        }
+        for (var removedId in existingItemMap) {
+
+        }
+        result.count = newResult.count;
+        return Promise.all(taskList)
+            .then(() => {
+                result.list = newItems;
+                return result;
             });
     }
 }

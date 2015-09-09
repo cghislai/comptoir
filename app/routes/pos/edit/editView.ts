@@ -14,32 +14,8 @@ import {AuthService} from 'services/auth';
 import {PosService} from 'services/pos';
 import {ErrorService} from 'services/error';
 
-import {LangSelect, LocalizedDirective} from 'components/utils/langSelect/langSelect';
-
-
-class PosFormModel {
-    language:Language;
-    name:string;
-    description:LocaleTexts;
-    defaultCustomer: Customer;
-    pos:Pos;
-
-    constructor();
-    constructor(pos:Pos, lang:Language);
-    constructor(pos?:Pos, lang?:Language) {
-        if (pos == undefined) {
-            this.pos = new Pos();
-            this.description = new LocaleTexts();
-            return;
-        }
-        this.language = lang;
-        this.pos = pos;
-        this.name = pos.name;
-        this.description = pos.description;
-        this.defaultCustomer = null;
-    }
-}
-
+import {LangSelect} from 'components/lang/langSelect/langSelect';
+import {LocalizedDirective} from 'components/utils/localizedInput';
 
 @Component({
     selector: 'editPos'
@@ -50,52 +26,64 @@ class PosFormModel {
     directives: [NgFor, NgIf, FORM_DIRECTIVES, RouterLink, LocalizedDirective, LangSelect]
 })
 export class EditPosView {
-    posId:number;
     posService:PosService;
     errorService:ErrorService;
     authService:AuthService;
     router:Router;
 
-    language:Language;
-    posModel:PosFormModel;
+    appLocale:string;
+    editLanguage:Language;
+    editingPos:Pos;
+
 
     constructor(posService:PosService, authService:AuthService, appService:ErrorService,
                 routeParams:RouteParams, router:Router) {
-        var itemIdParam = routeParams.get('id');
-        this.posId = parseInt(itemIdParam);
-        if (isNaN(this.posId)) {
-            this.posId = null;
-        }
+
         this.router = router;
         this.posService = posService;
         this.authService = authService;
         this.errorService = appService;
-        this.language = authService.getEmployeeLanguage();
-        this.buildFormModel();
+
+        var language = authService.getEmployeeLanguage();
+        this.editLanguage = language;
+        this.appLocale = language.locale;
+        this.findPos(routeParams);
     }
 
-    buildFormModel() {
-        var lastEditLanguage = this.language;
-        if (this.posId == null) {
-            this.posModel = new PosFormModel();
-            this.posModel.language = lastEditLanguage;
+    findPos(routeParams:RouteParams) {
+        if (routeParams == null || routeParams.params == null) {
+            this.getNewPos();
             return;
         }
-        var thisView = this;
-        this.posService.get(this.posId)
-            .then(function (pos:Pos) {
-                thisView.posModel = new PosFormModel(pos, lastEditLanguage);
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
+        var itemIdParam = routeParams.get('id');
+        var posId = parseInt(itemIdParam);
+        if (isNaN(posId)) {
+            if (itemIdParam == 'new') {
+                this.getNewPos();
+                return;
+            }
+            this.getNewPos();
+            return;
+        }
+        this.getPos(posId);
+    }
+
+    getNewPos() {
+        this.editingPos = new Pos();
+        this.editingPos.description = new LocaleTexts();
+    }
+
+    getPos(id:number) {
+        this.posService.get(id)
+            .then((pos)=> {
+                this.editingPos = pos;
             });
     }
 
     doSaveEdit() {
-        var pos = this.posModel.pos;
-        pos.companyRef = new CompanyRef(this.authService.auth.employee.company.id);
-        pos.name = this.posModel.name;
-        pos.description = this.posModel.description;
-        this.posService.save(pos)
+        var company = this.authService.getEmployeeCompany();
+        var companyRef = new CompanyRef(company.id);
+        this.posService.save(this.editingPos)
             .then((posRef)=> {
                 this.router.navigate('/pos/list');
             }).catch((error)=> {

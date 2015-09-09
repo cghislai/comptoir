@@ -1,8 +1,8 @@
-<div class="listPage">
-    <h1>Ventes en cours</h1>
+<div class="pageContent">
+    <h1 class="pageTitle">Ventes en cours</h1>
 
-    <div class="busy" [hidden]="!loading">
-        <img src="../../../../res/img/ajax-loader.black.gif">
+    <div class="busy" [hidden]="searchRequest.request == null">
+        <img src="../../../../res/img/spinner-2-black.gif">
     </div>
 
 
@@ -10,17 +10,17 @@
 
     </div>
 
-    <paginator  *ng-if="salesResult != null"
-                [total-count]="salesResult.count"
+    <paginator *ng-if="searchResult != null"
+               [total-count]="searchResult.count"
                [page-size]="salesPerPage"
-               show-prev-next="true" show-first-last="true"
+               [show-prev-next-link]="true" [show-first-last-link]="true"
                (page-change)="onPageChanged($event)"></paginator>
-    <saleList *ng-if="salesResult != null"
-            [sales]="salesResult.list"
-            [columns]="columns"
-            selectable="true"
-            headers="true"
-            (sale-clicked)="onSaleClicked($event)"
-            (column-action)="onColumnAction($event)">
+    <saleList *ng-if="searchResult != null"
+              [sales]="searchResult.list"
+              [columns]="columns"
+              [selectable]="true"
+              [headers]="true"
+              (sale-clicked)="onSaleClicked($event)"
+              (column-action)="onColumnAction($event)">
     </saleList>
 </div>

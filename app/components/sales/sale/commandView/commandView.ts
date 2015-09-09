@@ -9,6 +9,7 @@ import {SaleRef} from 'client/domain/sale';
 import {ItemVariantSaleSearch} from 'client/domain/itemVariantSale';
 
 import {LocalSale} from 'client/localDomain/sale';
+import {LocalItemVariant} from 'client/localDomain/itemVariant';
 import {LocalItemVariantSale} from 'client/localDomain/itemVariantSale';
 
 import {LocaleTexts, Language} from 'client/utils/lang';
@@ -20,16 +21,17 @@ import {ItemVariantSaleService} from 'services/itemVariantSale';
 import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
 
-import {AutoFocusDirective} from 'directives/autoFocus';
-import {FastInput} from 'directives/fastInput';
-import {LangSelect, LocalizedDirective} from 'components/utils/langSelect/langSelect';
+import {AutoFocusDirective} from 'components/utils/autoFocus';
+import {FastInput} from 'components/utils/fastInput';
+import {LangSelect} from 'components/lang/langSelect/langSelect';
+import {LocalizedDirective} from 'components/utils/localizedInput'
 
 
 // The component
 @Component({
     selector: 'commandView',
     events: ['validate', 'saleInvalidated'],
-    properties: ['salePorp: sale', 'validated', 'noInput']
+    properties: ['saleProp: sale', 'validated', 'noInput']
 })
 
 @View({
@@ -80,13 +82,22 @@ export class CommandView {
 
     set saleProp(value:LocalSale) {
         this.sale = value;
-        var search = this.saleItemsRequest.search;
-        search.saleRef = new SaleRef(value.id);
+        if (this.sale.id == null) {
+            this.saleItemsResult = new SearchResult<LocalItemVariantSale>();
+            this.saleItemsResult.count = 0;
+            this.saleItemsResult.list = [];
+            return;
+        }
         this.searchItems();
     }
 
     searchItems() {
-        this.itemVariantSaleService.search(this.saleItemsRequest)
+        var search = this.saleItemsRequest.search;
+        search.saleRef = new SaleRef(this.sale.id);
+        if (this.sale.id == null) {
+            return;
+        }
+        return this.itemVariantSaleService.search(this.saleItemsRequest, this.saleItemsResult)
             .then((result)=> {
                 this.saleItemsResult = result;
             }).catch((error)=> {
@@ -104,14 +115,60 @@ export class CommandView {
         this.validate.next(this.validated);
     }
 
-
     doRemoveItem(localItemVariantSale:LocalItemVariantSale) {
-        var localSale = localItemVariantSale.sale;
+        var newItems: LocalItemVariantSale[] = [];
+        for (var existingItemSale of this.saleItemsResult.list) {
+            if (existingItemSale == localItemVariantSale) {
+                continue
+            }
+            newItems.push(existingItemSale);
+        }
+        this.saleItemsResult.list = newItems;
 
         this.itemVariantSaleService.remove(localItemVariantSale)
             .then(()=> {
-                this.searchItems();
                 this.saleService.refresh(this.sale);
+                this.searchItems();
+            }).catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });
+    }
+
+    doAddItem(itemVariant:LocalItemVariant) {
+        var existingItem:LocalItemVariantSale = null;
+        for (var existingItemSale of this.saleItemsResult.list) {
+            if (existingItemSale.itemVariant.id == itemVariant.id) {
+                existingItem = existingItemSale;
+                break;
+            }
+        }
+        var newItem = existingItem == null;
+        if (newItem) {
+            existingItemSale = new LocalItemVariantSale();
+            existingItemSale.comment = new LocaleTexts();
+            existingItemSale.discountRatio = 0;
+            existingItemSale.itemVariant = itemVariant;
+            existingItemSale.quantity = 1;
+            existingItemSale.sale = this.sale;
+            existingItemSale.vatExclusive = itemVariant.item.vatExclusive;
+            existingItemSale.vatRate = itemVariant.item.vatRate;
+            if (this.saleItemsResult != null) {
+                this.saleItemsResult.list.push(existingItemSale);
+                this.saleItemsResult.count++;
+            }
+        } else {
+            existingItemSale.quantity += 1;
+        }
+        return this.itemVariantSaleService.save(existingItemSale)
+            .then((localItemSale:LocalItemVariantSale)=> {
+                var taskList: Promise<any>[] = [
+                    this.itemVariantSaleService.refresh(existingItemSale),
+                    this.saleService.refresh(this.sale)
+                ]
+                if (newItem) {
+                    taskList.push(this.searchItems());
+                }
+                return Promise.all(taskList);
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
