@@ -44,8 +44,8 @@ export class SaleView {
     location:Location;
 
     sale:LocalSale;
-    payStep:boolean;
     navigatingWithinSale:boolean;
+    payStep:boolean;
 
     pos:Pos;
 
@@ -74,6 +74,15 @@ export class SaleView {
 
     onReuse() {
         this.navigatingWithinSale = false;
+    }
+
+    get saleClosed(): boolean{
+        var closed: boolean =  this.sale != null && this.sale.closed;
+        return closed;
+    }
+
+    get newSale(): boolean{
+        return this.sale != null && this.sale.id == null;
     }
 
     private findSale() {
@@ -155,8 +164,7 @@ export class SaleView {
         var itemList = document.getElementById('saleItemList');
         itemList.focus();
 
-        var newSale = this.sale.id == null;
-        if (newSale) {
+        if (this.newSale) {
             this.sale.company = this.authService.auth.employee.company;
             this.sale.discountRatio = 0;
 

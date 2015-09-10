@@ -1,11 +1,11 @@
-<div class="saleView" *ng-if="sale != null">
+<div class="saleView">
     <div class="header">
         <span>Point de vente :</span>
         <span><posSelect (pos-changed)="pos = $event"
-                [attr.editable]="!sale?.closed"></posSelect></span>
+                [attr.editable]="!saleClosed"></posSelect></span>
     </div>
     <div class="wrapper">
-        <div class="saleViewContainer" [class.slide-left]="payStep"  [class.no-anim]="sale.closed || sale.id == null">
+        <div class="saleViewContainer" [class.slide-left]="payStep"  [class.no-anim]="saleClosed || newSale">
             <div class="itemList" >
                 <div>
                     <itemListView #itemlist id="saleItemList"
@@ -17,7 +17,7 @@
                     <commandView #commandview id="saleCommandView"
                                  (validate)="onCommandValidated($event, payview)"
                                  (sale-invalidated)="onSaleInvalidated()"
-                                 [no-input]="sale.closed"
+                                 [no-input]="saleClosed"
                                  [sale]="sale"
                                  [validated]="payStep"></commandView>
                 </div>
@@ -27,7 +27,7 @@
                     <payView #payview id="salePayView"
                              (paid)="onCommandPaid()"
                              [pos]="pos"
-                             [no-input]="sale.closed"
+                             [no-input]="saleClosed"
                              [sale]="sale"></payView>
                 </div>
             </div>

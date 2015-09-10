@@ -2,11 +2,9 @@
  * Created by cghislai on 02/09/15.
  */
 
-
-import {LocalAccount} from 'client/localDomain/account';
-
 import {AccountingEntry, AccountingEntryRef, AccountingEntryClient, AccountingEntryFactory} from 'client/domain/accountingEntry';
-import {AccountRef} from 'client/domain/account';
+import {AccountClient, AccountRef} from 'client/domain/account';
+import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
 import {Company, CompanyRef, CompanyClient, CompanyFactory} from 'client/domain/company';
 import {LocalCompany, LocalCompanyFactory} from 'client/localDomain/company';
 import {AccountingTransactionRef, AccountingTransaction, AccountingTransactionClient, AccountingTransactionFactory} from 'client/domain/accountingTransaction';
@@ -29,12 +27,12 @@ export class LocalAccountingEntry {
 }
 
 export class LocalAccountingEntryFactory {
-    static toLocalAccountingEntry(accountingEntry:AccountingEntry, authToken:string) : Promise<LocalAccountingEntry>{
+    static toLocalAccountingEntry(accountingEntry:AccountingEntry, authToken:string):Promise<LocalAccountingEntry> {
         var localAccountingEntry = new LocalAccountingEntry();
         return LocalAccountingEntryFactory.updateLocalAccountingEntry(localAccountingEntry, accountingEntry, authToken);
     }
 
-    static updateLocalAccountingEntry(localAccountingEntry:LocalAccountingEntry, accountingEntry:AccountingEntry, authToken:string): Promise<LocalAccountingEntry> {
+    static updateLocalAccountingEntry(localAccountingEntry:LocalAccountingEntry, accountingEntry:AccountingEntry, authToken:string):Promise<LocalAccountingEntry> {
         localAccountingEntry.amount = accountingEntry.amount;
         localAccountingEntry.dateTime = accountingEntry.dateTime;
         localAccountingEntry.description = accountingEntry.description;
@@ -44,6 +42,18 @@ export class LocalAccountingEntryFactory {
 
         var taskList = [];
 
+        var accontRef = accountingEntry.accountRef;
+        var accountId = accontRef.id;
+        var accoutClient = new AccountClient();
+        taskList.push(
+            accoutClient.getFromCacheOrServer(accountId, authToken)
+                .then((account)=> {
+                    return LocalAccountFactory.toLocalAccount(account, authToken);
+                })
+                .then((localAccount:LocalAccount)=> {
+                    localAccountingEntry.account = localAccount;
+                })
+        );
         var companyRef = accountingEntry.companyRef;
         var companyId = companyRef.id;
         var companyClient = new CompanyClient();
@@ -51,7 +61,7 @@ export class LocalAccountingEntryFactory {
             companyClient.getFromCacheOrServer(companyId, authToken)
                 .then((company)=> {
                     return LocalCompanyFactory.toLocalCompany(company, authToken);
-                }).then((localCompany: LocalCompany)=>{
+                }).then((localCompany:LocalCompany)=> {
                     localAccountingEntry.company = localCompany;
                 })
         );
@@ -72,9 +82,9 @@ export class LocalAccountingEntryFactory {
             var entryClient = new AccountingEntryClient();
             taskList.push(
                 entryClient.getFromCacheOrServer(vatEntryId, authToken)
-                    .then((entry: AccountingEntry)=> {
+                    .then((entry:AccountingEntry)=> {
                         return LocalAccountingEntryFactory.toLocalAccountingEntry(entry, authToken);
-                    }).then((localEntry: LocalAccountingEntry)=>{
+                    }).then((localEntry:LocalAccountingEntry)=> {
                         localAccountingEntry.vatAccountingEntry = localEntry;
                     })
             );

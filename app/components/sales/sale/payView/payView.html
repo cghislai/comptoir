@@ -45,7 +45,7 @@
     </div>
 
     <table class="payItems dataTable" *ng-if="accountingEntriesSearchResult != null"
-           [hidden]="accountingEntriesSearchResult.count == 0">
+           [hidden]="accountingEntriesSearchResult.list.length == 0">
         <thead>
         <tr>
             <th>Compte</th>
@@ -72,7 +72,7 @@
             </td>
 
             <td class="actions"  [hidden]="noInput">
-                <a class="actionIcon remove" (^click)="removePayItem(pay)">
+                <a class="actionIcon remove" (^click)="removeEntry(entry)">
                     <i class="fi-x red"></i>
                 </a>
             </td>

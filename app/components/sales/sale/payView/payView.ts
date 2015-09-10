@@ -81,6 +81,8 @@ export class PayView {
         accountingEntriesSearch.companyRef = authService.getEmployeeCompanyRef();
         this.accountingEntriesSearchRequest.search = accountingEntriesSearch;
 
+        this.accountingEntriesSearchResult = new SearchResult<LocalAccountingEntry>();
+        this.accountingEntriesSearchResult.list = [];
         this.totalPaidAmount = 0;
 
         this.locale = authService.getEmployeeLanguage().locale;

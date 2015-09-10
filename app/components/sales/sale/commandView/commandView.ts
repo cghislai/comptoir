@@ -2,7 +2,7 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, NgIf, EventEmitter, FORM_DIRECTIVES} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, EventEmitter, LifecycleEvent, FORM_DIRECTIVES} from 'angular2/angular2';
 
 import {CompanyRef} from 'client/domain/company';
 import {SaleRef} from 'client/domain/sale';
@@ -31,7 +31,8 @@ import {LocalizedDirective} from 'components/utils/localizedInput'
 @Component({
     selector: 'commandView',
     events: ['validate', 'saleInvalidated'],
-    properties: ['saleProp: sale', 'validated', 'noInput']
+    properties: ['sale', 'validated', 'noInput'],
+    lifecycle: [LifecycleEvent.onChange]
 })
 
 @View({
@@ -80,21 +81,23 @@ export class CommandView {
         this.saleItemsRequest.search = search;
     }
 
-    set saleProp(value:LocalSale) {
-        this.sale = value;
-        if (this.sale.id == null) {
-            this.saleItemsResult = new SearchResult<LocalItemVariantSale>();
-            this.saleItemsResult.count = 0;
-            this.saleItemsResult.list = [];
-            return;
+    onChange(changes: any) {
+        if (changes.sale != null) {
+            var newSale = changes.sale.currentValue;
+            if (newSale != null) {
+                this.searchItems();
+            }
         }
-        this.searchItems();
     }
 
     searchItems() {
         var search = this.saleItemsRequest.search;
         search.saleRef = new SaleRef(this.sale.id);
         if (this.sale.id == null) {
+            return;
+            this.saleItemsResult = new SearchResult<LocalItemVariantSale>();
+            this.saleItemsResult.count = 0;
+            this.saleItemsResult.list = [];
             return;
         }
         return this.itemVariantSaleService.search(this.saleItemsRequest, this.saleItemsResult)
