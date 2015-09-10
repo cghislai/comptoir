@@ -221,6 +221,26 @@ export class CountCashView {
 
     closeBalance() {
         this.balanceService.closeBalance(this.balance)
+            .then(()=>{
+                // Rest
+                this.balance = new LocalBalance();
+                this.moneyPileList = [];
+                for (var cashType of ALL_CASH_TYPES) {
+                    var moneyPile:LocalMoneyPile = new LocalMoneyPile();
+                    moneyPile.unitAmount = LocalMoneyPileFactory.getCashTypeUnitValue(cashType);
+                    moneyPile.balance = this.balance;
+                    moneyPile.label = LocalMoneyPileFactory.getCashTypeLabel(cashType);
+                    this.moneyPileList.push(moneyPile);
+                }
+                this.account =  this.accountService.lastUsedBalanceAccount;
+                this.balance.account = this.account;
+                if (this.account == null) {
+                    this.accountId = null;
+                    return;
+                }
+                this.accountId = this.account.id;
+                this.searchLastBalance();
+            })
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });

@@ -122,7 +122,7 @@ export class LocalMoneyPileFactory {
             case CashType.TEN_CENT:
                 return {'fr': '10 cent'};
             case CashType.TWENTY_CENT:
-                return {'fr': '30 cent'};
+                return {'fr': '20 cent'};
             case CashType.FIFTY_CENT:
                 return {'fr': '50 cent'};
             case CashType.ONE_EURO:
@@ -168,19 +168,19 @@ export enum CashType {
 }
 
 export var ALL_CASH_TYPES = [
-    CashType.ONE_CENT,
-    CashType.TWO_CENT,
-    CashType.FIVE_CENT,
-    CashType.TEN_CENT,
-    CashType.TWENTY_CENT,
-    CashType.FIFTY_CENT,
-    CashType.ONE_EURO,
-    CashType.TWO_EURO,
-    CashType.FIVE_EURO,
-    CashType.TEN_EURO,
-    CashType.TWENTY_EURO,
-    CashType.FIFTY_EURO,
-    CashType.ONE_HUNDRED_EURO,
+    CashType.FIVE_HUNDRED_EURO,
     CashType.TWO_HUNDRED_EURO,
-    CashType.FIVE_HUNDRED_EURO
+    CashType.ONE_HUNDRED_EURO,
+    CashType.FIFTY_EURO,
+    CashType.TWENTY_EURO,
+    CashType.TEN_EURO,
+    CashType.FIVE_EURO,
+    CashType.TWO_EURO,
+    CashType.ONE_EURO,
+    CashType.FIFTY_CENT,
+    CashType.TWENTY_CENT,
+    CashType.TEN_CENT,
+    CashType.FIVE_CENT,
+    CashType.TWO_CENT,
+    CashType.ONE_CENT
 ];

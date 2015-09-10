@@ -40,6 +40,9 @@ export class CashHistoryView {
         var balanceSearch = new BalanceSearch();
         balanceSearch.companyRef = new CompanyRef(authService.auth.employee.company.id);
         var pagination = new Pagination(0, this.itemsPerPage);
+        pagination.sorts = {
+            'DATETIME': 'desc'
+        };
         this.searchRequest.pagination = pagination;
         this.searchRequest.search = balanceSearch;
 
