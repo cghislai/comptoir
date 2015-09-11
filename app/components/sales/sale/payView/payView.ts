@@ -2,7 +2,7 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, EventEmitter, NgFor, NgIf} from 'angular2/angular2';
+import {Component, View, EventEmitter, NgFor, NgIf, LifecycleEvent} from 'angular2/angular2';
 
 import {LocalSale} from 'client/localDomain/sale';
 import {LocalAccount} from 'client/localDomain/account';
@@ -32,7 +32,8 @@ import {FastInput} from 'components/utils/fastInput'
 @Component({
     selector: "payView",
     events: ['paid'],
-    properties: ['saleProp: sale', 'posProp: pos', 'noInput']
+    properties: ['sale', 'pos', 'noInput'],
+    lifecycle: [LifecycleEvent.onChange]
 })
 @View({
     templateUrl: './components/sales/sale/payView/payView.html',
@@ -89,38 +90,29 @@ export class PayView {
         this.toPayAmount = 0;
     }
 
-    set saleProp(value:LocalSale) {
-        this.sale = value;
-        this.start();
-    }
+    onChange(changes) {
+        if (changes.sale != null) {
+            var newSale: LocalSale = changes.sale.currentValue;
+            if (newSale != null && newSale.id != null) {
+                this.searchTotalPaid();
+                this.searchAccountingEntries();
+            }
+        }
 
-    set posProp(value:Pos) {
-        this.pos = value;
-        this.start();
+        if (changes.sale != null || changes.pos != null) {
+            if (this.sale != null && this.pos != null) {
+                if (!this.sale.closed) {
+                    this.searchAccounts();
+                }
+            }
+        }
     }
 
     private hasSale():boolean {
         return this.sale != null && this.sale.id != null;
     }
 
-    start() {
-        if (!this.hasSale()) {
-            return;
-        }
-        if (!this.sale.closed) {
-            if (this.pos == null) {
-                return;
-            }
-        }
-        this.searchAccounts();
-        this.searchAccountingEntries();
-        this.searchTotalPaid();
-    }
-
     searchAccounts() {
-        if (this.sale.closed) {
-            return;
-        }
         if (this.pos != null) {
             var posRef = new PosRef(this.pos.id);
             this.accountsSearchRequest.search.posRef = posRef;

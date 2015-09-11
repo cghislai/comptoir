@@ -54,7 +54,7 @@ export class ItemListView {
 
         var itemSearch = new ItemSearch();
         itemSearch.multiSearch = null;
-        itemSearch.companyRef = new CompanyRef(authService.auth.employee.company.id);
+        itemSearch.companyRef = authService.getEmployeeCompanyRef();
         var itemVariantSearch = new ItemVariantSearch();
         itemVariantSearch.itemSearch = itemSearch;
         var pagination = new Pagination(0, 20);

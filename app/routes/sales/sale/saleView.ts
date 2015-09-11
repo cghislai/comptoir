@@ -184,7 +184,7 @@ export class SaleView {
     onCommandValidated(validated:boolean, payView:PayView) {
         this.payStep = validated;
         if (validated) {
-            payView.start();
+            payView.searchTotalPaid();
         }
     }
 

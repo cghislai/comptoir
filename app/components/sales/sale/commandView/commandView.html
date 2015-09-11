@@ -173,7 +173,7 @@
 
         </tbody>
         <tfoot [hidden]="saleItemsResult?.list?.length <= 0">
-        <tr [hidden]="sale.discountRatio == null"
+        <tr [hidden]="sale.discountRatio == null || sale.discountRatio <= 0"
             class="details">
             <th colspan="3" class="saleFooter reduction">
                 Réduction {{ (sale.discountRatio * 100) | number:'.0' }}%
