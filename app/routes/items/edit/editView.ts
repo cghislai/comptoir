@@ -49,7 +49,7 @@ export class ItemEditView {
 
     item:LocalItem;
     itemPictureTouched:boolean;
-    itemVatPercentage: number;
+    itemVatPercentage:number;
     appLocale:string;
     editLanguage:Language;
 
@@ -215,6 +215,17 @@ export class ItemEditView {
     }
 
     onVariantColumnAction(event) {
-        console.log(event);
+        var column = event.column;
+        var itemVariant:LocalItemVariant = event.itemVariant;
+        ;
+        if (column == ItemVariantColumn.ACTION_REMOVE) {
+            this.itemVariantService.remove(itemVariant)
+                .then(()=> {
+                    this.findItemVariants();
+                })
+                .catch((error)=> {
+                    this.errorService.handleRequestError(error);
+                });
+        }
     }
 }

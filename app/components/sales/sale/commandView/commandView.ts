@@ -137,7 +137,7 @@ export class CommandView {
             })
             .then(()=>{
                 if (this.saleItemsResult.list.length == 0) {
-                    this.saleEmptied.next();
+                    this.saleEmptied.next(null);
                 }
             })
             .catch((error)=> {
