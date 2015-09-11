@@ -30,7 +30,7 @@ import {LocalizedDirective} from 'components/utils/localizedInput'
 // The component
 @Component({
     selector: 'commandView',
-    events: ['validate', 'saleInvalidated'],
+    events: ['validate', 'saleEmptied'],
     properties: ['sale', 'validated', 'noInput'],
     lifecycle: [LifecycleEvent.onChange]
 })
@@ -64,7 +64,7 @@ export class CommandView {
     editingSaleDiscount:boolean = false;
     validate = new EventEmitter();
     validated:boolean = false;
-    saleInvalidated = new EventEmitter();
+    saleEmptied = new EventEmitter();
 
     constructor(saleService:SaleService, itemVariantSaleService:ItemVariantSaleService,
                 authService:AuthService,
@@ -95,7 +95,7 @@ export class CommandView {
         }
     }
 
-    searchItems() {
+    searchItems() : Promise<any>{
         var search = this.saleItemsRequest.search;
         search.saleRef = new SaleRef(this.sale.id);
         if (this.sale.id == null) {
@@ -129,9 +129,18 @@ export class CommandView {
 
         this.itemVariantSaleService.remove(localItemVariantSale)
             .then(()=> {
-                this.saleService.refresh(this.sale);
-                this.searchItems();
-            }).catch((error)=> {
+                var taskList = [
+                    this.saleService.refresh(this.sale),
+                    this.searchItems()
+                ];
+                return Promise.all(taskList);
+            })
+            .then(()=>{
+                if (this.saleItemsResult.list.length == 0) {
+                    this.saleEmptied.next();
+                }
+            })
+            .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }

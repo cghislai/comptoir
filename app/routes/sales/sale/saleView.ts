@@ -138,6 +138,11 @@ export class SaleView {
         }
         this.saleService.get(id)
             .then((sale)=> {
+                if (sale == null) {
+                    this.getNewSale();
+                    this.location.go('/sales/sale/new');
+                    return;
+                }
                 this.sale = sale;
                 if (sale.closed) {
                     this.payStep = true;

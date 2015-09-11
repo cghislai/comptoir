@@ -16,7 +16,7 @@
                 <div>
                     <commandView #commandview id="saleCommandView"
                                  (validate)="onCommandValidated($event, payview)"
-                                 (sale-invalidated)="onSaleInvalidated()"
+                                 (sale-emptied)="onSaleEmptied()"
                                  [no-input]="saleClosed"
                                  [sale]="sale"
                                  [validated]="payStep"></commandView>

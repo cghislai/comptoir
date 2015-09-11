@@ -125,6 +125,9 @@ export class BasicClient<T extends WithId> {
         return request
             .run()
             .then((response) => {
+                if (response.text == null || response.text.length == 0) {
+                    return null;
+                }
                 var entity:T = JSON.parse(response.text, reviver);
                 this.resourceInfo.cacheHandler.putInCache(entity);
                 return entity;

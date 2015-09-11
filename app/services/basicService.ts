@@ -94,6 +94,9 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
         var authToken = this.authService.authToken;
         return this.client.get(id, authToken)
             .then((entity:T) => {
+                if (entity == null) {
+                    return null;
+                }
                 return this.serviceInfo.toLocalConverter(entity, authToken);
             });
     }
