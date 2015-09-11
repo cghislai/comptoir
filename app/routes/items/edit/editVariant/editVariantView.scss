@@ -1,4 +1,5 @@
 @import '../../../../styles/_forms';
+@import '../../../../styles/_dataTable';
 
 div.pageContent {
   .itemPicturePreview {
@@ -25,7 +26,7 @@ div.pageContent {
       width: 20em;
     }
 
-    div.attributeTable {
+    .attributeTable {
       border-bottom: .1em solid lightgray;
     }
 
@@ -40,7 +41,7 @@ div.pageContent {
       }
     }
 
-    div.attribute {
+    .attribute {
       padding: .3em;
       width: 100%;
 

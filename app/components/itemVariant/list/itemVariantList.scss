@@ -49,3 +49,26 @@
     font-size: 3em;
   }
 }
+
+.attributeValue {
+  font-size: .8em;
+  color: #555555;
+
+  &:not(:last-child) {
+    &::after {
+      content: ' | ';
+      font-size: 1em;
+    }
+  }
+  .def {
+    padding: 0;
+    font-weight: bold;
+    &::after {
+      content: ':';
+    }
+  }
+  .value
+  {
+    font-weight: lighter;;
+  }
+}

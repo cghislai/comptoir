@@ -2,9 +2,11 @@
     <header class="coloredHeader"
             [class.inactive]="noInput">
         <h1>
-            <span>Vente</span>
-            <span class="saleRef" [hidden]="sale.id == null">
-                #{{ sale.id}}
+            <span [hidden]="sale.id == null">
+                Vente <span class="saleRef" >#{{ sale.id}}</span>
+            </span>
+            <span [hidden]="sale.id != null">
+                Nouvelle vente
             </span>
         </h1>
         <span class="busy">

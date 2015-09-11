@@ -3,7 +3,7 @@
 
     <form #f="form" class="left"
           (ng-submit)="doSaveItemVariant()"
-          *ng-if="itemVariant != undefined && item != undefined"
+          *ng-if="itemVariant != null && item != undefined"
           enctype="multipart/form-data">
 
         <div class="table">
@@ -24,8 +24,8 @@
                     <input type="text" id="reference"
                            [placeholder]="item.reference"
                            [(ng-model)]="itemVariant.variantReference"
-                           ng-control="variantReference" validate-required>
-                    <formMessage for="variantReference"
+                           ng-control="reference" validate-required>
+                    <formMessage for="reference"
                                  check-errors=" ['required']"></formMessage>
                 </span>
             </div>
@@ -74,22 +74,27 @@
           *ng-if="itemVariant != undefined">
         <h3>Attributs</h3>
 
-        <div class="attributeTable">
-            <div class="attribute"
-                 *ng-for="#attribute of itemVariant.attributeValues">
-                <span class="definition">
+        <table class="dataTable">
+            <tbody>
+
+            <tr class="attribute"
+                *ng-for="#attribute of allVariantAttributes">
+                <td class="definition">
                     {{ attribute.attributeDefinition?.name[editLanguage.locale] }}
-                </span>
-                <span class="value">
+                </td>
+                <td class="value">
                     {{ attribute.value[editLanguage.locale] }}
-                </span>
-                <span class="action remove"
-                      (^click)="doRemoveAttribute(attribute)">
-                    <i class="fi-minus"></i>
-                </span>
-            </div>
-        </div>
-        <div class="form" >
+                </td>
+                <td class="actions">
+                    <a class="actionIcon"
+                          (^click)="doRemoveAttribute(attribute)">
+                        <i class="fi-minus red"></i>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="form">
             <div class="language">
                 <langSelect [display-locale]="appLocale"
                             [selected-language]="editLanguage"
@@ -115,6 +120,7 @@
             </div>
             <formMessage for="definition" check-errors="['required']"></formMessage>
             <formMessage for="value" check-errors="['required']"></formMessage>
+
         </div>
     </form>
 </div>

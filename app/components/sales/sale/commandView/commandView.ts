@@ -79,6 +79,11 @@ export class CommandView {
         var search = new ItemVariantSaleSearch();
         search.companyRef = new CompanyRef(authService.auth.employee.company.id);
         this.saleItemsRequest.search = search;
+
+        this.saleItemsResult = new SearchResult<LocalItemVariantSale>();
+        this.saleItemsResult.count = 0;
+        this.saleItemsResult.list = [];
+
     }
 
     onChange(changes: any) {
@@ -95,15 +100,9 @@ export class CommandView {
         search.saleRef = new SaleRef(this.sale.id);
         if (this.sale.id == null) {
             return;
-            this.saleItemsResult = new SearchResult<LocalItemVariantSale>();
-            this.saleItemsResult.count = 0;
-            this.saleItemsResult.list = [];
-            return;
         }
         return this.itemVariantSaleService.search(this.saleItemsRequest, this.saleItemsResult)
-            .then((result)=> {
-                this.saleItemsResult = result;
-            }).catch((error)=> {
+            .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }

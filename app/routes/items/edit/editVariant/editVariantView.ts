@@ -46,6 +46,8 @@ export class ItemVariantEditView {
     item:LocalItem;
     itemVariant:LocalItemVariant;
     newAttributeValue:LocalAttributeValue;
+    attributesToAdd:LocalAttributeValue[];
+    allVariantAttributes:LocalAttributeValue[];
 
     pricingAmountRequired:boolean;
 
@@ -71,6 +73,8 @@ export class ItemVariantEditView {
             Pricing.ADD_TO_BASE,
             Pricing.PARENT_ITEM
         ];
+        this.attributesToAdd = [];
+        this.allVariantAttributes = [];
 
         this.resetNewAttributeValue();
         this.findItem(routeParams).then(()=> {
@@ -78,7 +82,7 @@ export class ItemVariantEditView {
         });
     }
 
-    findItem(routeParams:RouteParams) : Promise<any> {
+    findItem(routeParams:RouteParams):Promise<any> {
         if (routeParams == null || routeParams.params == null) {
             throw 'no route params';
         }
@@ -90,7 +94,7 @@ export class ItemVariantEditView {
         return this.getItem(idNumber);
     }
 
-    getItem(id:number) : Promise<any> {
+    getItem(id:number):Promise<any> {
         return this.itemService.get(id)
             .then((item)=> {
                 this.item = item;
@@ -118,17 +122,20 @@ export class ItemVariantEditView {
     }
 
     getNewItemVariant() {
-        this.itemVariant = new LocalItemVariant();
-        this.itemVariant.attributeValues = [];
-        this.itemVariant.pricing = Pricing.PARENT_ITEM;
-        this.itemVariant.item = this.item;
-        this.itemVariant.pricingAmount = 0;
+        var itemVariant = new LocalItemVariant();
+        itemVariant.attributeValues = [];
+        itemVariant.pricing = Pricing.PARENT_ITEM;
+        itemVariant.item = this.item;
+        itemVariant.pricingAmount = 0;
+        this.allVariantAttributes = [];
+        this.itemVariant = itemVariant;
     }
 
     getItemVariant(id:number) {
         this.itemVariantService.get(id)
             .then((itemVariant:LocalItemVariant)=> {
                 this.itemVariant = itemVariant;
+                this.fillAllVariantsAttribute();
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -137,7 +144,15 @@ export class ItemVariantEditView {
 
     public doSaveItemVariant() {
         this.itemVariantService.save(this.itemVariant)
-            .then(() => {
+            .then((itemVariant) => {
+                var newAttributeTask = [];
+                for (var attribute of this.attributesToAdd) {
+                    newAttributeTask.push(this.doSaveAttribute(attribute));
+                }
+                return Promise.all(newAttributeTask);
+            }).then(()=> {
+                this.attributesToAdd = [];
+                this.allVariantAttributes = this.itemVariant.attributeValues;
                 this.router.navigate('/items/edit/' + this.item.id);
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
@@ -215,8 +230,19 @@ export class ItemVariantEditView {
         return total;
     }
 
+
     doAddAttribute() {
         var attributeToAdd = this.newAttributeValue;
+        if (this.itemVariant.id != null) {
+            this.doSaveAttribute(attributeToAdd);
+        } else {
+            this.attributesToAdd.push(attributeToAdd);
+            this.allVariantAttributes.push(attributeToAdd);
+        }
+        this.resetNewAttributeValue();
+    }
+
+    private doSaveAttribute(attributeToAdd:LocalAttributeValue) {
 
         var defName = attributeToAdd.attributeDefinition.name[this.editLanguage.locale];
         var attributeDefRequest = new SearchRequest<AttributeDefinition>();
@@ -225,7 +251,7 @@ export class ItemVariantEditView {
         search.nameContains = defName;
         attributeDefRequest.search = search;
 
-        this.attributeDefinitionService.search(attributeDefRequest)
+        return this.attributeDefinitionService.search(attributeDefRequest)
             .then((result:SearchResult<AttributeDefinition>) => {
                 if (result.list.length > 0) {
                     var def = result.list[0];
@@ -246,26 +272,55 @@ export class ItemVariantEditView {
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
-        this.resetNewAttributeValue();
     }
 
     doRemoveAttribute(attr:LocalAttributeValue) {
-        var newAttributes = [];
-        for (var existingAttribute of this.itemVariant.attributeValues) {
-            if (existingAttribute == attr) {
+        var addedAttributesCopy = [];
+        var attrFound = false;
+        for (var addedAttribute of this.attributesToAdd) {
+            if (addedAttribute == attr) {
+                attrFound = true;
                 continue;
             }
-            newAttributes.push(existingAttribute);
+            addedAttributesCopy.push(addedAttribute);
         }
-        this.itemVariant.attributeValues = newAttributes;
+        if (attrFound) {
+            this.attributesToAdd = addedAttributesCopy;
+            this.fillAllVariantsAttribute();
+            return;
+        }
 
-        this.attributeValueService.remove(attr)
-            .then(()=> {
-                return this.itemVariantService.save(this.itemVariant);
-            })
-            .catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
+        var itemAttributesCopy = [];
+        for (var existingAttribute of this.itemVariant.attributeValues) {
+            if (existingAttribute == attr) {
+                attrFound = true;
+                continue;
+            }
+            itemAttributesCopy.push(existingAttribute);
+        }
+        if (attrFound) {
+            this.itemVariant.attributeValues = itemAttributesCopy;
+            this.fillAllVariantsAttribute();
+            this.attributeValueService.remove(attr)
+                .then(()=> {
+                    return this.itemVariantService.save(this.itemVariant);
+                })
+                .catch((error)=> {
+                    this.errorService.handleRequestError(error);
+                });
+            return;
+        }
+    }
+
+    private fillAllVariantsAttribute() {
+        var attributeList = [];
+        for (var itemAttr of this.itemVariant.attributeValues) {
+            attributeList.push(itemAttr);
+        }
+        for (var itemAttr of this.attributesToAdd) {
+            attributeList.push(itemAttr);
+        }
+        this.allVariantAttributes = attributeList;
     }
 
 

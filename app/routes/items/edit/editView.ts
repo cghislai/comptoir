@@ -79,6 +79,9 @@ export class ItemEditView {
         ];
         this.itemVariantSearchRequest = new SearchRequest<LocalItemVariant>();
 
+        this.itemVariantSearchResult = new SearchResult<LocalItemVariant>();
+        this.itemVariantSearchResult.list = [];
+
         this.findItem(routeParams);
     }
 
@@ -104,8 +107,6 @@ export class ItemEditView {
         this.item = new LocalItem();
         this.item.description = new LocaleTexts();
         this.item.name = new LocaleTexts();
-        this.itemVariantSearchResult = new SearchResult<LocalItemVariant>();
-        this.itemVariantSearchResult.list = [];
         this.itemVatPercentage = 0;
         this.findItemVariants();
     }
@@ -133,10 +134,8 @@ export class ItemEditView {
         variantSearch.itemSearch.companyRef = new CompanyRef(this.authService.auth.employee.company.id);
         this.itemVariantSearchRequest.search = variantSearch;
 
-        this.itemVariantService.search(this.itemVariantSearchRequest)
-            .then((result)=> {
-                this.itemVariantSearchResult = result;
-            }).catch((error)=> {
+        this.itemVariantService.search(this.itemVariantSearchRequest, this.itemVariantSearchResult)
+            .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }

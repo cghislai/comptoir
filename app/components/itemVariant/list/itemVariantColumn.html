@@ -21,7 +21,7 @@
 <div class="picture"
      *ng-if="column.name == 'pictureNoItemFallback' ">
     <img [src]="itemVariant.mainPicture.dataURI" *ng-if="itemVariant.mainPicture?.dataURI != undefined">
-    <div class="imagePlaceover" *ng-if="itemVariant.item?.mainPicture?.dataURI == undefined">
+    <div class="imagePlaceover" *ng-if="itemVariant.mainPicture?.dataURI == undefined">
         <i class="fi-book"></i>
     </div>
 </div>
@@ -38,7 +38,7 @@
     <span class="attributeValue"
           *ng-for="#attr of itemVariant.attributeValues">
         <span class="def">
-            {{ attr.attributeDefinition.name[lang] }} :
+            {{ attr.attributeDefinition.name[lang] }}
         </span>
         <span class="value">
             {{ attr.value[lang] }}
@@ -70,7 +70,7 @@
         <span class="attributeValue"
               *ng-for="#attr of itemVariant.attributeValues">
         <span class="def">
-            {{ attr.attributeDefinition.name[lang] }} :
+            {{ attr.attributeDefinition.name[lang] }}
         </span>
         <span class="value">
             {{ attr.value[lang] }}

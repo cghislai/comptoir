@@ -41,6 +41,7 @@
                     <input type="text" id="name"
                            localized [language]="editLanguage"
                            [locale-texts]="item.name"
+                           [(ng-model)]="item.name[editLanguage.locale]"
                            ng-control="name" validate-required required>
                     <formMessage for="name" check-errors="['required']"></formMessage>
                 </span>
@@ -51,6 +52,7 @@
                     <textarea type="text" id="description" rows="3"
                               localized [language]="editLanguage"
                               [locale-texts]="item.description"
+                              [(ng-model)]="item.description[editLanguage.locale]"
                               ng-control="description"></textarea>
                     <formMessage for="description" check-errors="['required']"></formMessage>
                 </span>
@@ -91,7 +93,7 @@
     <div class="column right" *ng-if="item != null">
         <h3>Variantes</h3>
 
-        <itemVariantList [items]="itemVariantList"
+        <itemVariantList [items]="itemVariantSearchResult.list"
                          [columns]="itemVariantListColumns"
                          [row-selectable]="true"
                          [headers-visible]="true"
