@@ -101,7 +101,7 @@
                          (column-action)="onVariantColumnAction($event)">
         </itemVariantList>
 
-        <a (^click)="doAddNewVariant()" [class.disabled]="item.id == null"
+        <a (click)="doAddNewVariant()" [class.disabled]="item.id == null"
            class="newVariantLink blueLink">Ajouter une variante</a>
     </div>
 </div>

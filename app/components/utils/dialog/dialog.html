@@ -1,6 +1,6 @@
 <div class="container" *ng-if="visible"
      [class.modal]="isModal"
-     (^click)="onContainerClick()">
+     (click)="onContainerClick()">
 
     <div class="dialog">
         <header [hidden]="!isClosable && title == undefined">
@@ -8,7 +8,7 @@
             <span class="actions">
                 <span class="action red"
                       [hidden]="!isClosable"
-                      (^click)="doClose()">
+                      (click)="doClose()">
                 <i class="fi-x"></i>
                     </span>
             </span>

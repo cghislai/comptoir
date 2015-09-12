@@ -62,7 +62,7 @@
             </td>
             <td class="number total">
                 <a class="edit actionlink"
-                   (^click)="startEditEntry(entry)"
+                   (click)="startEditEntry(entry)"
                    [hidden]="noInput">
                     {{ entry.amount | currency:'EUR':true:'.2-2' }}
                 </a>
@@ -72,7 +72,7 @@
             </td>
 
             <td class="actions"  [hidden]="noInput">
-                <a class="actionIcon remove" (^click)="removeEntry(entry)">
+                <a class="actionIcon remove" (click)="removeEntry(entry)">
                     <i class="fi-minus red"></i>
                 </a>
             </td>
@@ -104,7 +104,7 @@
     <div class="addMethod" [hidden]="noInput" *ng-if="accountsSearchResult != null">
         <div *ng-for="#account of accountsSearchResult.list"
              class="boxedHoverableLink"
-             (^click)="addAccountingEntry(account)">
+             (click)="addAccountingEntry(account)">
             {{ account.description[locale] }}
         </div>
     </div>

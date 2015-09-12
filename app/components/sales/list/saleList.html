@@ -20,7 +20,7 @@
                 <saleColumn *ng-for="#col of columns"
                             class="dataTableCell"
                             (action)="onColumnAction($event)"
-                            (^click)="onSaleClick(sale, col)"
+                            (click)="onSaleClick(sale, col)"
                             [class.right]="col.alignRight"
                             [sale]="sale"
                             [column]="col"

@@ -15,7 +15,7 @@
         <tbody>
         <tr *ng-for="#item of items"
             [class.selectable]="rowSelectable"
-            (^click)="onItemClick(item, $event)"
+            (click)="onItemClick(item, $event)"
             focusable>
             <td *ng-for="#col of columns"
                 [class.right]="col.alignRight"

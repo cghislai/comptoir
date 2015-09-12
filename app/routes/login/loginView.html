@@ -7,7 +7,7 @@
         {{ introText }}
     </p>
 
-    <form (^submit)="doLogin($event)" #f="form">
+    <form (submit)="doLogin($event)" #f="form">
             <div>
                 <span>
                     <input ng-control="login" id="login"

@@ -11,7 +11,7 @@
                name="fileInput"
                (change)="onFileSelected(f, $event)"
                required hidden>
-        <div class="boxedLink" (^click)="fileInput.click()">
+        <div class="boxedLink" (click)="fileInput.click()">
             <span [hidden]="toUploadFile == null">
                 Choisir un autre fichier
             </span>

@@ -22,14 +22,14 @@
         </thead>
         <tbody>
         <tr *ng-for="#pos of searchResult.list"
-            (^click)="doEditPos(pos)"
+            (click)="doEditPos(pos)"
             class="selectable">
             <td class="name">{{ pos.name }}</td>
             <td class="desc">{{ pos.description[locale] }}</td>
 
             <td class="actions">
                 <a class="remove actionIcon"
-                   (^click)="doRemovePos(pos, $event)">
+                   (click)="doRemovePos(pos, $event)">
                     <i class="fi-minus red"></i>
                 </a>
             </td>

@@ -19,7 +19,7 @@
              [hidden]="noInput || saleItemsResult?.list?.length < 1">
             <div class="action reduction"
                  [hidden]="validated"
-                 (^click)="doEditSaleDiscount()"
+                 (click)="doEditSaleDiscount()"
                  [class.editing]="editingSaleDiscount"
                  [class.has-reduction]="sale.discountRatio > 0">
                 <span [hidden]="editingSaleDiscount || sale.discountRatio > 0">
@@ -36,8 +36,8 @@
                            size="2" fast-input/>
                     %
                     <span class="editActions">
-                        <i class="fi-check green" (^click)="discount.doValidate()"></i>
-                        <i class="fi-x red" (^click)="discount.doCancel()"></i>
+                        <i class="fi-check green" (click)="discount.doValidate()"></i>
+                        <i class="fi-x red" (click)="discount.doCancel()"></i>
                     </span>
                 </span>
             </div>
@@ -74,7 +74,7 @@
                 </div>
                 <div class="comment">
                     <a class="commentLink"
-                       (^click)="doEditItemComment(saleItem)"
+                       (click)="doEditItemComment(saleItem)"
                        [class.actionLink]="!validated"
                        [class.editing]="editingItem == saleItem && editingItemComment"
                        [class.unneeded]="!hasComment(saleItem)"
@@ -95,14 +95,14 @@
                       [class.unneeded]="saleItem.quantity <= 1"
                       [class.nolink]="validated">
                     <a class="quantityLink"
-                       (^click)="doEditItemQuantity(saleItem)"
+                       (click)="doEditItemQuantity(saleItem)"
                        [class.actionLink]="!validated">
                             <span class="count">
                                 {{ saleItem.quantity}} x
                             </span>
                     </a>
                     <a class="priceLink"
-                       (^click)="doEditItemPrice(saleItem)"
+                       (click)="doEditItemPrice(saleItem)"
                        [class.actionLink]="!validated">
                             <span class="price">
                                 {{ saleItem.vatExclusive | currency:'EUR':true:'.2-2'  }}
@@ -129,7 +129,7 @@
                    [class.unneeded]="saleItem.discountRatio == null || saleItem.discountRatio <= 0 || (editingItem == saleItem && editingItemDiscount)"
                    [class.nolink]="validated"
                    [class.actionLink]="!validated"
-                   (^click)="doEditItemDiscount(saleItem)">
+                   (click)="doEditItemDiscount(saleItem)">
                     -{{ ( saleItem.discountRatio * 100) | number:'.0' }}%
                 </a>
                 <span class="setReduction"
@@ -144,27 +144,27 @@
             </td>
             <td class="actions" [hidden]="validated">
                 <a class="actionIcon noBlur validate"
-                   (^click)="doValidateInput(row)"
+                   (click)="doValidateInput(row)"
                    [hidden]="editingItem != saleItem">
                     <i class="fi-check green"></i>
                 </a>
                 <a class="actionIcon noBlur validate"
-                   (^click)="doCancelInput(row)"
+                   (click)="doCancelInput(row)"
                    [hidden]="editingItem != saleItem">
                     <i class="fi-x red"></i>
                 </a>
                 <a class="actionIcon remove"
                    [hidden]="editingItem != null"
-                   (^click)="doRemoveItem(saleItem)">
+                   (click)="doRemoveItem(saleItem)">
                     <i class="fi-minus red"></i>
                 </a>
                 <a class="actionIcon setReductionLink"
-                   (^click)="doEditItemDiscount(saleItem)"
+                   (click)="doEditItemDiscount(saleItem)"
                    [hidden]="saleItem.discountPercentage > 0 || editingItem != null">
                     <span class="green" style="font-weight: bold;">%</span>
                 </a>
                 <a class="actionIcon commentLink"
-                   (^click)="doEditItemComment(saleItem)"
+                   (click)="doEditItemComment(saleItem)"
                    [hidden]="hasComment(saleItem) || editingItem != null">
                     <i class="fi-comment"></i>
                 </a>
