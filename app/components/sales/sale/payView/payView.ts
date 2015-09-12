@@ -2,7 +2,7 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, EventEmitter, NgFor, NgIf, LifecycleEvent} from 'angular2/angular2';
+import {Component, View, EventEmitter, NgFor, NgIf, OnChanges} from 'angular2/angular2';
 
 import {LocalSale} from 'client/localDomain/sale';
 import {LocalAccount} from 'client/localDomain/account';
@@ -32,8 +32,7 @@ import {FastInput} from 'components/utils/fastInput'
 @Component({
     selector: "payView",
     events: ['paid'],
-    properties: ['sale', 'pos', 'noInput'],
-    lifecycle: [LifecycleEvent.onChange]
+    properties: ['sale', 'pos', 'noInput']
 })
 @View({
     templateUrl: './components/sales/sale/payView/payView.html',
@@ -41,7 +40,7 @@ import {FastInput} from 'components/utils/fastInput'
     directives: [NgFor, NgIf, FastInput]
 })
 
-export class PayView {
+export class PayView implements  OnChanges{
     accountService:AccountService;
     accountingEntryService:AccountingEntryService;
     saleService:SaleService;
@@ -90,16 +89,19 @@ export class PayView {
         this.toPayAmount = 0;
     }
 
-    onChange(changes) {
-        if (changes.sale != null) {
-            var newSale: LocalSale = changes.sale.currentValue;
+
+    onChanges(changes:StringMap<string, any>):void {
+        var saleChanges = changes.get('sale');
+        var posChanges = changes.get('pos');
+        if (saleChanges != null) {
+            var newSale: LocalSale = saleChanges.currentValue;
             if (newSale != null && newSale.id != null) {
                 this.searchTotalPaid();
                 this.searchAccountingEntries();
             }
         }
 
-        if (changes.sale != null || changes.pos != null) {
+        if (saleChanges != null || posChanges != null) {
             if (this.sale != null && this.pos != null) {
                 if (!this.sale.closed) {
                     this.searchAccounts();

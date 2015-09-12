@@ -2,7 +2,7 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, NgIf, EventEmitter, LifecycleEvent, FORM_DIRECTIVES} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, EventEmitter, OnChanges, FORM_DIRECTIVES} from 'angular2/angular2';
 
 import {CompanyRef} from 'client/domain/company';
 import {SaleRef} from 'client/domain/sale';
@@ -31,8 +31,7 @@ import {LocalizedDirective} from 'components/utils/localizedInput'
 @Component({
     selector: 'commandView',
     events: ['validate', 'saleEmptied'],
-    properties: ['sale', 'validated', 'noInput'],
-    lifecycle: [LifecycleEvent.onChange]
+    properties: ['sale', 'validated', 'noInput']
 })
 
 @View({
@@ -41,7 +40,7 @@ import {LocalizedDirective} from 'components/utils/localizedInput'
     directives: [AutoFocusDirective, LocalizedDirective, FastInput, NgFor, NgIf, FORM_DIRECTIVES]
 })
 
-export class CommandView {
+export class CommandView implements OnChanges {
     saleService:SaleService;
     itemVariantSaleService:ItemVariantSaleService;
     errorService:ErrorService;
@@ -86,13 +85,18 @@ export class CommandView {
 
     }
 
-    onChange(changes: any) {
-        if (changes.sale != null) {
-            var newSale = changes.sale.currentValue;
+
+    onChanges(changes:StringMap<string, any>):void {
+        var saleChanges = changes.get('sale');
+        if (saleChanges != null) {
+            var newSale = saleChanges.currentValue;
             if (newSale != null) {
                 this.searchItems();
             }
         }
+    }
+
+    OnChanges(changes: any) {
     }
 
     searchItems() : Promise<any>{
