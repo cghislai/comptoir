@@ -105,10 +105,8 @@ export class BasicClient<T extends WithId> {
         } else {
             var getPromise = this.resourceInfo.cacheHandler.getPromises[id];
             if (getPromise != null) {
-                console.log("waiting running get request..");
                 return getPromise;
             }
-            //console.log("Fetching " + this.debugString(id));
             return this.get(id, authToken);
         }
     }
