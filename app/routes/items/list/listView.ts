@@ -80,7 +80,7 @@ export class ItemsListView {
     }
 
     onColumnAction(event) {
-        var item:LocalItem = event.itemVariant;
+        var item:LocalItem = event.item;
         var column:ItemColumn = event.column;
         if (column == ItemColumn.ACTION_REMOVE) {
             this.doRemoveItem(item);
