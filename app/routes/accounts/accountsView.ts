@@ -20,9 +20,9 @@ import {AccountsEditView} from 'routes/accounts/edit/editView';
     directives: [AppHeader, AppMenu, AppTab, RouterOutlet, RouterLink]
 })
 @RouteConfig([
-    {path: '/', redirectTo: '/accounts/list'},
-    {path: '/edit/:id', component: AccountsEditView, as: 'edit'},
-    {path: '/list', component: AccountsListView, as: 'list'}
+    {path: '/', redirectTo: '/List'},
+    {path: '/edit/:id', component: AccountsEditView, as: 'Edit'},
+    {path: '/list', component: AccountsListView, as: 'List'}
 ])
 export class AccountsView {
     location:Location;

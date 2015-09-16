@@ -1,11 +1,11 @@
 <appHeader title="Comptes">
     <appTab [selectable]="true" [active]="isActive('./list')">
-        <a [router-link]="['./list']">
+        <a [router-link]="['./List']">
             Liste
         </a>
     </appTab>
     <appTab [selectable]="true">
-        <a [router-link]="['./edit', {id: 'new'}]">
+        <a [router-link]="['./Edit', {id: 'new'}]">
             Nouveau
         </a>
     </appTab>

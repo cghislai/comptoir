@@ -87,7 +87,7 @@ export class CommandView implements OnChanges {
 
 
     onChanges(changes:StringMap<string, any>):void {
-        var saleChanges = changes.get('sale');
+        var saleChanges = changes['sale'];
         if (saleChanges != null) {
             var newSale = saleChanges.currentValue;
             if (newSale != null) {

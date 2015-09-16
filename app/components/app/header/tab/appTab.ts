@@ -10,7 +10,7 @@ import {Component, View,  bootstrap, NgIf, ViewEncapsulation} from 'angular2/ang
 @View({
     templateUrl: './components/app/header/tab/appTab.html',
     styleUrls: ['./components/app/header/tab/appTab.css'],
-    encapsulation: ViewEncapsulation.NONE
+    encapsulation: ViewEncapsulation.None
 })
 export class AppTab {
     active: boolean;

@@ -1,6 +1,6 @@
 /// <reference path="./typings/_custom.d.ts" />
 import {Component, View,  bootstrap, NgIf} from 'angular2/angular2';
-import {RouteConfig, Router, RouterOutlet, RouterLink, routerInjectables, Location} from 'angular2/router';
+import {RouteConfig, Router, RouterOutlet, RouterLink, ROUTER_BINDINGS, Location} from 'angular2/router';
 
 import {AccountService} from 'services/account';
 import {AccountingEntryService} from 'services/accountingEntry';
@@ -43,15 +43,15 @@ import {PosView} from 'routes/pos/posView';
 })
 
 @RouteConfig([
-    {path: '/', redirectTo: '/sales/sale/new'},
-    {path: '/login', component: LoginView, as: 'login'},
-    {path: '/register', component: RegisterView, as: 'register'},
+    {path: '/', redirectTo: '/Sales/Sale/New'},
+    {path: '/login', component: LoginView, as: 'Login'},
+    {path: '/register', component: RegisterView, as: 'Register'},
 
-    {path: '/sales/...', component: SalesView, as: 'sales'},
-    {path: '/items/...', component: ItemsView, as: 'items'},
-    {path: '/accounts/...', component: AccountsView, as: 'accounts'},
-    {path: '/cash/...', component: CashView, as: 'cash'},
-    {path: '/pos/...', component: PosView, as: 'pos'}
+    {path: '/sales/...', component: SalesView, as: 'Sales'},
+    {path: '/items/...', component: ItemsView, as: 'Items'},
+    {path: '/accounts/...', component: AccountsView, as: 'Accounts'},
+    {path: '/cash/...', component: CashView, as: 'Cash'},
+    {path: '/pos/...', component: PosView, as: 'Pos'}
 ])
 export class App {
     appService:ApplicationService;
@@ -103,7 +103,7 @@ export class App {
 
 
 bootstrap(App, [
-    routerInjectables,
+    ROUTER_BINDINGS,
 
     AuthService,
 

@@ -20,9 +20,9 @@ import {CashHistoryView} from 'routes/cash/history/historyView';
     directives: [AppHeader, AppTab, RouterOutlet, RouterLink]
 })
 @RouteConfig([
-    {path: '/', redirectTo: '/items/list'},
-    {path: '/count', component: CountCashView, as: 'count'},
-    {path: '/history', component: CashHistoryView, as: 'history'}
+    {path: '/', redirectTo: '/Count'},
+    {path: '/count', component: CountCashView, as: 'Count'},
+    {path: '/history', component: CashHistoryView, as: 'History'}
 ])
 export class CashView {
     location:Location;

@@ -20,10 +20,10 @@ import {ItemsImportView} from 'routes/items/import/importView';
     directives: [AppHeader, AppTab, RouterOutlet, RouterLink]
 })
 @RouteConfig([
-    {path: '/', redirectTo: '/items/list'},
-    {path: '/edit/...', component: EditItemRedirect, as: 'edit'},
-    {path: '/list', component: ItemsListView, as: 'list'},
-    {path: '/import', component: ItemsImportView, as: 'import'}
+    {path: '/', redirectTo: '/list'},
+    {path: '/edit/...', component: EditItemRedirect, as: 'Edit'},
+    {path: '/list', component: ItemsListView, as: 'List'},
+    {path: '/import', component: ItemsImportView, as: 'Import'}
 ])
 export class ItemsView {
     location:Location;

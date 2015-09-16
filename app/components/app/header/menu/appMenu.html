@@ -8,15 +8,15 @@
     </a>
     <div id="appMenu"
          [hidden]="!menuVisible" (click)="closeMenu()">
-        <a [router-link]="['/sales']"
+        <a [router-link]="['/Sales']"
            [class.active]="isActive('/sales')">Ventes</a>
-        <a [router-link]="['/items']"
+        <a [router-link]="['/Items']"
            [class.active]="isActive('/items')">Produits</a>
-        <a [router-link]="['/accounts']"
+        <a [router-link]="['/Accounts']"
            [class.active]="isActive('/accounts')">Comptes</a>
-        <a [router-link]="['/cash']"
+        <a [router-link]="['/Cash']"
            [class.active]="isActive('/cash')">Caisse</a>
-        <a [router-link]="['/pos']"
+        <a [router-link]="['/Pos']"
            [class.active]="isActive('/pos')">Points de vente</a>
     </div>
 </div>

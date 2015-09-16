@@ -29,7 +29,7 @@ import {FocusableDirective} from 'components/utils/focusable';
     styleUrls: ['./components/item/list/itemList.css'],
     directives: [NgIf, FocusableDirective],
     // eases styling
-    encapsulation: ViewEncapsulation.NONE
+    encapsulation: ViewEncapsulation.None
 })
 export class ItemColumnComponent {
     action = new EventEmitter();

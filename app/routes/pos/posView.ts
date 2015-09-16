@@ -20,9 +20,9 @@ import {EditPosView} from 'routes/pos/edit/editView';
     directives: [AppHeader, AppTab, RouterOutlet, RouterLink]
 })
 @RouteConfig([
-    {path: '/', redirectTo: '/items/list'},
-    {path: '/edit/:id', component: EditPosView, as: 'edit'},
-    {path: '/list', component: PosListView, as: 'list'}
+    {path: '/', redirectTo: '/list'},
+    {path: '/edit/:id', component: EditPosView, as: 'Edit'},
+    {path: '/list', component: PosListView, as: 'List'}
 ])
 export class PosView {
     location:Location;

@@ -91,8 +91,8 @@ export class PayView implements  OnChanges{
 
 
     onChanges(changes:StringMap<string, any>):void {
-        var saleChanges = changes.get('sale');
-        var posChanges = changes.get('pos');
+        var saleChanges = changes['sale'];
+        var posChanges = changes['pos'];
         if (saleChanges != null) {
             var newSale: LocalSale = saleChanges.currentValue;
             if (newSale != null && newSale.id != null) {

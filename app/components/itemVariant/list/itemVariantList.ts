@@ -30,7 +30,7 @@ import {FocusableDirective} from 'components/utils/focusable';
     styleUrls: ['./components/itemVariant/list/itemVariantList.css'],
     directives: [NgIf, NgFor, FocusableDirective],
     // eases styling
-    encapsulation: ViewEncapsulation.NONE
+    encapsulation: ViewEncapsulation.None
 })
 export class ItemVariantColumnComponent {
     action = new EventEmitter();

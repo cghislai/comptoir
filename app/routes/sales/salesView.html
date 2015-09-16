@@ -1,15 +1,15 @@
 <appHeader title="Ventes">
     <appTab  [selectable]="true" [active]="isActive('./sale')">
-        <a [router-link]="['./sale', {id: 'active'}]">Vente</a>
+        <a [router-link]="['./Sale', {id: 'active'}]">Vente</a>
     </appTab>
     <appTab  [selectable]="true">
-        <a [router-link]="['./sale', {id: 'new'}]">Nouvelle</a>
+        <a [router-link]="['./Sale', {id: 'new'}]">Nouvelle</a>
     </appTab>
     <appTab  [selectable]="true" [active]="isActive('./actives')">
-        <a [router-link]=["./actives"]>En cours</a>
+        <a [router-link]=["./Actives"]>En cours</a>
     </appTab>
     <appTab  [selectable]="true" [active]="isActive('./history')">
-        <a [router-link]=["./history"]>Historique</a>
+        <a [router-link]=["./History"]>Historique</a>
     </appTab>
 </appHeader>
 <router-outlet></router-outlet>

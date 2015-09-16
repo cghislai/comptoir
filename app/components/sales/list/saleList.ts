@@ -27,7 +27,7 @@ import {FocusableDirective} from 'components/utils/focusable';
     styleUrls: ['./components/sales/list/saleList.css'],
     directives: [NgIf],
     // eases styling
-    encapsulation: ViewEncapsulation.NONE
+    encapsulation: ViewEncapsulation.None
 })
 export class SaleColumnComponent {
     action = new EventEmitter();

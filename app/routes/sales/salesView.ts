@@ -21,10 +21,10 @@ import {AppTab} from 'components/app/header/tab/appTab';
     directives: [AppHeader, AppMenu, AppTab, RouterOutlet, RouterLink]
 })
 @RouteConfig([
-    {path: '/', redirectTo: '/sale/active'},
-    {path: '/sale/:id', component: SaleView, as: 'sale'},
-    {path: '/actives', component: ActiveSalesView, as: 'actives'},
-    {path: '/history', component: SaleHistoryView, as: 'history'}
+    {path: '', redirectTo: 'Actives'},
+    {path: '/sale/:id', component: SaleView, as: 'Sale'},
+    {path: '/actives', component: ActiveSalesView, as: 'Actives'},
+    {path: '/history', component: SaleHistoryView, as: 'History'}
 ])
 export class SalesView {
     location:Location;
