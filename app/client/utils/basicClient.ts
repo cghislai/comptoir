@@ -78,6 +78,14 @@ export class BasicClient<T extends WithId> {
             url += pagination.firstIndex;
             url += "&length=";
             url += pagination.pageSize;
+            if (pagination.sorts != null) {
+                url += "&sort="
+                for (var column in pagination.sorts) {
+                    url += column;
+                    url += "-"
+                    url += pagination.sorts[column];
+                }
+            }
         }
         return url;
     }

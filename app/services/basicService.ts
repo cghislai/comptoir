@@ -152,19 +152,39 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
                 var localResult = new SearchResult<U>();
                 localResult.count = result.count;
                 localResult.list = [];
-                for (var entity of result.list) {
+
+                // Keep track of result order
+                for (var index in result.list) {
+                    var entity = result.list[index];
                     taskList.push(
-                        this.serviceInfo.toLocalConverter(entity, authToken)
-                            .then((localEntity:U)=> {
-                                localResult.list.push(localEntity);
-                            })
+                        this.fetchLocalEntityForListIndex(index, entity, localResult.list)
                     );
+                }
+                for (var entity of result.list) {
                 }
                 return Promise.all(taskList)
                     .then(()=> {
                         searchRequest.request = null;
                         return localResult;
                     });
+            });
+    }
+
+    fetchLocalEntityForListIndex(index: number, entity: T, list: U[]): Promise<U> {
+        var authToken = this.authService.authToken;
+        return this.serviceInfo.toLocalConverter(entity, authToken)
+            .then((localEntity:U)=> {
+                list[index] = localEntity;
+                return localEntity;
+            });
+    }
+
+    updateLocalEntityForListIndex(index: number, localEntity: U, entity: T, list: U[]): Promise<U> {
+        var authToken = this.authService.authToken;
+        return this.serviceInfo.updateLocal(localEntity, entity, authToken)
+            .then((localEntity:U)=> {
+                list[index] = localEntity;
+                return localEntity;
             });
     }
 
@@ -177,22 +197,18 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
         for (var item of result.list) {
             existingItemMap[item.id] = item;
         }
-        for (var newItem of newResult.list) {
+        // Keep track of result order
+        for (var newIndex in newResult.list) {
+            var newItem = newResult.list[newIndex];
             var oldItem = existingItemMap[newItem.id];
             if (oldItem == null) {
                 taskList.push(
-                    this.serviceInfo.toLocalConverter(newItem, authToken)
-                        .then((newLocalItem)=> {
-                            newItems.push(newLocalItem);
-                        })
+                    this.fetchLocalEntityForListIndex(newIndex, newItem, newItems)
                 );
                 continue;
             }
             taskList.push(
-                this.serviceInfo.updateLocal(oldItem, newItem, authToken)
-                    .then((newLocalItem)=> {
-                        newItems.push(newLocalItem);
-                    })
+                this.updateLocalEntityForListIndex(newIndex, oldItem, newItem, newItems)
             );
             delete existingItemMap[oldItem.id];
         }

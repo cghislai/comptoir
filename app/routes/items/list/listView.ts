@@ -75,7 +75,8 @@ export class ItemsListView {
     }
 
     onPageChanged(pagination:Pagination) {
-        this.searchRequest.pagination = pagination;
+        this.searchRequest.pagination.firstIndex = pagination.firstIndex;
+        this.searchRequest.pagination.pageSize = pagination.pageSize;
         this.searchItems();
     }
 
