@@ -3,6 +3,9 @@
  */
 @import './_constants';
 
+img.busy {
+  float: right;
+}
 table.dataTable {
   width: 100%;
   font-size: 1em;

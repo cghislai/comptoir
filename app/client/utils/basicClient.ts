@@ -15,6 +15,7 @@ export interface WithId {
 export class BasicCacheHandler<T extends WithId> {
     cache:{[id: number] : T} = {};
     requestCache:{[id: number] : ComptoirRequest} = {};
+    getPromises:{[id: number] : Promise<T>} = {};
 
     putInCache(entity:T) {
         var id = entity.id;
@@ -47,6 +48,13 @@ export class BasicCacheHandler<T extends WithId> {
     }
     unsetRequest(id: number) {
         delete this.requestCache[id];
+    }
+
+    setGetPromise(id: number, promise: Promise<T>) {
+        this.getPromises[id] = promise;
+    }
+    unsetGetPromise(id: number) {
+        delete this.getPromises[id];
     }
 }
 
@@ -95,6 +103,11 @@ export class BasicClient<T extends WithId> {
         if (entityFromCache != null) {
             return Promise.resolve(entityFromCache);
         } else {
+            var getPromise = this.resourceInfo.cacheHandler.getPromises[id];
+            if (getPromise != null) {
+                console.log("waiting running get request..");
+                return getPromise;
+            }
             //console.log("Fetching " + this.debugString(id));
             return this.get(id, authToken);
         }
@@ -130,7 +143,7 @@ export class BasicClient<T extends WithId> {
         var request = this.getGetRequest(id, authToken);
         var reviver = this.resourceInfo.jsonReviver;
 
-        return request
+        var getPromise = request
             .run()
             .then((response) => {
                 if (response.text == null || response.text.length == 0) {
@@ -138,8 +151,11 @@ export class BasicClient<T extends WithId> {
                 }
                 var entity:T = JSON.parse(response.text, reviver);
                 this.resourceInfo.cacheHandler.putInCache(entity);
+                this.resourceInfo.cacheHandler.unsetGetPromise(id);
                 return entity;
             });
+        this.resourceInfo.cacheHandler.setGetPromise(id, getPromise);
+        return getPromise;
     }
 
     private getUpdateRequest(entity:T, authToken:string):ComptoirRequest {
