@@ -160,8 +160,6 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
                         this.fetchLocalEntityForListIndex(index, entity, localResult.list)
                     );
                 }
-                for (var entity of result.list) {
-                }
                 return Promise.all(taskList)
                     .then(()=> {
                         searchRequest.request = null;

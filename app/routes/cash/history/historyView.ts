@@ -45,15 +45,14 @@ export class CashHistoryView {
         };
         this.searchRequest.pagination = pagination;
         this.searchRequest.search = balanceSearch;
+        this.searchResult = new SearchResult<LocalBalance>();
 
         this.searchBalances();
     }
 
     searchBalances() {
-        this.balanceService.search(this.searchRequest)
-            .then((result: SearchResult<LocalBalance>)=> {
-                this.searchResult = result;
-            }).catch((error)=> {
+        this.balanceService.search(this.searchRequest, this.searchResult)
+            .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }
