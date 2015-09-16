@@ -301,10 +301,7 @@ export class ItemVariantEditView {
         if (attrFound) {
             this.itemVariant.attributeValues = itemAttributesCopy;
             this.fillAllVariantsAttribute();
-            this.attributeValueService.remove(attr)
-                .then(()=> {
-                    return this.itemVariantService.save(this.itemVariant);
-                })
+            this.itemVariantService.save(this.itemVariant)
                 .catch((error)=> {
                     this.errorService.handleRequestError(error);
                 });
