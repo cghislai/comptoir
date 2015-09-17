@@ -38,4 +38,8 @@ export class SalesView {
         var locationPath = this.location.path();
         return locationPath.indexOf(fullPath) >= 0;
     }
+
+    canReuse() {
+       return false;
+    }
 }
