@@ -71,7 +71,8 @@ export class SaleView {
     }
 
     canReuse() {
-        return this.navigatingWithinSale;
+        return false;
+        //return this.navigatingWithinSale;
     }
 
     onReuse() {
