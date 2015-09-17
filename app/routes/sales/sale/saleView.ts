@@ -62,6 +62,8 @@ export class SaleView {
         this.routeParams = routeParams;
         this.router = router;
         this.location = location;
+
+        this.navigatingWithinSale = false;
     }
 
     onActivate() {
@@ -69,10 +71,12 @@ export class SaleView {
     }
 
     canReuse() {
+        console.log("can resuse: "+this.navigatingWithinSale);
         return this.navigatingWithinSale;
     }
 
     onReuse() {
+        console.log("Reuse");
         this.navigatingWithinSale = false;
     }
 
