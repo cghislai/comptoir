@@ -72,7 +72,6 @@ export class App {
         this.errorService = errorService;
         this.router = router;
         router.subscribe((path)=> {
-            console.log("navigating to "+path);
             this.checkLoginRequired(path);
         });
         this.checkLoginRequired(location.path());

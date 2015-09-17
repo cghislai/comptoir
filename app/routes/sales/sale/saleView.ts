@@ -71,12 +71,10 @@ export class SaleView {
     }
 
     canReuse() {
-        console.log("can resuse: "+this.navigatingWithinSale);
         return this.navigatingWithinSale;
     }
 
     onReuse() {
-        console.log("Reuse");
         this.navigatingWithinSale = false;
     }
 
