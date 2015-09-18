@@ -117,6 +117,7 @@ export class AuthService {
 
 
     private saveAuth(auth:LocalAuth) {
+        this.auth = auth;
         if (auth != null) {
             var wsAuth = LocalAuthFactory.fromLocalAuth(auth);
             var jsonString = JSON.stringify(wsAuth, JSONFactory.toJSONReplacer);
