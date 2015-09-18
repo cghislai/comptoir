@@ -17,8 +17,10 @@
             <div class="value">
                 <div *ng-if="accountSearchResult != null" [hidden]="accountSearchResult.count < 2">
                     <select (input)="onAccountChanged($event)" [value]="accountId">
-                        <option [value]="null" [hidden]="account != null">Choisissez un compte</option>
-                        <option *ng-for="#accountOption of accountSearchResult.list" [value]="accountOption.id">
+                        <option [value]="null" [hidden]="account != null"
+                                [selected]="accountId == null">Choisissez un compte</option>
+                        <option *ng-for="#accountOption of accountSearchResult.list" [value]="accountOption.id"
+                                [selected]="accountId == accountOption.id">
                             {{ accountOption.description[locale] }}
                         </option>
                     </select>

@@ -53,7 +53,7 @@ export class CountCashView {
     accountSearchRequest:SearchRequest<LocalAccount>;
     accountSearchResult:SearchResult<LocalAccount>;
     account:LocalAccount;
-    accountId:number = -1;
+    accountId:number;
 
     balanceSearchRequest:SearchRequest<LocalBalance>;
     balanceSearchResult:SearchResult<LocalBalance>;
@@ -84,6 +84,7 @@ export class CountCashView {
         this.balanceSearchRequest = new SearchRequest<LocalBalance>();
 
         this.locale = authService.getEmployeeLanguage().locale;
+        this.accountId = null;
         this.searchPaymentAccounts();
         this.searchLastBalance();
     }
