@@ -27,12 +27,16 @@
     </div>
 </div>
 <div class="tva_excl price"
-        *ng-if="column.name == 'tva_excl'">
+        *ng-if="column.name == 'vat_exclusive'">
     {{ item.vatExclusive | currency:'EUR':true:'.2-2' }}
 </div>
 <div class="tva_rate price"
-    *ng-if="column.name == 'tva_rate'">
-    {{ ( item.vatRate * 100 )| number:'.0-2' }}
+    *ng-if="column.name == 'vat_rate'">
+    {{ ( item.vatRate * 100 )| number:'.0' }} %
+</div>
+<div class="vat_inclusive price"
+     *ng-if="column.name == 'vat_inclusive'">
+    {{ ( item.vatExclusive * ( 1 + item.vatRate) ) |  currency:'EUR':true:'.2-2' }}
 </div>
 <div class="action remove"
       *ng-if="column.name == 'action_remove' " >

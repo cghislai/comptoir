@@ -24,11 +24,13 @@ export class LocalItemVariant {
     mainPicture:LocalPicture;
     item:LocalItem;
 
-    calcPrice():number {
+    calcPrice(includeTaxes: boolean):number {
+        var vatExclusive : number = 0;
         switch (this.pricing) {
             case Pricing.ABSOLUTE:
             {
-                return this.pricingAmount;
+                vatExclusive = this.pricingAmount;
+                break;
             }
             case Pricing.ADD_TO_BASE:
             {
@@ -36,17 +38,23 @@ export class LocalItemVariant {
                     return null;
                 }
                 var itemVatExclusive = this.item.vatExclusive;
-                return itemVatExclusive + this.pricingAmount;
+                vatExclusive = itemVatExclusive + this.pricingAmount;
+                break;
             }
             case Pricing.PARENT_ITEM:
             {
                 if (this.item == null) {
                     return null;
                 }
-                return this.item.vatExclusive;
+                vatExclusive = this.item.vatExclusive;
+                break;
             }
         }
-        return null;
+        if (!includeTaxes) {
+            return vatExclusive;
+        }
+        var vatInclusive = vatExclusive * (1 + this.item.vatRate);
+        return vatInclusive;
     }
 }
 

@@ -111,6 +111,7 @@ export class ItemVariantColumn {
     static ITEM_NAME_VARIANT_ATTRIBUTES:ItemVariantColumn;
     static ITEM_VAT_EXCLUSIVE:ItemVariantColumn;
     static ITEM_VAT_RATE:ItemVariantColumn;
+    static ITEM_VAT_INCLUSIVE:ItemVariantColumn;
 
     static TOTAL_PRICE: ItemVariantColumn;
 
@@ -201,6 +202,13 @@ export class ItemVariantColumn {
         ItemVariantColumn.ITEM_VAT_RATE.alignRight = true;
         ItemVariantColumn.ITEM_VAT_RATE.title = {
             'fr': "Taux TVA"
+        };
+
+        ItemVariantColumn.ITEM_VAT_INCLUSIVE = new ItemVariantColumn();
+        ItemVariantColumn.ITEM_VAT_INCLUSIVE.name = 'itemVatInclusive';
+        ItemVariantColumn.ITEM_VAT_INCLUSIVE.alignRight = true;
+        ItemVariantColumn.ITEM_VAT_INCLUSIVE.title = {
+            'fr': "Prix (parent)"
         };
 
         ItemVariantColumn.TOTAL_PRICE = new ItemVariantColumn();

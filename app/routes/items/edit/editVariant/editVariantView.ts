@@ -129,6 +129,7 @@ export class ItemVariantEditView {
         itemVariant.pricingAmount = 0;
         this.allVariantAttributes = [];
         this.itemVariant = itemVariant;
+        this.checkPricingAmountRequired();
     }
 
     getItemVariant(id:number) {
@@ -136,6 +137,7 @@ export class ItemVariantEditView {
             .then((itemVariant:LocalItemVariant)=> {
                 this.itemVariant = itemVariant;
                 this.fillAllVariantsAttribute();
+                this.checkPricingAmountRequired();
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -191,6 +193,16 @@ export class ItemVariantEditView {
         this.checkPricingAmountRequired();
     }
 
+    setItemVariantPricingAmount(event) {
+        var valueString = event.target.value;
+        var valueNumber: number = parseFloat(valueString);
+        if (isNaN(valueNumber)) {
+            return;
+        }
+        valueNumber = NumberUtils.toFixedDecimals(valueNumber, 2);
+        this.itemVariant.pricingAmount = valueNumber;
+    }
+
     checkPricingAmountRequired() {
         var required = true;
         switch (this.itemVariant.pricing) {
@@ -202,34 +214,6 @@ export class ItemVariantEditView {
         }
         this.pricingAmountRequired = required;
     }
-
-    getPricingTotalAmount():number {
-        var pricingAmount = this.itemVariant.pricingAmount;
-        if (isNaN(pricingAmount)) {
-            pricingAmount = 0;
-        }
-        var total:number = 0;
-        switch (this.itemVariant.pricing) {
-            case Pricing.ABSOLUTE:
-            {
-                total = pricingAmount;
-                break;
-            }
-            case Pricing.ADD_TO_BASE:
-            {
-                var itemPrice:number = this.item.vatExclusive;
-                total = itemPrice + pricingAmount;
-                break;
-            }
-            case Pricing.PARENT_ITEM:
-            {
-                total = this.item.vatExclusive;
-                break;
-            }
-        }
-        return total;
-    }
-
 
     doAddAttribute() {
         var attributeToAdd = this.newAttributeValue;

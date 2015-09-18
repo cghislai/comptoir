@@ -200,8 +200,8 @@ export class PayView implements  OnChanges{
     applyEditingEntry(event) {
         var amount = parseFloat(event);
         if (isNaN(amount)) {
-            return;
             this.cancelEditEntry();
+            return;
         }
         amount = NumberUtils.toFixedDecimals(amount, 2);
         this.editingEntry.amount = amount;

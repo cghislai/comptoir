@@ -58,11 +58,12 @@
                 </span>
                 </div>
                 <div>
-                    <label for="price">Prix</label>
+                    <label for="price">Prix (TVAC)</label>
                 <span>
                     <input class="number" type="number"
                            min="0" step="0.01" id="price" size="5"
-                           [(ng-model)]="item.vatExclusive"
+                           [ng-model]="itemTotalPrice"
+                           (input)="setItemTotalPrice($event)"
                            ng-control="vatExclusive"
                            validate-required>
                     €
@@ -75,11 +76,21 @@
                     <div>
                         <input class="number" type="number"
                                min="0" max="100" step="1" id="vat" size="5"
-                               [(ng-model)]="itemVatPercentage"
+                               [ng-model]="itemVatPercentage"
+                               (input)="setItemVatRate($event)"
                                ng-control="vatPercentage"
                                validate-required>
                         %
                         <formMessage for="vatPercentage" check-errors="['required']"></formMessage>
+                    </div>
+                </div>
+                <div>
+                    <label for="vatInclusive">Prix HTVA</label>
+
+                    <div class="totalPreview" id="vatInclusive">
+                        <span>
+                            {{ item.vatExclusive | currency:'EUR':true:'.2-2' }}
+                        </span>
                     </div>
                 </div>
             </div>

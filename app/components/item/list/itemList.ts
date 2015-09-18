@@ -98,6 +98,7 @@ export class ItemColumn {
     static DESCRIPTION:ItemColumn;
     static VAT_EXCLUSIVE:ItemColumn;
     static VAT_RATE:ItemColumn;
+    static VAT_INCLUSIVE:ItemColumn;
     static PICTURE:ItemColumn;
     static ACTION_REMOVE:ItemColumn;
     static ALL_COLUMNS:ItemColumn[];
@@ -133,17 +134,24 @@ export class ItemColumn {
         };
 
         ItemColumn.VAT_EXCLUSIVE = new ItemColumn();
-        ItemColumn.VAT_EXCLUSIVE.name = 'tva_excl';
+        ItemColumn.VAT_EXCLUSIVE.name = 'vat_exclusive';
         ItemColumn.VAT_EXCLUSIVE.alignRight = true;
         ItemColumn.VAT_EXCLUSIVE.title = {
             'fr': "Prix HTVA"
         };
 
         ItemColumn.VAT_RATE = new ItemColumn();
-        ItemColumn.VAT_RATE.name = 'tva_rate';
+        ItemColumn.VAT_RATE.name = 'vat_rate';
         ItemColumn.VAT_RATE.alignRight = true;
         ItemColumn.VAT_RATE.title = {
-            'fr': "TVA%"
+            'fr': "Taux TVA"
+        };
+
+        ItemColumn.VAT_INCLUSIVE = new ItemColumn();
+        ItemColumn.VAT_INCLUSIVE.name = 'vat_inclusive';
+        ItemColumn.VAT_INCLUSIVE.alignRight = true;
+        ItemColumn.VAT_INCLUSIVE.title = {
+            'fr': "Prix"
         };
 
         ItemColumn.PICTURE = new ItemColumn();

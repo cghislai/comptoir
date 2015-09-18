@@ -48,8 +48,10 @@ export class ItemEditView {
     router:Router;
 
     item:LocalItem;
+    itemTotalPrice: number;
+    itemVatPercentage: number;
+    itemVatPercentageString: string;
     itemPictureTouched:boolean;
-    itemVatPercentage:number;
     appLocale:string;
     editLanguage:Language;
 
@@ -107,16 +109,18 @@ export class ItemEditView {
         this.item = new LocalItem();
         this.item.description = new LocaleTexts();
         this.item.name = new LocaleTexts();
-        this.itemVatPercentage = 0;
         this.findItemVariants();
+        this.calcTotalPrice();
+        this.calcVatPercentage();
     }
 
     getItem(id:number) {
         this.itemService.get(id)
             .then((item:LocalItem)=> {
                 this.item = item;
-                this.itemVatPercentage = NumberUtils.toInt(this.item.vatRate * 100);
                 this.findItemVariants();
+                this.calcTotalPrice();
+                this.calcVatPercentage();
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -142,7 +146,6 @@ export class ItemEditView {
 
 
     public doSaveItem() {
-        this.item.vatRate = NumberUtils.toFixedDecimals(this.itemVatPercentage, 2);
         this.saveItem()
             .then(()=> {
                 this.router.navigate('/items/list');
@@ -165,6 +168,17 @@ export class ItemEditView {
         }
     }
 
+    private calcTotalPrice() {
+        var totalPrice = this.item.vatExclusive * (1 + this.item.vatRate);
+        totalPrice = NumberUtils.toFixedDecimals(totalPrice, 2);
+        this.itemTotalPrice = totalPrice;
+    }
+
+    private calcVatPercentage() {
+        var vatPercentage = NumberUtils.toInt(this.item.vatRate * 100);
+        this.itemVatPercentage = vatPercentage;
+        this.itemVatPercentageString = vatPercentage+'';
+    }
 
     onPictureFileSelected(event) {
         var files = event.target.files;
@@ -188,6 +202,29 @@ export class ItemEditView {
                 thisView.item.mainPicture.dataURI = data;
                 thisView.itemPictureTouched = true;
             });
+    }
+
+    setItemVatRate(event) {
+        var valueString = event.target.value;
+        var valueNumber: number = parseInt(valueString);
+        if (isNaN(valueNumber)) {
+            return;
+        }
+        var vatRate = NumberUtils.toFixedDecimals(valueNumber / 100, 2);
+        this.item.vatRate = vatRate;
+        this.calcTotalPrice();
+        this.calcVatPercentage();
+    }
+
+    setItemTotalPrice(event) {
+        var valueString = event.target.value;
+        var valueNumber: number = parseFloat(valueString);
+        if (isNaN(valueNumber)) {
+            return;
+        }
+        var vatExclusive = NumberUtils.toFixedDecimals(valueNumber / (1 + this.item.vatRate), 2);
+        this.item.vatExclusive = vatExclusive;
+        this.calcTotalPrice();
     }
 
     doAddNewVariant() {

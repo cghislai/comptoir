@@ -60,6 +60,7 @@ export class ItemsListView {
             ItemColumn.NAME,
             ItemColumn.VAT_EXCLUSIVE,
             ItemColumn.VAT_RATE,
+            ItemColumn.VAT_INCLUSIVE,
             ItemColumn.ACTION_REMOVE
         ];
         this.searchItems();

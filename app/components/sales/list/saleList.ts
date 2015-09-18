@@ -97,6 +97,7 @@ export class SaleColumn {
     static ID: SaleColumn;
     static DATETIME: SaleColumn;
     static VAT_EXCLUSIVE_AMOUNT: SaleColumn;
+    static VAT_INCLUSIVE_AMOUNT: SaleColumn;
     static VAT_AMOUNT: SaleColumn;
     static CLOSED: SaleColumn;
     static REFERENCE:SaleColumn;
@@ -124,6 +125,13 @@ export class SaleColumn {
         SaleColumn.VAT_EXCLUSIVE_AMOUNT.alignRight = true;
         SaleColumn.VAT_EXCLUSIVE_AMOUNT.title = {
             'fr': "Total HTVA"
+        };
+
+        SaleColumn.VAT_INCLUSIVE_AMOUNT = new SaleColumn();
+        SaleColumn.VAT_INCLUSIVE_AMOUNT.name = 'vatInclusive';
+        SaleColumn.VAT_INCLUSIVE_AMOUNT.alignRight = true;
+        SaleColumn.VAT_INCLUSIVE_AMOUNT.title = {
+            'fr': "Total"
         };
 
         SaleColumn.VAT_AMOUNT = new SaleColumn();

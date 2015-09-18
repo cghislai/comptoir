@@ -78,7 +78,7 @@
     </span>
         </div>
     </div>
-    <div class="vatExslusive"
+    <div class="vatExclusive"
          *ng-if="column.name == 'itemVatExclusive'">
         {{ itemVariant.item.vatExclusive | currency:'EUR':true:'.2-2' }}
     </div>
@@ -86,9 +86,14 @@
          *ng-if="column.name == 'itemVatRate'">
         {{ ( itemVariant.item.vatRate * 100 )| number:'.0' }} %
     </div>
+    <div class="vatInclusive"
+         *ng-if="column.name == 'itemVatInclusive'">
+        {{ ( itemVariant.item.vatExclusive * (1 + itemVariant.item.vatRate)) |currency:'EUR':true:'.2-2' }}
+    </div>
+
     <div class="totalPrice"
          *ng-if="column.name == 'totalPrice' ">
-        {{ itemVariant.calcPrice() | currency:'EUR':true:'.2-2' }}
+        {{ itemVariant.calcPrice(true) | currency:'EUR':true:'.2-2' }}
     </div>
 </div>
 <div class="action remove"

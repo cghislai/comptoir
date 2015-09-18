@@ -13,6 +13,10 @@
     *ng-if="column.name == 'vatExclusive' ">
     {{ sale.vatExclusiveAmount | currency:'EUR':true:'.2-2' }}
 </span>
+<span class="total number"
+      *ng-if="column.name == 'vatInclusive' ">
+    {{ (sale.vatExclusiveAmount + sale.vatAmount ) | currency:'EUR':true:'.2-2' }}
+</span>
 <span class="vat number"
     *ng-if="column.name == 'vat'">
     {{ sale.vatAmount | currency:'EUR':true:'.2-2' }}

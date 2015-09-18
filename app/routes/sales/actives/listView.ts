@@ -62,8 +62,9 @@ export class ActiveSalesView {
             SaleColumn.ID,
             SaleColumn.REFERENCE,
             SaleColumn.DATETIME,
-            SaleColumn.VAT_AMOUNT,
             SaleColumn.VAT_EXCLUSIVE_AMOUNT,
+            SaleColumn.VAT_AMOUNT,
+            SaleColumn.VAT_INCLUSIVE_AMOUNT,
             SaleColumn.ACTION_REMOVE
         ];
         this.searchSales();

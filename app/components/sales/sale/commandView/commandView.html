@@ -105,7 +105,7 @@
                        (click)="doEditItemPrice(saleItem)"
                        [class.actionLink]="!validated">
                             <span class="price">
-                                {{ saleItem.vatExclusive | currency:'EUR':true:'.2-2'  }}
+                                {{ (saleItem.vatExclusive * (1 + saleItem.vatRate)) | currency:'EUR':true:'.2-2'  }}
                             </span>
                     </a>
                 </span>
@@ -140,7 +140,7 @@
                            size="2" fast-input/>
                     %
                 </span>
-                <span>{{ saleItem.total | currency:'EUR':true:'.2-2' }}</span>
+                <span>{{ (saleItem.total * (1 + saleItem.itemVariant.item.vatRate) ) | currency:'EUR':true:'.2-2' }}</span>
             </td>
             <td class="actions" [hidden]="validated">
                 <a class="actionIcon noBlur validate"

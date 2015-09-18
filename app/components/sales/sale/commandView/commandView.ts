@@ -165,7 +165,7 @@ export class CommandView implements OnChanges {
             existingItemSale.itemVariant = itemVariant;
             existingItemSale.quantity = 1;
             existingItemSale.sale = this.sale;
-            existingItemSale.vatExclusive = itemVariant.item.vatExclusive;
+            existingItemSale.vatExclusive = itemVariant.calcPrice(false);
             existingItemSale.vatRate = itemVariant.item.vatRate;
             if (this.saleItemsResult != null) {
                 this.saleItemsResult.list.push(existingItemSale);
@@ -344,9 +344,10 @@ export class CommandView implements OnChanges {
     onItemPriceChange(newValue) {
         var price = parseFloat(newValue);
         if (isNaN(price)) {
-            price = this.editingItem.itemVariant.calcPrice();
+            this.cancelEdits();
+            return;
         }
-        var vatExclusive = NumberUtils.toFixedDecimals(price, 2);
+        var vatExclusive = NumberUtils.toFixedDecimals(price / ( 1 + this.editingItem.vatRate), 2);
         var item = this.editingItem;
         item.vatExclusive = vatExclusive;
         this.itemVariantSaleService.save(item)
