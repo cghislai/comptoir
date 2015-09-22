@@ -4,7 +4,6 @@
             <input #filter id="itemListFilterInput"
                    (keyup)="onFilterKeyUp($event)"
                    (change)="onFilterChange($event)"
-                   [value]="searchRequest?.search?.itemSearch?.multiSearch"
                    placeholder="Filtrer les produits" autofocusselect/>
 
             <div class="busy">
@@ -14,7 +13,7 @@
             </div>
         </div>
     </header>
-    <div class="scrollPane"  *ng-if="searchResult != null">
+    <div class="scrollPane">
         <itemVariantList
                 [columns]="columns"
                 [items]="searchResult.list"
