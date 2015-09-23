@@ -49,11 +49,6 @@ export class BasicService<T extends WithId> {
         });
     }
 
-    refresh(entity:T):Promise<T> {
-        this.client.resourceInfo.cacheHandler.clearFromCache(entity.id);
-        return this.get(entity.id);
-    }
-
     remove(entity:T):Promise<any> {
         var authToken = this.authService.authToken;
         return this.client.remove(entity.id, authToken);
@@ -101,7 +96,7 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
             });
     }
 
-    save(localEntity:U):Promise<U> {
+    save(localEntity:U):Promise<WithId> {
         var newEntity = localEntity.id == null;
         var authToken = this.authService.authToken;
         var entity = this.serviceInfo.fromLocalConverter(localEntity);
@@ -112,18 +107,7 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
         } else {
             nextTask = this.client.update(entity, authToken);
         }
-        return nextTask.then((ref:WithId)=> {
-            localEntity.id = ref.id;
-            return localEntity;
-        });
-    }
-
-    refresh(entity:U):Promise<U> {
-        var authToken = this.authService.authToken;
-        return this.client.get(entity.id, authToken)
-            .then((wsEntity:T)=> {
-                return this.serviceInfo.updateLocal(entity, wsEntity, authToken);
-            });
+        return nextTask;
     }
 
     remove(entity:U):Promise<any> {
@@ -213,9 +197,9 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
         for (var removedId in existingItemMap) {
 
         }
-        result.count = newResult.count;
         return Promise.all(taskList)
             .then(() => {
+                result.count = newResult.count;
                 result.list = newItems;
                 return result;
             });

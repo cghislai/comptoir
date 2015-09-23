@@ -1,34 +1,29 @@
 <div class="saleView">
     <div class="header">
         <span>Point de vente :</span>
-        <span><posSelect (pos-changed)="pos = $event"
+        <span><posSelect (pos-changed)="onPosChanged($event)"
                 [attr.editable]="!saleClosed"></posSelect></span>
     </div>
     <div class="wrapper">
-        <div class="saleViewContainer" [class.slide-left]="payStep"  [class.no-anim]="saleClosed || newSale">
+        <div class="saleViewContainer" [class.slide-left]="activeSaleService.payStep"  [class.no-anim]="saleClosed || newSale">
             <div class="itemList" >
                 <div>
-                    <itemListView #itemlist id="saleItemList"
-                                  (item-clicked)="onItemClicked($event, commandview)"></itemListView>
+                    <itemListView id="saleItemList"
+                                  (item-clicked)="onItemClicked($event)"></itemListView>
                 </div>
             </div>
             <div class="commandView" >
                 <div>
-                    <commandView #commandview id="saleCommandView"
-                                 (validate)="onCommandValidated($event, payview)"
+                    <commandView id="saleCommandView" *ng-if="activeSaleService.sale != null"
                                  (sale-emptied)="onSaleEmptied()"
-                                 [no-input]="saleClosed"
-                                 [sale]="sale"
-                                 [validated]="payStep"></commandView>
+                                 [no-input]="saleClosed"></commandView>
                 </div>
             </div>
             <div class="payView">
                 <div>
-                    <payView #payview id="salePayView"
+                    <payView id="salePayView"
                              (paid)="onCommandPaid()"
-                             [pos]="pos"
-                             [no-input]="saleClosed"
-                             [sale]="sale"></payView>
+                             [no-input]="saleClosed"></payView>
                 </div>
             </div>
         </div>

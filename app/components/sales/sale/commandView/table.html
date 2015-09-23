@@ -1,0 +1,135 @@
+<table class="dataTable"
+       [hidden]="items.length== 0">
+    <thead>
+    <tr>
+        <th>Ref</th>
+        <th>Nom</th>
+        <th class="quantity number">Quantité</th>
+        <th class="price number">Prix</th>
+        <th class="actions" [hidden]="validated"></th>
+    </tr>
+    </thead>
+
+
+    <tbody>
+        <tr *ng-for="#saleItem of items"
+            #row
+            class="saleItem">
+
+            <td class="ref">
+                    <span>
+                        {{ saleItem.itemVariant.variantReference }}
+                    </span>
+            </td>
+
+            <td class="name">
+                <div class="name">
+                    {{ saleItem.itemVariant.item.name[locale] }}
+                </div>
+                <div class="comment">
+                    <a class="commentLink"
+                       (click)="doEditItemComment(saleItem)"
+                       [class.actionLink]="!validated"
+                       [class.editing]="editingItem == saleItem && editingComment"
+                       [class.unneeded]="!hasComment(saleItem)"
+                       [class.nolink]="validated">
+                        {{ saleItem.comment[locale] }}
+                    </a>
+                    <span *ng-if="editingItem == saleItem && editingComment">
+                        <input [initial-value]="editingItem.comment[locale]"
+                               (fast-change)="onItemCommentChange($event)"
+                               type="text"
+                               size="14" fast-input/>
+                    </span>
+                </div>
+            </td>
+
+            <td class="quantity number">
+                    <span class="quantityAmountLinks"
+                          [class.editing]="(editingQuantity || editingPrice) && (editingItem == saleItem)"
+                          [class.unneeded]="saleItem.quantity <= 1"
+                          [class.nolink]="validated">
+                        <a class="quantityLink"
+                           (click)="doEditItemQuantity(saleItem)"
+                           [class.actionLink]="!validated">
+                                <span class="count">
+                                    {{ saleItem.quantity}} x
+                                </span>
+                        </a>
+                        <a class="priceLink"
+                           (click)="doEditItemPrice(saleItem)"
+                           [class.actionLink]="!validated">
+                                <span class="price">
+                                    {{ calcPriceVatInclusive(saleItem) | currency:'EUR':true:'.2-2'  }}
+                                </span>
+                        </a>
+                    </span>
+                    <span class="editQuantity"
+                          *ng-if="editingQuantity && editingItem == saleItem">
+                        <input [initial-value]="editingItem.quantity"
+                                [validator]="validateQuantity"
+                               (fast-change)="onItemQuantityChange($event)"
+                               type="number" min="1" step="1"
+                               size="4" fast-input>
+                    </span>
+                    <span class="editPrice"
+                          *ng-if="editingPrice && editingItem == saleItem">
+                        <input [initial-value]="(editingItem.vatExclusive * (1 + editingItem.vatRate)) | number:'.2-2'"
+                                [validator]="validatePrice"
+                               (fast-change)="onItemPriceChange($event)"
+                               type="number" min="0.01" step="0.01"
+                               size="6" fast-input> €
+                    </span>
+            </td>
+
+            <td class="price number">
+                <a class="reduction green"
+                   [class.unneeded]="saleItem.discountRatio == null || saleItem.discountRatio <= 0 || (editingItem == saleItem && editingDiscount)"
+                   [class.nolink]="validated"
+                   [class.actionLink]="!validated"
+                   (click)="doEditItemDiscount(saleItem)">
+                    -{{ ( saleItem.discountRatio * 100) | number:'.0' }}%
+                </a>
+                <span class="editDiscount"
+                      *ng-if="isEditingDiscount(saleItem)">
+                    <input [initial-value]="saleItem.discountRatio * 100"
+                            [validator]="validateDiscount"
+                           (fast-change)="onItemDiscountChange($event)"
+                           type="number" min="1" max="100" step="1"
+                           size="2" fast-input/>
+                    %
+                </span>
+                <span>{{ calcTotalVatInclusive(saleItem) | currency:'EUR':true:'.2-2' }}</span>
+            </td>
+
+            <td class="actions" [hidden]="validated">
+                <a class="actionIcon noBlur validate"
+                   (click)="doValidateInput(row)"
+                   [hidden]="!isEditingItem(saleItem)">
+                    <i class="fi-check green"></i>
+                </a>
+                <a class="actionIcon noBlur validate"
+                   (click)="doCancelInput(row)"
+                   [hidden]="!isEditingItem(saleItem)">
+                    <i class="fi-x red"></i>
+                </a>
+                <a class="actionIcon remove"
+                   [hidden]="isEditing()"
+                   (click)="doRemoveItem(saleItem)">
+                    <i class="fi-minus red"></i>
+                </a>
+                <a class="actionIcon setReductionLink"
+                   (click)="doEditItemDiscount(saleItem)"
+                   [hidden]="saleItem.discountRatio > 0 || isEditing()">
+                    <span class="green" style="font-weight: bold;">%</span>
+                </a>
+                <a class="actionIcon commentLink"
+                   (click)="doEditItemComment(saleItem)"
+                   [hidden]="hasComment(saleItem) || isEditing()">
+                    <i class="fi-comment"></i>
+                </a>
+            </td>
+        </tr>
+
+    </tbody>
+</table>

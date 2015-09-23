@@ -191,13 +191,20 @@ export class CountCashView {
         }
         balanceTask.then((balance)=> {
             moneyPile.balance = balance;
-            return this.moneyPileService.save(moneyPile)
-        }).then(()=> {
-            this.moneyPileService.refresh(moneyPile);
-            this.balanceService.refresh(this.balance);
-        }).catch((error)=> {
-            this.errorService.handleRequestError(error);
-        });
+            return this.moneyPileService.save(moneyPile);
+        }).then((ref)=> {
+            return Promise.all(<Promise<any>[]>[
+                this.moneyPileService.get(ref.id),
+                this.balanceService.get(this.balance.id)
+            ]);
+        })
+            .then((result)=> {
+                moneyPile = result[0];
+                this.balance = result[1];
+            })
+            .catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });
     }
 
     startEditTotal() {
@@ -222,7 +229,7 @@ export class CountCashView {
 
     closeBalance() {
         this.balanceService.closeBalance(this.balance)
-            .then(()=>{
+            .then(()=> {
                 // Rest
                 this.balance = new LocalBalance();
                 this.moneyPileList = [];
@@ -233,7 +240,7 @@ export class CountCashView {
                     moneyPile.label = LocalMoneyPileFactory.getCashTypeLabel(cashType);
                     this.moneyPileList.push(moneyPile);
                 }
-                this.account =  this.accountService.lastUsedBalanceAccount;
+                this.account = this.accountService.lastUsedBalanceAccount;
                 this.balance.account = this.account;
                 if (this.account == null) {
                     this.accountId = null;

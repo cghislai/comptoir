@@ -2,7 +2,7 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, NgIf, EventEmitter, OnChanges, FORM_DIRECTIVES} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, EventEmitter, OnInit, FORM_DIRECTIVES, ChangeDetectionStrategy} from 'angular2/angular2';
 
 import {CompanyRef} from 'client/domain/company';
 import {SaleRef} from 'client/domain/sale';
@@ -16,6 +16,7 @@ import {LocaleTexts, Language} from 'client/utils/lang';
 import {NumberUtils} from 'client/utils/number';
 import {SearchRequest, SearchResult} from 'client/utils/search';
 
+import {ActiveSaleService} from 'routes/sales/sale/activeSale';
 import {SaleService} from 'services/sale';
 import {ItemVariantSaleService} from 'services/itemVariantSale';
 import {ErrorService} from 'services/error';
@@ -27,169 +28,273 @@ import {LangSelect} from 'components/lang/langSelect/langSelect';
 import {LocalizedDirective} from 'components/utils/localizedInput'
 
 
-// The component
 @Component({
-    selector: 'commandView',
-    events: ['validate', 'saleEmptied'],
-    properties: ['sale', 'validated', 'noInput']
+    selector: 'commandViewHeader',
+    properties: ['noInput', 'validated'],
+    events: ['validateChanged'],
+    changeDetection: ChangeDetectionStrategy.Default
 })
-
 @View({
-    templateUrl: './components/sales/sale/commandView/commandView.html',
+    templateUrl: './components/sales/sale/commandView/header.html',
     styleUrls: ['./components/sales/sale/commandView/commandView.css'],
-    directives: [AutoFocusDirective, LocalizedDirective, FastInput, NgFor, NgIf, FORM_DIRECTIVES]
+    directives: [FastInput, NgIf, FORM_DIRECTIVES]
 })
-
-export class CommandView implements OnChanges {
-    saleService:SaleService;
-    itemVariantSaleService:ItemVariantSaleService;
+export class CommandViewHeader {
+    activeSaleService:ActiveSaleService;
     errorService:ErrorService;
 
-    sale:LocalSale;
-    saleItemsRequest:SearchRequest<LocalItemVariantSale>;
-    saleItemsResult:SearchResult<LocalItemVariantSale>;
-
-    language:Language;
-    locale:string;
-    noInput:boolean;
-
-    editingItem:LocalItemVariantSale = null;
-    editingItemQuantity:boolean;
-    editingItemPrice:boolean;
-    editingItemComment:boolean;
-    editingItemDiscount:boolean;
-    editingValue:any;
-
     editingSaleDiscount:boolean = false;
-    validate = new EventEmitter();
     validated:boolean = false;
-    saleEmptied = new EventEmitter();
+    validateChanged = new EventEmitter();
 
-    constructor(saleService:SaleService, itemVariantSaleService:ItemVariantSaleService,
-                authService:AuthService,
+    constructor(saleService:ActiveSaleService,
                 errorService:ErrorService) {
-        this.saleService = saleService;
-        this.itemVariantSaleService = itemVariantSaleService;
+        this.activeSaleService = saleService;
         this.errorService = errorService;
-        this.language = authService.getEmployeeLanguage();
-        this.locale = authService.getEmployeeLanguage().locale;
-
-        this.saleItemsRequest = new SearchRequest<LocalItemVariantSale>();
-        var search = new ItemVariantSaleSearch();
-        search.companyRef = new CompanyRef(authService.auth.employee.company.id);
-        this.saleItemsRequest.search = search;
-
-        this.saleItemsResult = new SearchResult<LocalItemVariantSale>();
-        this.saleItemsResult.count = 0;
-        this.saleItemsResult.list = [];
-
     }
 
+    get isNewSale():boolean {
+        var sale = this.activeSaleService.sale;
+        return sale != null && sale.id == null;
+    }
 
-    onChanges(changes:StringMap<string, any>):void {
-        var saleChanges = changes['sale'];
-        if (saleChanges != null) {
-            var newSale = saleChanges.currentValue;
-            if (newSale != null) {
-                this.searchItems();
+    get sale():LocalSale {
+        return this.activeSaleService.sale;
+    }
+
+    get isSearching():boolean {
+        var request = this.activeSaleService.saleItemsRequest;
+        return request != null && request.request != null;
+    }
+
+    get hasItems():boolean {
+        var result = this.activeSaleService.saleItemsResult;
+        return result != null && result.count > 0;
+    }
+
+    doEditSaleDiscount() {
+        this.editingSaleDiscount = true;
+    }
+
+    validateDiscount(value:string) {
+        if (value.length > 0) {
+            var intValue = parseInt(value);
+            if (isNaN(intValue)) {
+                return false;
             }
+            return intValue >= 0 && intValue <= 100;
         }
+        return true;
     }
 
-    OnChanges(changes: any) {
-    }
+    onSaleDiscountChange(newValue:string) {
+        this.editingSaleDiscount = false;
 
-    searchItems() : Promise<any>{
-        var search = this.saleItemsRequest.search;
-        search.saleRef = new SaleRef(this.sale.id);
-        if (this.sale.id == null) {
-            return;
+        var discountPercentage = parseInt(newValue);
+        if (isNaN(discountPercentage)) {
+            discountPercentage = null;
         }
-        return this.itemVariantSaleService.search(this.saleItemsRequest, this.saleItemsResult)
+        var sale = this.activeSaleService.sale;
+        if (discountPercentage != null) {
+            var discountRatio = NumberUtils.toFixedDecimals(discountPercentage / 100, 2);
+            sale.discountRatio = discountRatio;
+        } else {
+            sale.discountRatio = null;
+        }
+        this.activeSaleService.doUpdateSale()
+            .then(()=> {
+            })
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }
 
     doValidate() {
-        this.validated = true;
-        this.validate.next(this.validated);
+        this.validateChanged.next(true);
     }
 
     doUnvalidate() {
-        this.validated = false;
-        this.validate.next(this.validated);
+        this.validateChanged.next(false);
+    }
+}
+
+
+@Component({
+    selector: 'commandViewTable',
+    properties: ['noInput', 'validated', 'items'],
+    events: ['itemRemoved'],
+    changeDetection: ChangeDetectionStrategy.Default
+})
+@View({
+    templateUrl: './components/sales/sale/commandView/table.html',
+    styleUrls: ['./components/sales/sale/commandView/commandView.css'],
+    directives: [FastInput, NgIf, NgFor, FORM_DIRECTIVES]
+})
+export class CommandViewTable {
+    activeSaleService:ActiveSaleService;
+    errorService:ErrorService;
+
+    items:LocalItemVariant[];
+    validated:boolean;
+    noInput:boolean;
+    itemRemoved = new EventEmitter();
+    locale:string;
+
+    editingItem:LocalItemVariantSale;
+    editingComment:boolean = false;
+    editingQuantity:boolean = false;
+    editingPrice:boolean = false;
+    editingDiscount:boolean = false;
+
+    constructor(saleService:ActiveSaleService,
+                authService:AuthService,
+                errorService:ErrorService) {
+        this.activeSaleService = saleService;
+        this.errorService = errorService;
+        this.locale = authService.getEmployeeLanguage().locale;
     }
 
-    doRemoveItem(localItemVariantSale:LocalItemVariantSale) {
-        var newItems: LocalItemVariantSale[] = [];
-        for (var existingItemSale of this.saleItemsResult.list) {
-            if (existingItemSale == localItemVariantSale) {
-                continue
-            }
-            newItems.push(existingItemSale);
-        }
-        this.saleItemsResult.list = newItems;
+    cancelEdits() {
+        if (this.editingItem)
+            this.editingItem = null;
+        if (this.editingComment)
+            this.editingComment = false;
+        if (this.editingPrice)
+            this.editingPrice = false;
+        if (this.editingQuantity)
+            this.editingQuantity = false;
+        if (this.editingDiscount)
+            this.editingDiscount = false;
+    }
 
-        this.itemVariantSaleService.remove(localItemVariantSale)
-            .then(()=> {
-                var taskList = [
-                    this.saleService.refresh(this.sale),
-                    this.searchItems()
-                ];
-                return Promise.all(taskList);
-            })
-            .then(()=>{
-                if (this.saleItemsResult.list.length == 0) {
-                    this.saleEmptied.next(null);
-                }
-            })
+    isEditing() {
+        return this.editingItem != null;
+    }
+
+    isEditingItem(item:LocalItemVariantSale) {
+        return item == this.editingItem;
+    }
+
+    isEditingDiscount(item) {
+        return this.isEditingItem(item) && this.editingDiscount;
+    }
+
+    hasComment(localItemVariantSale:LocalItemVariantSale) {
+        if (localItemVariantSale.comment == null) {
+            return false;
+        }
+        var text = localItemVariantSale.comment[this.locale];
+        if (text != null && text.trim().length > 0) {
+            return true;
+        }
+        return false;
+    }
+
+
+    doEditItemComment(localItemVariantSale:LocalItemVariantSale) {
+        this.cancelEdits();
+        this.editingItem = localItemVariantSale;
+        this.editingComment = true;
+        if (this.editingItem.comment[this.locale] == null) {
+            this.editingItem.comment[this.locale] = '';
+        }
+    }
+
+    onItemCommentChange(event) {
+        var commentTexts = this.editingItem.comment;
+        if (commentTexts[this.locale] == event) {
+            this.cancelEdits();
+            return;
+        }
+        commentTexts[this.locale] = event;
+        var item = this.editingItem;
+        this.activeSaleService.doUpdateItem(item)
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
+        this.cancelEdits();
     }
 
-    doAddItem(itemVariant:LocalItemVariant) {
-        var existingItem:LocalItemVariantSale = null;
-        for (var existingItemSale of this.saleItemsResult.list) {
-            if (existingItemSale.itemVariant.id == itemVariant.id) {
-                existingItem = existingItemSale;
-                break;
-            }
+    doEditItemQuantity(localItemVariantSale:LocalItemVariantSale) {
+        this.cancelEdits();
+        this.editingItem = localItemVariantSale;
+        this.editingQuantity = true;
+    }
+
+
+    onItemQuantityChange(newValue) {
+        var quantity = parseInt(newValue);
+        if (isNaN(quantity)) {
+            quantity = 1;
+        } else if (quantity < 1) {
+            quantity = 1;
         }
-        var newItem = existingItem == null;
-        if (newItem) {
-            existingItemSale = new LocalItemVariantSale();
-            existingItemSale.comment = new LocaleTexts();
-            existingItemSale.discountRatio = 0;
-            existingItemSale.itemVariant = itemVariant;
-            existingItemSale.quantity = 1;
-            existingItemSale.sale = this.sale;
-            existingItemSale.vatExclusive = itemVariant.calcPrice(false);
-            existingItemSale.vatRate = itemVariant.item.vatRate;
-            if (this.saleItemsResult != null) {
-                this.saleItemsResult.list.push(existingItemSale);
-                this.saleItemsResult.count++;
-            }
-        } else {
-            existingItemSale.quantity += 1;
+        if (this.editingItem.quantity == quantity) {
+            this.cancelEdits();
+            return;
         }
-        return this.itemVariantSaleService.save(existingItemSale)
-            .then((localItemSale:LocalItemVariantSale)=> {
-                var taskList: Promise<any>[] = [
-                    this.itemVariantSaleService.refresh(existingItemSale),
-                    this.saleService.refresh(this.sale)
-                ]
-                if (newItem) {
-                    taskList.push(this.searchItems());
-                }
-                return Promise.all(taskList);
-            }).catch((error)=> {
+        var item = this.editingItem;
+        item.quantity = quantity;
+        this.activeSaleService.doUpdateItem(item)
+            .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
+        this.cancelEdits();
     }
 
-    // Validators
+
+    doEditItemPrice(localItemVariantSale:LocalItemVariantSale) {
+        this.cancelEdits();
+        this.editingItem = localItemVariantSale;
+        this.editingPrice = true;
+    }
+
+
+    onItemPriceChange(newValue) {
+        var price = parseFloat(newValue);
+        if (isNaN(price)) {
+            this.cancelEdits();
+            return;
+        }
+        var vatExclusive = NumberUtils.toFixedDecimals(price / ( 1 + this.editingItem.vatRate), 2);
+        var item = this.editingItem;
+        if (item.vatExclusive == vatExclusive) {
+            this.cancelEdits();
+            return;
+        }
+        item.vatExclusive = vatExclusive;
+        this.activeSaleService.doUpdateItem(item)
+            .catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });
+        this.cancelEdits();
+    }
+
+    doEditItemDiscount(localItemVariantSale:LocalItemVariantSale) {
+        this.cancelEdits();
+        this.editingItem = localItemVariantSale;
+        this.editingDiscount = true;
+    }
+
+    onItemDiscountChange(newValue) {
+        var discountPercentage = parseInt(newValue);
+        if (isNaN(discountPercentage)) {
+            discountPercentage = 0;
+        }
+        var discountRatio = NumberUtils.toFixedDecimals(discountPercentage / 100, 2);
+        var item = this.editingItem;
+        if (item.discountRatio == discountRatio) {
+            this.cancelEdits();
+            return;
+        }
+        item.discountRatio = discountRatio;
+        this.activeSaleService.doUpdateItem(item)
+            .catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });
+        this.cancelEdits();
+    }
+
 
     validateQuantity(value:string) {
         if (value.length > 0) {
@@ -225,169 +330,6 @@ export class CommandView implements OnChanges {
         return true;
     }
 
-    // Edits
-
-    cancelEdits() {
-        this.editingItem = null;
-        this.editingItemQuantity = false;
-        this.editingItemComment = false;
-        this.editingItemDiscount = false;
-        this.editingItemPrice = false;
-        this.editingItemQuantity = false;
-        this.editingSaleDiscount = false
-    }
-
-
-    // Item comment
-
-    doEditItemComment(localItemVariantSale:LocalItemVariantSale) {
-        this.cancelEdits();
-        this.editingItem = localItemVariantSale;
-        this.editingItemComment = true;
-        if (this.editingItem.comment[this.locale] == null) {
-            this.editingItem.comment[this.locale] = '';
-        }
-        this.editingValue = localItemVariantSale.comment[this.locale];
-    }
-
-    onItemCommentChange(event) {
-        var commentTexts = this.editingItem.comment;
-        commentTexts[this.locale] = event;
-        var item = this.editingItem;
-        this.itemVariantSaleService.save(item)
-            .then(()=> {
-                this.itemVariantSaleService.refresh(item);
-                this.saleService.refresh(this.sale);
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
-        this.cancelEdits();
-    }
-
-    hasComment(localItemVariantSale:LocalItemVariantSale) {
-        if (localItemVariantSale.comment == null) {
-            return false;
-        }
-        var text = localItemVariantSale.comment[this.locale];
-        if (text != null && text.trim().length > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    // Item discount
-
-    doEditItemDiscount(localItemVariantSale:LocalItemVariantSale) {
-        this.cancelEdits();
-        this.editingValue = localItemVariantSale.discountRatio;
-        this.editingItem = localItemVariantSale;
-        this.editingItemDiscount = true;
-    }
-
-    onItemDiscountChange(newValue) {
-        var discountPercentage = parseInt(newValue);
-        if (isNaN(discountPercentage)) {
-            discountPercentage = 0;
-        }
-        var discountRatio = NumberUtils.toFixedDecimals(discountPercentage / 100, 2);
-        var item = this.editingItem;
-        item.discountRatio = discountRatio;
-        this.itemVariantSaleService.save(item)
-            .then(()=> {
-                this.itemVariantSaleService.refresh(item);
-                this.saleService.refresh(this.sale);
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
-        this.cancelEdits();
-    }
-
-    // Item quantity
-
-    doEditItemQuantity(localItemVariantSale:LocalItemVariantSale) {
-        this.cancelEdits();
-        this.editingValue = localItemVariantSale.quantity;
-        this.editingItem = localItemVariantSale;
-        this.editingItemQuantity = true;
-    }
-
-
-    onItemQuantityChange(newValue) {
-        var quantity = parseInt(newValue);
-        if (isNaN(quantity)) {
-            quantity = 1;
-        } else if (quantity < 1) {
-            quantity = 1;
-        }
-        var item = this.editingItem;
-        item.quantity = quantity;
-        this.itemVariantSaleService.save(item)
-            .then(()=> {
-                this.itemVariantSaleService.refresh(item);
-                this.saleService.refresh(this.sale);
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
-        this.cancelEdits();
-    }
-
-    // Item price
-
-    doEditItemPrice(localItemVariantSale:LocalItemVariantSale) {
-        this.cancelEdits();
-        this.editingValue = localItemVariantSale.vatExclusive;
-        this.editingItem = localItemVariantSale;
-        this.editingItemPrice = true;
-    }
-
-
-    onItemPriceChange(newValue) {
-        var price = parseFloat(newValue);
-        if (isNaN(price)) {
-            this.cancelEdits();
-            return;
-        }
-        var vatExclusive = NumberUtils.toFixedDecimals(price / ( 1 + this.editingItem.vatRate), 2);
-        var item = this.editingItem;
-        item.vatExclusive = vatExclusive;
-        this.itemVariantSaleService.save(item)
-            .then(()=> {
-                this.itemVariantSaleService.refresh(item);
-                this.saleService.refresh(this.sale);
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
-        this.cancelEdits();
-    }
-
-    // Sale discount
-
-    doEditSaleDiscount() {
-        this.cancelEdits();
-        this.editingSaleDiscount = true;
-        this.editingValue = this.sale.discountRatio * 100;
-    }
-
-
-    onSaleDiscountChange(newValue:string) {
-        var discountPercentage = parseInt(newValue);
-        if (isNaN(discountPercentage)) {
-            discountPercentage = null;
-        }
-        if (discountPercentage != null) {
-            var discountRatio = NumberUtils.toFixedDecimals(discountPercentage / 100, 2);
-            this.sale.discountRatio = discountRatio;
-        } else {
-            this.sale.discountRatio = null;
-        }
-        this.saleService.save(this.sale)
-            .then(()=> {
-                this.saleService.refresh(this.sale);
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
-        this.cancelEdits();
-    }
 
     doValidateInput(container) {
         var input = this.doFindInput(container);
@@ -411,5 +353,73 @@ export class CommandView implements OnChanges {
             return inputList[0];
         }
     }
+
+    calcTotalVatInclusive(item: LocalItemVariantSale) {
+        var price = item.total;
+        var vat = item.itemVariant.item.vatRate;
+        price *= (1 + vat);
+        return price;
+    }
+
+    calcPriceVatInclusive(item: LocalItemVariantSale) {
+        var price = item.itemVariant.calcPrice(true);
+        return price;
+    }
+
+    doRemoveItem(localItemVariantSale:LocalItemVariantSale) {
+        this.activeSaleService.doRemoveItem(localItemVariantSale)
+            .then(()=> {
+                this.itemRemoved.next(null);
+            })
+            .catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });
+    }
+
+}
+
+// The component
+@Component({
+    selector: 'commandView',
+    events: ['saleEmptied'],
+    properties: ['noInput'],
+    changeDetection: ChangeDetectionStrategy.Default
+})
+
+@View({
+    templateUrl: './components/sales/sale/commandView/commandView.html',
+    styleUrls: ['./components/sales/sale/commandView/commandView.css'],
+    directives: [CommandViewHeader, CommandViewTable,
+        NgIf, FORM_DIRECTIVES]
+})
+
+export class CommandView {
+    activeSaleService:ActiveSaleService;
+    errorService:ErrorService;
+
+    validated:boolean = false;
+    saleEmptied = new EventEmitter();
+    observableItems: any;
+
+    constructor(saleService:ActiveSaleService,
+                errorService:ErrorService) {
+        this.activeSaleService = saleService;
+        this.errorService = errorService;
+        this.validated = this.activeSaleService.payStep;
+    }
+
+    onValidateChanged(validated) {
+        this.validated = validated;
+        this.activeSaleService.payStep = validated;
+    }
+
+    onItemRemoved() {
+        var searchResult = this.activeSaleService.saleItemsResult;
+        if (searchResult.list.length == 0) {
+            this.saleEmptied.next(null);
+        }
+    }
+
+
 
 }

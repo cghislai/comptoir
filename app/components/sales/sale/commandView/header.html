@@ -1,0 +1,48 @@
+<header class="coloredHeader"
+        [class.inactive]="noInput">
+    <h1>
+            <span [hidden]="isNewSale">
+                Vente <span class="saleRef" >#{{ sale.id}}</span>
+            </span>
+            <span [hidden]="!isNewSale">
+                Nouvelle vente
+            </span>
+    </h1>
+
+    <span class="busy">
+        <span class="valignAnchor"></span>
+        <img src="res/img/spinner-2-white.gif"
+             [hidden]="!isSearching"/>
+    </span>
+
+    <div class="actions"
+         [hidden]="noInput || !hasItems">
+        <div class="action reduction"
+             [hidden]="validated"
+             (click)="doEditSaleDiscount()"
+             [class.editing]="editingSaleDiscount"
+             [class.has-reduction]="sale.discountRatio > 0">
+                <span [hidden]="editingSaleDiscount || sale.discountRatio > 0">
+                    Réduction
+                </span>
+                <span [hidden]="editingSaleDiscount || sale.discountRatio == null || sale.discountRatio <= 0">
+                    -{{ (sale.discountRatio * 100) | number:'.0' }} %
+                </span>
+                <span *ng-if="editingSaleDiscount" class="editDiscount">
+                    <input #discount
+                           [initial-value]="sale.discountRatio * 100"
+                           [validator]="validateDiscount"
+                           (fast-change)="onSaleDiscountChange($event)"
+                           type="number" min="0" max="100" step="1"
+                           size="2" fast-input>
+                    %
+                    <span class="editActions">
+                        <i class="fi-check green" (click)="discount.doValidate()"></i>
+                        <i class="fi-x red" (click)="discount.doCancel()"></i>
+                    </span>
+                </span>
+        </div>
+        <div class="action validate" (click)="doValidate()" [hidden]="validated">Encaisser</div>
+        <div class="action back" (click)="doUnvalidate()" [hidden]="!validated">Retour</div>
+    </div>
+</header>

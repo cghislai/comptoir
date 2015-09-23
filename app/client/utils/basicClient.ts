@@ -196,6 +196,9 @@ export class BasicClient<T extends WithId> {
             .run()
             .then((response)=> {
                 var result = new SearchResult<T>().parseResponse(response, reviver);
+                for (var entity of result.list) {
+                    this.resourceInfo.cacheHandler.putInCache(entity);
+                }
                 return result;
             });
     }

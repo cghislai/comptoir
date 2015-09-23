@@ -3,22 +3,21 @@
  */
 
 import {Directive, ElementRef, EventEmitter,
-    Observable, Attribute} from 'angular2/angular2';
+    Observable, Attribute, OnInit} from 'angular2/angular2';
 
 
 @Directive({
     selector: 'input[fast-input]',
-    properties: ['validator', 'validateOnBlur'],
+    properties: ['validator', 'initialValue'],
     events: ['fastChange'],
     host: {
         '(keyup)': 'onKeyUp($event)',
         '(input)': 'onInput($event)',
-        '(blur)': 'onBlur($event)',
         '(cancelled)': 'doCancel()',
         '(validated)': 'doValidate()'
     }
 })
-export class FastInput {
+export class FastInput implements OnInit {
     static VALIDATE_EVENT = new Event('validated');
     static CANCEL_EVENT = new Event('cancelled');
 
@@ -26,13 +25,12 @@ export class FastInput {
     fastChange:EventEmitter;
     initialValue:any;
     elementRef:ElementRef;
-    validateOnBlur: boolean;
+    validateOnBlur: boolean = false;
 
     constructor(elementRef:ElementRef) {
         this.elementRef = elementRef;
         this.initialValue = elementRef.nativeElement.value;
         this.fastChange = new EventEmitter();
-        this.doFocus();
 
         var nativeElement = this.elementRef.nativeElement;
         nativeElement.doValidate = ()=>{
@@ -41,6 +39,13 @@ export class FastInput {
         nativeElement.doCancel = ()=>{
             nativeElement.dispatchEvent(FastInput.CANCEL_EVENT);
         };
+    }
+
+    onInit() {
+        if (this.initialValue != null) {
+            this.elementRef.nativeElement.value = this.initialValue;
+        }
+        this.doFocus();
     }
 
     doFocus() {
@@ -77,14 +82,6 @@ export class FastInput {
         return true;
     }
 
-    onBlur(event) {
-        //this.doValidate();
-        if (this.validateOnBlur) {
-            this.doValidate();
-        }
-        return true;
-    }
-
     doValidate() {
         var value = this.elementRef.nativeElement.value;
         if (this.validator != null) {
@@ -99,6 +96,6 @@ export class FastInput {
 
     doCancel() {
         //this.elementRef.nativeElement.value = this.initialValue;
-        this.fastChange.next(null);
+        this.fastChange.next(this.initialValue);
     }
 }
