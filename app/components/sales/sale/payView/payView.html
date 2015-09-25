@@ -1,4 +1,4 @@
-<div class="payView" *ng-if="hasSale()">
+<div class="payView">
     <div>
         <div class="toPayHeader coloredHeader"
              [class.inactive]="noInput"
@@ -7,7 +7,7 @@
             <span class="busy">
                 <span class="valignAnchor"></span>
                 <img src="res/img/spinner-2-white.gif"
-                     [hidden]="!sale.dirty"/>
+                     [hidden]="!isSearching()"/>
             </span>
             <span class="actions">
                 <span class="valignAnchor"></span>
@@ -25,7 +25,7 @@
             <span class="busy">
                 <span class="valignAnchor"></span>
                 <img src="res/img/spinner-2-white.gif"
-                     [hidden]="!sale.dirty"/>
+                     [hidden]="!isSearching()"/>
             </span>
 
             <span class="actions">
@@ -44,8 +44,8 @@
         </div>
     </div>
 
-    <table class="payItems dataTable" *ng-if="accountingEntriesSearchResult != null"
-           [hidden]="accountingEntriesSearchResult.list.length == 0">
+    <table class="payItems dataTable"
+           [hidden]="!hasAccountingEntries()">
         <thead>
         <tr>
             <th>Compte</th>
@@ -54,7 +54,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ng-for="#entry of accountingEntriesSearchResult.list" class="payItem">
+        <tr *ng-for="#entry of accountingEntriesResult.list" class="payItem">
             <td>
                 <span *ng-if="entry.account != null">
                     {{ entry.account.description[locale] }}
@@ -82,7 +82,7 @@
         <tr>
             <th class="right">Total</th>
             <th class="number total">
-                {{ (sale.vatExclusiveAmount + sale.vatAmount) | currency:'EUR':true:'.2-2' }}
+                {{ (activeSaleService.paidAmount) | currency:'EUR':true:'.2-2' }}
             </th>
         </tr>
 
@@ -93,16 +93,17 @@
         <span class="method">{{ editingEntry.account.description[locale] }}</span>
         <span class="amount">
             Montant: <input #amount
-                            [value]="editingEntry.amount"
+                            [initial-value]="editingEntry.amount"
                             type="number" min="0.01" step="0.01"
                             [validator]="validateEntryAmount"
                             (fast-change)="applyEditingEntry($event)"
+                            (cancelled)="cancelEditEntry()"
                             fast-input> €
         </span>
     </div>
 
-    <div class="addMethod" [hidden]="noInput" *ng-if="accountsSearchResult != null">
-        <div *ng-for="#account of accountsSearchResult.list"
+    <div class="addMethod" [hidden]="noInput">
+        <div *ng-for="#account of accountsResult.list"
              class="boxedHoverableLink"
              (click)="addAccountingEntry(account)">
             {{ account.description[locale] }}

@@ -33,6 +33,7 @@
                            [initial-value]="sale.discountRatio * 100"
                            [validator]="validateDiscount"
                            (fast-change)="onSaleDiscountChange($event)"
+                           (cancelled)="editingSaleDiscount = false"
                            type="number" min="0" max="100" step="1"
                            size="2" fast-input>
                     %

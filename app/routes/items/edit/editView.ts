@@ -138,7 +138,10 @@ export class ItemEditView {
         variantSearch.itemSearch.companyRef = new CompanyRef(this.authService.auth.employee.company.id);
         this.itemVariantSearchRequest.search = variantSearch;
 
-        this.itemVariantService.search(this.itemVariantSearchRequest, this.itemVariantSearchResult)
+        this.itemVariantService.search(this.itemVariantSearchRequest)
+            .then((result)=>{
+                this.itemVariantSearchResult = result;
+            })
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });

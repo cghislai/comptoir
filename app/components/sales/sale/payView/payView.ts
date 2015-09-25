@@ -8,7 +8,6 @@ import {LocalSale} from 'client/localDomain/sale';
 import {LocalAccount} from 'client/localDomain/account';
 import {LocalAccountingEntry,LocalAccountingEntryFactory } from 'client/localDomain/accountingEntry';
 
-
 import {AccountingEntry, AccountingEntrySearch} from 'client/domain/accountingEntry';
 import {Account, AccountRef, AccountType, AccountSearch} from 'client/domain/account';
 import {Pos, PosRef} from 'client/domain/pos';
@@ -20,11 +19,9 @@ import {NumberUtils} from 'client/utils/number';
 import {LocaleTexts} from 'client/utils/lang';
 import {ComptoirRequest, ComptoirResponse} from 'client/utils/request';
 
-import {AccountService} from 'services/account';
-import {AccountingEntryService} from 'services/accountingEntry';
+import {ActiveSaleService} from 'services/activeSale';
 import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
-import {SaleService} from 'services/sale';
 
 import {FastInput} from 'components/utils/fastInput'
 
@@ -32,7 +29,7 @@ import {FastInput} from 'components/utils/fastInput'
 @Component({
     selector: "payView",
     events: ['paid'],
-    properties: ['sale', 'pos', 'noInput']
+    properties: ['saleTotal', 'noInput']
 })
 @View({
     templateUrl: './components/sales/sale/payView/payView.html',
@@ -40,128 +37,54 @@ import {FastInput} from 'components/utils/fastInput'
     directives: [NgFor, NgIf, FastInput]
 })
 
-export class PayView implements  OnChanges{
-    accountService:AccountService;
-    accountingEntryService:AccountingEntryService;
-    saleService:SaleService;
+export class PayView {
     errorService:ErrorService;
-
-    accountsSearchRequest:SearchRequest<LocalAccount>;
-    accountsSearchResult:SearchResult<LocalAccount>;
-    accountingEntriesSearchRequest:SearchRequest<LocalAccountingEntry>;
-    accountingEntriesSearchResult:SearchResult<LocalAccountingEntry>;
-    totalPaidAmount:number;
-    totalPaidRequest:ComptoirRequest;
-
-    sale:LocalSale;
-    pos:Pos;
+    activeSaleService:ActiveSaleService;
 
     editingEntry:LocalAccountingEntry;
     locale:string;
     noInput:boolean;
-    toPayAmount:number;
+    saleTotal:number;
 
     paid = new EventEmitter();
 
-    constructor(accountService:AccountService, accountingEntryService:AccountingEntryService,
-                errorService:ErrorService, saleService:SaleService, authService:AuthService) {
-        this.accountService = accountService;
-        this.accountingEntryService = accountingEntryService;
-        this.saleService = saleService;
+    constructor(activeSaleService:ActiveSaleService,
+                errorService:ErrorService, authService:AuthService) {
+        this.activeSaleService = activeSaleService;
         this.errorService = errorService;
 
-        this.accountsSearchRequest = new SearchRequest<LocalAccount>();
-        var accountSearch = new AccountSearch();
-        accountSearch.companyRef = authService.getEmployeeCompanyRef();
-        accountSearch.type = AccountType[AccountType.PAYMENT];
-        this.accountsSearchRequest.search = accountSearch;
-
-        this.accountingEntriesSearchRequest = new SearchRequest<LocalAccountingEntry>();
-        var accountingEntriesSearch = new AccountingEntrySearch();
-        accountingEntriesSearch.companyRef = authService.getEmployeeCompanyRef();
-        this.accountingEntriesSearchRequest.search = accountingEntriesSearch;
-
-        this.accountingEntriesSearchResult = new SearchResult<LocalAccountingEntry>();
-        this.accountingEntriesSearchResult.list = [];
-        this.totalPaidAmount = 0;
-
         this.locale = authService.getEmployeeLanguage().locale;
-        this.toPayAmount = 0;
     }
 
-
-    onChanges(changes:StringMap<string, any>):void {
-        var saleChanges = changes['sale'];
-        var posChanges = changes['pos'];
-        if (saleChanges != null) {
-            var newSale: LocalSale = saleChanges.currentValue;
-            if (newSale != null && newSale.id != null) {
-                this.searchTotalPaid();
-                this.searchAccountingEntries();
-            }
-        }
-
-        if (saleChanges != null || posChanges != null) {
-            if (this.sale != null && this.pos != null) {
-                if (!this.sale.closed) {
-                    this.searchAccounts();
-                }
-            }
-        }
+    get sale() {
+        return this.activeSaleService.sale;
     }
 
-    private hasSale():boolean {
+    hasSale():boolean {
         return this.sale != null && this.sale.id != null;
     }
 
-    searchAccounts() {
-        if (this.pos != null) {
-            var posRef = new PosRef(this.pos.id);
-            this.accountsSearchRequest.search.posRef = posRef;
-        }
-
-        this.accountService.search(this.accountsSearchRequest)
-            .then((result:SearchResult<LocalAccount>)=> {
-                this.accountsSearchResult = result;
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
+    isSearching():boolean {
+        return this.activeSaleService.accountingEntriesRequest.request != null;
     }
 
-    searchAccountingEntries() {
-        var accountingEntriesSearch = this.accountingEntriesSearchRequest.search;
-        accountingEntriesSearch.accountingTransactionRef = this.sale.accountingTransactionRef;
-
-        this.accountingEntryService.search(this.accountingEntriesSearchRequest, this.accountingEntriesSearchResult)
-            .catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
+    hasAccountingEntries():boolean {
+        return this.activeSaleService.accountingEntriesResult.count > 0;
     }
 
-    searchTotalPaid() {
-        if (this.totalPaidRequest != null) {
-            this.totalPaidRequest.discardRequest();
-        }
-        var client:SaleClient = new SaleClient();
-        var saleId = this.sale.id;
-        var authToken = this.saleService.authService.authToken;
-        this.totalPaidRequest = client.getGetTotalPayedRequest(saleId, authToken);
-        this.totalPaidRequest.run()
-            .then((response:ComptoirResponse)=> {
-                var valueJSON = JSON.parse(response.text);
-                var totalPaidAmount = NumberUtils.toFixedDecimals(valueJSON.value, 2);
-                if (totalPaidAmount == null) {
-                    totalPaidAmount = 0;
-                }
-                this.totalPaidRequest = null;
-
-                var totalToPay = this.sale.vatExclusiveAmount;
-                totalToPay += this.sale.vatAmount;
-
-                this.totalPaidAmount = totalPaidAmount;
-                this.toPayAmount = NumberUtils.toFixedDecimals(totalToPay - totalPaidAmount, 2);
-            });
+    get accountingEntriesResult() {
+        return this.activeSaleService.accountingEntriesResult;
     }
+
+    get accountsResult() {
+        return this.activeSaleService.accountsResult;
+    }
+
+    get toPayAmount() {
+        var total = this.saleTotal - this.activeSaleService.paidAmount;
+        return NumberUtils.toFixedDecimals(total, 2);
+    }
+
 
     addAccountingEntry(account:LocalAccount) {
         var localAccountingEntry = new LocalAccountingEntry();
@@ -206,11 +129,8 @@ export class PayView implements  OnChanges{
         amount = NumberUtils.toFixedDecimals(amount, 2);
         this.editingEntry.amount = amount;
 
-        this.accountingEntryService.save(this.editingEntry)
-            .then(()=> {
-                this.searchTotalPaid();
-                this.searchAccountingEntries();
-            }).catch((error)=> {
+        this.activeSaleService.doAddAccountingEntry(this.editingEntry)
+            .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
         this.cancelEditEntry();
@@ -221,15 +141,19 @@ export class PayView implements  OnChanges{
     }
 
     removeEntry(entry:LocalAccountingEntry) {
-        return this.accountingEntryService.remove(entry)
-            .then(()=> {
-                this.searchAccountingEntries();
-                this.searchTotalPaid();
+        return this.activeSaleService.doRemoveAccountingEntry(entry)
+            .catch((error)=> {
+                this.errorService.handleRequestError(error);
             });
     }
 
+
     onValidateClicked() {
-        this.paid.next(true);
         this.cancelEditEntry();
+        this.activeSaleService.doCloseSale()
+            .catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });
+        this.paid.next(true);
     }
 }

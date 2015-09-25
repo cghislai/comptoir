@@ -51,7 +51,10 @@ export class CashHistoryView {
     }
 
     searchBalances() {
-        this.balanceService.search(this.searchRequest, this.searchResult)
+        this.balanceService.search(this.searchRequest)
+            .then((result)=>{
+                this.searchResult = result;
+            })
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });

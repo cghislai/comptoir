@@ -62,7 +62,6 @@ export class ItemListView {
         this.searchRequest.search = itemVariantSearch;
         this.searchRequest.pagination = pagination;
         this.searchResult = new SearchResult<LocalItemVariant>();
-        this.searchResult.list = [];
 
         this.columns = [
             ItemVariantColumn.VARIANT_REFERENCE,
@@ -74,7 +73,10 @@ export class ItemListView {
     }
 
     searchItems() {
-        this.itemVariantService.search(this.searchRequest, this.searchResult)
+        this.itemVariantService.search(this.searchRequest)
+            .then((result)=>{
+                this.searchResult = result;
+            })
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });

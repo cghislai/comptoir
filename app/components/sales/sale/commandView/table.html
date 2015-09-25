@@ -1,5 +1,5 @@
 <table class="dataTable"
-       [hidden]="items.length== 0">
+       [hidden]="itemsResult.count== 0">
     <thead>
     <tr>
         <th>Ref</th>
@@ -12,7 +12,7 @@
 
 
     <tbody>
-        <tr *ng-for="#saleItem of items"
+        <tr *ng-for="#saleItem of itemsResult.list"
             #row
             class="saleItem">
 
@@ -38,6 +38,7 @@
                     <span *ng-if="editingItem == saleItem && editingComment">
                         <input [initial-value]="editingItem.comment[locale]"
                                (fast-change)="onItemCommentChange($event)"
+                               (cancelled)="cancelEdits()"
                                type="text"
                                size="14" fast-input/>
                     </span>
@@ -69,6 +70,7 @@
                         <input [initial-value]="editingItem.quantity"
                                 [validator]="validateQuantity"
                                (fast-change)="onItemQuantityChange($event)"
+                               (cancelled)="cancelEdits()"
                                type="number" min="1" step="1"
                                size="4" fast-input>
                     </span>
@@ -77,6 +79,7 @@
                         <input [initial-value]="(editingItem.vatExclusive * (1 + editingItem.vatRate)) | number:'.2-2'"
                                 [validator]="validatePrice"
                                (fast-change)="onItemPriceChange($event)"
+                               (cancelled)="cancelEdits()"
                                type="number" min="0.01" step="0.01"
                                size="6" fast-input> €
                     </span>
@@ -95,6 +98,7 @@
                     <input [initial-value]="saleItem.discountRatio * 100"
                             [validator]="validateDiscount"
                            (fast-change)="onItemDiscountChange($event)"
+                           (cancelled)="cancelEdits()"
                            type="number" min="1" max="100" step="1"
                            size="2" fast-input/>
                     %
@@ -132,4 +136,32 @@
         </tr>
 
     </tbody>
+
+    <tfoot [hidden]="itemsResult.count == 0">
+        <tr [hidden]="sale.discountRatio == null || sale.discountRatio <= 0"
+            class="details">
+            <th colspan="3" class="saleFooter reduction">
+                Réduction {{ (sale.discountRatio * 100) | number:'.0' }}%
+            </th>
+            <th class="saleFooter reduction number">
+                -{{ sale.discountAmount | currency:'EUR':true:'.2-2'}}
+            </th>
+        </tr>
+        <tr class="details">
+            <th colspan="3" class="saleFooter">Total HTVA</th>
+            <th class="saleFooter number">{{ sale.vatExclusiveAmount | currency:'EUR':true:'.2-2'}}
+            </th>
+        </tr>
+        <tr class="details">
+            <th colspan="3" class="saleFooter">TVA</th>
+            <th class="number saleFooter">{{ sale.vatAmount | currency:'EUR':true:'.2-2'}}</th>
+        </tr>
+
+        <tr>
+            <th colspan="3" class="total saleFooter">Total</th>
+            <th class="total price number saleFooter">
+                {{ (sale.vatExclusiveAmount + sale.vatAmount) | currency:'EUR':true:'.2-2' }}
+            </th>
+        </tr>
+    </tfoot>
 </table>

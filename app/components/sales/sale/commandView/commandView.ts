@@ -3,6 +3,7 @@
  */
 
 import {Component, View, NgFor, NgIf, EventEmitter, OnInit, FORM_DIRECTIVES, ChangeDetectionStrategy} from 'angular2/angular2';
+import {Subject} from 'rx';
 
 import {CompanyRef} from 'client/domain/company';
 import {SaleRef} from 'client/domain/sale';
@@ -16,7 +17,7 @@ import {LocaleTexts, Language} from 'client/utils/lang';
 import {NumberUtils} from 'client/utils/number';
 import {SearchRequest, SearchResult} from 'client/utils/search';
 
-import {ActiveSaleService} from 'routes/sales/sale/activeSale';
+import {ActiveSaleService} from 'services/activeSale';
 import {SaleService} from 'services/sale';
 import {ItemVariantSaleService} from 'services/itemVariantSale';
 import {ErrorService} from 'services/error';
@@ -121,7 +122,7 @@ export class CommandViewHeader {
 
 @Component({
     selector: 'commandViewTable',
-    properties: ['noInput', 'validated', 'items'],
+    properties: ['noInput', 'validated', 'itemsResult'],
     events: ['itemRemoved'],
     changeDetection: ChangeDetectionStrategy.Default
 })
@@ -134,7 +135,7 @@ export class CommandViewTable {
     activeSaleService:ActiveSaleService;
     errorService:ErrorService;
 
-    items:LocalItemVariant[];
+    itemsResult:SearchResult<LocalItemVariantSale>;
     validated:boolean;
     noInput:boolean;
     itemRemoved = new EventEmitter();
@@ -152,6 +153,11 @@ export class CommandViewTable {
         this.activeSaleService = saleService;
         this.errorService = errorService;
         this.locale = authService.getEmployeeLanguage().locale;
+    }
+
+
+    get sale():LocalSale {
+        return this.activeSaleService.sale;
     }
 
     cancelEdits() {
@@ -362,7 +368,7 @@ export class CommandViewTable {
     }
 
     calcPriceVatInclusive(item: LocalItemVariantSale) {
-        var price = item.itemVariant.calcPrice(true);
+        var price = item.vatExclusive * (1 + item.vatRate);
         return price;
     }
 
@@ -389,8 +395,7 @@ export class CommandViewTable {
 @View({
     templateUrl: './components/sales/sale/commandView/commandView.html',
     styleUrls: ['./components/sales/sale/commandView/commandView.css'],
-    directives: [CommandViewHeader, CommandViewTable,
-        NgIf, FORM_DIRECTIVES]
+    directives: [CommandViewHeader, CommandViewTable]
 })
 
 export class CommandView {
@@ -399,7 +404,6 @@ export class CommandView {
 
     validated:boolean = false;
     saleEmptied = new EventEmitter();
-    observableItems: any;
 
     constructor(saleService:ActiveSaleService,
                 errorService:ErrorService) {
@@ -409,6 +413,9 @@ export class CommandView {
     }
 
     onValidateChanged(validated) {
+        if (validated) {
+            this.activeSaleService.searchPaidAmount();
+        }
         this.validated = validated;
         this.activeSaleService.payStep = validated;
     }

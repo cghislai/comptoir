@@ -14,14 +14,15 @@
             </div>
             <div class="commandView" >
                 <div>
-                    <commandView id="saleCommandView" *ng-if="activeSaleService.sale != null"
+                    <commandView id="saleCommandView"  *ng-if="activeSaleService.sale != null"
                                  (sale-emptied)="onSaleEmptied()"
                                  [no-input]="saleClosed"></commandView>
                 </div>
             </div>
             <div class="payView">
                 <div>
-                    <payView id="salePayView"
+                    <payView id="salePayView"  *ng-if="activeSaleService.sale != null"
+                             [sale-total]="activeSaleService.getSaleTotalAmount()"
                              (paid)="onCommandPaid()"
                              [no-input]="saleClosed"></payView>
                 </div>

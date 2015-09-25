@@ -4,6 +4,7 @@ import {RouteConfig, Router, RouterOutlet, RouterLink, ROUTER_BINDINGS, Location
 
 import {AccountService} from 'services/account';
 import {AccountingEntryService} from 'services/accountingEntry';
+import {ActiveSaleService} from 'services/activeSale';
 import {ApplicationService} from 'services/application';
 import {AttributeDefinitionService} from 'services/attributeDefinition';
 import {AttributeValueService} from 'services/attributeValue';
@@ -109,6 +110,7 @@ bootstrap(App, [
 
     AccountService,
     AccountingEntryService,
+    ActiveSaleService,
     ApplicationService,
     AttributeDefinitionService,
     AttributeValueService,

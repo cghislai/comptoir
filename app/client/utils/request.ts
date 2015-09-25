@@ -42,8 +42,6 @@ export class ComptoirRequest {
     private failed:boolean;
     private discarded:boolean;
 
-    private runPromise:Promise<any>;
-
     constructor() {
         this.request = new XMLHttpRequest();
         this.acceptContentType = ComptoirRequest.JSON_MIME + ',' + 'text/*';
@@ -92,70 +90,68 @@ export class ComptoirRequest {
 
     getDebugString() {
         var string = this.method + " " + this.url + " ";
+        return string;
     }
 
     run():Promise<ComptoirResponse> {
-        var xmlRequest = this.request;
-        var thisRequest = this;
-        this.runPromise = new Promise((resolve, reject)=> {
-            xmlRequest.onreadystatechange = function () {
-                if (thisRequest.discarded) {
+
+        var promiseTask = (resolve, reject)=> {
+            this.request.onreadystatechange = ()=> {
+                if (this.discarded) {
                     reject(ComptoirError.DISCARDED_ERROR);
                     return;
                 }
-                if (xmlRequest.readyState != 4) {
+                if (this.request.readyState != 4) {
                     return;
                 }
-                if (xmlRequest.status != 200 && xmlRequest.status != 204) {
+                if (this.request.status != 200 && this.request.status != 204) {
                     var error = new ComptoirError();
-                    error.code = xmlRequest.status;
-                    error.text = xmlRequest.statusText;
-                    error.request = thisRequest;
-                    if (xmlRequest.response != null) {
-                        error.response = xmlRequest.response.text;
+                    error.code = this.request.status;
+                    error.text = this.request.statusText;
+                    error.request = this;
+                    if (this.request.response != null) {
+                        error.response = this.request.response.text;
                     }
                     reject(error);
                     return;
                 }
                 var response = new ComptoirResponse();
-                response.code = xmlRequest.status;
-                response.listTotalCountHeader = xmlRequest.getResponseHeader(ComptoirRequest.HEADER_TOTAL_COUNT);
-                response.text = new String(xmlRequest.responseText).toString();
+                response.code = this.request.status;
+                response.listTotalCountHeader = this.request.getResponseHeader(ComptoirRequest.HEADER_TOTAL_COUNT);
+                response.text = this.request.responseText;
                 resolve(response);
-            }
-            xmlRequest.onerror = function () {
-                if (thisRequest.discarded) {
+            };
+            this.request.onerror = ()=> {
+                if (this.discarded) {
                     reject(ComptoirError.DISCARDED_ERROR);
                     return;
                 }
                 var error = new ComptoirError();
-                error.code = xmlRequest.status;
-                error.text = xmlRequest.statusText;
-                error.request = thisRequest;
-                if (xmlRequest.response != null) {
-                    error.response = xmlRequest.response.text;
+                error.code = this.request.status;
+                error.text = this.request.statusText;
+                error.request = this;
+                if (this.request.response != null) {
+                    error.response = this.request.response.text;
                 }
                 reject(error);
                 return;
             };
-            xmlRequest.timeout = ComptoirRequest.REQUEST_TIMEOUT;
-            xmlRequest.open(thisRequest.method, thisRequest.url);
-            xmlRequest.setRequestHeader('Accept', thisRequest.acceptContentType);
-            xmlRequest.setRequestHeader('Content-Type', thisRequest.contentType + '; charset=' + thisRequest.charset);
+            this.request.timeout = ComptoirRequest.REQUEST_TIMEOUT;
+            this.request.open(this.method, this.url, true);
+            this.request.setRequestHeader('Accept', this.acceptContentType);
+            this.request.setRequestHeader('Content-Type', this.contentType + '; charset=' + this.charset);
             if (this.authToken != null) {
-                xmlRequest.setRequestHeader(ComptoirRequest.HEADER_OAUTH_TOKEN, 'Bearer ' + this.authToken);
+                this.request.setRequestHeader(ComptoirRequest.HEADER_OAUTH_TOKEN, 'Bearer ' + this.authToken);
             }
 
-            if (thisRequest.objectToSend != null) {
-                var stringifiedJSON = JSON.stringify(thisRequest.objectToSend, JSONFactory.toJSONReplacer);
-                xmlRequest.send(stringifiedJSON);
+            if (this.objectToSend != null) {
+                var stringifiedJSON = JSON.stringify(this.objectToSend, JSONFactory.toJSONReplacer);
+                this.request.send(stringifiedJSON);
             } else {
-                xmlRequest.send();
+                this.request.send();
             }
-        }).then((response)=> {
-                return response;
-            });
-        return this.runPromise;
+        };
+        return new Promise(promiseTask);
     }
 
 

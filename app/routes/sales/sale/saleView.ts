@@ -15,7 +15,7 @@ import {Pos} from 'client/domain/pos';
 import {LocaleTexts} from 'client/utils/lang';
 
 import {ErrorService} from 'services/error';
-import {ActiveSaleService} from 'routes/sales/sale/activeSale';
+import {ActiveSaleService} from 'services/activeSale';
 import {AuthService} from 'services/auth';
 
 import {ItemListView} from 'components/sales/sale/itemList/listView';
@@ -24,8 +24,7 @@ import {PayView} from 'components/sales/sale/payView/payView'
 import {PosSelect} from 'components/pos/posSelect/posSelect';
 
 @Component({
-    selector: 'saleView',
-    bindings: [ActiveSaleService]
+    selector: 'saleView'
 })
 @View({
     templateUrl: './routes/sales/sale/saleView.html',
@@ -61,12 +60,10 @@ export class SaleView {
     }
 
     onActivate() {
-        return this.findSale().then(()=> {
-            console.log("found");
-        })
-        .catch((error)=> {
-            this.errorService.handleRequestError(error);
-        });
+        return this.findSale()
+            .catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });
     }
 
     canReuse() {
@@ -75,7 +72,7 @@ export class SaleView {
     }
 
     onReuse() {
-        console.log("resuse");
+
     }
 
     get saleClosed():boolean {
@@ -96,7 +93,6 @@ export class SaleView {
     }
 
     private findSale():Promise<any> {
-        console.log("find sale");
         if (this.routeParams != null && this.routeParams.params != null) {
             var idParam = this.routeParams.get('id');
             var id = parseInt(idParam);
@@ -105,9 +101,9 @@ export class SaleView {
                     return this.activeSaleService.getNewSale();
                 }
                 if (idParam == 'active') {
-                    return this.activeSaleService.getActiveSale();
+                    return this.getActiveSale();
                 }
-                return this.activeSaleService.getActiveSale();
+                return this.getActiveSale();
             }
             return this.activeSaleService.getSale(id);
         } else {
@@ -115,15 +111,30 @@ export class SaleView {
         }
     }
 
+    private getActiveSale():Promise<any> {
+        return this.activeSaleService.getActiveSale()
+            .then(()=> {
+                var saleId = this.activeSaleService.sale.id;
+                // update url
+                if (saleId == null) {
+                    var instruction = this.router.generate(['../Sale', {id: 'new'}]);
+                    this.router.navigateInstruction(instruction, false);
+                } else {
+                    var instruction = this.router.generate(['../Sale', {id: saleId}]);
+                    this.router.navigateInstruction(instruction, false);
+                }
+            });
+    }
+
     onPosChanged(pos) {
-        this.activeSaleService.pos = pos;
+        this.activeSaleService.setPos(pos);
     }
 
     onSaleEmptied() {
         this.activeSaleService.doCancelSale()
             .then(()=> {
                 this.router.navigate('/sales/sale/new');
-            }) .catch((error)=> {
+            }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }
@@ -141,9 +152,9 @@ export class SaleView {
                 .then((sale)=> {
                     return this.activeSaleService.doAddItem(item);
                 }).then(()=> {
-                    this.navigatingWithinSale = true;
+                    // this.navigatingWithinSale = true;
                     var saleId = this.activeSaleService.sale.id;
-                    this.router.navigate('/sales/sale/' + saleId);
+                    this.location.go('/sales/sale/' + saleId);
                 })
                 .catch((error)=> {
                     this.errorService.handleRequestError(error);
@@ -156,6 +167,7 @@ export class SaleView {
     }
 
     onCommandPaid() {
+        this.activeSaleService.payStep = false;
         this.router.navigate('/sales/sale/new');
     }
 }

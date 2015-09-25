@@ -9,7 +9,7 @@ import {Directive, ElementRef, EventEmitter,
 @Directive({
     selector: 'input[fast-input]',
     properties: ['validator', 'initialValue'],
-    events: ['fastChange'],
+    events: ['fastChange', 'cancelled'],
     host: {
         '(keyup)': 'onKeyUp($event)',
         '(input)': 'onInput($event)',
@@ -23,6 +23,7 @@ export class FastInput implements OnInit {
 
     validator:(any)=>boolean;
     fastChange:EventEmitter;
+    cancelled: EventEmitter;
     initialValue:any;
     elementRef:ElementRef;
     validateOnBlur: boolean = false;
@@ -31,6 +32,7 @@ export class FastInput implements OnInit {
         this.elementRef = elementRef;
         this.initialValue = elementRef.nativeElement.value;
         this.fastChange = new EventEmitter();
+        this.cancelled = new EventEmitter();
 
         var nativeElement = this.elementRef.nativeElement;
         nativeElement.doValidate = ()=>{
@@ -95,7 +97,7 @@ export class FastInput implements OnInit {
     }
 
     doCancel() {
-        //this.elementRef.nativeElement.value = this.initialValue;
-        this.fastChange.next(this.initialValue);
+        this.elementRef.nativeElement.value = this.initialValue;
+        this.cancelled.next(null);
     }
 }

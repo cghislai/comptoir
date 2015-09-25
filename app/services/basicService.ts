@@ -115,7 +115,7 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
         return this.client.remove(entity.id, authToken);
     }
 
-    search(searchRequest:SearchRequest<U>, existingResult?:SearchResult<U>):Promise<SearchResult<U>> {
+    search(searchRequest:SearchRequest<U>):Promise<SearchResult<U>> {
         if (searchRequest.request != null) {
             searchRequest.request.discardRequest();
         }
@@ -128,10 +128,6 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
                 result.parseResponse(response, this.client.resourceInfo.jsonReviver);
                 return result;
             }).then((result:SearchResult<T>)=> {
-                if (existingResult) {
-                    searchRequest.request = null;
-                    return this.updateResult(existingResult, result);
-                }
                 var taskList = [];
                 var localResult = new SearchResult<U>();
                 localResult.count = result.count;
@@ -161,47 +157,5 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
             });
     }
 
-    updateLocalEntityForListIndex(index: number, localEntity: U, entity: T, list: U[]): Promise<U> {
-        var authToken = this.authService.authToken;
-        return this.serviceInfo.updateLocal(localEntity, entity, authToken)
-            .then((localEntity:U)=> {
-                list[index] = localEntity;
-                return localEntity;
-            });
-    }
 
-    updateResult(result:SearchResult<U>, newResult:SearchResult<T>):Promise<SearchResult<U>> {
-        var taskList = [];
-        var authToken = this.authService.authToken;
-
-        var newItems = [];
-        var existingItemMap = {};
-        for (var item of result.list) {
-            existingItemMap[item.id] = item;
-        }
-        // Keep track of result order
-        for (var newIndex in newResult.list) {
-            var newItem = newResult.list[newIndex];
-            var oldItem = existingItemMap[newItem.id];
-            if (oldItem == null) {
-                taskList.push(
-                    this.fetchLocalEntityForListIndex(newIndex, newItem, newItems)
-                );
-                continue;
-            }
-            taskList.push(
-                this.updateLocalEntityForListIndex(newIndex, oldItem, newItem, newItems)
-            );
-            delete existingItemMap[oldItem.id];
-        }
-        for (var removedId in existingItemMap) {
-
-        }
-        return Promise.all(taskList)
-            .then(() => {
-                result.count = newResult.count;
-                result.list = newItems;
-                return result;
-            });
-    }
 }

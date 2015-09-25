@@ -2,13 +2,18 @@
  * Created by cghislai on 22/09/15.
  */
 
-import {Inject, LifeCycle} from 'angular2/angular2';
+import {Inject} from 'angular2/angular2';
 
 import {CompanyRef} from 'client/domain/company';
 import {Sale, SaleRef, SaleClient} from 'client/domain/sale';
+import {AccountClient, Account, AccountSearch} from 'client/domain/account';
+import {AccountingEntryClient, AccountingEntry, AccountingEntrySearch} from 'client/domain/accountingEntry';
+import {AccountingTransactionRef} from 'client/domain/accountingTransaction';
 import {ItemVariantSale, ItemVariantSaleClient, ItemVariantSaleSearch} from 'client/domain/itemVariantSale';
-import {Pos} from 'client/domain/pos';
+import {Pos, PosRef} from 'client/domain/pos';
 
+import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
+import {LocalAccountingEntry, LocalAccountingEntryFactory} from 'client/localDomain/accountingEntry';
 import {LocalSale, LocalSaleFactory} from 'client/localDomain/sale';
 import {LocalItemVariant} from 'client/localDomain/itemVariant';
 import {LocalItemVariantSale, LocalItemVariantSaleFactory} from 'client/localDomain/itemVariantSale';
@@ -17,40 +22,73 @@ import {SearchRequest, SearchResult} from 'client/utils/search';
 import {LocaleTexts} from 'client/utils/lang';
 
 import {AuthService} from 'services/auth';
-import {SaleService } from 'services/sale';
 import {BasicLocalService, BasicLocalServiceInfo} from 'services/basicService';
 
 export class ActiveSaleService {
-    lifecycle:LifeCycle;
     sale:LocalSale;
-    pos:Pos;
     payStep:boolean;
     saleItemsRequest:SearchRequest<LocalItemVariantSale>;
     saleItemsResult:SearchResult<LocalItemVariantSale>;
+    pos:Pos;
+    accountingEntriesRequest:SearchRequest<LocalAccountingEntry>;
+    accountingEntriesResult:SearchResult<LocalAccountingEntry>;
+    accountsRequest:SearchRequest<LocalAccount>;
+    accountsResult:SearchResult<LocalAccount>;
+    paidAmount:number;
+
 
     authService:AuthService;
+    accountClient:AccountClient;
+    accoutService:BasicLocalService<Account, LocalAccount>;
+    accountingEntryClient:AccountingEntryClient;
+    accountingEntryService:BasicLocalService<AccountingEntry, LocalAccountingEntry>;
     saleClient:SaleClient;
     saleService:BasicLocalService<Sale, LocalSale>;
     itemVariantSaleService:BasicLocalService<ItemVariantSale, LocalItemVariantSale>;
 
-    constructor(@Inject authService:AuthService, @Inject lifecycle:LifeCycle) {
+    constructor(@Inject authService:AuthService) {
         this.sale = null;
         this.pos = null;
-        this.lifecycle = lifecycle;
 
         this.saleItemsRequest = new SearchRequest<LocalItemVariantSale>();
-        var search = new ItemVariantSaleSearch();
-        search.companyRef = new CompanyRef(authService.auth.employee.company.id);
-        this.saleItemsRequest.search = search;
-
+        var itemVariantSaleSearch = new ItemVariantSaleSearch();
+        itemVariantSaleSearch.companyRef = authService.getEmployeeCompanyRef();
+        this.saleItemsRequest.search = itemVariantSaleSearch;
         this.saleItemsResult = new SearchResult<LocalItemVariantSale>();
 
-        this.saleItemsResult = new SearchResult<LocalItemVariantSale>();
-        this.saleItemsResult.count = 0;
-        this.saleItemsResult.list = [];
+        this.accountingEntriesRequest = new SearchRequest<LocalAccountingEntry>();
+        var accountingEntrySearch = new AccountingEntrySearch();
+        accountingEntrySearch.companyRef = authService.getEmployeeCompanyRef();
+        this.accountingEntriesRequest.search = accountingEntrySearch;
+        this.accountingEntriesResult = new SearchResult<LocalAccountingEntry>();
 
+        this.accountsRequest = new SearchRequest<LocalAccount>();
+        var accountSearch = new AccountSearch();
+        accountSearch.companyRef = authService.getEmployeeCompanyRef();
+        this.accountsRequest.search = accountSearch;
+        this.accountsResult = new SearchResult<LocalAccount>();
 
         this.authService = authService;
+        this.accountClient = new AccountClient();
+        var accountServiceInfo:BasicLocalServiceInfo<Account, LocalAccount> = <BasicLocalServiceInfo<Account, LocalAccount>>{
+            client: this.accountClient,
+            authService: authService,
+            fromLocalConverter: LocalAccountFactory.fromLocalAccount,
+            toLocalConverter: LocalAccountFactory.toLocalAccount,
+            updateLocal: LocalAccountFactory.updateLocalAccount
+        };
+        this.accoutService = new BasicLocalService<Account, LocalAccount>(accountServiceInfo);
+
+        this.accountingEntryClient = new AccountingEntryClient();
+        var accountingEntryServiceInfo:BasicLocalServiceInfo<AccountingEntry, LocalAccountingEntry> = <BasicLocalServiceInfo<AccountingEntry, LocalAccountingEntry>>{
+            client: this.accountingEntryClient,
+            authService: authService,
+            fromLocalConverter: LocalAccountingEntryFactory.fromLocalAccountingEntry,
+            toLocalConverter: LocalAccountingEntryFactory.toLocalAccountingEntry,
+            updateLocal: LocalAccountingEntryFactory.updateLocalAccountingEntry
+        };
+        this.accountingEntryService = new BasicLocalService<AccountingEntry, LocalAccountingEntry>(accountingEntryServiceInfo);
+
         this.saleClient = new SaleClient();
         var saleServiceInfo:BasicLocalServiceInfo<Sale, LocalSale> = <BasicLocalServiceInfo<Sale, LocalSale>>{
             client: this.saleClient,
@@ -77,10 +115,14 @@ export class ActiveSaleService {
                 return this.setSale(sale);
             })
             .then((sale) => {
-                return this.doSearchSaleItems();
+                var taskList:Promise<any>[] = <Promise<any>[]>[
+                    this.searchPaidAmount(),
+                    this.searchAccountingEntries(),
+                    this.doSearchSaleItems()
+                ];
+                return Promise.all(taskList);
             })
-            .then((result)=> {
-                this.saleItemsResult = result;
+            .then(()=> {
                 return this.sale;
             });
     }
@@ -88,6 +130,9 @@ export class ActiveSaleService {
     public getNewSale():Promise<LocalSale> {
         return Promise.resolve(new LocalSale())
             .then((sale)=> {
+                this.paidAmount = 0;
+                this.accountingEntriesResult = new SearchResult<LocalAccountingEntry>();
+                this.saleItemsResult = new SearchResult<LocalItemVariantSale>();
                 return this.setSale(sale);
             });
     }
@@ -105,16 +150,16 @@ export class ActiveSaleService {
             return this.getNewSale();
         }
         var curSale = this.sale;
-        this.sale = sale;
         if (curSale != null && curSale.id == sale.id) {
-            this.lifecycle.tick();
             return Promise.resolve(sale);
         }
+        this.sale = sale;
+        return Promise.resolve(sale);
     }
 
     public doCancelSale():Promise<any> {
         return this.saleService.remove(this.sale).then(()=> {
-            this.lifecycle.tick();
+            this.sale = null;
         });
     }
 
@@ -140,23 +185,27 @@ export class ActiveSaleService {
         }
         var authToken = this.authService.authToken;
         return this.saleClient.closeSale(this.sale.id, authToken)
-            ;
+            .then(()=>{
+                this.getNewSale();
+            });
     }
 
-    private updateSale(sale: LocalSale) {
+    private updateSale(sale:LocalSale) {
         this.sale.discountAmount = sale.discountAmount;
         this.sale.vatAmount = sale.vatAmount;
         this.sale.vatExclusiveAmount = sale.vatExclusiveAmount;
     }
 
-    private updateSaleItem(saleItem: LocalItemVariantSale, fetchedItem: LocalItemVariantSale) {
+    private updateSaleItem(saleItem:LocalItemVariantSale, fetchedItem:LocalItemVariantSale) {
         saleItem.total = fetchedItem.total;
+        saleItem.vatExclusive = fetchedItem.vatExclusive;
+        saleItem.discountRatio = fetchedItem.discountRatio;
     }
 
     public fetchSaleAndItem(item:LocalItemVariantSale):Promise<any[]> {
         var taskList:Promise<any>[] = <Promise<any>[]>[
             this.saleService.get(this.sale.id).then((sale)=> {
-               this.updateSale(sale);
+                this.updateSale(sale);
             }),
             this.itemVariantSaleService.get(item.id)
                 .then((fetchedItem)=> {
@@ -199,7 +248,6 @@ export class ActiveSaleService {
         } else {
             itemSale.quantity += 1;
         }
-
         return this.itemVariantSaleService.save(itemSale)
             .then((ref)=> {
                 itemSale.id = ref.id;
@@ -220,12 +268,10 @@ export class ActiveSaleService {
         return this.itemVariantSaleService.remove(saleItem)
             .then(()=> {
                 var taskList:Promise<any>[] = [
-                    this.saleService.get(this.sale.id).then((sale)=>{
+                    this.saleService.get(this.sale.id).then((sale)=> {
                         this.updateSale(sale);
                     }),
-                    this.doSearchSaleItems().then((result)=>{
-                        this.saleItemsResult = result;
-                    })
+                    this.doSearchSaleItems()
                 ];
                 return Promise.all(taskList);
             });
@@ -236,7 +282,8 @@ export class ActiveSaleService {
             .then((ref)=> {
                 saleItem.id = ref.id;
                 return this.fetchSaleAndItem(saleItem);
-            })
+            });
+        return Promise.resolve(saleItem);
     }
 
     public doUpdateSale():Promise<any> {
@@ -250,7 +297,7 @@ export class ActiveSaleService {
     }
 
 
-    doSearchSaleItems() {
+    public doSearchSaleItems():Promise<any> {
         if (this.sale == null) {
             throw 'no sale';
         }
@@ -260,8 +307,81 @@ export class ActiveSaleService {
         var search = this.saleItemsRequest.search;
         var saleRef = new SaleRef(this.sale.id);
         search.saleRef = saleRef;
-        return this.itemVariantSaleService.search(this.saleItemsRequest, this.saleItemsResult);
+        return this.itemVariantSaleService.search(this.saleItemsRequest)
+            .then((result)=> {
+                this.saleItemsResult.list = result.list;
+                this.saleItemsResult.count = result.count;
+            });
+    }
+
+    public searchPaidAmount():Promise<any> {
+        if (this.sale == null || this.sale.id == null) {
+            throw "No saved sale";
+        }
+        return this.saleClient.getTotalPayed(this.sale.id, this.authService.authToken)
+            .then((paid:number)=> {
+                this.paidAmount = paid;
+                return paid;
+            });
+    }
+
+    public setPos(pos:Pos) {
+        this.pos = pos;
+        this.searchAccounts();
+    }
+
+    public searchAccounts(): Promise<any> {
+        var search = this.accountsRequest.search;
+        var posRef = new PosRef(this.pos.id);
+        search.posRef = posRef;
+        return this.accoutService.search(this.accountsRequest)
+            .then((result)=> {
+                this.accountsResult = result;
+            });
+    }
+
+    public searchAccountingEntries(): Promise<any> {
+        var search = this.accountingEntriesRequest.search;
+        search.accountingTransactionRef = this.sale.accountingTransactionRef;
+        return this.accountingEntryService.search(this.accountingEntriesRequest)
+            .then((result)=> {
+                this.accountingEntriesResult = result;
+            });
+    }
+
+    public doAddAccountingEntry(entry:LocalAccountingEntry): Promise<any> {
+        this.accountingEntriesResult.list.push(entry);
+        this.accountingEntriesResult.count++;
+
+        return this.accountingEntryService.save(entry)
+            .then(()=> {
+                var taskLlist:Promise<any> [] = <Promise<any>[]>[
+                    this.searchPaidAmount(),
+                    this.searchAccountingEntries()
+                ];
+                return Promise.all(taskLlist);
+            });
+
+    }
+
+    public doRemoveAccountingEntry(entry:LocalAccountingEntry): Promise<any> {
+        return  this.accountingEntryService.remove(entry)
+            .then(()=> {
+                var taskLlist:Promise<any> [] = <Promise<any>[]>[
+                    this.searchPaidAmount(),
+                    this.searchAccountingEntries()
+                ];
+                return Promise.all(taskLlist);
+            });
+
     }
 
 
+    public getSaleTotalAmount() {
+        if (this.sale == null) {
+            return 0;
+        }
+        var total =  this.sale.vatExclusiveAmount + this.sale.vatAmount;
+        return total;
+    }
 }
