@@ -154,6 +154,11 @@ export class ActiveSaleService {
             return Promise.resolve(sale);
         }
         this.sale = sale;
+        if (sale.closed) {
+            this.payStep = true;
+        } else {
+            this.payStep = false;
+        }
         return Promise.resolve(sale);
     }
 
@@ -185,7 +190,7 @@ export class ActiveSaleService {
         }
         var authToken = this.authService.authToken;
         return this.saleClient.closeSale(this.sale.id, authToken)
-            .then(()=>{
+            .then(()=> {
                 this.getNewSale();
             });
     }
@@ -330,7 +335,7 @@ export class ActiveSaleService {
         this.searchAccounts();
     }
 
-    public searchAccounts(): Promise<any> {
+    public searchAccounts():Promise<any> {
         var search = this.accountsRequest.search;
         var posRef = new PosRef(this.pos.id);
         search.posRef = posRef;
@@ -340,7 +345,7 @@ export class ActiveSaleService {
             });
     }
 
-    public searchAccountingEntries(): Promise<any> {
+    public searchAccountingEntries():Promise<any> {
         var search = this.accountingEntriesRequest.search;
         search.accountingTransactionRef = this.sale.accountingTransactionRef;
         return this.accountingEntryService.search(this.accountingEntriesRequest)
@@ -349,7 +354,7 @@ export class ActiveSaleService {
             });
     }
 
-    public doAddAccountingEntry(entry:LocalAccountingEntry): Promise<any> {
+    public doAddAccountingEntry(entry:LocalAccountingEntry):Promise<any> {
         this.accountingEntriesResult.list.push(entry);
         this.accountingEntriesResult.count++;
 
@@ -364,8 +369,8 @@ export class ActiveSaleService {
 
     }
 
-    public doRemoveAccountingEntry(entry:LocalAccountingEntry): Promise<any> {
-        return  this.accountingEntryService.remove(entry)
+    public doRemoveAccountingEntry(entry:LocalAccountingEntry):Promise<any> {
+        return this.accountingEntryService.remove(entry)
             .then(()=> {
                 var taskLlist:Promise<any> [] = <Promise<any>[]>[
                     this.searchPaidAmount(),
@@ -381,7 +386,7 @@ export class ActiveSaleService {
         if (this.sale == null) {
             return 0;
         }
-        var total =  this.sale.vatExclusiveAmount + this.sale.vatAmount;
+        var total = this.sale.vatExclusiveAmount + this.sale.vatAmount;
         return total;
     }
 }

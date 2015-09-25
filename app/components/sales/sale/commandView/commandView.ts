@@ -388,7 +388,7 @@ export class CommandViewTable {
 @Component({
     selector: 'commandView',
     events: ['saleEmptied'],
-    properties: ['noInput'],
+    properties: ['noInput', 'validated'],
     changeDetection: ChangeDetectionStrategy.Default
 })
 
@@ -409,7 +409,6 @@ export class CommandView {
                 errorService:ErrorService) {
         this.activeSaleService = saleService;
         this.errorService = errorService;
-        this.validated = this.activeSaleService.payStep;
     }
 
     onValidateChanged(validated) {

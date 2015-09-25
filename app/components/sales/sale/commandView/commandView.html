@@ -1,11 +1,10 @@
 <div class="commandView">
-
     <commandViewHeader [no-input]="noInput"
-                       [validated]="validated"
+                       [validated]="validated || noInput "
                        (validate-changed)="onValidateChanged($event)"></commandViewHeader>
 
     <commandViewTable [no-input]="noInput"
-                      [validated]="validated"
+                      [validated]="validated || noInput"
                       [items-result]="activeSaleService.saleItemsResult"
                       (item-removed)="onItemRemoved($event)"></commandViewTable>
 
