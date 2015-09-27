@@ -181,6 +181,14 @@ export class BasicClient<T extends WithId> {
             });
     }
 
+    save(entity:T, authToken:string):Promise<WithId> {
+        if (entity.id == null) {
+            return this.create(entity, authToken);
+        } else {
+            return this.update(entity, authToken);
+        }
+    }
+
     getSearchRequest(search:any, pagination:Pagination, authToken:string):ComptoirRequest {
         var request = new ComptoirRequest();
         var url = this.getSearchUrl(pagination);
