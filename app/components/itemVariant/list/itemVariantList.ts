@@ -2,7 +2,7 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, NgIf,
+import {Component, View, NgFor, NgIf, NgSwitch, NgSwitchWhen,
     EventEmitter, Attribute, ViewEncapsulation} from 'angular2/angular2';
 
 import {LocalItemVariant, LocalItemVariantFactory} from 'client/localDomain/itemVariant';
@@ -28,7 +28,7 @@ import {FocusableDirective} from 'components/utils/focusable';
 @View({
     templateUrl: './components/itemVariant/list/itemVariantColumn.html',
     styleUrls: ['./components/itemVariant/list/itemVariantList.css'],
-    directives: [NgIf, NgFor, FocusableDirective],
+    directives: [NgIf, NgFor, NgSwitch, NgSwitchWhen, FocusableDirective],
     // eases styling
     encapsulation: ViewEncapsulation.None
 })
