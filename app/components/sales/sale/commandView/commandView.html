@@ -5,7 +5,7 @@
 
     <commandViewTable [no-input]="noInput"
                       [validated]="validated || noInput"
-                      [items-result]="activeSaleService.saleItemsResult"
+                      [items]="activeSaleService.saleItemsResult.list"
                       (item-removed)="onItemRemoved($event)"></commandViewTable>
 
 </div>

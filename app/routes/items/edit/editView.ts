@@ -28,7 +28,7 @@ import {LocalizedDirective} from 'components/utils/localizedInput';
 import {ItemVariantList, ItemVariantColumn} from 'components/itemVariant/list/itemVariantList';
 
 import {ItemVariantEditView} from 'routes/items/edit/editVariant/editVariantView';
-
+import {List} from 'immutable';
 @Component({
     selector: 'editItem'
 })
@@ -82,7 +82,7 @@ export class ItemEditView {
         this.itemVariantSearchRequest = new SearchRequest<LocalItemVariant>();
 
         this.itemVariantSearchResult = new SearchResult<LocalItemVariant>();
-        this.itemVariantSearchResult.list = [];
+        this.itemVariantSearchResult.list = List([]);
 
         this.findItem(routeParams);
     }

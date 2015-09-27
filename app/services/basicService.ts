@@ -7,7 +7,7 @@ import {SearchRequest, SearchResult} from 'client/utils/search';
 import {ComptoirResponse} from 'client/utils/request';
 
 import {AuthService} from 'services/auth';
-
+import {List} from 'immutable';
 
 export class BasicServiceInfo<T extends WithId> {
     client:BasicClient<T>;
@@ -125,33 +125,21 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
                 return result;
             }).then((result:SearchResult<T>)=> {
                 var taskList = [];
-
-                for (var index in result.list) {
-                    var entity = result.list[index];
+                result.list.forEach((entity)=>{
                     taskList.push(
                         this.serviceInfo.toLocalConverter(entity, authToken)
                     );
-                }
+                });
                 return Promise.all(taskList)
                     .then((results)=> {
                         var localResult = new SearchResult<U>();
                         localResult.count = result.count;
-                        localResult.list = results;
+                        localResult.list = List(results);
                         searchRequest.setRequest(null);
                         searchRequest.busy = false;
                         return localResult;
                     });
             });
     }
-
-    fetchLocalEntityForListIndex(index: number, entity: T, list: U[]): Promise<U> {
-        var authToken = this.authService.authToken;
-        return this.serviceInfo.toLocalConverter(entity, authToken)
-            .then((localEntity:U)=> {
-                list[index] = localEntity;
-                return localEntity;
-            });
-    }
-
 
 }

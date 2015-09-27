@@ -13,10 +13,11 @@
             </div>
         </div>
     </header>
+
     <div class="scrollPane">
         <itemVariantList
                 [columns]="columns"
-                [items]="searchResult.list"
+                [items]="itemList"
                 [row-selectable]="true"
                 [headers-visible]="false"
                 (row-clicked)="onItemClicked($event)"></itemVariantList>

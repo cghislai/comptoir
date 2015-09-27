@@ -3,7 +3,7 @@
  */
 
 import {Component, View, NgFor, NgIf, EventEmitter, OnInit, FORM_DIRECTIVES, ChangeDetectionStrategy} from 'angular2/angular2';
-import {Subject} from 'rx';
+import {List} from 'immutable';
 
 import {CompanyRef} from 'client/domain/company';
 import {SaleRef} from 'client/domain/sale';
@@ -122,9 +122,9 @@ export class CommandViewHeader {
 
 @Component({
     selector: 'commandViewTable',
-    properties: ['noInput', 'validated', 'itemsResult'],
+    properties: ['noInput', 'validated', 'items'],
     events: ['itemRemoved'],
-    changeDetection: ChangeDetectionStrategy.Default
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 @View({
     templateUrl: './components/sales/sale/commandView/table.html',
@@ -135,7 +135,7 @@ export class CommandViewTable {
     activeSaleService:ActiveSaleService;
     errorService:ErrorService;
 
-    itemsResult:SearchResult<LocalItemVariantSale>;
+    items:List<LocalItemVariantSale>;
     validated:boolean;
     noInput:boolean;
     itemRemoved = new EventEmitter();
@@ -422,7 +422,7 @@ export class CommandView {
 
     onItemRemoved() {
         var searchResult = this.activeSaleService.saleItemsResult;
-        if (searchResult.list.length == 0) {
+        if (searchResult.list.count() == 0) {
             this.saleEmptied.next(null);
         }
     }

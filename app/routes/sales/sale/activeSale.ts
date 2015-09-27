@@ -23,6 +23,7 @@ import {LocaleTexts} from 'client/utils/lang';
 
 import {AuthService} from 'services/auth';
 import {BasicLocalService, BasicLocalServiceInfo} from 'services/basicService';
+import {List} from 'immutable';
 
 export class ActiveSaleService {
     sale:LocalSale;
@@ -181,9 +182,8 @@ export class ActiveSaleService {
     }
 
     private updateSaleItem(saleItem:LocalItemVariantSale, fetchedItem:LocalItemVariantSale) {
-        saleItem.total = fetchedItem.total;
-        saleItem.vatExclusive = fetchedItem.vatExclusive;
-        saleItem.discountRatio = fetchedItem.discountRatio;
+        var index = this.saleItemsResult.list.indexOf(saleItem);
+        this.saleItemsResult.list = this.saleItemsResult.list.update(index, (item)=>{return fetchedItem});
     }
 
     public fetchSaleAndItem(item:LocalItemVariantSale):Promise<any[]> {
@@ -208,13 +208,9 @@ export class ActiveSaleService {
         }
 
 
-        var itemSale:LocalItemVariantSale = null;
-        for (var existingItemSale of this.saleItemsResult.list) {
-            if (existingItemSale.itemVariant.id == itemVariant.id) {
-                itemSale = existingItemSale;
-                break;
-            }
-        }
+        var itemSale:LocalItemVariantSale =  this.saleItemsResult.list.filter((itemSale)=>{
+            return itemSale.itemVariant.id == itemVariant.id;
+        }).first();
         var newItem = itemSale == null;
         if (newItem) {
             itemSale = new LocalItemVariantSale();
@@ -226,7 +222,7 @@ export class ActiveSaleService {
             itemSale.vatExclusive = itemVariant.calcPrice(false);
             itemSale.vatRate = itemVariant.item.vatRate;
             if (this.saleItemsResult != null) {
-                this.saleItemsResult.list.push(itemSale);
+                this.saleItemsResult.list = this.saleItemsResult.list.push(itemSale);
                 this.saleItemsResult.count++;
             }
         } else {
@@ -240,13 +236,9 @@ export class ActiveSaleService {
     }
 
     public doRemoveItem(saleItem:LocalItemVariantSale):Promise<any> {
-        var newItems:LocalItemVariantSale[] = [];
-        for (var existingItemSale of this.saleItemsResult.list) {
-            if (existingItemSale == saleItem) {
-                continue
-            }
-            newItems.push(existingItemSale);
-        }
+        var newItems = this.saleItemsResult.list.filter((item)=>{
+            return item != saleItem;
+        }).toList();
         this.saleItemsResult.list = newItems;
 
         return this.itemVariantSaleService.remove(saleItem)

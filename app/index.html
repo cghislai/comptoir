@@ -26,13 +26,14 @@
   // keep this before inserting angular2.js
   System.config({
     baseURL: '<%= APP_BASE %>',
-    paths: {'*': '*.js?v=<%= VERSION %>'},
+    paths: {'*': '*.js?v=<%= VERSION %>', 'immutable': 'lib/immutable.js'},
     defaultJSExtensions: false
   });
 
 </script>
   <script src="<%= APP_BASE %>lib/angular2.js"></script>
   <script src="<%= APP_BASE %>lib/router.js"></script>
+  <script src="<%= APP_BASE %>lib/immutable.js"></script>
   <script src="<%= APP_BASE %>init.js?v=<%= VERSION %>"></script>
 </body>
 </html>

@@ -142,7 +142,7 @@ export class CountCashView {
         if (this.accountSearchResult == null) {
             return;
         }
-        for (var accountItem of this.accountSearchResult.list) {
+        for (var accountItem in this.accountSearchResult.list.values()) {
             if (accountItem.id == accountId) {
                 account = accountItem;
                 break;

@@ -6,7 +6,7 @@ import {ServiceConfig} from 'client/utils/service';
 import {Pagination} from 'client/utils/pagination';
 import {ComptoirRequest} from 'client/utils/request';
 import {SearchResult} from 'client/utils/search';
-
+import {List} from 'immutable';
 
 export interface WithId {
     id: number;
@@ -204,7 +204,7 @@ export class BasicClient<T extends WithId> {
             .run()
             .then((response)=> {
                 var result = new SearchResult<T>().parseResponse(response, reviver);
-                for (var entity of result.list) {
+                for (var entity in result.list.values()) {
                     this.resourceInfo.cacheHandler.putInCache(entity);
                 }
                 return result;

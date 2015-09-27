@@ -4,6 +4,7 @@
 
 import {ComptoirRequest, ComptoirResponse} from 'client/utils/request';
 import {Pagination} from 'client/utils/pagination';
+import {List} from 'immutable';
 
 export class SearchRequest<T> {
     search:any;
@@ -26,11 +27,11 @@ export class SearchRequest<T> {
 export class SearchResult<T> {
 
     count:number;
-    list:T[];
+    list:List<T>;
 
     constructor() {
         this.count = 0;
-        this.list = [];
+        this.list = List([]);
     }
 
     parseResponse(response:ComptoirResponse, jsonReviver:(key, value)=>any):SearchResult<T> {
@@ -39,7 +40,7 @@ export class SearchResult<T> {
         if (isNaN(count)) {
             count = 0;
         }
-        this.list = list;
+        this.list = List(list);
         this.count = count;
         return this;
     }

@@ -56,7 +56,7 @@ var PATH = {
       './node_modules/reflect-metadata/Reflect.js.map',
       './node_modules/systemjs/dist/system.src.js',
       './node_modules/angular2/node_modules/zone.js/dist/zone.js',
-      './node_modules/immutable/immutable.js'
+      './node_modules/immutable/dist/immutable.js'
     ]
   }
 };

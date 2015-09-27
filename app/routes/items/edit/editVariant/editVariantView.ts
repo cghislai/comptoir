@@ -237,7 +237,7 @@ export class ItemVariantEditView {
 
         return this.attributeDefinitionService.search(attributeDefRequest)
             .then((result:SearchResult<AttributeDefinition>) => {
-                if (result.list.length > 0) {
+                if (result.list.count() > 0) {
                     var def = result.list[0];
                     return def;
                 }

@@ -2,7 +2,7 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, NgIf, NgSwitch, NgSwitchWhen,
+import {Component, View, NgFor, NgIf, NgSwitch, NgSwitchWhen, ChangeDetectionStrategy,
     EventEmitter, Attribute, ViewEncapsulation} from 'angular2/angular2';
 
 import {LocalItemVariant, LocalItemVariantFactory} from 'client/localDomain/itemVariant';
@@ -16,21 +16,23 @@ import {AuthService} from 'services/auth';
 import {AutoFocusDirective} from 'components/utils/autoFocus';
 import {FocusableDirective} from 'components/utils/focusable';
 
-
+import {List, Map, Record} from 'immutable';
 /****
  * Column component
  */
 @Component({
     selector: "itemVariantColumn",
     properties: ['itemVariant', 'column', 'lang'],
-    events: ['action']
+    events: ['action'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 @View({
     templateUrl: './components/itemVariant/list/itemVariantColumn.html',
     styleUrls: ['./components/itemVariant/list/itemVariantList.css'],
     directives: [NgIf, NgFor, NgSwitch, NgSwitchWhen, FocusableDirective],
     // eases styling
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+
 })
 export class ItemVariantColumnComponent {
     action = new EventEmitter();
@@ -58,7 +60,8 @@ export class ItemVariantColumnComponent {
 @Component({
     selector: 'itemVariantList',
     properties: ['items', 'columns', 'rowSelectable', 'headersVisible'],
-    events: ['rowClicked', 'columnAction']
+    events: ['rowClicked', 'columnAction'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 @View({
@@ -69,8 +72,8 @@ export class ItemVariantColumnComponent {
 
 export class ItemVariantList {
     // properties
-    items:LocalItemVariant[];
-    columns:ItemVariantColumn[];
+    items:List<LocalItemVariant>;
+    columns:List<ItemVariantColumn>;
     itemSelectable:boolean;
     headersVisible:boolean;
 

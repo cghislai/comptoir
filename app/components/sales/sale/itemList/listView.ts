@@ -20,7 +20,7 @@ import {ItemVariantService} from 'services/itemVariant';
 import {ItemVariantList, ItemVariantColumn} from 'components/itemVariant/list/itemVariantList';
 import {AutoFocusDirective} from 'components/utils/autoFocus';
 import {FocusableDirective} from 'components/utils/focusable';
-
+import {List} from 'immutable';
 
 @Component({
     selector: 'itemListView',
@@ -39,13 +39,14 @@ export class ItemListView {
     authService: AuthService;
 
     itemClicked = new EventEmitter();
-    columns:ItemVariantColumn[];
+    columns:List<ItemVariantColumn>;
     // Delay keyevent for 500ms
     keyboardTimeoutSet:boolean;
     keyboardTimeout:number = 200;
     //
     searchRequest:SearchRequest<LocalItemVariant>;
     searchResult:SearchResult<LocalItemVariant>;
+    itemList: List<LocalItemVariant>;
 
     constructor(errorService:ErrorService, itemVariantService:ItemVariantService, authService: AuthService) {
         this.itemVariantService = itemVariantService;
@@ -63,19 +64,19 @@ export class ItemListView {
         this.searchRequest.pagination = pagination;
         this.searchResult = new SearchResult<LocalItemVariant>();
 
-        this.columns = [
+        this.columns = List.of(
             ItemVariantColumn.VARIANT_REFERENCE,
             ItemVariantColumn.PICTURE,
             ItemVariantColumn.ITEM_NAME_VARIANT_ATTRIBUTES,
             ItemVariantColumn.TOTAL_PRICE
-        ];
+        );
         this.searchItems();
     }
 
     searchItems() {
         this.itemVariantService.search(this.searchRequest)
             .then((result)=>{
-                this.searchResult = result;
+                this.itemList = List(result.list);
             })
             .catch((error)=> {
                 this.errorService.handleRequestError(error);

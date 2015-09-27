@@ -11,6 +11,7 @@ import {Language} from 'client/utils/lang';
 import {PosService} from 'services/pos';
 import {AuthService} from 'services/auth';
 import {ErrorService} from 'services/error';
+import {List} from 'immutable';
 
 @Component({
     selector: 'posSelect',
@@ -57,8 +58,8 @@ export class PosSelect {
                 var lastUsedPos = this.posService.lastUsedPos;
                 if (lastUsedPos != null) {
                     this.setPos(lastUsedPos);
-                } else if (result.list.length > 0) {
-                    var pos = result.list[0];
+                } else if (result.list.count() > 0) {
+                    var pos = result.list.get(0);
                     this.setPos(pos);
                 }
             }).catch((error)=> {
@@ -70,7 +71,7 @@ export class PosSelect {
     onPosChanged(event) {
         this.pos = null;
         this.posId = event.target.value;
-        for (var posItem of this.searchResult.list) {
+        for (var posItem in this.searchResult.list.values()) {
             if (posItem.id == this.posId) {
                 this.setPos(posItem);
                 return;
