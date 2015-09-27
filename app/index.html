@@ -23,10 +23,11 @@
   <!-- inject:js -->
   <!-- endinject -->
 <script>
+  // keep this before inserting angular2.js
   System.config({
     baseURL: '<%= APP_BASE %>',
     paths: {'*': '*.js?v=<%= VERSION %>'},
-    defaultJSExtensions: true
+    defaultJSExtensions: false
   });
 
 </script>

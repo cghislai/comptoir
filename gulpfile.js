@@ -55,7 +55,8 @@ var PATH = {
       './node_modules/reflect-metadata/Reflect.js',
       './node_modules/reflect-metadata/Reflect.js.map',
       './node_modules/systemjs/dist/system.src.js',
-      './node_modules/angular2/node_modules/zone.js/dist/zone.js'
+      './node_modules/angular2/node_modules/zone.js/dist/zone.js',
+      './node_modules/immutable/immutable.js'
     ]
   }
 };
@@ -64,7 +65,8 @@ var ng2Builder = new Builder({
   defaultJSExtensions: true,
   paths: {
     'angular2/*': 'node_modules/angular2/es6/dev/*.js',
-    rx: 'node_modules/angular2/node_modules/rx/dist/rx.js'
+    rx: 'node_modules/angular2/node_modules/rx/dist/rx.js',
+    'immutable' : '/node_modules/immutable/immutable.js'
   },
   meta: {
     rx: {

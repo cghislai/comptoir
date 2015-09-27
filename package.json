@@ -40,6 +40,7 @@
     "es6-module-loader": "^0.16.6",
     "systemjs": "^0.18.10",
     "zone.js": "^0.5.4",
-    "reflect-metadata": "0.1.1"
+    "reflect-metadata": "0.1.1",
+    "immutable": "^3.7.2"
   }
 }
