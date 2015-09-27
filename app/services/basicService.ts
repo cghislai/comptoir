@@ -16,7 +16,6 @@ export class BasicServiceInfo<T extends WithId> {
 export class BasicLocalServiceInfo<T extends WithId, U extends WithId> extends BasicServiceInfo<T> {
     fromLocalConverter:(U)=>T;
     toLocalConverter:(T, string)=>Promise<U>;
-    updateLocal:(U, T, string)=>Promise<U>;
 }
 
 export class BasicService<T extends WithId> {
@@ -55,19 +54,17 @@ export class BasicService<T extends WithId> {
     }
 
     search(searchRequest:SearchRequest<T>):Promise<SearchResult<T>> {
-        if (searchRequest.request != null) {
-            searchRequest.request.discardRequest();
-        }
+        searchRequest.discardRequest();
         var authToken = this.authService.authToken;
         var request = this.client.getSearchRequest(searchRequest.search, searchRequest.pagination, authToken);
-        searchRequest.request = request;
+        searchRequest.setRequest(request);
         return request.run()
             .then((response:ComptoirResponse)=> {
                 var result:SearchResult<T> = new SearchResult<T>();
                 result.parseResponse(response, this.client.resourceInfo.jsonReviver);
                 return result;
             }).then((result:SearchResult<T>)=> {
-                searchRequest.request = null;
+                searchRequest.setRequest(null);
                 return result;
             });
     }
@@ -116,12 +113,11 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
     }
 
     search(searchRequest:SearchRequest<U>):Promise<SearchResult<U>> {
-        if (searchRequest.request != null) {
-            searchRequest.request.discardRequest();
-        }
+        searchRequest.discardRequest();
         var authToken = this.authService.authToken;
         var request = this.client.getSearchRequest(searchRequest.search, searchRequest.pagination, authToken);
-        searchRequest.request = request;
+        searchRequest.setRequest(request);
+        searchRequest.busy = true;
         return request.run()
             .then((response:ComptoirResponse)=> {
                 var result:SearchResult<T> = new SearchResult<T>();
@@ -129,20 +125,20 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
                 return result;
             }).then((result:SearchResult<T>)=> {
                 var taskList = [];
-                var localResult = new SearchResult<U>();
-                localResult.count = result.count;
-                localResult.list = [];
 
-                // Keep track of result order
                 for (var index in result.list) {
                     var entity = result.list[index];
                     taskList.push(
-                        this.fetchLocalEntityForListIndex(index, entity, localResult.list)
+                        this.serviceInfo.toLocalConverter(entity, authToken)
                     );
                 }
                 return Promise.all(taskList)
-                    .then(()=> {
-                        searchRequest.request = null;
+                    .then((results)=> {
+                        var localResult = new SearchResult<U>();
+                        localResult.count = result.count;
+                        localResult.list = results;
+                        searchRequest.setRequest(null);
+                        searchRequest.busy = false;
                         return localResult;
                     });
             });

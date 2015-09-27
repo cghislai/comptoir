@@ -15,7 +15,8 @@ import {Pos} from 'client/domain/pos';
 import {LocaleTexts} from 'client/utils/lang';
 
 import {ErrorService} from 'services/error';
-import {ActiveSaleService} from 'services/activeSale';
+import {SaleService} from 'services/sale';
+import {ActiveSaleService} from 'routes/sales/sale/activeSale';
 import {AuthService} from 'services/auth';
 
 import {ItemListView} from 'components/sales/sale/itemList/listView';
@@ -24,7 +25,8 @@ import {PayView} from 'components/sales/sale/payView/payView'
 import {PosSelect} from 'components/pos/posSelect/posSelect';
 
 @Component({
-    selector: 'saleView'
+    selector: 'saleView',
+    bindings: [ActiveSaleService]
 })
 @View({
     templateUrl: './routes/sales/sale/saleView.html',
@@ -36,21 +38,24 @@ export class SaleView {
     activeSaleService:ActiveSaleService;
     errorService:ErrorService;
     authService:AuthService;
+    saleService: SaleService;
 
     routeParams:RouteParams;
     router:Router;
     location:Location;
 
     navigatingWithinSale:boolean;
+    payStep: boolean;
 
     language:string;
 
-    constructor(saleService:ActiveSaleService, errorService:ErrorService,
-                authService:AuthService,
+    constructor(activeSaleService:ActiveSaleService, errorService:ErrorService,
+                authService:AuthService, saleService: SaleService,
                 routeParams:RouteParams, router:Router, location:Location) {
-        this.activeSaleService = saleService;
+        this.activeSaleService = activeSaleService;
         this.authService = authService;
         this.errorService = errorService;
+        this.saleService = saleService;
 
         this.routeParams = routeParams;
         this.router = router;
@@ -61,6 +66,14 @@ export class SaleView {
 
     onActivate() {
         return this.findSale()
+            .then((sale)=>{
+                if (sale.closed) {
+                    this.payStep = true;
+                } else {
+                    this.payStep = false;
+                }
+                this.saleService.activeSale = sale;
+            })
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -111,10 +124,18 @@ export class SaleView {
         }
     }
 
-    private getActiveSale():Promise<any> {
-        return this.activeSaleService.getActiveSale()
-            .then(()=> {
-                var saleId = this.activeSaleService.sale.id;
+    private getActiveSale():Promise<LocalSale> {
+        var activeSale = this.saleService.activeSale;
+
+        var saleTask: Promise<LocalSale>;
+        if (activeSale != null) {
+            saleTask = Promise.resolve(activeSale);
+        } else {
+            saleTask =this.activeSaleService.getNewSale();
+        }
+        return saleTask
+            .then((sale)=> {
+                var saleId = sale.id;
                 // update url
                 if (saleId == null) {
                     var instruction = this.router.generate(['../Sale', {id: 'new'}]);
@@ -123,11 +144,15 @@ export class SaleView {
                     var instruction = this.router.generate(['../Sale', {id: saleId}]);
                     this.router.navigateInstruction(instruction, false);
                 }
+                return sale;
             });
     }
 
     onPosChanged(pos) {
-        this.activeSaleService.setPos(pos);
+        this.activeSaleService.setPos(pos)
+        .catch((error)=>{
+                this.errorService.handleRequestError(error);
+            });
     }
 
     onSaleEmptied() {
@@ -150,6 +175,7 @@ export class SaleView {
 
             return this.activeSaleService.doSaveSale()
                 .then((sale)=> {
+                    this.saleService.activeSale = sale;
                     return this.activeSaleService.doAddItem(item);
                 }).then(()=> {
                     // this.navigatingWithinSale = true;
@@ -167,7 +193,11 @@ export class SaleView {
     }
 
     onCommandPaid() {
-        this.activeSaleService.payStep = false;
+        this.payStep = false;
         this.router.navigate('/sales/sale/new');
+    }
+
+    onValidatevChanged(validated){
+        this.payStep = validated;
     }
 }

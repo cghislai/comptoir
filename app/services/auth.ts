@@ -119,6 +119,7 @@ export class AuthService {
     private saveAuth(auth:LocalAuth) {
         this.auth = auth;
         if (auth != null) {
+            this.authToken = auth.token;
             var wsAuth = LocalAuthFactory.fromLocalAuth(auth);
             var jsonString = JSON.stringify(wsAuth, JSONFactory.toJSONReplacer);
             localStorage.setItem(AuthService.STORAGE_AUTH_KEY, jsonString);

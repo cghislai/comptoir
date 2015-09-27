@@ -5,7 +5,7 @@
                 [attr.editable]="!saleClosed"></posSelect></span>
     </div>
     <div class="wrapper">
-        <div class="saleViewContainer" [class.slide-left]="activeSaleService.payStep"  [class.no-anim]="saleClosed || newSale">
+        <div class="saleViewContainer" [class.slide-left]="payStep"  [class.no-anim]="saleClosed || newSale">
             <div class="itemList" >
                 <div>
                     <itemListView id="saleItemList"
@@ -16,7 +16,8 @@
                 <div>
                     <commandView id="saleCommandView"  *ng-if="activeSaleService.sale != null"
                                  (sale-emptied)="onSaleEmptied()"
-                                 [validated]="activeSaleService.payStep"
+                                 (validateChanged)="onValidateChanged($event)"
+                                 [validated]="payStep"
                                  [no-input]="saleClosed"></commandView>
                 </div>
             </div>

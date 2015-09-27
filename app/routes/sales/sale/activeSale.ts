@@ -26,7 +26,6 @@ import {BasicLocalService, BasicLocalServiceInfo} from 'services/basicService';
 
 export class ActiveSaleService {
     sale:LocalSale;
-    payStep:boolean;
     saleItemsRequest:SearchRequest<LocalItemVariantSale>;
     saleItemsResult:SearchResult<LocalItemVariantSale>;
     pos:Pos;
@@ -94,8 +93,7 @@ export class ActiveSaleService {
             client: this.saleClient,
             authService: authService,
             fromLocalConverter: LocalSaleFactory.fromLocalSale,
-            toLocalConverter: LocalSaleFactory.toLocalSale,
-            updateLocal: LocalSaleFactory.updateLocalSale
+            toLocalConverter: LocalSaleFactory.toLocalSale
         };
         this.saleService = new BasicLocalService<Sale, LocalSale>(saleServiceInfo);
 
@@ -112,9 +110,13 @@ export class ActiveSaleService {
     public getSale(id:number):Promise<LocalSale> {
         return this.saleService.get(id)
             .then((sale)=> {
-                return this.setSale(sale);
+                if (sale == null) {
+                    return this.getNewSale();
+                }
+                return sale;
             })
-            .then((sale) => {
+            .then((sale: LocalSale) => {
+                this.sale = sale;
                 var taskList:Promise<any>[] = <Promise<any>[]>[
                     this.searchPaidAmount(),
                     this.searchAccountingEntries(),
@@ -130,36 +132,12 @@ export class ActiveSaleService {
     public getNewSale():Promise<LocalSale> {
         return Promise.resolve(new LocalSale())
             .then((sale)=> {
+                this.sale = sale;
                 this.paidAmount = 0;
                 this.accountingEntriesResult = new SearchResult<LocalAccountingEntry>();
                 this.saleItemsResult = new SearchResult<LocalItemVariantSale>();
-                return this.setSale(sale);
+                return sale
             });
-    }
-
-    public getActiveSale():Promise<LocalSale> {
-        if (this.sale == null) {
-            return this.getNewSale();
-        } else {
-            return Promise.resolve(this.sale);
-        }
-    }
-
-    private setSale(sale:LocalSale):Promise<LocalSale> {
-        if (sale == null) {
-            return this.getNewSale();
-        }
-        var curSale = this.sale;
-        if (curSale != null && curSale.id == sale.id) {
-            return Promise.resolve(sale);
-        }
-        this.sale = sale;
-        if (sale.closed) {
-            this.payStep = true;
-        } else {
-            this.payStep = false;
-        }
-        return Promise.resolve(sale);
     }
 
     public doCancelSale():Promise<any> {
@@ -176,7 +154,8 @@ export class ActiveSaleService {
             .then((ref)=> {
                 return this.saleService.get(ref.id);
             }).then((sale:LocalSale)=> {
-                return this.setSale(sale);
+                this.sale = sale;
+                return sale;
             });
     }
 
@@ -330,9 +309,9 @@ export class ActiveSaleService {
             });
     }
 
-    public setPos(pos:Pos) {
+    public setPos(pos:Pos): Promise<any> {
         this.pos = pos;
-        this.searchAccounts();
+        return this.searchAccounts();
     }
 
     public searchAccounts():Promise<any> {
