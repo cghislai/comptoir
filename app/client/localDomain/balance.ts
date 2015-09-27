@@ -16,6 +16,8 @@ export class LocalBalance {
 }
 
 export class LocalBalanceFactory {
+    static accountClient = new AccountClient();
+
     static toLocalBalance(balance:Balance, authToken:string):Promise<LocalBalance> {
         var localBalance = new LocalBalance();
         return LocalBalanceFactory.updateLocalBalance(localBalance, balance, authToken);
@@ -29,9 +31,8 @@ export class LocalBalanceFactory {
 
         var taskList = [];
         var accountRef = balance.accountRef;
-        var accountClient = new AccountClient();
         taskList.push(
-            accountClient.getFromCacheOrServer(accountRef.id, authToken)
+           LocalBalanceFactory.accountClient.getFromCacheOrServer(accountRef.id, authToken)
                 .then((account)=> {
                     return LocalAccountFactory.toLocalAccount(account, authToken);
                 }).then((localAccount: LocalAccount)=> {

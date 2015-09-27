@@ -16,6 +16,7 @@ export class LocalCompany {
 }
 
 export class LocalCompanyFactory {
+    static  countryClient = new CountryClient();
     static toLocalCompany(company:Company, authToken:string):Promise<LocalCompany> {
         var localCompany = new LocalCompany();
         return LocalCompanyFactory.updateLocalCompany(localCompany, company, authToken);
@@ -28,9 +29,8 @@ export class LocalCompanyFactory {
 
         var taskList = [];
         var countryRef = company.countryRef;
-        var countryClient = new CountryClient();
         taskList.push(
-            countryClient.getFromCacheOrServer(countryRef.code, authToken)
+            LocalCompanyFactory.countryClient.getFromCacheOrServer(countryRef.code, authToken)
             .then((country)=>{
                     localCompany.country = country;
                 })

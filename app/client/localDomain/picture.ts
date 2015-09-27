@@ -15,6 +15,8 @@ export class LocalPicture {
 }
 
 export class LocalPictureFactory {
+    static companyClient = new CompanyClient();
+
     static toLocalPicture(picture:Picture, authToken:string):Promise<LocalPicture> {
         var localPicture = new LocalPicture();
         return LocalPictureFactory.updateLocalPicture(localPicture, picture, authToken);
@@ -28,9 +30,8 @@ export class LocalPictureFactory {
 
         var taskList = [];
         var companyRef = picture.companyRef;
-        var companyClient = new CompanyClient();
         taskList.push(
-            companyClient.getFromCacheOrServer(companyRef.id, authToken)
+            LocalPictureFactory.companyClient.getFromCacheOrServer(companyRef.id, authToken)
                 .then((company)=> {
                     return LocalCompanyFactory.toLocalCompany(company, authToken);
                 }).then((localCompany: LocalCompany)=>{

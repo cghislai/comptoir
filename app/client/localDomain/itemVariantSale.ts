@@ -25,6 +25,8 @@ export class LocalItemVariantSale {
 }
 
 export class LocalItemVariantSaleFactory {
+    static saleClient = new SaleClient();
+    static itemVariantClient = new ItemVariantClient();
 
     static toLocalItemVariantSale(itemSale:ItemVariantSale, authToken:string):Promise<LocalItemVariantSale> {
         var localItemSale = new LocalItemVariantSale();
@@ -45,9 +47,8 @@ export class LocalItemVariantSaleFactory {
         var taskList = [];
 
         var itemVariantRef = itemSale.itemVariantRef;
-        var itemVariantClient = new ItemVariantClient();
         taskList.push(
-            itemVariantClient.getFromCacheOrServer(itemVariantRef.id, authToken)
+            LocalItemVariantSaleFactory.itemVariantClient.getFromCacheOrServer(itemVariantRef.id, authToken)
                 .then((itemVariant)=> {
                     return LocalItemVariantFactory.toLocalItemVariant(itemVariant, authToken);
                 }).then((localVariant:LocalItemVariant)=> {
@@ -56,9 +57,8 @@ export class LocalItemVariantSaleFactory {
         );
 
         var saleRef = itemSale.saleRef;
-        var saleClient = new SaleClient();
         taskList.push(
-            saleClient.getFromCacheOrServer(saleRef.id, authToken)
+            LocalItemVariantSaleFactory.saleClient.getFromCacheOrServer(saleRef.id, authToken)
                 .then((sale)=> {
                     return LocalSaleFactory.toLocalSale(sale, authToken);
                 }).then((localSale: LocalSale)=> {

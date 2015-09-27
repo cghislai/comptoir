@@ -17,6 +17,8 @@ export class LocalEmployee {
 }
 
 export class LocalEmployeeFactory {
+    static companyClient = new CompanyClient();
+
     static toLocalEmployee(employee:Employee, authToken:string):Promise<LocalEmployee> {
         var localEmployee = new LocalEmployee();
         return LocalEmployeeFactory.updateLocalEmployee(localEmployee, employee, authToken);
@@ -32,9 +34,8 @@ export class LocalEmployeeFactory {
 
         var taskList = [];
         var companyRef = employee.companyRef;
-        var companyClient = new CompanyClient();
         taskList.push(
-            companyClient.getFromCacheOrServer(companyRef.id, authToken)
+            LocalEmployeeFactory.companyClient.getFromCacheOrServer(companyRef.id, authToken)
                 .then((company)=> {
                     return LocalCompanyFactory.toLocalCompany(company, authToken);
                 }).then((localCompany: LocalCompany)=>{

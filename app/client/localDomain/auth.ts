@@ -15,6 +15,8 @@ export class LocalAuth {
 }
 
 export class LocalAuthFactory {
+    static employeeClient = new EmployeeClient();
+
     static toLocalAuth(auth:Auth, authToken:string):Promise<LocalAuth> {
         var localAuth = new LocalAuth();
         return LocalAuthFactory.updateLocalAuth(localAuth, auth, authToken);
@@ -28,9 +30,8 @@ export class LocalAuthFactory {
 
         var taskList = [];
         var employeeRef = auth.employeeRef;
-        var employeeClient = new EmployeeClient();
         taskList.push(
-            employeeClient.getFromCacheOrServer(employeeRef.id, authToken)
+            LocalAuthFactory.employeeClient.getFromCacheOrServer(employeeRef.id, authToken)
                 .then((emploiyee)=> {
                     return LocalEmployeeFactory.toLocalEmployee(emploiyee, authToken);
                 }).then((localEmployee: LocalEmployee)=>{

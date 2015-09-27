@@ -20,6 +20,9 @@ export class LocalAccount {
 }
 
 export class LocalAccountFactory {
+
+    static companyClient = new CompanyClient();
+
     static ACCOUNT_TYPE_OTHER_LABEL = {
         'fr': 'Autre'
     };
@@ -68,9 +71,8 @@ export class LocalAccountFactory {
 
         var companyRef = account.companyRef;
         var companyId = companyRef.id;
-        var companyClient = new CompanyClient();
         taskList.push(
-            companyClient.getFromCacheOrServer(companyId, authToken)
+            LocalAccountFactory.companyClient.getFromCacheOrServer(companyId, authToken)
                 .then((company)=> {
                     return LocalCompanyFactory.toLocalCompany(company, authToken);
                 }).then((localCompany: LocalCompany)=>{

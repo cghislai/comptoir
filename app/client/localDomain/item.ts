@@ -25,6 +25,9 @@ export class LocalItem {
 
 export class LocalItemFactory {
 
+    static  companyClient = new CompanyClient();
+    static pictureClient = new PictureClient();
+
     static toLocalItem(item:Item, authToken:string):Promise<LocalItem> {
         var localItem = new LocalItem();
         return LocalItemFactory.updateLocalItem(localItem, item, authToken);
@@ -41,9 +44,8 @@ export class LocalItemFactory {
 
         var taskList = [];
         var companyRef = item.companyRef;
-        var companyClient = new CompanyClient();
         taskList.push(
-            companyClient.getFromCacheOrServer(companyRef.id, authToken)
+            LocalItemFactory.companyClient.getFromCacheOrServer(companyRef.id, authToken)
                 .then((company)=> {
                     return LocalCompanyFactory.toLocalCompany(company, authToken);
                 }).then((localCompany: LocalCompany)=>{
@@ -54,9 +56,8 @@ export class LocalItemFactory {
         var mainPictureRef = item.mainPictureRef;
         if (mainPictureRef != null) {
             var picId = mainPictureRef.id;
-            var pictureClient = new PictureClient();
             taskList.push(
-                pictureClient.getFromCacheOrServer(picId, authToken)
+                LocalItemFactory.pictureClient.getFromCacheOrServer(picId, authToken)
                     .then((picture)=> {
                         return LocalPictureFactory.toLocalPicture(picture, authToken);
                     }).then((localPicture: LocalPicture)=> {

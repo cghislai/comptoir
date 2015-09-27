@@ -44,6 +44,9 @@ export class LocalSale {
 }
 
 export class LocalSaleFactory {
+    static companyClient = new CompanyClient();
+    static customerClient = new CustomerClient();
+    static invoiceClient = new InvoiceClient();
 
     static fromLocalSale(localSale:LocalSale):Sale {
         var sale = new Sale();
@@ -73,7 +76,7 @@ export class LocalSaleFactory {
         return LocalSaleFactory.updateLocalSale(localSale, sale, authToken);
     }
 
-    static updateLocalSale(localSale:LocalSale, sale:Sale, authToken:string):Promise<LocalSale> {
+    private static updateLocalSale(localSale:LocalSale, sale:Sale, authToken:string):Promise<LocalSale> {
         localSale.accountingTransactionRef = sale.accountingTransactionRef;
         localSale.id = sale.id;
         localSale.closed = sale.closed;
@@ -87,9 +90,8 @@ export class LocalSaleFactory {
         var taskList = [];
 
         var companyRef = sale.companyRef;
-        var companyClient = new CompanyClient();
         taskList.push(
-            companyClient.getFromCacheOrServer(companyRef.id, authToken)
+            LocalSaleFactory.companyClient.getFromCacheOrServer(companyRef.id, authToken)
                 .then((company)=> {
                     return LocalCompanyFactory.toLocalCompany(company, authToken);
                 }).then((localCompany:LocalCompany) => {
@@ -98,9 +100,8 @@ export class LocalSaleFactory {
         );
         var customerRef = sale.customerRef;
         if (customerRef != null) {
-            var customerClient = new CustomerClient();
             taskList.push(
-                customerClient.getFromCacheOrServer(customerRef.id, authToken)
+                LocalSaleFactory.customerClient.getFromCacheOrServer(customerRef.id, authToken)
                     .then((customer)=> {
                         localSale.customer = customer;
                     })
@@ -108,9 +109,8 @@ export class LocalSaleFactory {
         }
         var invoiceRef = sale.invoiceRef;
         if (invoiceRef != null) {
-            var invoiceClient = new InvoiceClient();
             taskList.push(
-                invoiceClient.getFromCacheOrServer(invoiceRef.id, authToken)
+                LocalSaleFactory.invoiceClient.getFromCacheOrServer(invoiceRef.id, authToken)
                     .then((invoice)=> {
                         localSale.invoice = invoice;
                     })

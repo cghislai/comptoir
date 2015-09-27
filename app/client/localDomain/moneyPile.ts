@@ -23,6 +23,8 @@ export class LocalMoneyPile {
 }
 
 export class LocalMoneyPileFactory {
+    static  accountClient = new AccountClient();
+    static balanceClient = new BalanceClient();
 
     static toLocalMoneyPile(moneyPile:MoneyPile, authToken:string):Promise<LocalMoneyPile> {
         var localMoneyPile = new LocalMoneyPile();
@@ -38,9 +40,8 @@ export class LocalMoneyPileFactory {
 
         var taskList = [];
         var accountRef = moneyPile.accountRef;
-        var accountClient = new AccountClient();
         taskList.push(
-            accountClient.getFromCacheOrServer(accountRef.id, authToken)
+            LocalMoneyPileFactory.accountClient.getFromCacheOrServer(accountRef.id, authToken)
                 .then((account)=> {
                     return LocalAccountFactory.toLocalAccount(account, authToken);
                 }).then((localAccount:LocalAccount)=> {
@@ -48,9 +49,8 @@ export class LocalMoneyPileFactory {
                 })
         );
         var balanceRef = moneyPile.balanceRef;
-        var balanceClient = new BalanceClient();
         taskList.push(
-            balanceClient.getFromCacheOrServer(balanceRef.id, authToken)
+            LocalMoneyPileFactory.balanceClient.getFromCacheOrServer(balanceRef.id, authToken)
                 .then((balance)=> {
                     return LocalBalanceFactory.toLocalBalance(balance, authToken);
                 }).then((localBalance:LocalBalance)=> {

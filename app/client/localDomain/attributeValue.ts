@@ -14,6 +14,8 @@ export class LocalAttributeValue {
 }
 
 export class LocalAttributeValueFactory {
+    static  definitionClient = new AttributeDefinitionClient();
+
     static toLocalAttributeValue(attributevalue:AttributeValue, authToken):Promise<LocalAttributeValue> {
         var localValue = new LocalAttributeValue();
         return LocalAttributeValueFactory.updateLocalAttributeValue(localValue, attributevalue, authToken);
@@ -25,9 +27,8 @@ export class LocalAttributeValueFactory {
 
         var taskList = [];
         var definitionRef = value.attributeDefinitionRef;
-        var definitionClient = new AttributeDefinitionClient();
         taskList.push(
-            definitionClient.getFromCacheOrServer(definitionRef.id, authToken)
+            LocalAttributeValueFactory.definitionClient.getFromCacheOrServer(definitionRef.id, authToken)
                 .then((definition)=> {
                     localValue.attributeDefinition = definition;
                 })

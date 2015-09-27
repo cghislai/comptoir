@@ -59,6 +59,10 @@ export class LocalItemVariant {
 }
 
 export class LocalItemVariantFactory {
+    static attributeValueClient = new AttributeValueClient();
+    static itemClient = new ItemClient();
+    static pictureClient = new PictureClient();
+
     static PRICING_ADD_TO_BASE_LABEL = {
         'fr': 'À ajouter'
     };
@@ -96,11 +100,10 @@ export class LocalItemVariantFactory {
         localItemVariant.attributeValues = [];
         var taskList = [];
         var attributeValueRefList = itemVariant.attributeValueRefs;
-        var attributeValueClient = new AttributeValueClient();
         for (var attributeValueRef of attributeValueRefList) {
             var atributeId = attributeValueRef.id;
             taskList.push(
-                attributeValueClient.getFromCacheOrServer(atributeId, authToken)
+                LocalItemVariantFactory.attributeValueClient.getFromCacheOrServer(atributeId, authToken)
                     .then((attrValue)=> {
                         return LocalAttributeValueFactory.toLocalAttributeValue(attrValue, authToken);
                     }).then((localValue: LocalAttributeValue)=> {
@@ -110,9 +113,8 @@ export class LocalItemVariantFactory {
         }
 
         var itemRef = itemVariant.itemRef;
-        var itemClient = new ItemClient();
         taskList.push(
-            itemClient.getFromCacheOrServer(itemRef.id, authToken)
+            LocalItemVariantFactory.itemClient.getFromCacheOrServer(itemRef.id, authToken)
                 .then((item)=> {
                     return LocalItemFactory.toLocalItem(item, authToken);
                 }).then((localItem: LocalItem)=> {
@@ -123,9 +125,8 @@ export class LocalItemVariantFactory {
         var mainPictureRef = itemVariant.mainPictureRef;
         if (mainPictureRef != null) {
             var picId = mainPictureRef.id;
-            var pictureClient = new PictureClient();
             taskList.push(
-                pictureClient.getFromCacheOrServer(picId, authToken)
+                LocalItemVariantFactory.pictureClient.getFromCacheOrServer(picId, authToken)
                     .then((picture)=> {
                         return LocalPictureFactory.toLocalPicture(picture, authToken);
                     }).then((localPicture: LocalPicture)=> {
@@ -138,7 +139,7 @@ export class LocalItemVariantFactory {
         return Promise.all(taskList)
             .then(()=> {
                 return localItemVariant;
-            })
+            });
     }
 
     static fromLocalItemVariant(localVariant:LocalItemVariant) {

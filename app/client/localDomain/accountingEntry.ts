@@ -27,6 +27,11 @@ export class LocalAccountingEntry {
 }
 
 export class LocalAccountingEntryFactory {
+    static accountClient = new AccountClient();
+    static companyClient = new CompanyClient();
+    static customerClient = new CustomerClient();
+    static entryClient = new AccountingEntryClient();
+
     static toLocalAccountingEntry(accountingEntry:AccountingEntry, authToken:string):Promise<LocalAccountingEntry> {
         var localAccountingEntry = new LocalAccountingEntry();
         return LocalAccountingEntryFactory.updateLocalAccountingEntry(localAccountingEntry, accountingEntry, authToken);
@@ -44,9 +49,8 @@ export class LocalAccountingEntryFactory {
 
         var accontRef = accountingEntry.accountRef;
         var accountId = accontRef.id;
-        var accoutClient = new AccountClient();
         taskList.push(
-            accoutClient.getFromCacheOrServer(accountId, authToken)
+            LocalAccountingEntryFactory.accountClient.getFromCacheOrServer(accountId, authToken)
                 .then((account)=> {
                     return LocalAccountFactory.toLocalAccount(account, authToken);
                 })
@@ -56,9 +60,8 @@ export class LocalAccountingEntryFactory {
         );
         var companyRef = accountingEntry.companyRef;
         var companyId = companyRef.id;
-        var companyClient = new CompanyClient();
         taskList.push(
-            companyClient.getFromCacheOrServer(companyId, authToken)
+            LocalAccountingEntryFactory.companyClient.getFromCacheOrServer(companyId, authToken)
                 .then((company)=> {
                     return LocalCompanyFactory.toLocalCompany(company, authToken);
                 }).then((localCompany:LocalCompany)=> {
@@ -68,9 +71,8 @@ export class LocalAccountingEntryFactory {
         var customerRef = accountingEntry.customerRef;
         if (customerRef != null) {
             var customerId = customerRef.id;
-            var customerClient = new CustomerClient();
             taskList.push(
-                customerClient.getFromCacheOrServer(customerId, authToken)
+                LocalAccountingEntryFactory.customerClient.getFromCacheOrServer(customerId, authToken)
                     .then((customer)=> {
                         localAccountingEntry.customer = customer;
                     })
@@ -79,9 +81,8 @@ export class LocalAccountingEntryFactory {
         var vatAccountingEntryRef = accountingEntry.vatAccountingEntryRef;
         if (vatAccountingEntryRef != null) {
             var vatEntryId = vatAccountingEntryRef.id;
-            var entryClient = new AccountingEntryClient();
             taskList.push(
-                entryClient.getFromCacheOrServer(vatEntryId, authToken)
+                LocalAccountingEntryFactory.entryClient.getFromCacheOrServer(vatEntryId, authToken)
                     .then((entry:AccountingEntry)=> {
                         return LocalAccountingEntryFactory.toLocalAccountingEntry(entry, authToken);
                     }).then((localEntry:LocalAccountingEntry)=> {
