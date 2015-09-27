@@ -19,7 +19,7 @@ import {NumberUtils} from 'client/utils/number';
 import {LocaleTexts} from 'client/utils/lang';
 import {ComptoirRequest, ComptoirResponse} from 'client/utils/request';
 
-import {ActiveSaleService} from 'services/activeSale';
+import {ActiveSaleService} from 'routes/sales/sale/activeSale';
 import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
 
@@ -65,7 +65,7 @@ export class PayView {
     }
 
     isSearching():boolean {
-        return this.activeSaleService.accountingEntriesRequest.request != null;
+        return this.activeSaleService.accountingEntriesRequest.busy;
     }
 
     hasAccountingEntries():boolean {
