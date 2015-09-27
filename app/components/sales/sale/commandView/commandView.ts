@@ -17,7 +17,7 @@ import {LocaleTexts, Language} from 'client/utils/lang';
 import {NumberUtils} from 'client/utils/number';
 import {SearchRequest, SearchResult} from 'client/utils/search';
 
-import {ActiveSaleService} from 'services/activeSale';
+import {ActiveSaleService} from 'routes/sales/sale/activeSale';
 import {SaleService} from 'services/sale';
 import {ItemVariantSaleService} from 'services/itemVariantSale';
 import {ErrorService} from 'services/error';
@@ -65,7 +65,7 @@ export class CommandViewHeader {
 
     get isSearching():boolean {
         var request = this.activeSaleService.saleItemsRequest;
-        return request != null && request.request != null;
+        return request != null && request.busy;
     }
 
     get hasItems():boolean {
@@ -387,7 +387,7 @@ export class CommandViewTable {
 // The component
 @Component({
     selector: 'commandView',
-    events: ['saleEmptied'],
+    events: ['saleEmptied', 'validateChanged'],
     properties: ['noInput', 'validated'],
     changeDetection: ChangeDetectionStrategy.Default
 })
@@ -404,6 +404,7 @@ export class CommandView {
 
     validated:boolean = false;
     saleEmptied = new EventEmitter();
+    validateChanged= new EventEmitter();
 
     constructor(saleService:ActiveSaleService,
                 errorService:ErrorService) {
@@ -416,7 +417,7 @@ export class CommandView {
             this.activeSaleService.searchPaidAmount();
         }
         this.validated = validated;
-        this.activeSaleService.payStep = validated;
+        this.validateChanged.next(validated);
     }
 
     onItemRemoved() {
