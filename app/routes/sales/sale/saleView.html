@@ -16,7 +16,7 @@
                 <div>
                     <commandView id="saleCommandView"  *ng-if="activeSaleService.sale != null"
                                  (sale-emptied)="onSaleEmptied()"
-                                 (validateChanged)="onValidateChanged($event)"
+                                 (validate-changed)="onValidateChanged($event)"
                                  [validated]="payStep"
                                  [no-input]="saleClosed"></commandView>
                 </div>

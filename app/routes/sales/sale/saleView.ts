@@ -197,7 +197,7 @@ export class SaleView {
         this.router.navigate('/sales/sale/new');
     }
 
-    onValidatevChanged(validated){
+    onValidateChanged(validated){
         this.payStep = validated;
     }
 }
