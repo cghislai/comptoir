@@ -1,47 +1,55 @@
-<div class="id"
-      *ng-if="column.name == 'id' ">
-    {{ item.id }}
-</div>
-<div class="ref"
-    *ng-if="column.name == 'ref' ">
-    {{ item.reference }}
-</div>
-<div class="name"
-    *ng-if="column.name == 'name'">
-    <span *ng-if="item.name != undefined">
-        {{ item.name[lang] }}
-    </span>
-</div>
-<div class="desc"
-    *ng-if="column.name == 'desc'">
-    <span *ng-if="item.description != undefined">
-    {{ item.description[lang] }}
+<div [ng-switch]="column.name">
+    <template [ng-switch-when]=" 'id'">
+        <span class="id">
+            {{ item.id }}
         </span>
+    </template>
+    <template [ng-switch-when]=" 'ref'">
+        <span class="ref">
+            {{ item.reference }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'name'">
+        <span class="name">
+            {{ item.name.get(language.locale) }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'desc'">
+        <span class="desc">
+            {{ item.description.get(language.locale) }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'picture'">
+        <span class="picture">
+           <img [src]="item.mainPicture.dataURI" *ng-if="item.mainPicture?.dataURI !== null">
+
+            <div class="imagePlaceover" *ng-if="item.mainPicture?.dataURI === null">
+                <i class="fi-book"></i>
+            </div>
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'vat_exclusive'">
+        <span class="vat_exclusive price">
+           {{ item.vatExclusive | currency:'EUR':true:'.2-2' }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'vat_rate'">
+        <span class="vat_rate price">
+            {{ ( item.vatRate * 100 )| number:'.0' }} %
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'vat_inclusive'">
+        <span class="vat_inclusive price">
+            {{ ( item.vatExclusive * ( 1 + item.vatRate) ) | currency:'EUR':true:'.2-2' }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'action_remove'">
+        <span class="action remove">
+            <a class="actionIcon"
+               (click)="onColumnAction(item, column, $event)">
+                <i class="fi-minus red"></i>
+            </a>
+        </span>
+    </template>
 </div>
 
-<div class="picture"
-    *ng-if="column.name == 'picture' ">
-    <img [src]="item.mainPicture.dataURI" *ng-if="item.mainPicture?.dataURI != undefined">
-    <div class="imagePlaceover" *ng-if="item.mainPicture?.dataURI == undefined">
-        <i class="fi-book"></i>
-    </div>
-</div>
-<div class="tva_excl price"
-        *ng-if="column.name == 'vat_exclusive'">
-    {{ item.vatExclusive | currency:'EUR':true:'.2-2' }}
-</div>
-<div class="tva_rate price"
-    *ng-if="column.name == 'vat_rate'">
-    {{ ( item.vatRate * 100 )| number:'.0' }} %
-</div>
-<div class="vat_inclusive price"
-     *ng-if="column.name == 'vat_inclusive'">
-    {{ ( item.vatExclusive * ( 1 + item.vatRate) ) |  currency:'EUR':true:'.2-2' }}
-</div>
-<div class="action remove"
-      *ng-if="column.name == 'action_remove' " >
-    <a class="actionIcon "
-       (click)="onColumnAction(item, column, $event)">
-    <i class="fi-minus red"></i>
-    </a>
-</div>
