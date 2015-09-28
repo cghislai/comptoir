@@ -2,11 +2,11 @@
  * Created by cghislai on 31/08/15.
  */
 
-import {Component, View, NgIf, NgFor, EventEmitter} from 'angular2/angular2';
+import {Component, View, NgIf, NgFor, EventEmitter, ChangeDetectionStrategy} from 'angular2/angular2';
 
 import {Pos, PosRef, PosSearch} from 'client/domain/pos';
 import {SearchResult, SearchRequest} from 'client/utils/search';
-import {Language} from 'client/utils/lang';
+import {Language, LanguageFactory} from 'client/utils/lang';
 
 import {PosService} from 'services/pos';
 import {AuthService} from 'services/auth';
@@ -28,9 +28,8 @@ export class PosSelect {
     errorService:ErrorService;
 
     searchRequest:SearchRequest<Pos>;
-    searchResult:SearchResult<Pos>;
+    posList:List<Pos>;
     pos:Pos;
-    posId:number;
     language:Language;
 
     editable:boolean;
@@ -47,19 +46,19 @@ export class PosSelect {
         var posSearch = new PosSearch();
         posSearch.companyRef = authService.getEmployeeCompanyRef();
         this.searchRequest.search = posSearch;
-
+        this.posList = List([]);
         this.searchPos();
     }
 
     searchPos() {
         this.posService.search(this.searchRequest)
             .then((result:SearchResult<Pos>)=> {
-                this.searchResult = result;
+                this.posList = result.list;
                 var lastUsedPos = this.posService.lastUsedPos;
                 if (lastUsedPos != null) {
                     this.setPos(lastUsedPos);
-                } else if (result.list.count() > 0) {
-                    var pos = result.list.get(0);
+                } else if (result.list.size > 0) {
+                    var pos = result.list.first();
                     this.setPos(pos);
                 }
             }).catch((error)=> {
@@ -69,19 +68,17 @@ export class PosSelect {
 
 
     onPosChanged(event) {
-        this.pos = null;
-        this.posId = event.target.value;
-        for (var posItem in this.searchResult.list.values()) {
-            if (posItem.id == this.posId) {
-                this.setPos(posItem);
-                return;
-            }
-        }
+        var posId:number = event.target.value;
+        var pos = this.posList.valueSeq()
+            .filter((pos)=> {
+                return pos.id == posId;
+            })
+            .first();
+        this.setPos(pos);
     }
 
     setPos(pos:Pos) {
         this.pos = pos;
-        this.posId = pos.id;
         this.posService.lastUsedPos = this.pos;
         this.posChanged.next(pos);
     }

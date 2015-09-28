@@ -1,14 +1,13 @@
 
-<form id="posSelectForm" style="display: inline-block;"
-        *ng-if="searchResult != null">
-    <select [value]="posId" [hidden]="searchResult.count <= 1 || !editable"
+<form id="posSelectForm" style="display: inline-block;" [hidden]="posList.size == 0">
+    <select [value]="pos?.id" [hidden]="posList.size <= 1 || !editable"
             (change)="onPosChanged($event)">
-        <option *ng-for="#posOption of searchResult.list"
+        <option *ng-for="#posOption of posList"
                 [value]="posOption.id">
-            {{ posOption.description[language.locale] }}
+            {{ posOption.description.get(language.get(locale)) }}
         </option>
     </select>
-    <span [hidden]="searchResult.count >1 || pos == null">
-        <strong *ng-if="pos != null">{{ pos.description[language.locale] }}</strong>
+    <span [hidden]="posList.size > 1 || pos === null">
+        <strong>{{ pos?.description.get(language.get(locale)) }}</strong>
     </span>
 </form>
