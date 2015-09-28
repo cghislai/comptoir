@@ -15,11 +15,10 @@
                [page-size]="salesPerPage"
                [show-prev-next-link]="true" [show-first-last-link]="true"
                (page-change)="onPageChanged($event)"></paginator>
-    <saleList *ng-if="searchResult != null"
-              [sales]="searchResult.list"
+    <saleList [sales]="searchResult.list"
               [columns]="columns"
-              [selectable]="true"
-              [headers]="true"
+              [row-selectable]="true"
+              [headers-visible]="true"
               (sale-clicked)="onSaleClicked($event)"
               (column-action)="onColumnAction($event)">
     </saleList>

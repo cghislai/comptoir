@@ -18,6 +18,8 @@ import {SaleService} from 'services/sale';
 import {Paginator} from 'components/utils/paginator/paginator';
 import {SaleListComponent, SaleColumn} from 'components/sales/list/saleList';
 
+import {List} from 'immutable';
+
 @Component({
     selector: "salesHistoryView"
 })
@@ -36,7 +38,7 @@ export class SaleHistoryView {
     searchRequest:SearchRequest<LocalSale>;
     searchResult:SearchResult<LocalSale>;
 
-    columns:SaleColumn[];
+    columns:List<SaleColumn>;
     salesPerPage:number = 25;
 
     loading:boolean;
@@ -53,21 +55,25 @@ export class SaleHistoryView {
         var saleSearch = new SaleSearch();
         saleSearch.companyRef = new CompanyRef(authService.auth.employee.company.id);
         saleSearch.closed = true;
-        var pagination = PaginationFactory.Pagination({firstIndex: 0, pageSize: this.salesPerPage});
-        pagination.sorts = {
-            'DATETIME': 'desc'
-        };
+        var pagination = PaginationFactory.Pagination({
+            firstIndex: 0,
+            pageSize: this.salesPerPage,
+            sorts:{
+                'DATETIME': 'desc'
+            }
+        });
         this.searchRequest.pagination = pagination;
         this.searchRequest.search = saleSearch;
+        this.searchResult = new SearchResult<LocalSale>();
 
-        this.columns = [
+        this.columns = List.of(
             SaleColumn.ID,
             SaleColumn.REFERENCE,
             SaleColumn.DATETIME,
             SaleColumn.VAT_EXCLUSIVE_AMOUNT,
             SaleColumn.VAT_AMOUNT,
             SaleColumn.VAT_INCLUSIVE_AMOUNT
-        ];
+        );
         this.searchSales();
     }
 

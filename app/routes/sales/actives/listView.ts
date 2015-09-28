@@ -51,12 +51,16 @@ export class ActiveSalesView {
         var saleSearch = new SaleSearch();
         saleSearch.companyRef = new CompanyRef(authService.auth.employee.company.id);
         saleSearch.closed = false;
-        var pagination = PaginationFactory.Pagination({firstIndex: 0, pageSize: this.salesPerPage});
-        pagination.sorts = {
-            'DATETIME': 'desc'
-        };
+        var pagination = PaginationFactory.Pagination({
+            firstIndex: 0,
+            pageSize: this.salesPerPage,
+            sorts: {
+                'DATETIME': 'desc'
+            }
+        });
         this.searchRequest.pagination = pagination;
         this.searchRequest.search = saleSearch;
+        this.searchResult = new SearchResult<LocalSale>();
 
         this.columns = [
             SaleColumn.ID,
