@@ -5,8 +5,8 @@
             <th *ng-for="#col of columns"
                 [class.right]="col.alignRight"
                 [class.center]="col.alignCenter">
-                    <span *ng-if="col.title != undefined">
-                        {{ col.title[locale] }}
+                    <span *ng-if="col.title !== null">
+                        {{ col.title.get(language.locale) }}
                     </span>
             </th>
         </tr>
@@ -15,7 +15,7 @@
         <tr *ng-for="#item of items"
             [class.selectable]="rowSelectable"
             (click)="onItemClick(item, $event)"
-            focusable>
+            [attr.focusable]="rowSelectable">
             <td *ng-for="#col of columns"
                 [class.right]="col.alignRight"
                 [class.center]="col.alignCenter">
@@ -23,7 +23,7 @@
                         (action)="onColumnAction($event)"
                         [item-variant]="item"
                         [column]="col"
-                        [lang]="locale">
+                        [lang]="language">
                 </itemVariantColumn>
             </td>
         </tr>

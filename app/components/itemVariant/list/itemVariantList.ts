@@ -9,14 +9,14 @@ import {LocalItemVariant, LocalItemVariantFactory} from 'client/localDomain/item
 import {LocalPicture} from 'client/localDomain/picture';
 import {Pricing, ItemVariantFactory} from 'client/domain/itemVariant';
 
-import {LocaleTexts} from 'client/utils/lang';
+import {Language, LanguageFactory, LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 
 import {AuthService} from 'services/auth';
 
-import {AutoFocusDirective} from 'components/utils/autoFocus';
 import {FocusableDirective} from 'components/utils/focusable';
 
-import {List, Map, Record} from 'immutable';
+import {List} from 'immutable';
+
 /****
  * Column component
  */
@@ -36,19 +36,22 @@ import {List, Map, Record} from 'immutable';
 })
 export class ItemVariantColumnComponent {
     action = new EventEmitter();
-    itemVariant: LocalItemVariant;
-    column: ItemVariantColumn;
-    lang: string;
+    itemVariant:LocalItemVariant;
+    column:ItemVariantColumn;
+    lang:Language;
 
     onColumnAction(item:LocalItemVariant, column:ItemVariantColumn, event) {
         this.action.next({itemVariant: item, column: column});
         event.stopPropagation();
         event.preventDefault();
-        //  event.stopPropagation();
     }
 
-    getPricingLabel(pricing: Pricing) {
-        return LocalItemVariantFactory.getPricingLabel(pricing);
+    getPricingLabel(pricing:Pricing) {
+        return LocalItemVariantFactory.getPricingLabel(pricing).get(this.lang.locale);
+    }
+
+    getVariantPrice(itemVariant: LocalItemVariant) {
+        return LocalItemVariantFactory.calcPrice(itemVariant, true);
     }
 }
 
@@ -67,7 +70,7 @@ export class ItemVariantColumnComponent {
 @View({
     templateUrl: './components/itemVariant/list/itemVariantList.html',
     styleUrls: ['./components/itemVariant/list/itemVariantList.css'],
-    directives: [NgFor, NgIf, AutoFocusDirective, FocusableDirective, ItemVariantColumnComponent]
+    directives: [NgFor, NgIf, FocusableDirective, ItemVariantColumnComponent]
 })
 
 export class ItemVariantList {
@@ -76,13 +79,13 @@ export class ItemVariantList {
     columns:List<ItemVariantColumn>;
     itemSelectable:boolean;
     headersVisible:boolean;
+    language:Language;
 
     rowClicked = new EventEmitter();
     columnAction = new EventEmitter();
-    locale:string;
 
-    constructor(authService: AuthService) {
-        this.locale = authService.getEmployeeLanguage().locale;
+    constructor(authService:AuthService) {
+        this.language = authService.getEmployeeLanguage();
     }
 
 
@@ -116,7 +119,7 @@ export class ItemVariantColumn {
     static ITEM_VAT_RATE:ItemVariantColumn;
     static ITEM_VAT_INCLUSIVE:ItemVariantColumn;
 
-    static TOTAL_PRICE: ItemVariantColumn;
+    static TOTAL_PRICE:ItemVariantColumn;
 
     static ACTION_REMOVE:ItemVariantColumn;
     static ALL_COLUMNS:ItemVariantColumn[];
@@ -129,97 +132,97 @@ export class ItemVariantColumn {
     static init() {
         ItemVariantColumn.ID = new ItemVariantColumn();
         ItemVariantColumn.ID.name = 'id';
-        ItemVariantColumn.ID.title = {
+        ItemVariantColumn.ID.title = LocaleTextsFactory.toLocaleTexts({
             'fr': "Id"
-        };
+        });
 
         ItemVariantColumn.VARIANT_REFERENCE = new ItemVariantColumn();
         ItemVariantColumn.VARIANT_REFERENCE.name = 'variantReference';
-        ItemVariantColumn.VARIANT_REFERENCE.title = {
+        ItemVariantColumn.VARIANT_REFERENCE.title = LocaleTextsFactory.toLocaleTexts({
             'fr': "Ref"
-        };
+        });
 
         ItemVariantColumn.PICTURE = new ItemVariantColumn();
         ItemVariantColumn.PICTURE.name = 'picture';
-        ItemVariantColumn.PICTURE.title = {
+        ItemVariantColumn.PICTURE.title = LocaleTextsFactory.toLocaleTexts({
             'fr': "Image"
-        };
+        });
 
         ItemVariantColumn.PICTURE_NO_ITEM_FALLBACK = new ItemVariantColumn();
         ItemVariantColumn.PICTURE_NO_ITEM_FALLBACK.name = 'pictureNoItemFallback';
-        ItemVariantColumn.PICTURE_NO_ITEM_FALLBACK.title = {
+        ItemVariantColumn.PICTURE_NO_ITEM_FALLBACK.title = LocaleTextsFactory.toLocaleTexts({
             'fr': "Image"
-        };
+        });
 
         ItemVariantColumn.PRICING = new ItemVariantColumn();
         ItemVariantColumn.PRICING.name = 'pricing';
-        ItemVariantColumn.PRICING.title = {
+        ItemVariantColumn.PRICING.title = LocaleTextsFactory.toLocaleTexts({
             'fr': "Mode tarification"
-        };
+        });
 
         ItemVariantColumn.PRICING_AMOUNT = new ItemVariantColumn();
         ItemVariantColumn.PRICING_AMOUNT.name = 'pricingAmount';
-        ItemVariantColumn.PRICING_AMOUNT.title = {
+        ItemVariantColumn.PRICING_AMOUNT.title = LocaleTextsFactory.toLocaleTexts({
             'fr': "Valeur tarification"
-        };
+        });
 
         ItemVariantColumn.ATTRIBUTES = new ItemVariantColumn();
         ItemVariantColumn.ATTRIBUTES.name = 'attributes';
-        ItemVariantColumn.ATTRIBUTES.title = {
+        ItemVariantColumn.ATTRIBUTES.title = LocaleTextsFactory.toLocaleTexts({
             'fr': "Attributs"
-        };
+        });
 
         ItemVariantColumn.ITEM_REFERENCE = new ItemVariantColumn();
         ItemVariantColumn.ITEM_REFERENCE.name = 'itemReference';
-        ItemVariantColumn.ITEM_REFERENCE.title = {
+        ItemVariantColumn.ITEM_REFERENCE.title = LocaleTextsFactory.toLocaleTexts({
             'fr': "Ref (parent)"
-        };
+        });
 
         ItemVariantColumn.ITEM_NAME = new ItemVariantColumn();
         ItemVariantColumn.ITEM_NAME.name = 'itemName';
-        ItemVariantColumn.ITEM_NAME.title = {
+        ItemVariantColumn.ITEM_NAME.title = LocaleTextsFactory.toLocaleTexts({
             'fr': "Nom"
-        };
+        });
 
         ItemVariantColumn.ITEM_DESCRIPTION = new ItemVariantColumn();
         ItemVariantColumn.ITEM_DESCRIPTION.name = 'itemDescription';
-        ItemVariantColumn.ITEM_DESCRIPTION.title = {
+        ItemVariantColumn.ITEM_DESCRIPTION.title = LocaleTextsFactory.toLocaleTexts({
             'fr': "Description"
-        };
+        });
 
         ItemVariantColumn.ITEM_NAME_VARIANT_ATTRIBUTES = new ItemVariantColumn();
         ItemVariantColumn.ITEM_NAME_VARIANT_ATTRIBUTES.name = 'itemNameVariantAttributes';
-        ItemVariantColumn.ITEM_NAME_VARIANT_ATTRIBUTES.title = {
+        ItemVariantColumn.ITEM_NAME_VARIANT_ATTRIBUTES.title = LocaleTextsFactory.toLocaleTexts({
             'fr': "Nom / Attributs"
-        };
+        });
 
         ItemVariantColumn.ITEM_VAT_EXCLUSIVE = new ItemVariantColumn();
         ItemVariantColumn.ITEM_VAT_EXCLUSIVE.name = 'itemVatExclusive';
         ItemVariantColumn.ITEM_VAT_EXCLUSIVE.alignRight = true;
-        ItemVariantColumn.ITEM_VAT_EXCLUSIVE.title = {
+        ItemVariantColumn.ITEM_VAT_EXCLUSIVE.title = LocaleTextsFactory.toLocaleTexts({
             'fr': "Prix HTVA (parent)"
-        };
+        });
 
         ItemVariantColumn.ITEM_VAT_RATE = new ItemVariantColumn();
         ItemVariantColumn.ITEM_VAT_RATE.name = 'itemVatRate';
         ItemVariantColumn.ITEM_VAT_RATE.alignRight = true;
-        ItemVariantColumn.ITEM_VAT_RATE.title = {
+        ItemVariantColumn.ITEM_VAT_RATE.title = LocaleTextsFactory.toLocaleTexts({
             'fr': "Taux TVA"
-        };
+        });
 
         ItemVariantColumn.ITEM_VAT_INCLUSIVE = new ItemVariantColumn();
         ItemVariantColumn.ITEM_VAT_INCLUSIVE.name = 'itemVatInclusive';
         ItemVariantColumn.ITEM_VAT_INCLUSIVE.alignRight = true;
-        ItemVariantColumn.ITEM_VAT_INCLUSIVE.title = {
+        ItemVariantColumn.ITEM_VAT_INCLUSIVE.title = LocaleTextsFactory.toLocaleTexts({
             'fr': "Prix (parent)"
-        };
+        });
 
         ItemVariantColumn.TOTAL_PRICE = new ItemVariantColumn();
         ItemVariantColumn.TOTAL_PRICE.name = 'totalPrice';
         ItemVariantColumn.TOTAL_PRICE.alignRight = true;
-        ItemVariantColumn.TOTAL_PRICE.title = {
+        ItemVariantColumn.TOTAL_PRICE.title = LocaleTextsFactory.toLocaleTexts({
             'fr': "Prix total"
-        };
+        });
 
         ItemVariantColumn.ACTION_REMOVE = new ItemVariantColumn();
         ItemVariantColumn.ACTION_REMOVE.name = 'action_remove';
