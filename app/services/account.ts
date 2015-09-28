@@ -17,13 +17,12 @@ export class AccountService extends BasicLocalService<Account, LocalAccount> {
     lastUsedBalanceAccount:LocalAccount;
 
     constructor(@Inject authService:AuthService) {
-        var client:BasicClient<Account> = new AccountClient();
-        super({
+        var client = new AccountClient();
+        super(<BasicLocalServiceInfo<Account, LocalAccount>>{
             client: client,
             authService: authService,
             fromLocalConverter: LocalAccountFactory.fromLocalAccount,
-            toLocalConverter: LocalAccountFactory.toLocalAccount,
-            updateLocal: LocalAccountFactory.updateLocalAccount
+            toLocalConverter: LocalAccountFactory.toLocalAccount
         } );
     }
 

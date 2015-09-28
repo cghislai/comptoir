@@ -6,6 +6,7 @@
     <commandViewTable [no-input]="noInput"
                       [validated]="validated || noInput"
                       [items]="activeSaleService.saleItemsResult.list"
+                      [sale]="activeSaleService.sale"
                       (item-removed)="onItemRemoved($event)"></commandViewTable>
 
 </div>

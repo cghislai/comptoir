@@ -4,7 +4,7 @@
 import {Component, View, FormBuilder, FORM_DIRECTIVES, NgFor, NgIf} from 'angular2/angular2';
 
 import {LocalAccount} from 'client/localDomain/account';
-import {LocalBalance} from 'client/localDomain/balance';
+import {LocalBalance, LocalBalanceFactory} from 'client/localDomain/balance';
 import {LocalMoneyPile, CashType, ALL_CASH_TYPES, LocalMoneyPileFactory} from 'client/localDomain/moneyPile';
 
 import {CompanyRef} from 'client/domain/company';
@@ -14,7 +14,7 @@ import {Pos, PosRef, PosSearch} from 'client/domain/pos';
 
 import {SearchRequest, SearchResult} from 'client/utils/search';
 import {NumberUtils} from 'client/utils/number';
-import {Pagination} from 'client/utils/pagination';
+import {Pagination, PaginationFactory} from 'client/utils/pagination';
 
 import {BalanceService} from 'services/balance';
 import {MoneyPileService} from 'services/moneyPile';
@@ -26,6 +26,8 @@ import {AuthService} from 'services/auth';
 import {Paginator} from 'components/utils/paginator/paginator';
 import {PosSelect} from 'components/pos/posSelect/posSelect';
 import {FastInput} from 'components/utils/fastInput'
+
+import {is as ImmutableIs, List, Map} from 'immutable';
 
 @Component({
     selector: 'editCashView'
@@ -46,7 +48,7 @@ export class CountCashView {
 
     balance:LocalBalance;
     editingTotal:boolean;
-    moneyPileList:LocalMoneyPile[];
+    moneyPileList:List<LocalMoneyPile>;
 
     pos:Pos;
 
@@ -70,15 +72,7 @@ export class CountCashView {
         this.errorService = errorService;
         this.authService = authService;
 
-        this.balance = new LocalBalance();
-        this.moneyPileList = [];
-        for (var cashType of ALL_CASH_TYPES) {
-            var moneyPile:LocalMoneyPile = new LocalMoneyPile();
-            moneyPile.unitAmount = LocalMoneyPileFactory.getCashTypeUnitValue(cashType);
-            moneyPile.balance = this.balance;
-            moneyPile.label = LocalMoneyPileFactory.getCashTypeLabel(cashType);
-            this.moneyPileList.push(moneyPile);
-        }
+        this.reset();
 
         this.accountSearchRequest = new SearchRequest<LocalAccount>();
         this.balanceSearchRequest = new SearchRequest<LocalBalance>();
@@ -121,10 +115,13 @@ export class CountCashView {
 
 
     setAccount(account:LocalAccount) {
-        if (this.account == account) {
+        if (ImmutableIs(this.account, account)) {
             return;
         }
         this.account = account;
+        if (account === null) {
+            return;
+        }
         this.accountService.lastUsedBalanceAccount = account;
         this.balance.account = account;
         if (account == null) {
@@ -137,17 +134,15 @@ export class CountCashView {
 
 
     onAccountChanged(event) {
-        var account = null;
         var accountId = event.target.value;
         if (this.accountSearchResult == null) {
             return;
         }
-        for (var accountItem in this.accountSearchResult.list.values()) {
-            if (accountItem.id == accountId) {
-                account = accountItem;
-                break;
-            }
-        }
+        var account = this.accountSearchResult.list.valueSeq()
+            .filter((a)=> {
+                return a.id == accountId
+            })
+            .first();
         this.setAccount(account);
     }
 
@@ -159,12 +154,11 @@ export class CountCashView {
         var balanceSearch = new BalanceSearch();
         balanceSearch.accountSearch = this.accountSearchRequest.search;
         balanceSearch.companyRef = this.authService.getEmployeeCompanyRef();
-        var pagination = new Pagination();
-        pagination.firstIndex = 0;
-        pagination.pageSize = 1;
-        pagination.sorts = {
-            'DATETIME': 'desc'
-        };
+        var pagination = PaginationFactory.Pagination({
+            firstIndex: 0,
+            pageSize: 1,
+            sorts: {'DATETIME': 'desc'}
+        });
         this.balanceSearchRequest.search = balanceSearch;
         this.balanceSearchRequest.pagination = pagination;
         this.balanceService.search(this.balanceSearchRequest)
@@ -181,9 +175,11 @@ export class CountCashView {
         if (isNaN(amount)) {
             amount = 0;
         }
-        moneyPile.count = amount;
-        moneyPile.account = this.account;
-        moneyPile.balance = this.balance;
+        var moneyPileIndex = this.moneyPileList.indexOf(moneyPile);
+        moneyPile = <LocalMoneyPile>moneyPile
+            .set('unitCount', amount)
+            .set('account', this.account)
+            .set('balance', this.balance);
 
         var balanceTask = Promise.resolve(this.balance);
         if (this.balance.id == null) {
@@ -200,6 +196,7 @@ export class CountCashView {
         })
             .then((result)=> {
                 moneyPile = result[0];
+                this.moneyPileList = this.moneyPileList.set(moneyPileIndex, moneyPile);
                 this.balance = result[1];
             })
             .catch((error)=> {
@@ -231,15 +228,8 @@ export class CountCashView {
         this.balanceService.closeBalance(this.balance)
             .then(()=> {
                 // Rest
-                this.balance = new LocalBalance();
-                this.moneyPileList = [];
-                for (var cashType of ALL_CASH_TYPES) {
-                    var moneyPile:LocalMoneyPile = new LocalMoneyPile();
-                    moneyPile.unitAmount = LocalMoneyPileFactory.getCashTypeUnitValue(cashType);
-                    moneyPile.balance = this.balance;
-                    moneyPile.label = LocalMoneyPileFactory.getCashTypeLabel(cashType);
-                    this.moneyPileList.push(moneyPile);
-                }
+                this.reset();
+
                 this.account = this.accountService.lastUsedBalanceAccount;
                 this.balance.account = this.account;
                 if (this.account == null) {
@@ -252,5 +242,19 @@ export class CountCashView {
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
+    }
+
+    reset() {
+        this.balance = <LocalBalance>Map({});
+        var moneyPileListArray = [];
+        for (var cashType of ALL_CASH_TYPES) {
+            var moneyPileDesc:any = {};
+            moneyPileDesc.unitAmount = LocalMoneyPileFactory.getCashTypeUnitValue(cashType);
+            moneyPileDesc.balance = this.balance;
+            moneyPileDesc.label = LocalMoneyPileFactory.getCashTypeLabel(cashType);
+            var moneyPile:LocalMoneyPile = <LocalMoneyPile>Map(moneyPileDesc);
+            moneyPileListArray.push(moneyPile);
+        }
+        this.moneyPileList = List(moneyPileListArray);
     }
 }

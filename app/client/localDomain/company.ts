@@ -7,13 +7,22 @@ import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 import {Country, CountryRef, CountryFactory} from 'client/domain/country';
 import {CountryClient} from 'client/country';
 
-import {Map} from 'immutable';
+import {Map, Record} from 'immutable';
 
 export interface LocalCompany extends Map<string, any> {
     id: number;
     name: LocaleTexts;
     description: LocaleTexts;
     country: Country;
+}
+var CompanyRecord = Record({
+    id: null,
+    name: null,
+    description: null,
+    country: null
+});
+export function NewCompany(desc: any) : LocalCompany {
+    return <any>CompanyRecord(desc);
 }
 
 export class LocalCompanyFactory {
@@ -35,12 +44,12 @@ export class LocalCompanyFactory {
         );
         return Promise.all(taskList)
             .then(()=> {
-                var localCompany:LocalCompany = <LocalCompany>Map(localCompanyDesc);
-                return localCompany;
+                return NewCompany(localCompanyDesc);
             });
     }
 
     static fromLocalCompany(localCompany:LocalCompany):Company {
+        localCompany = localCompany.toJS();
         var company = new Company();
         company.id = localCompany.id;
         company.countryRef = new CountryRef(localCompany.country.code);

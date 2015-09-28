@@ -7,7 +7,7 @@ import {Company, CompanyRef, CompanyClient, CompanyFactory} from 'client/domain/
 
 import {LocalCompany, LocalCompanyFactory} from 'client/localDomain/company';
 
-import {Map} from 'immutable';
+import {Map, Record} from 'immutable';
 
 export interface LocalPicture extends Map<string, any> {
     id:number;
@@ -15,6 +15,16 @@ export interface LocalPicture extends Map<string, any> {
     data:string;
     contentType:string;
     dataURI:string;
+}
+var PictureRecord = Record({
+    id: null,
+    company: null,
+    data: null,
+    contentType: null,
+    dataURI: null
+});
+export function NewPicture(desc:any):LocalPicture {
+    return <any>PictureRecord(desc);
 }
 
 export class LocalPictureFactory {
@@ -39,13 +49,12 @@ export class LocalPictureFactory {
         );
         return Promise.all(taskList)
             .then(()=> {
-                var localPicture:LocalPicture;
-                localPicture = <LocalPicture>Map(localPictureDesc);
-                return localPicture;
+                return NewPicture(localPictureDesc);
             });
     }
 
     static fromLocalPicture(localPicture:LocalPicture):Picture {
+        localPicture = localPicture.toJS();
         var picture = new Picture();
         picture.id = localPicture.id;
         picture.companyRef = new CompanyRef(localPicture.company.id);

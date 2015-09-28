@@ -2,7 +2,8 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, NgIf, EventEmitter, OnInit, FORM_DIRECTIVES, ChangeDetectionStrategy} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, EventEmitter,
+    FORM_DIRECTIVES, ChangeDetectionStrategy} from 'angular2/angular2';
 import {List} from 'immutable';
 
 import {CompanyRef} from 'client/domain/company';
@@ -13,7 +14,7 @@ import {LocalSale} from 'client/localDomain/sale';
 import {LocalItemVariant} from 'client/localDomain/itemVariant';
 import {LocalItemVariantSale} from 'client/localDomain/itemVariantSale';
 
-import {LocaleTexts, Language} from 'client/utils/lang';
+import {LocaleTexts, Language, LanguageFactory, LocaleTextsFactory} from 'client/utils/lang';
 import {NumberUtils} from 'client/utils/number';
 import {SearchRequest, SearchResult} from 'client/utils/search';
 
@@ -95,19 +96,18 @@ export class CommandViewHeader {
         if (isNaN(discountPercentage)) {
             discountPercentage = null;
         }
-        var sale = this.activeSaleService.sale;
         if (discountPercentage != null) {
             var discountRatio = NumberUtils.toFixedDecimals(discountPercentage / 100, 2);
-            sale.discountRatio = discountRatio;
+            this.activeSaleService.doSetSaleDiscountRatio(discountRatio)
+                .catch((error)=> {
+                    this.errorService.handleRequestError(error);
+                });
         } else {
-            sale.discountRatio = null;
+            this.activeSaleService.doSetSaleDiscountRatio(null)
+                .catch((error)=> {
+                    this.errorService.handleRequestError(error);
+                });
         }
-        this.activeSaleService.doUpdateSale()
-            .then(()=> {
-            })
-            .catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
     }
 
     doValidate() {
@@ -122,7 +122,7 @@ export class CommandViewHeader {
 
 @Component({
     selector: 'commandViewTable',
-    properties: ['noInput', 'validated', 'items'],
+    properties: ['noInput', 'validated', 'items', 'sale'],
     events: ['itemRemoved'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -139,7 +139,8 @@ export class CommandViewTable {
     validated:boolean;
     noInput:boolean;
     itemRemoved = new EventEmitter();
-    locale:string;
+    language: Language;
+    sale: LocalSale;
 
     editingItem:LocalItemVariantSale;
     editingComment:boolean = false;
@@ -152,12 +153,7 @@ export class CommandViewTable {
                 errorService:ErrorService) {
         this.activeSaleService = saleService;
         this.errorService = errorService;
-        this.locale = authService.getEmployeeLanguage().locale;
-    }
-
-
-    get sale():LocalSale {
-        return this.activeSaleService.sale;
+        this.language = authService.getEmployeeLanguage();
     }
 
     cancelEdits() {
@@ -189,11 +185,22 @@ export class CommandViewTable {
         if (localItemVariantSale.comment == null) {
             return false;
         }
-        var text = localItemVariantSale.comment[this.locale];
+        var text = localItemVariantSale.comment.get(this.language.locale);
         if (text != null && text.trim().length > 0) {
             return true;
         }
         return false;
+    }
+
+    getComment(localItemVariantSale:LocalItemVariantSale) {
+        if (localItemVariantSale.comment == null) {
+            return '';
+        }
+        var text = localItemVariantSale.comment.get(this.language.locale);
+        if (text != null && text.trim().length > 0) {
+            return text;
+        }
+        return '';
     }
 
 
@@ -201,19 +208,16 @@ export class CommandViewTable {
         this.cancelEdits();
         this.editingItem = localItemVariantSale;
         this.editingComment = true;
-        if (this.editingItem.comment[this.locale] == null) {
-            this.editingItem.comment[this.locale] = '';
-        }
     }
 
     onItemCommentChange(event) {
         var commentTexts = this.editingItem.comment;
-        if (commentTexts[this.locale] == event) {
+        if (commentTexts.get(this.language.locale) == event) {
             this.cancelEdits();
             return;
         }
-        commentTexts[this.locale] = event;
-        var item = this.editingItem;
+        commentTexts = <LocaleTexts>commentTexts.set(this.language.locale, event);
+        var item = <LocalItemVariantSale>this.editingItem.set('comment', commentTexts);
         this.activeSaleService.doUpdateItem(item)
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
@@ -239,8 +243,7 @@ export class CommandViewTable {
             this.cancelEdits();
             return;
         }
-        var item = this.editingItem;
-        item.quantity = quantity;
+        var item = <LocalItemVariantSale>this.editingItem.set('quantity', quantity);
         this.activeSaleService.doUpdateItem(item)
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
@@ -263,12 +266,7 @@ export class CommandViewTable {
             return;
         }
         var vatExclusive = NumberUtils.toFixedDecimals(price / ( 1 + this.editingItem.vatRate), 2);
-        var item = this.editingItem;
-        if (item.vatExclusive == vatExclusive) {
-            this.cancelEdits();
-            return;
-        }
-        item.vatExclusive = vatExclusive;
+        var item = <LocalItemVariantSale>this.editingItem.set('vatExclusive', vatExclusive);
         this.activeSaleService.doUpdateItem(item)
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
@@ -288,12 +286,7 @@ export class CommandViewTable {
             discountPercentage = 0;
         }
         var discountRatio = NumberUtils.toFixedDecimals(discountPercentage / 100, 2);
-        var item = this.editingItem;
-        if (item.discountRatio == discountRatio) {
-            this.cancelEdits();
-            return;
-        }
-        item.discountRatio = discountRatio;
+        var item = <LocalItemVariantSale>this.editingItem.set('discountRatio', discountRatio);
         this.activeSaleService.doUpdateItem(item)
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
@@ -360,14 +353,14 @@ export class CommandViewTable {
         }
     }
 
-    calcTotalVatInclusive(item: LocalItemVariantSale) {
+    calcTotalVatInclusive(item:LocalItemVariantSale) {
         var price = item.total;
         var vat = item.itemVariant.item.vatRate;
         price *= (1 + vat);
         return price;
     }
 
-    calcPriceVatInclusive(item: LocalItemVariantSale) {
+    calcPriceVatInclusive(item:LocalItemVariantSale) {
         var price = item.vatExclusive * (1 + item.vatRate);
         return price;
     }
@@ -404,7 +397,7 @@ export class CommandView {
 
     validated:boolean = false;
     saleEmptied = new EventEmitter();
-    validateChanged= new EventEmitter();
+    validateChanged = new EventEmitter();
 
     constructor(saleService:ActiveSaleService,
                 errorService:ErrorService) {
@@ -422,11 +415,9 @@ export class CommandView {
 
     onItemRemoved() {
         var searchResult = this.activeSaleService.saleItemsResult;
-        if (searchResult.list.count() == 0) {
+        if (searchResult.list.size == 0) {
             this.saleEmptied.next(null);
         }
     }
-
-
 
 }

@@ -8,7 +8,7 @@ import {CompanyRef} from 'client/domain/company';
 import {Pos, PosRef} from 'client/domain/pos';
 import {LocaleText} from 'client/domain/lang';
 import {Customer, CustomerRef} from 'client/domain/customer';
-import {Language, LocaleTexts} from 'client/utils/lang';
+import {Language, LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 
 import {AuthService} from 'services/auth';
 import {PosService} from 'services/pos';
@@ -70,7 +70,7 @@ export class EditPosView {
 
     getNewPos() {
         this.editingPos = new Pos();
-        this.editingPos.description = new LocaleTexts();
+        this.editingPos.description = LocaleTextsFactory.toLocaleTexts({});
     }
 
     getPos(id:number) {

@@ -16,13 +16,12 @@ export class EmployeeService extends BasicLocalService<Employee, LocalEmployee> 
 
 
     constructor(@Inject authService:AuthService) {
-        var client:BasicClient<Employee> = new EmployeeClient();
-        super({
+        var client = new EmployeeClient();
+        super(<BasicLocalServiceInfo<Employee, LocalEmployee>>{
             client: client,
             authService: authService,
             fromLocalConverter: LocalEmployeeFactory.fromLocalEmployee,
-            toLocalConverter: LocalEmployeeFactory.toLocalEmployee,
-            updateLocal: LocalEmployeeFactory.updateLocalEmployee
+            toLocalConverter: LocalEmployeeFactory.toLocalEmployee
         } );
     }
 

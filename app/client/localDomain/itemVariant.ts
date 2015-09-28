@@ -12,7 +12,7 @@ import {LocalAttributeValue, LocalAttributeValueFactory} from 'client/localDomai
 import {LocalPicture, LocalPictureFactory} from 'client/localDomain/picture';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 
-import {Map} from 'immutable';
+import {Map, Record} from 'immutable';
 
 export interface LocalItemVariant extends Map<string, any> {
     id:number;
@@ -24,6 +24,18 @@ export interface LocalItemVariant extends Map<string, any> {
     mainPicture:LocalPicture;
     item:LocalItem;
 
+}
+var ItemVariantRecord = Record({
+    id: null,
+    variantReference: null,
+    pricing: null,
+    pricingAmount: null,
+    attributeValues: null,
+    mainPicture: null,
+    item: null
+});
+export function NewItemVariant(desc:any):LocalItemVariant {
+    return <any>ItemVariantRecord(desc);
 }
 
 export class LocalItemVariantFactory {
@@ -100,13 +112,12 @@ export class LocalItemVariantFactory {
 
         return Promise.all(taskList)
             .then(()=> {
-                var localItemVariant:LocalItemVariant;
-                localItemVariant = <LocalItemVariant>Map(localVariantDesc);
-                return localItemVariant;
+                return NewItemVariant(localVariantDesc);
             });
     }
 
     static fromLocalItemVariant(localVariant:LocalItemVariant) {
+        localVariant = localVariant.toJS();
         var itemVariant:ItemVariant = new ItemVariant();
         itemVariant.attributeValueRefs = [];
         for (var localAttribute of localVariant.attributeValues) {
@@ -158,6 +169,5 @@ export class LocalItemVariantFactory {
         var vatInclusive = vatExclusive * (1 + localVariant.item.vatRate);
         return vatInclusive;
     }
-
 
 }

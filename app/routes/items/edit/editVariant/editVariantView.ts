@@ -10,7 +10,7 @@ import {LocalItemVariant, LocalItemVariantFactory} from 'client/localDomain/item
 import {LocalItem} from 'client/localDomain/item';
 import {AttributeDefinition, AttributeDefinitionSearch} from 'client/domain/attributeDefinition';
 import {ItemVariant, Pricing} from 'client/domain/itemVariant';
-import {Language, LocaleTexts} from 'client/utils/lang';
+import {Language, LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 import {NumberUtils} from 'client/utils/number';
 import {SearchRequest, SearchResult} from 'client/utils/search';
 
@@ -25,6 +25,8 @@ import {LangSelect} from 'components/lang/langSelect/langSelect';
 import {FormMessage} from 'components/utils/formMessage/formMessage';
 import {RequiredValidator} from 'components/utils/validators';
 import {LocalizedDirective} from 'components/utils/localizedInput';
+
+import {Map} from 'immutable';
 
 @Component({
     selector: 'editItemVariant'
@@ -122,13 +124,13 @@ export class ItemVariantEditView {
     }
 
     getNewItemVariant() {
-        var itemVariant = new LocalItemVariant();
-        itemVariant.attributeValues = [];
-        itemVariant.pricing = Pricing.PARENT_ITEM;
-        itemVariant.item = this.item;
-        itemVariant.pricingAmount = 0;
+        var itemVariantDesc:any = {};
+        itemVariantDesc.attributeValues = [];
+        itemVariantDesc.pricing = Pricing.PARENT_ITEM;
+        itemVariantDesc.item = this.item;
+        itemVariantDesc.pricingAmount = 0;
         this.allVariantAttributes = [];
-        this.itemVariant = itemVariant;
+        this.itemVariant = <LocalItemVariant>Map(itemVariantDesc);
         this.checkPricingAmountRequired();
     }
 
@@ -178,10 +180,16 @@ export class ItemVariantEditView {
             };
             reader.readAsDataURL(file);
         }).then((data:string)=> {
-                if (thisView.itemVariant.mainPicture == null) {
-                    thisView.itemVariant.mainPicture = new LocalPicture();
+                var picDesc = {
+                    dataURI: data
+                };
+
+                var mainPicture:LocalPicture = <LocalPicture> Map(picDesc);
+                if (thisView.itemVariant.mainPicture != null) {
+                    mainPicture = <LocalPicture>thisView.itemVariant.mainPicture.merge(mainPicture);
                 }
-                thisView.itemVariant.mainPicture.dataURI = data;
+                thisView.itemVariant = <LocalItemVariant>
+                    thisView.itemVariant.set('mainPicture', mainPicture);
             });
     }
 
@@ -195,7 +203,7 @@ export class ItemVariantEditView {
 
     setItemVariantPricingAmount(event) {
         var valueString = event.target.value;
-        var valueNumber: number = parseFloat(valueString);
+        var valueNumber:number = parseFloat(valueString);
         if (isNaN(valueNumber)) {
             return;
         }
@@ -306,9 +314,11 @@ export class ItemVariantEditView {
 
 
     resetNewAttributeValue() {
-        this.newAttributeValue = new LocalAttributeValue();
-        this.newAttributeValue.value = new LocaleTexts();
-        this.newAttributeValue.attributeDefinition = new AttributeDefinition();
-        this.newAttributeValue.attributeDefinition.name = new LocaleTexts();
+        var attributeDefinition = new AttributeDefinition();
+        attributeDefinition.name = LocaleTextsFactory.toLocaleTexts({});
+        this.newAttributeValue = <LocalAttributeValue>Map({
+            value: LocaleTextsFactory.toLocaleTexts({}),
+            attributeDefinition: attributeDefinition
+        });
     }
 }

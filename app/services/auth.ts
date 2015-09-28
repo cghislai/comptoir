@@ -4,12 +4,12 @@
 import {Inject} from 'angular2/angular2';
 
 import {Auth, Registration, AuthFactory} from 'client/domain/auth';
-import {LocalAuth, LocalAuthFactory} from 'client/localDomain/auth';
+import {LocalAuth, LocalAuthFactory, NewAuth} from 'client/localDomain/auth';
 import {LocalEmployee} from 'client/localDomain/employee';
 import {LocalCompany} from 'client/localDomain/company';
 import {CompanyRef} from 'client/domain/company';
 
-import {Language} from 'client/utils/lang';
+import {Language, LanguageFactory} from 'client/utils/lang';
 import {JSONFactory} from 'client/utils/factory';
 import {ComptoirRequest,ComptoirResponse} from 'client/utils/request';
 
@@ -86,14 +86,14 @@ export class AuthService {
         }
         var employee = this.auth.employee;
         if (employee == null) {
-            return Language.DEFAULT_LANGUAGE;
+            return LanguageFactory.DEFAULT_LANGUAGE;
         }
         var locale = employee.locale;
-        var language = Language.fromLocale(locale);
+        var language = LanguageFactory.fromLocale(locale);
         if (language != undefined) {
             return language;
         }
-        return Language.DEFAULT_LANGUAGE;
+        return LanguageFactory.DEFAULT_LANGUAGE;
     }
 
     public getEmployeeCompany():LocalCompany {
@@ -139,6 +139,7 @@ export class AuthService {
             this.saveAuth(null);
             return;
         }
+
         var auth:Auth = JSON.parse(authJSON, AuthFactory.fromJSONAuthReviver);
         if (auth == null) {
             this.saveAuth(null);
@@ -149,11 +150,7 @@ export class AuthService {
             this.saveAuth(null);
             return;
         }
-        this.auth = new LocalAuth();
-        this.auth.id = auth.id;
-        this.auth.token = auth.token;
-        this.auth.refreshToken = auth.refreshToken;
-        this.auth.expirationDateTime = auth.expirationDateTime;
+
         this.loadingPromise = LocalAuthFactory.toLocalAuth(auth, auth.token)
             .then((localAuth:LocalAuth)=> {
                 this.auth = localAuth;

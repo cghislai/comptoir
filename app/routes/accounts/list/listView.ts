@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 06/08/15.
  */
-import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, FORM_DIRECTIVES, ChangeDetectionStrategy} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
 import {CompanyRef} from 'client/domain/company';
@@ -10,7 +10,7 @@ import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
 import {Account, AccountType, AccountSearch} from 'client/domain/account';
 import {SearchResult, SearchRequest} from 'client/utils/search';
 import {LocaleTexts, Language} from 'client/utils/lang';
-import {Pagination} from 'client/utils/pagination';
+import {Pagination, PaginationFactory} from 'client/utils/pagination';
 
 import {AccountService} from 'services/account';
 import {ErrorService} from 'services/error';
@@ -25,7 +25,8 @@ import {Paginator} from 'components/utils/paginator/paginator';
 @View({
     templateUrl: './routes/accounts/list/listView.html',
     styleUrls: ['./routes/accounts/list/listView.css'],
-    directives: [NgFor, NgIf, Paginator, FORM_DIRECTIVES]
+    directives: [NgFor, NgIf, Paginator, FORM_DIRECTIVES],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class AccountsListView {
@@ -33,11 +34,11 @@ export class AccountsListView {
     errorService:ErrorService;
     router:Router;
 
-    searchRequest:SearchRequest<LocalAccount>
+    searchRequest:SearchRequest<LocalAccount>;
     searchResult:SearchResult<LocalAccount>;
     accountsPerPage:number = 25;
 
-    locale:string;
+    language:Language;
 
     constructor(accountService:AccountService, errorService:ErrorService,
                 authService:AuthService, router:Router) {
@@ -49,11 +50,11 @@ export class AccountsListView {
         var accountSearch = new AccountSearch();
         accountSearch.companyRef = new CompanyRef(authService.auth.employee.company.id);
 
-        var pagination = new Pagination(0, this.accountsPerPage);
+        var pagination =PaginationFactory.Pagination({firstIndex: 0, pageSize: this.accountsPerPage});
         this.searchRequest.search = accountSearch;
         this.searchRequest.pagination = pagination;
 
-        this.locale = authService.getEmployeeLanguage().locale;
+        this.language = authService.getEmployeeLanguage();
         this.searchAccounts();
     }
 
@@ -75,12 +76,13 @@ export class AccountsListView {
         if (label == null) {
             return null;
         }
-        return label[this.locale];
+        return label.get(this.language.locale);
     }
 
     onPageChanged(pagination:Pagination) {
-        this.searchRequest.pagination.firstIndex = pagination.firstIndex;
-        this.searchRequest.pagination.pageSize = pagination.pageSize;
+        this.searchRequest.pagination
+        = <Pagination>this.searchRequest.pagination.set('firstIndex', pagination.firstIndex)
+            .set('pageSize', pagination.pageSize);
         this.searchAccounts();
     }
 

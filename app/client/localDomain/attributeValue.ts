@@ -5,38 +5,43 @@
 import {AttributeValue, AttributeValueRef} from 'client/domain/attributeValue';
 import {AttributeDefinition, AttributeDefinitionRef,AttributeDefinitionClient, AttributeDefinitionFactory} from 'client/domain/attributeDefinition';
 import {LocaleTexts} from 'client/utils/lang';
+import {Map, Record} from 'immutable';
 
-export class LocalAttributeValue {
+export interface LocalAttributeValue extends Map<string, any>{
     id:number;
     value:LocaleTexts;
 
     attributeDefinition:AttributeDefinition;
+}
+var AttributeValueRecord = Record({
+    id: null,
+    value: null,
+    attributeDefinition: null
+});
+export function NewAttributeValue(desc: any) : LocalAttributeValue {
+    return <any>AttributeValueRecord(desc);
 }
 
 export class LocalAttributeValueFactory {
     static  definitionClient = new AttributeDefinitionClient();
 
     static toLocalAttributeValue(attributevalue:AttributeValue, authToken):Promise<LocalAttributeValue> {
-        var localValue = new LocalAttributeValue();
-        return LocalAttributeValueFactory.updateLocalAttributeValue(localValue, attributevalue, authToken);
-    }
-
-    static updateLocalAttributeValue(localValue:LocalAttributeValue, value:AttributeValue, authToken:string):Promise<LocalAttributeValue> {
-        localValue.id = value.id;
-        localValue.value = value.value;
+        var localValueDesc: any = {};
+        localValueDesc.id = attributevalue.id;
+        localValueDesc.value = attributevalue.value;
 
         var taskList = [];
-        var definitionRef = value.attributeDefinitionRef;
+        var definitionRef = attributevalue.attributeDefinitionRef;
         taskList.push(
             LocalAttributeValueFactory.definitionClient.getFromCacheOrServer(definitionRef.id, authToken)
                 .then((definition)=> {
-                    localValue.attributeDefinition = definition;
+                    localValueDesc.attributeDefinition = definition;
                 })
         );
 
         return Promise.all(taskList)
             .then(()=> {
-                return localValue;
+                return NewAttributeValue(localValueDesc);
             });
     }
 

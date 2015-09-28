@@ -16,13 +16,12 @@ export class ItemVariantService extends BasicLocalService<ItemVariant, LocalItem
 
 
     constructor(@Inject authService:AuthService) {
-        var client:BasicClient<ItemVariant> = new ItemVariantClient();
-        super({
+        var client = new ItemVariantClient();
+        super(<BasicLocalServiceInfo<ItemVariant, LocalItemVariant>>{
             client: client,
             authService: authService,
             fromLocalConverter: LocalItemVariantFactory.fromLocalItemVariant,
-            toLocalConverter: LocalItemVariantFactory.toLocalItemVariant,
-            updateLocal: LocalItemVariantFactory.updateLocalItemVariant
+            toLocalConverter: LocalItemVariantFactory.toLocalItemVariant
         } );
     }
 

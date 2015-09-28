@@ -3,7 +3,7 @@
  */
 
 import {Component, View, NgFor, NgIf, NgSwitch, NgSwitchWhen, ChangeDetectionStrategy,
-    EventEmitter, Attribute, ViewEncapsulation} from 'angular2/angular2';
+    EventEmitter, ViewEncapsulation} from 'angular2/angular2';
 
 import {LocalItemVariant, LocalItemVariantFactory} from 'client/localDomain/itemVariant';
 import {LocalPicture} from 'client/localDomain/picture';

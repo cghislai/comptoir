@@ -14,16 +14,16 @@ import {Pos, PosRef} from 'client/domain/pos';
 
 import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
 import {LocalAccountingEntry, LocalAccountingEntryFactory} from 'client/localDomain/accountingEntry';
-import {LocalSale, LocalSaleFactory} from 'client/localDomain/sale';
-import {LocalItemVariant} from 'client/localDomain/itemVariant';
-import {LocalItemVariantSale, LocalItemVariantSaleFactory} from 'client/localDomain/itemVariantSale';
+import {LocalSale, LocalSaleFactory, NewSale} from 'client/localDomain/sale';
+import {LocalItemVariant, LocalItemVariantFactory} from 'client/localDomain/itemVariant';
+import {LocalItemVariantSale, LocalItemVariantSaleFactory, NewItemVariantSale} from 'client/localDomain/itemVariantSale';
 
 import {SearchRequest, SearchResult} from 'client/utils/search';
-import {LocaleTexts} from 'client/utils/lang';
+import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 
 import {AuthService} from 'services/auth';
 import {BasicLocalService, BasicLocalServiceInfo} from 'services/basicService';
-import {List} from 'immutable';
+import {List, Map} from 'immutable';
 
 export class ActiveSaleService {
     sale:LocalSale;
@@ -74,8 +74,7 @@ export class ActiveSaleService {
             client: this.accountClient,
             authService: authService,
             fromLocalConverter: LocalAccountFactory.fromLocalAccount,
-            toLocalConverter: LocalAccountFactory.toLocalAccount,
-            updateLocal: LocalAccountFactory.updateLocalAccount
+            toLocalConverter: LocalAccountFactory.toLocalAccount
         };
         this.accoutService = new BasicLocalService<Account, LocalAccount>(accountServiceInfo);
 
@@ -84,8 +83,7 @@ export class ActiveSaleService {
             client: this.accountingEntryClient,
             authService: authService,
             fromLocalConverter: LocalAccountingEntryFactory.fromLocalAccountingEntry,
-            toLocalConverter: LocalAccountingEntryFactory.toLocalAccountingEntry,
-            updateLocal: LocalAccountingEntryFactory.updateLocalAccountingEntry
+            toLocalConverter: LocalAccountingEntryFactory.toLocalAccountingEntry
         };
         this.accountingEntryService = new BasicLocalService<AccountingEntry, LocalAccountingEntry>(accountingEntryServiceInfo);
 
@@ -102,8 +100,7 @@ export class ActiveSaleService {
             client: new ItemVariantSaleClient(),
             authService: authService,
             fromLocalConverter: LocalItemVariantSaleFactory.fromLocalItemVariantSale,
-            toLocalConverter: LocalItemVariantSaleFactory.toLocalItemVariantSale,
-            updateLocal: LocalItemVariantSaleFactory.updateLocalItemVariantSale
+            toLocalConverter: LocalItemVariantSaleFactory.toLocalItemVariantSale
         };
         this.itemVariantSaleService = new BasicLocalService<ItemVariantSale, LocalItemVariantSale>(itemVariantSaleServiceInfo);
     }
@@ -116,7 +113,7 @@ export class ActiveSaleService {
                 }
                 return sale;
             })
-            .then((sale: LocalSale) => {
+            .then((sale:LocalSale) => {
                 this.sale = sale;
                 var taskList:Promise<any>[] = <Promise<any>[]>[
                     this.searchPaidAmount(),
@@ -131,7 +128,11 @@ export class ActiveSaleService {
     }
 
     public getNewSale():Promise<LocalSale> {
-        return Promise.resolve(new LocalSale())
+        var newSale = NewSale({
+            company: this.authService.getEmployeeCompany(),
+            discountRatio: 0
+        });
+        return Promise.resolve(newSale)
             .then((sale)=> {
                 this.sale = sale;
                 this.paidAmount = 0;
@@ -148,9 +149,6 @@ export class ActiveSaleService {
     }
 
     public doSaveSale():Promise<LocalSale> {
-        this.sale.company = this.authService.auth.employee.company;
-        this.sale.discountRatio = 0;
-
         return this.saleService.save(this.sale)
             .then((ref)=> {
                 return this.saleService.get(ref.id);
@@ -175,25 +173,24 @@ export class ActiveSaleService {
             });
     }
 
-    private updateSale(sale:LocalSale) {
-        this.sale.discountAmount = sale.discountAmount;
-        this.sale.vatAmount = sale.vatAmount;
-        this.sale.vatExclusiveAmount = sale.vatExclusiveAmount;
-    }
-
-    private updateSaleItem(saleItem:LocalItemVariantSale, fetchedItem:LocalItemVariantSale) {
-        var index = this.saleItemsResult.list.indexOf(saleItem);
-        this.saleItemsResult.list = this.saleItemsResult.list.update(index, (item)=>{return fetchedItem});
+    private updateSaleItem(fetchedItem:LocalItemVariantSale) {
+        var listIndex = this.saleItemsResult.list.findIndex((item)=> {
+            return item.itemVariant.id === fetchedItem.itemVariant.id;
+        });
+        if (listIndex < 0) {
+            return;
+        }
+        this.saleItemsResult.list = this.saleItemsResult.list.set(listIndex, fetchedItem);
     }
 
     public fetchSaleAndItem(item:LocalItemVariantSale):Promise<any[]> {
         var taskList:Promise<any>[] = <Promise<any>[]>[
             this.saleService.get(this.sale.id).then((sale)=> {
-                this.updateSale(sale);
+                this.sale = sale;
             }),
             this.itemVariantSaleService.get(item.id)
                 .then((fetchedItem)=> {
-                    this.updateSaleItem(item, fetchedItem);
+                    this.updateSaleItem(fetchedItem);
                 })
         ];
         return Promise.all(taskList);
@@ -208,35 +205,41 @@ export class ActiveSaleService {
         }
 
 
-        var itemSale:LocalItemVariantSale =  this.saleItemsResult.list.filter((itemSale)=>{
+        var itemSale:LocalItemVariantSale = this.saleItemsResult.list.find((itemSale)=> {
             return itemSale.itemVariant.id == itemVariant.id;
-        }).first();
-        var newItem = itemSale == null;
-        if (newItem) {
-            itemSale = new LocalItemVariantSale();
-            itemSale.comment = new LocaleTexts();
-            itemSale.discountRatio = 0;
-            itemSale.itemVariant = itemVariant;
-            itemSale.quantity = 1;
-            itemSale.sale = this.sale;
-            itemSale.vatExclusive = itemVariant.calcPrice(false);
-            itemSale.vatRate = itemVariant.item.vatRate;
+        });
+
+        if (itemSale == null) {
+            var itemSaleDesc:any = {
+                comment: LocaleTextsFactory.toLocaleTexts({}),
+                discountRatio: 0,
+                itemVariant: itemVariant,
+                quantity: 1,
+                sale: this.sale,
+                vatExclusive: LocalItemVariantFactory.calcPrice(itemVariant, false),
+                vatRate: itemVariant.item.vatRate
+            };
+            itemSale = NewItemVariantSale(itemSaleDesc);
+
             if (this.saleItemsResult != null) {
                 this.saleItemsResult.list = this.saleItemsResult.list.push(itemSale);
                 this.saleItemsResult.count++;
             }
         } else {
-            itemSale.quantity += 1;
+            var oldQuantity = itemSale.quantity;
+            var newQuantity = oldQuantity + 1;
+            var itemSale = <LocalItemVariantSale>itemSale.set('quantity', newQuantity);
+            this.updateSaleItem(itemSale);
         }
         return this.itemVariantSaleService.save(itemSale)
             .then((ref)=> {
-                itemSale.id = ref.id;
-                return this.fetchSaleAndItem(itemSale);
+                var newItemSale = <LocalItemVariantSale>itemSale.set('id', ref.id);
+                return this.fetchSaleAndItem(newItemSale);
             });
     }
 
     public doRemoveItem(saleItem:LocalItemVariantSale):Promise<any> {
-        var newItems = this.saleItemsResult.list.filter((item)=>{
+        var newItems = this.saleItemsResult.list.filter((item)=> {
             return item != saleItem;
         }).toList();
         this.saleItemsResult.list = newItems;
@@ -245,7 +248,7 @@ export class ActiveSaleService {
             .then(()=> {
                 var taskList:Promise<any>[] = [
                     this.saleService.get(this.sale.id).then((sale)=> {
-                        this.updateSale(sale);
+                        this.sale = sale;
                     }),
                     this.doSearchSaleItems()
                 ];
@@ -256,19 +259,25 @@ export class ActiveSaleService {
     public doUpdateItem(saleItem:LocalItemVariantSale):Promise<any> {
         return this.itemVariantSaleService.save(saleItem)
             .then((ref)=> {
-                saleItem.id = ref.id;
+                saleItem = <LocalItemVariantSale>saleItem.set('id', ref.id);
                 return this.fetchSaleAndItem(saleItem);
             });
         return Promise.resolve(saleItem);
     }
 
-    public doUpdateSale():Promise<any> {
+    public doSetSaleDiscountRatio(ratio:number):Promise<any> {
+        var newSale = <LocalSale>this.sale.set('discountRatio', ratio);
+        this.sale = newSale;
+        return this.doUpdateSale();
+    }
+
+    private doUpdateSale():Promise<any> {
         return this.saleService.save(this.sale)
             .then((ref)=> {
                 return this.saleService.get(ref.id);
             })
             .then((sale:LocalSale)=> {
-                this.updateSale(sale);
+                this.sale = sale;
             });
     }
 
@@ -301,7 +310,7 @@ export class ActiveSaleService {
             });
     }
 
-    public setPos(pos:Pos): Promise<any> {
+    public setPos(pos:Pos):Promise<any> {
         this.pos = pos;
         return this.searchAccounts();
     }

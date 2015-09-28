@@ -2,7 +2,7 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, NgIf, EventEmitter} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, EventEmitter, ChangeDetectionStrategy} from 'angular2/angular2';
 
 import {LocalItemVariant} from 'client/localDomain/itemVariant';
 import {LocalPicture} from 'client/localDomain/picture';
@@ -11,7 +11,7 @@ import {CompanyRef} from 'client/domain/company';
 import {ItemSearch} from 'client/domain/item';
 import {ItemVariantSearch} from 'client/domain/itemVariant';
 import {SearchResult, SearchRequest} from 'client/utils/search';
-import {Pagination} from 'client/utils/pagination';
+import {Pagination, PaginationFactory} from 'client/utils/pagination';
 
 import {AuthService} from 'services/auth';
 import {ErrorService} from 'services/error';
@@ -24,7 +24,8 @@ import {List} from 'immutable';
 
 @Component({
     selector: 'itemListView',
-    events: ['itemClicked']
+    events: ['itemClicked'],
+    changeDetection: ChangeDetectionStrategy.Default
 })
 
 @View({
@@ -58,7 +59,7 @@ export class ItemListView {
         itemSearch.companyRef = authService.getEmployeeCompanyRef();
         var itemVariantSearch = new ItemVariantSearch();
         itemVariantSearch.itemSearch = itemSearch;
-        var pagination = new Pagination(0, 20);
+        var pagination = PaginationFactory.Pagination({firstIndex: 0, pageSize: 20});
         this.searchRequest = new SearchRequest<LocalItemVariant>();
         this.searchRequest.search = itemVariantSearch;
         this.searchRequest.pagination = pagination;
@@ -76,6 +77,7 @@ export class ItemListView {
     searchItems() {
         this.itemVariantService.search(this.searchRequest)
             .then((result)=>{
+                this.searchResult = result;
                 this.itemList = List(result.list);
             })
             .catch((error)=> {

@@ -12,7 +12,7 @@ import {LocaleTexts, Language} from 'client/utils/lang';
 import {PosService} from 'services/pos';
 import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
-import {Pagination} from 'client/utils/pagination';
+import {Pagination, PaginationFactory} from 'client/utils/pagination';
 import {SearchResult, SearchRequest} from 'client/utils/search';
 
 import {Paginator} from 'components/utils/paginator/paginator';
@@ -50,7 +50,7 @@ export class PosListView {
         this.searchRequest = new SearchRequest<Pos>();
         var posSearch = new PosSearch();
          posSearch.companyRef = new CompanyRef(authService.auth.employee.company.id);
-        var pagination = new Pagination(0, this.posPerPage);
+        var pagination = PaginationFactory.Pagination({firstIndex: 0, pageSize: this.posPerPage});
         this.searchRequest.pagination = pagination;
         this.searchRequest.search = posSearch;
 
@@ -70,8 +70,8 @@ export class PosListView {
 
 
     onPageChanged(pagination:Pagination) {
-        this.searchRequest.pagination.firstIndex = pagination.firstIndex;
-        this.searchRequest.pagination.pageSize = pagination.pageSize;
+        this.searchRequest.pagination = <Pagination>
+            this.searchRequest.pagination.merge(pagination);
         this.searchPosList();
     }
 

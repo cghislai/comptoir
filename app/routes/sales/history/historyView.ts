@@ -8,7 +8,7 @@ import {LocalSale} from 'client/localDomain/sale';
 import {SaleSearch} from 'client/domain/sale';
 import {CompanyRef} from 'client/domain/company';
 
-import {Pagination} from 'client/utils/pagination';
+import {Pagination, PaginationFactory} from 'client/utils/pagination';
 import {SearchRequest, SearchResult} from 'client/utils/search';
 
 import {ErrorService} from 'services/error';
@@ -53,7 +53,7 @@ export class SaleHistoryView {
         var saleSearch = new SaleSearch();
         saleSearch.companyRef = new CompanyRef(authService.auth.employee.company.id);
         saleSearch.closed = true;
-        var pagination = new Pagination(0, this.salesPerPage);
+        var pagination = PaginationFactory.Pagination({firstIndex: 0, pageSize: this.salesPerPage});
         pagination.sorts = {
             'DATETIME': 'desc'
         };
@@ -82,8 +82,8 @@ export class SaleHistoryView {
     }
 
     onPageChanged(pagination:Pagination) {
-        this.searchRequest.pagination.firstIndex = pagination.firstIndex;
-        this.searchRequest.pagination.pageSize = pagination.pageSize;
+        this.searchRequest.pagination = <Pagination>
+            this.searchRequest.pagination.merge(pagination);
         this.searchSales();
     }
 

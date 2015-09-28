@@ -18,12 +18,11 @@ export class AccountingEntryService extends BasicLocalService<AccountingEntry, L
 
     constructor(@Inject authService:AuthService) {
         var client = new AccountingEntryClient();
-        super({
+        super(<BasicLocalServiceInfo<AccountingEntry, LocalAccountingEntry>>{
             client: client,
             authService: authService,
             fromLocalConverter: LocalAccountingEntryFactory.fromLocalAccountingEntry,
-            toLocalConverter: LocalAccountingEntryFactory.toLocalAccountingEntry,
-            updateLocal: LocalAccountingEntryFactory.updateLocalAccountingEntry
+            toLocalConverter: LocalAccountingEntryFactory.toLocalAccountingEntry
         } );
     }
 }

@@ -11,7 +11,7 @@ import {LocalItemVariant} from 'client/localDomain/itemVariant';
 import {CompanyRef} from 'client/domain/company';
 import {Item, ItemRef, ItemSearch} from 'client/domain/item';
 import {ItemVariant, ItemVariantSearch} from 'client/domain/itemVariant';
-import {Language, LocaleTexts} from 'client/utils/lang';
+import {Language, LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 import {NumberUtils} from 'client/utils/number';
 import {SearchRequest, SearchResult} from 'client/utils/search';
 
@@ -28,7 +28,8 @@ import {LocalizedDirective} from 'components/utils/localizedInput';
 import {ItemVariantList, ItemVariantColumn} from 'components/itemVariant/list/itemVariantList';
 
 import {ItemVariantEditView} from 'routes/items/edit/editVariant/editVariantView';
-import {List} from 'immutable';
+import {List, Map} from 'immutable';
+
 @Component({
     selector: 'editItem'
 })
@@ -106,9 +107,11 @@ export class ItemEditView {
     }
 
     getNewItem() {
-        this.item = new LocalItem();
-        this.item.description = new LocaleTexts();
-        this.item.name = new LocaleTexts();
+        var itemDesc:any = {};
+        itemDesc.description = LocaleTextsFactory.toLocaleTexts({});
+        itemDesc.name = LocaleTextsFactory.toLocaleTexts({});
+        this.item = <LocalItem>Map(itemDesc);
+
         this.findItemVariants();
         this.calcTotalPrice();
         this.calcVatPercentage();
@@ -199,10 +202,13 @@ export class ItemEditView {
             };
             reader.readAsDataURL(file);
         }).then((data:string)=> {
-                if (thisView.item.mainPicture == null) {
-                    thisView.item.mainPicture = new LocalPicture();
+                var mainPicture: LocalPicture = <LocalPicture>Map({
+                    dataURI: data
+                });
+                if (thisView.item.mainPicture !== null) {
+                    mainPicture = <LocalPicture>thisView.item.mainPicture.merge(mainPicture);
                 }
-                thisView.item.mainPicture.dataURI = data;
+                thisView.item = <LocalItem>thisView.item.set('mainPicture', mainPicture);
                 thisView.itemPictureTouched = true;
             });
     }

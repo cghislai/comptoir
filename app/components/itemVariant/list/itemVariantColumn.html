@@ -47,10 +47,10 @@
             <span class="attributeValue"
                   *ng-for="#attr of itemVariant.attributeValues">
                 <span class="def">
-                    {{ attr.attributeDefinition.name.get(language.locale) }}
+                    {{ attr.attributeDefinition.name.get(lang.locale) }}
                 </span>
                 <span class="value">
-                    {{ attr.value.get(language.locale) }}
+                    {{ attr.value.get(lang.locale) }}
                 </span>
             </span>
         </span>
@@ -63,28 +63,28 @@
     </template>
     <template [ng-switch-when]=" 'itemName'">
         <span class="name">
-              {{ itemVariant.item.name.get(language.locale) }}
+              {{ itemVariant.item.name.get(lang.locale) }}
         </span>
     </template>
     <template [ng-switch-when]=" 'itemDescription'">
         <span class="desc">
-            {{ itemVariant.item.description.get(language.locale) }}
+            {{ itemVariant.item.description.get(lang.locale) }}
         </span>
     </template>
 
     <template [ng-switch-when]=" 'itemNameVariantAttributes'">
         <span class="name_attributes">
             <div class="name">
-                {{ itemVariant.item.name.get(language.locale) }}
+                {{ itemVariant.item.name.get(lang.locale) }}
             </div>
             <div>
                 <span class="attributeValue"
                       *ng-for="#attr of itemVariant.attributeValues">
                     <span class="def">
-                        {{ attr.attributeDefinition.name.get(language.locale) }}
+                        {{ attr.attributeDefinition.name.get(lang.locale) }}
                     </span>
                     <span class="value">
-                        {{ attr.value.get(language.locale) }}
+                        {{ attr.value.get(lang.locale) }}
                     </span>
                 </span>
             </div>

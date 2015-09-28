@@ -23,7 +23,7 @@ import {LocalCompany, LocalCompanyFactory} from 'client/localDomain/company';
 import {LocaleTexts} from 'client/utils/lang';
 import {NumberUtils} from 'client/utils/number';
 
-import {Map} from 'immutable';
+import {Map, Record} from 'immutable';
 
 export interface LocalSale extends Map<string, any> {
     id:number;
@@ -41,6 +41,24 @@ export interface LocalSale extends Map<string, any> {
 
     totalPaid:number;
 }
+var SaleRecord = Record({
+    id: null,
+    company: null,
+    customer: null,
+    dateTime: null,
+    invoice: null,
+    vatExclusiveAmount: null,
+    vatAmount: null,
+    closed: null,
+    reference: null,
+    accountingTransactionRef: null,
+    discountRatio: null,
+    discountAmount: null
+});
+export function NewSale(desc:any):LocalSale {
+    return <any>SaleRecord(desc);
+}
+
 
 export class LocalSaleFactory {
     static companyClient = new CompanyClient();
@@ -48,6 +66,7 @@ export class LocalSaleFactory {
     static invoiceClient = new InvoiceClient();
 
     static fromLocalSale(localSale:LocalSale):Sale {
+        localSale = localSale.toJS();
         var sale = new Sale();
         sale.id = localSale.id;
         sale.accountingTransactionRef = localSale.accountingTransactionRef;
@@ -114,8 +133,7 @@ export class LocalSaleFactory {
 
         return Promise.all(taskList)
             .then(()=> {
-                var localSale:LocalSale = <LocalSale>Map(localSaleDesc);
-                return localSale;
+                return NewSale(localSaleDesc);
             });
     }
 

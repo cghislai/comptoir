@@ -16,13 +16,12 @@ export class CompanyService extends BasicLocalService<Company, LocalCompany> {
 
 
     constructor(@Inject authService:AuthService) {
-        var client:BasicClient<Company> = new CompanyClient();
-        super({
+        var client = new CompanyClient();
+        super(<BasicLocalServiceInfo<Company, LocalCompany>>{
             client: client,
             authService: authService,
             fromLocalConverter: LocalCompanyFactory.fromLocalCompany,
-            toLocalConverter: LocalCompanyFactory.toLocalCompany,
-            updateLocal: LocalCompanyFactory.updateLocalCompany
+            toLocalConverter: LocalCompanyFactory.toLocalCompany
         } );
     }
 

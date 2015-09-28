@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 05/08/15.
  */
-import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, FORM_DIRECTIVES, ChangeDetectionStrategy} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
 import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
@@ -9,7 +9,7 @@ import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
 import {Account, AccountType, ALL_ACCOUNT_TYPES} from 'client/domain/account';
 import {CompanyRef} from 'client/domain/company';
 
-import {Language, LocaleTexts} from 'client/utils/lang';
+import {Language, LocaleTexts, LanguageFactory, LocaleTextsFactory} from 'client/utils/lang';
 
 import {AuthService} from 'services/auth';
 import {AccountService} from 'services/account';
@@ -38,7 +38,7 @@ export class AccountsEditView {
 
     editingAccount:LocalAccount;
     editingLanguage:Language;
-    appLocale:string;
+    appLanguage: Language;
 
     allAccountTypes = ALL_ACCOUNT_TYPES;
 
@@ -55,14 +55,14 @@ export class AccountsEditView {
         this.errorService = errorService;
         var language = authService.getEmployeeLanguage();
         this.editingLanguage = language;
-        this.appLocale = language.locale;
+        this.appLanguage = language;
 
         this.findAccount();
     }
 
     findAccount() {
         if (this.accountId == null) {
-            this.editingAccount = new LocalAccount();
+            this.editingAccount = LocalAccountFactory.newLocalAccount();
             return;
         }
         this.accountService.get(this.accountId)
@@ -74,7 +74,7 @@ export class AccountsEditView {
     }
 
     getAccountTypeLabel(accountType:AccountType) {
-        return LocalAccountFactory.getAccountTypeLabel(accountType);
+        return LocalAccountFactory.getAccountTypeLabel(accountType).get(this.appLanguage.locale);
     }
 
     doSaveEdit() {

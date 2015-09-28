@@ -24,7 +24,7 @@
 
             <td class="name">
                 <div class="name">
-                    {{ saleItem.itemVariant.item.name[locale] }}
+                    {{ saleItem.itemVariant.item.name.get(language.locale) }}
                 </div>
                 <div class="comment">
                     <a class="commentLink"
@@ -33,10 +33,10 @@
                        [class.editing]="editingItem == saleItem && editingComment"
                        [class.unneeded]="!hasComment(saleItem)"
                        [class.nolink]="validated">
-                        {{ saleItem.comment[locale] }}
+                        {{ saleItem.comment.get(language.locale) }}
                     </a>
                     <span *ng-if="editingItem == saleItem && editingComment">
-                        <input [initial-value]="editingItem.comment[locale]"
+                        <input [initial-value]="getComment(saleItem)"
                                (fast-change)="onItemCommentChange($event)"
                                (cancelled)="cancelEdits()"
                                type="text"

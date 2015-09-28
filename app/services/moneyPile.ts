@@ -16,13 +16,12 @@ export class MoneyPileService extends BasicLocalService<MoneyPile, LocalMoneyPil
 
 
     constructor(@Inject authService:AuthService) {
-        var client:BasicClient<MoneyPile> = new MoneyPileClient();
-        super({
+        var client = new MoneyPileClient();
+        super(<BasicLocalServiceInfo<MoneyPile, LocalMoneyPile>>{
             client: client,
             authService: authService,
             fromLocalConverter: LocalMoneyPileFactory.fromLocalMoneyPile,
-            toLocalConverter: LocalMoneyPileFactory.toLocalMoneyPile,
-            updateLocal: LocalMoneyPileFactory.updateLocalMoneyPile
+            toLocalConverter: LocalMoneyPileFactory.toLocalMoneyPile
         } );
     }
 

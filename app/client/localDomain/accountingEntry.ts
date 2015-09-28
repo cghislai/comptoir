@@ -14,7 +14,7 @@ import {LocalCompany, LocalCompanyFactory} from 'client/localDomain/company';
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 import {ComptoirRequest} from 'client/utils/request';
 
-import {Map} from 'immutable';
+import {Map, Record} from 'immutable';
 
 export interface LocalAccountingEntry extends Map<string, any> {
     id:number;
@@ -28,6 +28,21 @@ export interface LocalAccountingEntry extends Map<string, any> {
     customer:Customer;
 
     account:LocalAccount;
+}
+var AccountingEntryRecord = Record({
+    id: null,
+    company: null,
+    amount: null,
+    vatRate: null,
+    dateTime: null,
+    description: null,
+    accountingTransactionRef: null,
+    vatAccountingEntry: null,
+    customer: null,
+    account: null
+});
+export function NewAccountingEntry(desc: any) : LocalAccountingEntry {
+    return <any>AccountingEntryRecord(desc);
 }
 
 export class LocalAccountingEntryFactory {
@@ -93,12 +108,12 @@ export class LocalAccountingEntryFactory {
 
         return Promise.all(taskList)
             .then(()=> {
-                var localAccountingEntry:LocalAccountingEntry = <LocalAccountingEntry>Map(localAccountingEntryDesc);
-                return localAccountingEntry;
+                return NewAccountingEntry(localAccountingEntryDesc);
             });
     }
 
     static fromLocalAccountingEntry(localAccountingEntry:LocalAccountingEntry) {
+        localAccountingEntry = localAccountingEntry.toJS();
         var accountingEntry = new AccountingEntry();
         accountingEntry.accountingTransactionRef = localAccountingEntry.accountingTransactionRef;
         accountingEntry.accountRef = new AccountRef(localAccountingEntry.account.id);
@@ -116,4 +131,5 @@ export class LocalAccountingEntryFactory {
         accountingEntry.vatRate = localAccountingEntry.vatRate;
         return accountingEntry;
     }
+
 }

@@ -8,7 +8,7 @@ import {LocalItem} from 'client/localDomain/item';
 import {ItemSearch} from 'client/domain/item';
 import {SearchResult, SearchRequest} from 'client/utils/search';
 import {LocaleTexts} from 'client/utils/lang';
-import {Pagination} from 'client/utils/pagination';
+import {Pagination, PaginationFactory} from 'client/utils/pagination';
 
 import {ErrorService} from 'services/error';
 import {ItemService} from 'services/item';
@@ -50,7 +50,7 @@ export class ItemsListView {
         this.searchRequest = new SearchRequest<LocalItem>();
         var itemSearch = new ItemSearch();
         itemSearch.companyRef = authService.getEmployeeCompanyRef();
-        var pagination = new Pagination(0, this.itemsPerPage);
+        var pagination = PaginationFactory.Pagination({firstIndex: 0, pageSize: this.itemsPerPage});
         this.searchRequest.search = itemSearch;
         this.searchRequest.pagination = pagination;
 
@@ -76,8 +76,8 @@ export class ItemsListView {
     }
 
     onPageChanged(pagination:Pagination) {
-        this.searchRequest.pagination.firstIndex = pagination.firstIndex;
-        this.searchRequest.pagination.pageSize = pagination.pageSize;
+        this.searchRequest.pagination = <Pagination>
+            this.searchRequest.pagination.merge(pagination);
         this.searchItems();
     }
 

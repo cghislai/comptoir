@@ -13,11 +13,12 @@ import {LocalizedDirective} from 'components/utils/localizedInput';
 import {LocalCompany, LocalCompanyFactory} from 'client/localDomain/company';
 import {LocalEmployee, LocalEmployeeFactory} from 'client/localDomain/employee';
 import {Registration} from 'client/domain/auth';
-import {LocaleTexts, Language} from 'client/utils/lang';
+import {LocaleTexts, Language, LanguageFactory, LocaleTextsFactory} from 'client/utils/lang';
 
 import {AuthService} from 'services/auth';
 import {ErrorService} from 'services/error';
 
+import {List, Map} from 'immutable';
 
 @Component({
     selector: "registerView"
@@ -37,9 +38,9 @@ export class RegisterView {
     editingEmployee: LocalEmployee;
     password: string;
 
-    appLocale:string;
+    appLanguage:Language;
     editLanguage:Language;
-    allLanguages: Language[];
+    allLanguages: List<Language>;
 
     constructor(authService:AuthService, errorService:ErrorService,
                 router:Router) {
@@ -47,18 +48,18 @@ export class RegisterView {
         this.errorService = errorService;
         this.router = router;
 
-        this.appLocale = Language.DEFAULT_LANGUAGE.locale;
-        this.editLanguage = Language.DEFAULT_LANGUAGE;
-        this.allLanguages = Language.ALL_LANGUAGES;
+        this.appLanguage = LanguageFactory.DEFAULT_LANGUAGE;
+        this.editLanguage = LanguageFactory.DEFAULT_LANGUAGE;
+        this.allLanguages = LanguageFactory.ALL_LANGUAGES;
 
-        this.editingCompany = new LocalCompany();
-        this.editingCompany.description = new LocaleTexts();
-        this.editingCompany.name = new LocaleTexts();
-        this.editingEmployee = new LocalEmployee();
+        this.editingCompany = <LocalCompany>Map({});
+        this.editingCompany.description = LocaleTextsFactory.toLocaleTexts({});
+        this.editingCompany.name = LocaleTextsFactory.toLocaleTexts({});
+        this.editingEmployee = <LocalEmployee>Map({});
     }
 
     getLanguage(locale: string) {
-        return Language.fromLocale(locale);
+        return LanguageFactory.fromLocale(locale);
     }
 
     doRegister() {

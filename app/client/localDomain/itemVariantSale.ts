@@ -11,7 +11,7 @@ import {LocalSale, LocalSaleFactory} from 'client/localDomain/sale';
 
 import {LocaleTexts} from 'client/utils/lang';
 
-import {Map} from 'immutable';
+import {Map, Record} from 'immutable';
 
 export interface LocalItemVariantSale extends Map<string, any> {
     id:number;
@@ -24,6 +24,21 @@ export interface LocalItemVariantSale extends Map<string, any> {
     total:number;
     itemVariant:LocalItemVariant;
     sale:LocalSale;
+}
+var ItemVariantSaleRecord = Record({
+    id: null,
+    dateTime: null,
+    quantity: null,
+    comment: null,
+    vatExclusive: null,
+    vatRate: null,
+    discountRatio: null,
+    total: null,
+    itemVariant: null,
+    sale: null
+});
+export function NewItemVariantSale(desc:any):LocalItemVariantSale {
+    return <any>ItemVariantSaleRecord(desc);
 }
 
 export class LocalItemVariantSaleFactory {
@@ -65,24 +80,23 @@ export class LocalItemVariantSaleFactory {
 
         return Promise.all(taskList)
             .then(()=> {
-                var localItemSale:LocalItemVariantSale;
-                localItemSale = <LocalItemVariantSale>Map(localItemSaleDesc);
-                return localItemSale;
+               return NewItemVariantSale(localItemSaleDesc);
             });
     }
 
     static fromLocalItemVariantSale(localItemSale:LocalItemVariantSale):ItemVariantSale {
+        var localItemSaleJS = localItemSale.toJS();
         var itemSale = new ItemVariantSale();
-        itemSale.comment = localItemSale.comment;
-        itemSale.dateTime = localItemSale.dateTime;
-        itemSale.discountRatio = localItemSale.discountRatio;
-        itemSale.id = localItemSale.id;
-        itemSale.itemVariantRef = new ItemVariantRef(localItemSale.itemVariant.id);
-        itemSale.quantity = localItemSale.quantity;
-        itemSale.saleRef = new SaleRef(localItemSale.sale.id);
-        itemSale.total = localItemSale.total;
-        itemSale.vatExclusive = localItemSale.vatExclusive;
-        itemSale.vatRate = localItemSale.vatRate;
+        itemSale.comment = localItemSaleJS.comment;
+        itemSale.dateTime = localItemSaleJS.dateTime;
+        itemSale.discountRatio = localItemSaleJS.discountRatio;
+        itemSale.id = localItemSaleJS.id;
+        itemSale.itemVariantRef = new ItemVariantRef(localItemSaleJS.itemVariant.id);
+        itemSale.quantity = localItemSaleJS.quantity;
+        itemSale.saleRef = new SaleRef(localItemSaleJS.sale.id);
+        itemSale.total = localItemSaleJS.total;
+        itemSale.vatExclusive = localItemSaleJS.vatExclusive;
+        itemSale.vatRate = localItemSaleJS.vatRate;
         return itemSale;
     }
 

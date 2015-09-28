@@ -9,9 +9,9 @@ import {LocalCompany, LocalCompanyFactory} from 'client/localDomain/company';
 
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 
-import {Map} from 'immutable';
+import {Record, Map} from 'immutable';
 
-export interface LocalAccount extends Map<string, any> {
+export interface LocalAccount extends  Map<string, any> {
     id:number;
     company:LocalCompany;
     accountingNumber:string;
@@ -22,6 +22,20 @@ export interface LocalAccount extends Map<string, any> {
     accountType:AccountType;
     accountTypeLabel:LocaleTexts;
 }
+var AccountRecord = Record({
+    id: null,
+    company: null,
+    accountingNumber: null,
+    iban: null,
+    bic: null,
+    name: null,
+    description: null,
+    accountType: null,
+    accountTypeLabel: null
+});
+export function NewAccount(desc: any) : LocalAccount{
+    return <any>AccountRecord(desc);
+}
 
 export class LocalAccountFactory {
 
@@ -30,14 +44,14 @@ export class LocalAccountFactory {
     static ACCOUNT_TYPE_OTHER_LABEL = LocaleTextsFactory.toLocaleTexts({
         'fr': 'Autre'
     });
-    static ACCOUNT_TYPE_VAT_LABEL =LocaleTextsFactory.toLocaleTexts({
+    static ACCOUNT_TYPE_VAT_LABEL = LocaleTextsFactory.toLocaleTexts({
         'fr': 'TVA'
     });
     static ACCOUNT_TYPE_PAIMENT_LABEL = LocaleTextsFactory.toLocaleTexts({
         'fr': 'Paiment'
     });
 
-    static getAccountTypeLabel(accountType:AccountType): LocaleTexts {
+    static getAccountTypeLabel(accountType:AccountType):LocaleTexts {
         switch (accountType) {
             case AccountType.OTHER:
             {
@@ -56,7 +70,7 @@ export class LocalAccountFactory {
     }
 
     static toLocalAccount(account:Account, authToken:string):Promise<LocalAccount> {
-        var localAccountDesc: any = {};
+        var localAccountDesc:any = {};
         localAccountDesc.accountingNumber = account.accountingNumber;
         localAccountDesc.accountType = AccountType[account.accountType];
         localAccountDesc.accountTypeLabel = LocalAccountFactory.getAccountTypeLabel(localAccountDesc.accountType);
@@ -74,15 +88,19 @@ export class LocalAccountFactory {
             LocalAccountFactory.companyClient.getFromCacheOrServer(companyId, authToken)
                 .then((company)=> {
                     return LocalCompanyFactory.toLocalCompany(company, authToken);
-                }).then((localCompany: LocalCompany)=>{
+                }).then((localCompany:LocalCompany)=> {
                     localAccountDesc.company = localCompany;
                 })
         );
         return Promise.all(taskList)
             .then(()=> {
-                var localAccount: LocalAccount = <LocalAccount>Map(localAccountDesc);
+                var localAccount:LocalAccount = NewAccount(localAccountDesc);
                 return localAccount;
             });
+    }
+
+    static newLocalAccount() {
+        return NewAccount({});
     }
 
     static fromLocalAccount(localAccount:LocalAccount) {

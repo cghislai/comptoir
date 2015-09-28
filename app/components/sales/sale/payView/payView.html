@@ -45,7 +45,7 @@
     </div>
 
     <table class="payItems dataTable"
-           [hidden]="!hasAccountingEntries()">
+           [hidden]="accountingEntries.size <=  0">
         <thead>
         <tr>
             <th>Compte</th>
@@ -54,10 +54,11 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ng-for="#entry of accountingEntriesResult.list" class="payItem">
+        <tr *ng-for="#entry of accountingEntries" class="payItem"
+                [hidden]="isEditing(entry)">
             <td>
-                <span *ng-if="entry.account != null">
-                    {{ entry.account.description[locale] }}
+                <span>
+                    {{ entry.account.description.get(language.locale)}}
                 </span>
             </td>
             <td class="number total">
@@ -90,7 +91,7 @@
     </table>
 
     <div class="editMethod" *ng-if="editingEntry != null"  [hidden]="noInput">
-        <span class="method">{{ editingEntry.account.description[locale] }}</span>
+        <span class="method">{{ editingEntry.account.description.get(language.locale) }}</span>
         <span class="amount">
             Montant: <input #amount
                             [initial-value]="editingEntry.amount"
@@ -106,7 +107,7 @@
         <div *ng-for="#account of accountsResult.list"
              class="boxedHoverableLink"
              (click)="addAccountingEntry(account)">
-            {{ account.description[locale] }}
+            {{ account.description.get(language.locale) }}
         </div>
     </div>
 </div>

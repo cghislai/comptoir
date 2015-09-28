@@ -16,7 +16,7 @@ export class PosService extends BasicService<Pos> {
     lastUsedPos: Pos;
 
     constructor(@Inject authService:AuthService) {
-        var client:BasicClient<Pos> = new PosClient();
+        var client= new PosClient();
         super({
             client: client,
             authService: authService

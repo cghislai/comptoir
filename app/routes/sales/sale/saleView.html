@@ -25,6 +25,9 @@
                 <div>
                     <payView id="salePayView"  *ng-if="activeSaleService.sale != null"
                              [sale-total]="activeSaleService.getSaleTotalAmount()"
+                             [paid-amount]="activeSaleService.paidAmount"
+                             [sale]="activeSaleService.sale"
+                             [accounting-entries]="activeSaleService.accountingEntriesResult.list"
                              (paid)="onCommandPaid()"
                              [no-input]="saleClosed"></payView>
                 </div>

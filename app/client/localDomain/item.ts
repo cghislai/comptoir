@@ -11,7 +11,7 @@ import {LocalCompany, LocalCompanyFactory} from 'client/localDomain/company';
 
 import {LocaleTexts} from 'client/utils/lang';
 
-import {Map} from 'immutable';
+import {Map, Record} from 'immutable';
 
 export interface LocalItem extends Map<string, any> {
     id:number;
@@ -25,10 +25,23 @@ export interface LocalItem extends Map<string, any> {
 
     mainPicture:LocalPicture;
 }
+var ItemRecord = Record({
+    id: null,
+    company: null,
+    reference: null,
+    name: null,
+    description: null,
+    vatExclusive: null,
+    vatRate: null,
+    mainPicture: null
+});
+export function NewItem(desc:any):LocalItem {
+    return <any>ItemRecord(desc);
+}
 
 export class LocalItemFactory {
 
-    static  companyClient = new CompanyClient();
+    static companyClient = new CompanyClient();
     static pictureClient = new PictureClient();
 
     static toLocalItem(item:Item, authToken:string):Promise<LocalItem> {
@@ -65,12 +78,12 @@ export class LocalItemFactory {
         }
         return Promise.all(taskList)
             .then(()=> {
-                var localItem:LocalItem = <LocalItem>Map(localItemDesc);
-                return localItem;
+                return NewItem(localItemDesc);
             });
     }
 
     static fromLocalItem(localItem:LocalItem) {
+        localItem = localItem.toJS();
         var item = new Item();
         item.companyRef = new CompanyRef(localItem.company.id);
         item.description = localItem.description;

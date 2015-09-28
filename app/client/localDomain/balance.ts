@@ -7,7 +7,7 @@ import {Account, AccountRef, AccountClient, AccountFactory} from 'client/domain/
 
 import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
 
-import {Map} from 'immutable';
+import {Map, Record} from 'immutable';
 
 export interface LocalBalance extends Map<string, any> {
     id:number;
@@ -16,6 +16,14 @@ export interface LocalBalance extends Map<string, any> {
     balance:number;
     comment:string;
     closed:boolean;
+}
+var BalanceRecord = Record({
+    id: null,
+    value: null,
+    attributeDefinition: null
+});
+export function NewBalance(desc: any) : LocalBalance {
+    return <any>BalanceRecord(desc);
 }
 
 export class LocalBalanceFactory {
@@ -40,13 +48,12 @@ export class LocalBalanceFactory {
         );
         return Promise.all(taskList)
             .then(()=> {
-                var localBalance:LocalBalance;
-                localBalance = <LocalBalance>Map(localBalanceDesc);
-                return localBalance;
+                return NewBalance(localBalanceDesc);
             });
     }
 
     static fromLocalBalance(localBalance:LocalBalance):Balance {
+        localBalance = localBalance.toJS();
         var balance = new Balance();
         balance.accountRef = new AccountRef(localBalance.account.id);
         balance.balance = localBalance.balance;

@@ -7,7 +7,7 @@ import {Company, CompanyRef, CompanyClient, CompanyFactory} from 'client/domain/
 
 import {LocalCompany, LocalCompanyFactory} from 'client/localDomain/company';
 
-import {Map} from 'immutable';
+import {Map, Record} from 'immutable';
 
 export interface LocalEmployee extends Map<string, any> {
     id: number;
@@ -17,6 +17,18 @@ export interface LocalEmployee extends Map<string, any> {
     firstName: string;
     lastName: string;
     locale: string;
+}
+var EmployeeRecord = Record({
+    id: null,
+    active: null,
+    company: null,
+    login: null,
+    firstName: null,
+    lastName: null,
+    locale: null
+});
+export function NewEmployee(desc: any) : LocalEmployee {
+    return <any>EmployeeRecord(desc);
 }
 
 export class LocalEmployeeFactory {
@@ -43,13 +55,12 @@ export class LocalEmployeeFactory {
         );
         return Promise.all(taskList)
             .then(()=> {
-                var localEmployee:LocalEmployee;
-                localEmployee = <LocalEmployee>Map(localEmployeeDesc);
-                return localEmployee;
+               return NewEmployee(localEmployeeDesc);
             });
     }
 
     static fromLocalEmployee(localEmployee:LocalEmployee):Employee {
+        localEmployee = localEmployee.toJS();
         var employee = new Employee();
         employee.active = localEmployee.active;
         employee.companyRef = new CompanyRef(localEmployee.company.id);

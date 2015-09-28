@@ -16,13 +16,12 @@ export class PictureService extends BasicLocalService<Picture, LocalPicture> {
 
 
     constructor(@Inject authService:AuthService) {
-        var client:BasicClient<Picture> = new PictureClient();
-        super({
+        var client = new PictureClient();
+        super(<BasicLocalServiceInfo<Picture, LocalPicture>>{
             client: client,
             authService: authService,
             fromLocalConverter: LocalPictureFactory.fromLocalPicture,
-            toLocalConverter: LocalPictureFactory.toLocalPicture,
-            updateLocal: LocalPictureFactory.updateLocalPicture
+            toLocalConverter: LocalPictureFactory.toLocalPicture
         } );
     }
 

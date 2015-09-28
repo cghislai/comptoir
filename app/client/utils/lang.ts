@@ -4,7 +4,7 @@
 
 import {LocaleText, LocaleTextFactory} from 'client/domain/lang';
 
-import {Map, List} from 'immutable';
+import {Map, List,Record} from 'immutable';
 
 export interface LocaleTexts extends Map<string, any> {
     // field used in the client/utils/factory JSONreplacer
@@ -20,15 +20,18 @@ export class LocaleTextsFactory {
             localeTextsDesc[lang] = text;
         }
         var localeTexts:LocaleTexts;
-        localeTexts = <LocaleTexts>Map(localeTextsDesc);
+        localeTexts = LocaleTextsFactory.toLocaleTexts(localeTextsDesc);
         return localeTexts;
     };
 
-    static toJSONArrayLocaleTextsTransformer = (texts:LocaleTexts)=> {
-        var textArray = texts.entrySeq()
-            .reduce((textArray, value)=> {
-                var lang = value[0];
-                var text = value[1];
+    static toJSONArrayLocaleTextsTransformer = (texts:any)=> {
+        var textArray:any[] = Map(texts)
+            .filter((value, key)=> {
+                return key != '_isLocalTexts';
+            })
+            .reduce((textArray, value, key)=> {
+                var lang = key;
+                var text = value;
                 var localText = {
                     locale: lang,
                     text: text
@@ -39,7 +42,7 @@ export class LocaleTextsFactory {
         return textArray;
     };
 
-    static toLocaleTexts(text?:any):LocaleTexts {
+    static toLocaleTexts(text:any):LocaleTexts {
         text._isLocalTexts = true;
         return <LocaleTexts>Map(text);
     }
@@ -47,8 +50,15 @@ export class LocaleTextsFactory {
 
 
 export interface Language extends Map<string, any> {
-    locale:string;
+    locale: string;
     label: LocaleTexts;
+}
+var LanguageRecord = Record({
+    locale: null,
+    label: null
+});
+export function NewLanguage(desc:any):Language {
+    return <any>LanguageRecord(desc);
 }
 
 export class LanguageFactory {
@@ -56,7 +66,7 @@ export class LanguageFactory {
     static DUTCH = LanguageFactory.toLanguage('nl', LocaleTextsFactory.toLocaleTexts({'fr': 'Néerlandais'}));
     static ENGLISH = LanguageFactory.toLanguage('en', LocaleTextsFactory.toLocaleTexts({'fr': 'Anglais'}));
 
-    static ALL_LANGUAGES = List.of(LanguageFactory.FRENCH, LanguageFactory.DUTCH, LanguageFactory.ENGLISH);
+    static ALL_LANGUAGES:List<Language> = List.of(LanguageFactory.FRENCH, LanguageFactory.DUTCH, LanguageFactory.ENGLISH);
     static DEFAULT_LANGUAGE = LanguageFactory.FRENCH;
 
     public locale:string;
@@ -68,9 +78,9 @@ export class LanguageFactory {
     }
 
     static fromLocale(lang:string):Language {
-        var language = LanguageFactory.ALL_LANGUAGES.valueSeq()
+        var language = LanguageFactory.ALL_LANGUAGES
             .filter((language)=> {
-                return language.locale == lang;
+                return language.locale === lang;
             })
             .first();
         return language;
@@ -78,6 +88,6 @@ export class LanguageFactory {
 
     static toLanguage(locale:string, label:LocaleTexts) {
         var desc:any = {locale: locale, label: label};
-        return <Language>Map(desc);
+        return NewLanguage(desc);
     }
 }

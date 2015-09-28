@@ -2,11 +2,11 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, EventEmitter, NgFor, NgIf, OnChanges} from 'angular2/angular2';
+import {Component, View, EventEmitter, NgFor, NgIf, ChangeDetectionStrategy} from 'angular2/angular2';
 
 import {LocalSale} from 'client/localDomain/sale';
 import {LocalAccount} from 'client/localDomain/account';
-import {LocalAccountingEntry,LocalAccountingEntryFactory } from 'client/localDomain/accountingEntry';
+import {LocalAccountingEntry, LocalAccountingEntryFactory, NewAccountingEntry } from 'client/localDomain/accountingEntry';
 
 import {AccountingEntry, AccountingEntrySearch} from 'client/domain/accountingEntry';
 import {Account, AccountRef, AccountType, AccountSearch} from 'client/domain/account';
@@ -16,7 +16,7 @@ import {CompanyRef} from 'client/domain/company';
 import {AccountingTransactionRef} from 'client/domain/accountingTransaction';
 import {SearchRequest, SearchResult} from 'client/utils/search';
 import {NumberUtils} from 'client/utils/number';
-import {LocaleTexts} from 'client/utils/lang';
+import {LocaleTexts, LocaleTextsFactory, Language} from 'client/utils/lang';
 import {ComptoirRequest, ComptoirResponse} from 'client/utils/request';
 
 import {ActiveSaleService} from 'routes/sales/sale/activeSale';
@@ -24,12 +24,13 @@ import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
 
 import {FastInput} from 'components/utils/fastInput'
-
+import {List} from 'immutable';
 
 @Component({
     selector: "payView",
     events: ['paid'],
-    properties: ['saleTotal', 'noInput']
+    properties: ['saleTotal', 'paidAmount', 'noInput', 'sale', 'accountingEntries'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 @View({
     templateUrl: './components/sales/sale/payView/payView.html',
@@ -42,9 +43,12 @@ export class PayView {
     activeSaleService:ActiveSaleService;
 
     editingEntry:LocalAccountingEntry;
-    locale:string;
+    language:Language;
     noInput:boolean;
     saleTotal:number;
+    paidAmount: number;
+    sale: LocalSale;
+    accountingEntries: List<LocalAccountingEntry>;
 
     paid = new EventEmitter();
 
@@ -53,11 +57,7 @@ export class PayView {
         this.activeSaleService = activeSaleService;
         this.errorService = errorService;
 
-        this.locale = authService.getEmployeeLanguage().locale;
-    }
-
-    get sale() {
-        return this.activeSaleService.sale;
+        this.language = authService.getEmployeeLanguage();
     }
 
     hasSale():boolean {
@@ -68,13 +68,10 @@ export class PayView {
         return this.activeSaleService.accountingEntriesRequest.busy;
     }
 
-    hasAccountingEntries():boolean {
-        return this.activeSaleService.accountingEntriesResult.count > 0;
+    isEditing(entry: LocalAccountingEntry) {
+        return this.editingEntry != null && this.editingEntry.id == entry.id;
     }
 
-    get accountingEntriesResult() {
-        return this.activeSaleService.accountingEntriesResult;
-    }
 
     get accountsResult() {
         return this.activeSaleService.accountsResult;
@@ -87,15 +84,15 @@ export class PayView {
 
 
     addAccountingEntry(account:LocalAccount) {
-        var localAccountingEntry = new LocalAccountingEntry();
-        localAccountingEntry.account = account;
-        localAccountingEntry.amount = this.toPayAmount;
-        localAccountingEntry.company = account.company;
-        localAccountingEntry.accountingTransactionRef = this.sale.accountingTransactionRef;
-        localAccountingEntry.customer = this.sale.customer;
-        localAccountingEntry.description = new LocaleTexts();
-        localAccountingEntry.dateTime = new Date();
-
+        var localAccountingEntryDesc: any = {};
+        localAccountingEntryDesc.account = account;
+        localAccountingEntryDesc.amount = this.toPayAmount;
+        localAccountingEntryDesc.company = account.company;
+        localAccountingEntryDesc.accountingTransactionRef = this.sale.accountingTransactionRef;
+        localAccountingEntryDesc.customer = this.sale.customer;
+        localAccountingEntryDesc.description = LocaleTextsFactory.toLocaleTexts({});
+        localAccountingEntryDesc.dateTime = new Date();
+        var localAccountingEntry = NewAccountingEntry(localAccountingEntryDesc);
         this.startEditEntry(localAccountingEntry);
     }
 
@@ -103,9 +100,10 @@ export class PayView {
         if (this.editingEntry != null) {
             this.cancelEditEntry();
         }
-        this.editingEntry = localAccountingEntry;
-        if (this.editingEntry.amount == null || this.editingEntry.amount <= 0) {
-            this.editingEntry.amount = this.toPayAmount;
+        if (localAccountingEntry.amount == null || localAccountingEntry.amount <= 0) {
+            this.editingEntry = <LocalAccountingEntry>localAccountingEntry.set('amount', this.toPayAmount);
+        } else {
+            this.editingEntry = localAccountingEntry;
         }
     }
 
@@ -127,9 +125,9 @@ export class PayView {
             return;
         }
         amount = NumberUtils.toFixedDecimals(amount, 2);
-        this.editingEntry.amount = amount;
+        var entry = <LocalAccountingEntry>this.editingEntry.set('amount', amount);
 
-        this.activeSaleService.doAddAccountingEntry(this.editingEntry)
+        this.activeSaleService.doAddAccountingEntry(entry)
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });

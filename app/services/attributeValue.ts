@@ -18,12 +18,11 @@ export class AttributeValueService extends BasicLocalService<AttributeValue, Loc
 
     constructor(@Inject authService:AuthService) {
         var client = new AttributeValueClient();
-        super({
+        super(<BasicLocalServiceInfo<AttributeValue, LocalAttributeValue>>{
             client: client,
             authService: authService,
             fromLocalConverter: LocalAttributeValueFactory.fromLocalAttributeValue,
-            toLocalConverter: LocalAttributeValueFactory.toLocalAttributeValue,
-            updateLocal: LocalAttributeValueFactory.updateLocalAttributeValue
+            toLocalConverter: LocalAttributeValueFactory.toLocalAttributeValue
         } );
     }
 }

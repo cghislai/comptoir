@@ -5,7 +5,7 @@
 import {Component, View, NgIf, OnInit} from 'angular2/angular2';
 import {Router, RouteParams, Location} from 'angular2/router';
 
-import {LocalSale} from 'client/localDomain/sale';
+import {LocalSale, NewSale} from 'client/localDomain/sale';
 import {LocalItemVariantSale} from 'client/localDomain/itemVariantSale';
 import {LocalItemVariant} from 'client/localDomain/itemVariant';
 
@@ -169,10 +169,6 @@ export class SaleView {
         itemList.focus();
 
         if (this.newSale) {
-            var sale = this.activeSaleService.sale;
-            sale.company = this.authService.auth.employee.company;
-            sale.discountRatio = 0;
-
             return this.activeSaleService.doSaveSale()
                 .then((sale)=> {
                     this.saleService.activeSale = sale;

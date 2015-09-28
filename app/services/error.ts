@@ -15,6 +15,7 @@ export class ErrorService {
             return;
         }
         this.hasError = true;
+        console.log(error);
 
         switch (error.code) {
             case 0: {

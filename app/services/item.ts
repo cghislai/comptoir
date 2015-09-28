@@ -16,13 +16,12 @@ export class ItemService extends BasicLocalService<Item, LocalItem> {
 
 
     constructor(@Inject authService:AuthService) {
-        var client:BasicClient<Item> = new ItemClient();
-        super({
+        var client= new ItemClient();
+        super(<BasicLocalServiceInfo<Item, LocalItem>>{
             client: client,
             authService: authService,
             fromLocalConverter: LocalItemFactory.fromLocalItem,
-            toLocalConverter: LocalItemFactory.toLocalItem,
-            updateLocal: LocalItemFactory.updateLocalItem
+            toLocalConverter: LocalItemFactory.toLocalItem
         } );
     }
 

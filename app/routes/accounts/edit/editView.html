@@ -1,12 +1,11 @@
 <div class="pageContent">
     <h1 class="pageTitle">Édition du compte</h1>
 
-    <form #f="form" (ng-submit)="doSaveEdit()"
-          *ng-if="editingAccount != null">
+    <form #f="form" (ng-submit)="doSaveEdit()">
         <div class="table">
             <div>
                 <label>Langue</label>
-                <langSelect [display-locale]="appLocale"
+                <langSelect [display-language]="appLanguage"
                             [selected-language]="editingLanguage"
                             (language-changed)="editingLanguage = $event"></langSelect>
             </div>
@@ -18,7 +17,7 @@
                             [(ng-model)]="editingAccount.accountType">
                         <option *ng-for="#accountType of allAccountTypes"
                                 [value]="accountType">
-                            {{ getAccountTypeLabel(accountType)[appLocale] }}
+                            {{ getAccountTypeLabel(accountType) }}
                         </option>
                     </select>
                     <formMessage for="accountType" check-errors="['required']"></formMessage>

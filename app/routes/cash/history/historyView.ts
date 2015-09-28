@@ -7,7 +7,7 @@ import {Component, View, NgFor, NgIf} from 'angular2/angular2';
 import {CompanyRef} from 'client/domain/company';
 import {LocalBalance} from 'client/localDomain/balance';
 import {BalanceSearch} from 'client/domain/balance';
-import {Pagination} from 'client/utils/pagination';
+import {Pagination, PaginationFactory} from 'client/utils/pagination';
 import {SearchResult, SearchRequest} from 'client/utils/search';
 
 import {AuthService} from 'services/auth';
@@ -26,23 +26,26 @@ import {Paginator} from 'components/utils/paginator/paginator';
 })
 export class CashHistoryView {
     balanceService:BalanceService;
-    errorService: ErrorService;
+    errorService:ErrorService;
 
-    searchRequest: SearchRequest<LocalBalance>;
-    searchResult: SearchResult<LocalBalance>;
+    searchRequest:SearchRequest<LocalBalance>;
+    searchResult:SearchResult<LocalBalance>;
     itemsPerPage:number = 25;
 
-    constructor(balanceService:BalanceService, errorService:ErrorService, authService: AuthService) {
+    constructor(balanceService:BalanceService, errorService:ErrorService, authService:AuthService) {
         this.errorService = errorService;
         this.balanceService = balanceService;
 
         this.searchRequest = new SearchRequest<LocalBalance>();
         var balanceSearch = new BalanceSearch();
         balanceSearch.companyRef = new CompanyRef(authService.auth.employee.company.id);
-        var pagination = new Pagination(0, this.itemsPerPage);
-        pagination.sorts = {
-            'DATETIME': 'desc'
-        };
+        var pagination = PaginationFactory.Pagination({
+            firstIndex: 0,
+            pageSize: this.itemsPerPage,
+            sorts: {
+                'DATETIME': 'desc'
+            }
+        });
         this.searchRequest.pagination = pagination;
         this.searchRequest.search = balanceSearch;
         this.searchResult = new SearchResult<LocalBalance>();
@@ -52,7 +55,7 @@ export class CashHistoryView {
 
     searchBalances() {
         this.balanceService.search(this.searchRequest)
-            .then((result)=>{
+            .then((result)=> {
                 this.searchResult = result;
             })
             .catch((error)=> {
@@ -61,8 +64,8 @@ export class CashHistoryView {
     }
 
     onPageChanged(pagination:Pagination) {
-        this.searchRequest.pagination.firstIndex = pagination.firstIndex;
-        this.searchRequest.pagination.pageSize = pagination.pageSize;
+        this.searchRequest.pagination
+         = <Pagination>this.searchRequest.pagination.merge(pagination);
         this.searchBalances();
     }
 }

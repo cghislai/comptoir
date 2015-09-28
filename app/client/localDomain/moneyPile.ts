@@ -11,7 +11,7 @@ import {LocalBalance, LocalBalanceFactory} from 'client/localDomain/balance';
 
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 
-import {Map} from 'immutable';
+import {Map, Record} from 'immutable';
 
 export interface LocalMoneyPile extends Map<string, any> {
     id:number;
@@ -24,6 +24,18 @@ export interface LocalMoneyPile extends Map<string, any> {
 
     //
     label: LocaleTexts;
+}
+var MoneyPileRecord = Record({
+    id: null,
+    account: null,
+    dateTime: null,
+    unitAmount: null,
+    unitCount: null,
+    total: null,
+    balance: null
+});
+export function NewMoneyPile(desc:any):LocalMoneyPile {
+    return <any>MoneyPileRecord(desc);
 }
 
 export class LocalMoneyPileFactory {
@@ -60,13 +72,12 @@ export class LocalMoneyPileFactory {
 
         return Promise.all(taskList)
             .then(()=> {
-                var localMoneyPile:LocalMoneyPile;
-                localMoneyPile = <LocalMoneyPile>Map(localMoneyPileDesc);
-                return localMoneyPile;
+               return NewMoneyPile(localMoneyPileDesc);
             });
     }
 
     static fromLocalMoneyPile(localMoneyPile:LocalMoneyPile):MoneyPile {
+        localMoneyPile = localMoneyPile.toJS()
         var moneyPile = new MoneyPile();
         moneyPile.accountRef = new AccountRef(localMoneyPile.account.id);
         moneyPile.balanceRef = new BalanceRef(localMoneyPile.balance.id);
