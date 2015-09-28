@@ -11,9 +11,9 @@
                 <label for="picture">Image</label>
 
                 <div>
-                    <img [src]="itemVariant.mainPicture.dataURI"
+                    <img [src]="itemVariantJS.mainPicture.dataURI"
                          class="itemPicturePreview"
-                         *ng-if="itemVariant.mainPicture?.dataURI != null">
+                         *ng-if="itemVariantJS.mainPicture?.dataURI != null">
                     <input type="file" id="picture" accept="image/*"
                            (change)="onPictureFileSelected($event)">
                 </div>
@@ -23,7 +23,7 @@
                 <span>
                     <input type="text" id="reference"
                            [placeholder]="item.reference"
-                           [(ng-model)]="itemVariant.variantReference"
+                           [(ng-model)]="itemVariantJS.variantReference"
                            ng-control="reference" validate-required>
                     <formMessage for="reference"
                                  check-errors=" ['required']"></formMessage>
@@ -33,12 +33,12 @@
                 <label for="pricing">Type de tarification</label>
                 <span>
                     <select id="pricing" required
-                            [(ng-model)]="itemVariant.pricing"
-                            (change)="onPricingChanged()"
+                            [ng-model]="itemVariantJS.pricing"
+                            (change)="onPricingChanged($event)"
                             ng-control="pricing" validate-required>
                         <option *ng-for="#pricing of allPricings"
                                 [value]="pricing">
-                            {{ getPricingLabel(pricing)[appLocale] }}
+                            {{ getPricingLabel(pricing) }}
                         </option>
                     </select>
                     <formMessage for="pricing"
@@ -50,7 +50,7 @@
                 <span>
                     <span [hidden]="!pricingAmountRequired">
                         <input class="number" type="number"
-                               [value]="itemVariant.pricingAmount"
+                               [value]="itemVariantJS.pricingAmount"
                                (input)="setItemVariantPricingAmount($event)"
                                [attr.validate-required]="pricingAmountRequired"
                                min="0" step="0.01" id="pricingAmount" size="5"
@@ -59,7 +59,7 @@
                     </span>
                     <div class="totalPreview">
                         <span>
-                            Total (TVAC): {{ itemVariant.calcPrice(true) | currency:'EUR':true:'.2-2' }}
+                            Total (TVAC): {{ getItemVariantTotalPrice() | currency:'EUR':true:'.2-2' }}
                         </span>
                     </div>
                     <formMessage for="pricingAmount"
@@ -84,10 +84,10 @@
             <tr class="attribute"
                 *ng-for="#attribute of allVariantAttributes">
                 <td class="definition">
-                    {{ attribute.attributeDefinition?.name[editLanguage.locale] }}
+                    {{ attribute.attributeDefinition?.name.get(editLanguage.locale) }}
                 </td>
                 <td class="value">
-                    {{ attribute.value[editLanguage.locale] }}
+                    {{ attribute.value.get(editLanguage.locale) }}
                 </td>
                 <td class="actions">
                     <a class="actionIcon"
@@ -100,7 +100,7 @@
         </table>
         <div class="form">
             <div class="language">
-                <langSelect [display-locale]="appLocale"
+                <langSelect [display-language]="appLanguage"
                             [selected-language]="editLanguage"
                             (language-changed)="editLanguage = $event"></langSelect>
             </div>

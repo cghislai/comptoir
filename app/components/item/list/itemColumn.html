@@ -11,12 +11,12 @@
     </template>
     <template [ng-switch-when]=" 'name'">
         <span class="name">
-            {{ item.name.get(language.locale) }}
+            {{ item.name.get(lang.locale) }}
         </span>
     </template>
     <template [ng-switch-when]=" 'desc'">
         <span class="desc">
-            {{ item.description.get(language.locale) }}
+            {{ item.description.get(lang.locale) }}
         </span>
     </template>
     <template [ng-switch-when]=" 'picture'">

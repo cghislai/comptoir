@@ -5,7 +5,7 @@ import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
 import {LocalPicture, LocalPictureFactory} from 'client/localDomain/picture';
-import {LocalItem} from 'client/localDomain/item';
+import {LocalItem, NewItem} from 'client/localDomain/item';
 import {LocalItemVariant} from 'client/localDomain/itemVariant';
 
 import {CompanyRef} from 'client/domain/company';
@@ -30,6 +30,7 @@ import {ItemVariantList, ItemVariantColumn} from 'components/itemVariant/list/it
 import {ItemVariantEditView} from 'routes/items/edit/editVariant/editVariantView';
 import {List, Map} from 'immutable';
 
+
 @Component({
     selector: 'editItem'
 })
@@ -49,16 +50,17 @@ export class ItemEditView {
     router:Router;
 
     item:LocalItem;
+    itemJS: any;
     itemTotalPrice: number;
     itemVatPercentage: number;
     itemVatPercentageString: string;
     itemPictureTouched:boolean;
-    appLocale:string;
+    appLanguage:Language;
     editLanguage:Language;
 
     itemVariantSearchRequest:SearchRequest<LocalItemVariant>;
     itemVariantSearchResult:SearchResult<LocalItemVariant>;
-    itemVariantListColumns:ItemVariantColumn[];
+    itemVariantListColumns:List<ItemVariantColumn>;
 
     constructor(itemService:ItemService, errorService:ErrorService, pictureService:PictureService,
                 authService:AuthService, itemVariantService:ItemVariantService,
@@ -70,16 +72,16 @@ export class ItemEditView {
         this.authService = authService;
         this.pictureService = pictureService;
 
-        this.appLocale = authService.getEmployeeLanguage().locale;
+        this.appLanguage = authService.getEmployeeLanguage();
         this.editLanguage = authService.getEmployeeLanguage();
 
-        this.itemVariantListColumns = [
+        this.itemVariantListColumns = List.of(
             ItemVariantColumn.VARIANT_REFERENCE,
             ItemVariantColumn.PICTURE_NO_ITEM_FALLBACK,
             ItemVariantColumn.ATTRIBUTES,
             ItemVariantColumn.TOTAL_PRICE,
             ItemVariantColumn.ACTION_REMOVE
-        ];
+        );
         this.itemVariantSearchRequest = new SearchRequest<LocalItemVariant>();
 
         this.itemVariantSearchResult = new SearchResult<LocalItemVariant>();
@@ -110,7 +112,8 @@ export class ItemEditView {
         var itemDesc:any = {};
         itemDesc.description = LocaleTextsFactory.toLocaleTexts({});
         itemDesc.name = LocaleTextsFactory.toLocaleTexts({});
-        this.item = <LocalItem>Map(itemDesc);
+        this.item = NewItem(itemDesc);
+        this.itemJS = this.item.toJS();
 
         this.findItemVariants();
         this.calcTotalPrice();
@@ -121,6 +124,7 @@ export class ItemEditView {
         this.itemService.get(id)
             .then((item:LocalItem)=> {
                 this.item = item;
+                this.itemJS = this.item.toJS();
                 this.findItemVariants();
                 this.calcTotalPrice();
                 this.calcVatPercentage();
@@ -166,22 +170,24 @@ export class ItemEditView {
             var picture = this.item.mainPicture;
             return this.pictureService.save(picture)
                 .then((localPic:LocalPicture)=> {
-                    this.item.mainPicture = localPic;
-                    return this.itemService.save(this.item);
+                    this.itemJS.mainPicture = localPic;
+                    var item = NewItem(this.itemJS);
+                    return this.itemService.save(item);
                 });
         } else {
-            return this.itemService.save(this.item);
+            var item = NewItem(this.itemJS);
+            return this.itemService.save(item);
         }
     }
 
     private calcTotalPrice() {
-        var totalPrice = this.item.vatExclusive * (1 + this.item.vatRate);
+        var totalPrice = this.itemJS.vatExclusive * (1 + this.itemJS.vatRate);
         totalPrice = NumberUtils.toFixedDecimals(totalPrice, 2);
         this.itemTotalPrice = totalPrice;
     }
 
     private calcVatPercentage() {
-        var vatPercentage = NumberUtils.toInt(this.item.vatRate * 100);
+        var vatPercentage = NumberUtils.toInt(this.itemJS.vatRate * 100);
         this.itemVatPercentage = vatPercentage;
         this.itemVatPercentageString = vatPercentage+'';
     }
@@ -220,7 +226,7 @@ export class ItemEditView {
             return;
         }
         var vatRate = NumberUtils.toFixedDecimals(valueNumber / 100, 2);
-        this.item.vatRate = vatRate;
+        this.itemJS.vatRate = vatRate;
         this.calcTotalPrice();
         this.calcVatPercentage();
     }
@@ -232,7 +238,7 @@ export class ItemEditView {
             return;
         }
         var vatExclusive = NumberUtils.toFixedDecimals(valueNumber / (1 + this.item.vatRate), 2);
-        this.item.vatExclusive = vatExclusive;
+        this.itemJS.vatExclusive = vatExclusive;
         this.calcTotalPrice();
     }
 

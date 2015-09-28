@@ -12,16 +12,16 @@
                     <label for="picture">Image</label>
 
                     <div>
-                        <img [src]="item.mainPicture.dataURI"
+                        <img [src]="itemJS.mainPicture.dataURI"
                              class="itemPicturePreview"
-                             *ng-if="item.mainPicture?.dataURI != null">
+                             *ng-if="itemJS.mainPicture?.dataURI != null">
                         <input type="file" id="picture" accept="image/*"
                                (change)="onPictureFileSelected($event)">
                     </div>
                 </div>
                 <div>
                     <label>Langue</label>
-                    <langSelect [display-locale]="appLocale"
+                    <langSelect [display-language]="appLanguage"
                                 [selected-language]="editLanguage"
                                 (language-changed)="editLanguage = $event"></langSelect>
                 </div>
@@ -29,7 +29,7 @@
                     <label for="reference">Référence</label>
                 <span>
                     <input type="text" id="reference"
-                           [(ng-model)]="item.reference"
+                           [(ng-model)]="itemJS.reference"
                            ng-control="reference"
                            validate-required required>
                     <formMessage for="reference" check-errors="['required']"></formMessage>
@@ -41,7 +41,7 @@
                     <input type="text" id="name"
                            localized [language]="editLanguage"
                            [locale-texts]="item.name"
-                           [(ng-model)]="item.name[editLanguage.locale]"
+                           [(ng-model)]="itemJS.name[editLanguage.locale]"
                            ng-control="name" validate-required required>
                     <formMessage for="name" check-errors="['required']"></formMessage>
                 </span>
@@ -52,7 +52,7 @@
                     <textarea type="text" id="description" rows="3"
                               localized [language]="editLanguage"
                               [locale-texts]="item.description"
-                              [(ng-model)]="item.description[editLanguage.locale]"
+                              [(ng-model)]="itemJS.description[editLanguage.locale]"
                               ng-control="description"></textarea>
                     <formMessage for="description" check-errors="['required']"></formMessage>
                 </span>
@@ -89,7 +89,7 @@
 
                     <div class="totalPreview" id="vatInclusive">
                         <span>
-                            {{ item.vatExclusive | currency:'EUR':true:'.2-2' }}
+                            {{ itemJS.vatExclusive | currency:'EUR':true:'.2-2' }}
                         </span>
                     </div>
                 </div>

@@ -48,19 +48,19 @@ export class LocalizedDirective {
         }
         var placeHolderValue:string = null;
         if (this.previousLanguage != null) {
-            placeHolderValue = this.localeTexts[this.previousLanguage.locale];
+            placeHolderValue = this.localeTexts.get(this.previousLanguage.locale);
         }
         if (placeHolderValue == null) {
             var langWithContent = this.findLangWithContent();
             if (langWithContent != null) {
-                placeHolderValue = this.localeTexts[langWithContent.locale];
+                placeHolderValue = this.localeTexts.get(langWithContent.locale);
             }
         }
         if (placeHolderValue == null) {
             placeHolderValue = this.placeHolderAttribute;
         }
 
-        var text = this.localeTexts[this.language.locale];
+        var text = this.localeTexts.get(this.language.locale);
         if (text == null || text.length == 0) {
             this.elementRef.nativeElement.placeholder = placeHolderValue;
         }
@@ -75,7 +75,7 @@ export class LocalizedDirective {
         if (this.localeTexts == null) {
             return null;
         }
-        var language = LanguageFactory.ALL_LANGUAGES.valueSeq()
+        var language = LanguageFactory.ALL_LANGUAGES
             .filter((lang)=> {
                 var text:string = this.localeTexts.get(lang.locale);
                 return text != null && text.length > 0;

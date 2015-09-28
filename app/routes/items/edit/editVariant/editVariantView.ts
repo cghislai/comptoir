@@ -5,8 +5,8 @@ import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
 import {LocalPicture, LocalPictureFactory} from 'client/localDomain/picture';
-import {LocalAttributeValue, LocalAttributeValueFactory} from 'client/localDomain/attributeValue';
-import {LocalItemVariant, LocalItemVariantFactory} from 'client/localDomain/itemVariant';
+import {LocalAttributeValue, LocalAttributeValueFactory, NewAttributeValue} from 'client/localDomain/attributeValue';
+import {LocalItemVariant, LocalItemVariantFactory, NewItemVariant} from 'client/localDomain/itemVariant';
 import {LocalItem} from 'client/localDomain/item';
 import {AttributeDefinition, AttributeDefinitionSearch} from 'client/domain/attributeDefinition';
 import {ItemVariant, Pricing} from 'client/domain/itemVariant';
@@ -47,13 +47,15 @@ export class ItemVariantEditView {
 
     item:LocalItem;
     itemVariant:LocalItemVariant;
+    itemVariantJS: any;
+
     newAttributeValue:LocalAttributeValue;
     attributesToAdd:LocalAttributeValue[];
     allVariantAttributes:LocalAttributeValue[];
 
     pricingAmountRequired:boolean;
 
-    appLocale:string;
+    appLanguage:Language;
     editLanguage:Language;
     allPricings:Pricing[];
 
@@ -68,7 +70,7 @@ export class ItemVariantEditView {
         this.errorService = errorService;
         this.authService = authService;
 
-        this.appLocale = authService.getEmployeeLanguage().locale;
+        this.appLanguage = authService.getEmployeeLanguage();
         this.editLanguage = authService.getEmployeeLanguage();
         this.allPricings = [
             Pricing.ABSOLUTE,
@@ -130,7 +132,8 @@ export class ItemVariantEditView {
         itemVariantDesc.item = this.item;
         itemVariantDesc.pricingAmount = 0;
         this.allVariantAttributes = [];
-        this.itemVariant = <LocalItemVariant>Map(itemVariantDesc);
+        this.itemVariant = NewItemVariant(itemVariantDesc);
+        this.itemVariantJS = this.itemVariant.toJS();
         this.checkPricingAmountRequired();
     }
 
@@ -138,6 +141,7 @@ export class ItemVariantEditView {
         this.itemVariantService.get(id)
             .then((itemVariant:LocalItemVariant)=> {
                 this.itemVariant = itemVariant;
+                this.itemVariantJS = this.itemVariant.toJS();
                 this.fillAllVariantsAttribute();
                 this.checkPricingAmountRequired();
             }).catch((error)=> {
@@ -145,20 +149,31 @@ export class ItemVariantEditView {
             });
     }
 
+    getItemVariantTotalPrice() {
+        return LocalItemVariantFactory.calcPrice(this.itemVariantJS, true);
+    }
+
 
     public doSaveItemVariant() {
-        this.itemVariantService.save(this.itemVariant)
-            .then((itemVariant) => {
+        var itemVariant = NewItemVariant(this.itemVariantJS);
+        this.itemVariantService.save(itemVariant)
+            .then((ref)=>{
+                return this.itemVariantService.get(ref.id);
+            })
+            .then((itemVariant: LocalItemVariant) => {
+                this.itemVariant = itemVariant;
                 var newAttributeTask = [];
                 for (var attribute of this.attributesToAdd) {
                     newAttributeTask.push(this.doSaveAttribute(attribute));
                 }
                 return Promise.all(newAttributeTask);
-            }).then(()=> {
+            })
+            .then(()=> {
                 this.attributesToAdd = [];
                 this.allVariantAttributes = this.itemVariant.attributeValues;
                 this.router.navigate('/items/edit/' + this.item.id);
-            }).catch((error)=> {
+            })
+            .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }
@@ -194,10 +209,12 @@ export class ItemVariantEditView {
     }
 
     getPricingLabel(pricing:Pricing) {
-        return LocalItemVariantFactory.getPricingLabel(pricing);
+        return LocalItemVariantFactory.getPricingLabel(pricing).get(this.appLanguage.locale);
     }
 
-    onPricingChanged() {
+    onPricingChanged(event) {
+        var pricing: Pricing = parseInt(event.target.value);
+        this.itemVariantJS.pricing =pricing;
         this.checkPricingAmountRequired();
     }
 
@@ -208,24 +225,20 @@ export class ItemVariantEditView {
             return;
         }
         valueNumber = NumberUtils.toFixedDecimals(valueNumber, 2);
-        this.itemVariant.pricingAmount = valueNumber;
+        this.itemVariantJS.pricingAmount = valueNumber;
     }
 
     checkPricingAmountRequired() {
         var required = true;
-        switch (this.itemVariant.pricing) {
-            case Pricing.PARENT_ITEM:
-            {
-                required = false;
-                break;
-            }
+        if (this.itemVariantJS.pricing == Pricing.PARENT_ITEM) {
+            required = false;
         }
         this.pricingAmountRequired = required;
     }
 
     doAddAttribute() {
         var attributeToAdd = this.newAttributeValue;
-        if (this.itemVariant.id != null) {
+        if (this.itemVariantJS.id != null) {
             this.doSaveAttribute(attributeToAdd);
         } else {
             this.attributesToAdd.push(attributeToAdd);
@@ -235,8 +248,7 @@ export class ItemVariantEditView {
     }
 
     private doSaveAttribute(attributeToAdd:LocalAttributeValue) {
-
-        var defName = attributeToAdd.attributeDefinition.name[this.editLanguage.locale];
+        var defName = attributeToAdd.attributeDefinition.name.get(this.editLanguage.locale);
         var attributeDefRequest = new SearchRequest<AttributeDefinition>();
         var search = new AttributeDefinitionSearch();
         search.companyRef = this.authService.getEmployeeCompanyRef();
@@ -256,11 +268,12 @@ export class ItemVariantEditView {
                         return attributeToAdd.attributeDefinition;
                     });
             }).then((attributeDefinition)=> {
-                attributeToAdd.attributeDefinition = attributeDefinition;
+                attributeToAdd = <LocalAttributeValue>attributeToAdd.set('attributeDefinition', attributeDefinition);
                 return this.attributeValueService.save(attributeToAdd);
             }).then(()=> {
-                this.itemVariant.attributeValues.push(attributeToAdd);
-                return this.itemVariantService.save(this.itemVariant)
+                this.itemVariantJS.attributeValues.push(attributeToAdd);
+                var itemVariant = NewItemVariant(this.itemVariantJS);
+                return this.itemVariantService.save(itemVariant);
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -291,7 +304,7 @@ export class ItemVariantEditView {
             itemAttributesCopy.push(existingAttribute);
         }
         if (attrFound) {
-            this.itemVariant.attributeValues = itemAttributesCopy;
+            this.itemVariantJS.attributeValues = itemAttributesCopy;
             this.fillAllVariantsAttribute();
             this.itemVariantService.save(this.itemVariant)
                 .catch((error)=> {
@@ -316,7 +329,7 @@ export class ItemVariantEditView {
     resetNewAttributeValue() {
         var attributeDefinition = new AttributeDefinition();
         attributeDefinition.name = LocaleTextsFactory.toLocaleTexts({});
-        this.newAttributeValue = <LocalAttributeValue>Map({
+        this.newAttributeValue = NewAttributeValue({
             value: LocaleTextsFactory.toLocaleTexts({}),
             attributeDefinition: attributeDefinition
         });
