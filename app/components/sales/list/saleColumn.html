@@ -1,42 +1,44 @@
-
-<span class="id"
-    *ng-if="column.name == 'id' ">
-    {{ sale.id }}
-</span>
-<span class="dateTime"
-    *ng-if="column.name == 'dateTime'  ">
-    <span *ng-if="sale.dateTime != undefined">
-        {{ sale.dateTime | date:'dd/MM/yyyy HH:mm'  }}
-    </span>
-</span>
-<span class="total number"
-    *ng-if="column.name == 'vatExclusive' ">
-    {{ sale.vatExclusiveAmount | currency:'EUR':true:'.2-2' }}
-</span>
-<span class="total number"
-      *ng-if="column.name == 'vatInclusive' ">
-    {{ (sale.vatExclusiveAmount + sale.vatAmount ) | currency:'EUR':true:'.2-2' }}
-</span>
-<span class="vat number"
-    *ng-if="column.name == 'vat'">
-    {{ sale.vatAmount | currency:'EUR':true:'.2-2' }}
-</span>
-<span class="closed"
-      *ng-if="column.name == 'closed' ">
-    <span [hidden]="sale.closed">
-        Non
-    </span>
-    <span [hidden]="sale.closed == false">
-        Oui
-    </span>
-</span>
-<span class="ref" *ng-if="column.name == 'ref' ">
-    {{ sale.reference }}
-</span>
-<span class="action remove"
-      *ng-if="column.name == 'action_remove' " >
-    <a class="actionIcon "
-       (click)="onColumnAction(sale, column, $event)">
-    <i class="fi-minus red"></i>
-    </a>
-</span>
+<div [ng-switch]="column.name">
+    <template [ng-switch-when]=" 'id' ">
+        <span class="id">
+            {{ sale.id }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'dateTime' ">
+        <span class="dateTime">
+            {{ sale.dateTime | date:'dd/MM/yyyy HH:mm'  }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'vatExclusive' ">
+        <span class="vatExclusive price">
+            {{ sale.vatExclusiveAmount | currency:'EUR':true:'.2-2' }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'vatInclusive' ">
+        <span class="vatInclusive price">
+             {{ (sale.vatExclusiveAmount + sale.vatAmount ) | currency:'EUR':true:'.2-2' }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'vat' ">
+        <span class="vat price">
+             {{ sale.vatAmount | currency:'EUR':true:'.2-2' }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'closed' ">
+        <span class="closed">
+             <i class="fi-x" [hidden]="sale.closed"></i>
+             <i class="fi-check" [hidden]="!sale.closed"></i>
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'ref' ">
+        <span class="ref">
+             {{ sale.reference }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'action_remove' ">
+        <a class="actionIcon "
+           (click)="onColumnAction(sale, column, $event)">
+            <i class="fi-minus red"></i>
+        </a>
+    </template>
+</div>

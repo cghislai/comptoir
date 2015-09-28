@@ -1,31 +1,34 @@
 <div class="saleList listPage">
-    <div class="dataTable">
-        <div class="dataTableHead"
-             [hidden]="headers == false">
-            <div class="dataTableRow">
-            <span class="dataTableCell"
-                  *ng-for="#col of columns"
-                  [class.right]="col.alignRight">
-                    <span *ng-if="col.title != undefined">
-                        {{ col.title[locale] }}
+    <table class="dataTable">
+        <thead [hidden]="!headersVisible">
+        <tr>
+            <th *ng-for="#col of columns"
+                [class.right]="col.alignRight"
+                [class.center]="col.alignCenter">
+                    <span *ng-if="col.title !== null">
+                        {{ col.title.get(language.get(locale)) }}
                     </span>
-            </span>
-            </div>
+            </th>
+        </tr>
+        </thead>
+
+        <tbody>
+            <tr *ng-for="#sale of sales"
+                 [class.selectable]="rowSelectable"
+                (click)="onSaleClick(sale, $event)"
+                 [attr.focusable]="rowSelectable">
+                <td *ng-for="#col of columns"
+                    [class.right]="col.alignRight"
+                    [class.center]="col.alignCenter">
+                    <saleColumn class="column"
+                                (action)="onColumnAction($event)"
+                                [sale]="sale"
+                                [column]="col"
+                                [lang]="language">
+
+                    </saleColumn>
+                </td>
+            </tr>
         </div>
-        <div class="dataTableBody" *ng-if="sales != null">
-            <div *ng-for="#sale of sales"
-                 class="dataTableRow sale"
-                 [class.selectable]="selectable"
-                 [attr.focusable]="selectable">
-                <saleColumn *ng-for="#col of columns"
-                            class="dataTableCell"
-                            (action)="onColumnAction($event)"
-                            (click)="onSaleClick(sale, col)"
-                            [class.right]="col.alignRight"
-                            [sale]="sale"
-                            [column]="col"
-                            [lang]="locale"></saleColumn>
-            </div>
-        </div>
-    </div>
+</div>
 </div>

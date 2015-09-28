@@ -1,56 +1,7 @@
-@import '../../../styles/_main';
+@import '../../../styles/_dataTable';
 
 .saleList {
   position: relative;
-
-  .busy:not([hidden]) {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, .7);
-    text-align: center;
-
-    img {
-      position: relative;
-      display: inline-block;
-      vertical-align: middle;
-      height: 2em;
-    }
-  }
-
-  .dataTable {
-
-    .dataTableHead .dataTableCell {
-      font-size: .9em;
-      font-weight: bold;
-      border-bottom: .1em solid lightgray;
-    }
-    .sale {
-      border: .1em solid transparent;
-
-      &.selectable:hover {
-        cursor: pointer;
-      }
-      &:not(.selectable):hover {
-        cursor: default;
-      }
-    }
-
-    .dataTableCell.right {
-      text-align: right !important;
-    }
-  }
-}
-
-.name {
-  font-size: 1em;
-  font-weight: bold;
-}
-
-.model {
-  font-size: .8em;
-  font-weight: lighter;
-
 }
 
 .price {
@@ -65,15 +16,3 @@
   max-width: 10%;
 }
 
-.description {
-  font-size: .8em;
-  max-width: 20%;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-.picture img {
-  max-height: 3em;
-  max-width: 3em;
-}
