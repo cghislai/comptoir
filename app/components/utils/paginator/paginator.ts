@@ -2,15 +2,16 @@
  * Created by cghislai on 02/08/15.
  */
 
-import {Component, View, Attribute, EventEmitter, NgFor, Observable} from 'angular2/angular2';
-import {Pagination} from 'client/utils/pagination';
+import {Component, View, EventEmitter, NgFor, OnInit, OnChanges, ChangeDetectionStrategy} from 'angular2/angular2';
+import {Pagination, PaginationFactory} from 'client/utils/pagination';
 import {SearchResult} from 'client/utils/search';
 
 @Component({
     selector: 'paginator',
     events: ['pageChange'],
-    properties: ['totalCountParam: totalCount', 'pageSizeParam: pageSize',
-        "showPrevNextLink", 'showFirstLastLink']
+    properties: ['totalCount', 'pageSize',
+        "showPrevNextLink", 'showFirstLastLink'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 @View({
     templateUrl: './components/utils/paginator/paginator.html',
@@ -18,7 +19,7 @@ import {SearchResult} from 'client/utils/search';
     directives: [NgFor]
 })
 
-export class Paginator {
+export class Paginator implements OnInit, OnChanges {
     pageCount:number;
     pageSize: number;
     totalCount: number;
@@ -33,6 +34,13 @@ export class Paginator {
     constructor() {
         this.activePage = 0;
         this.pageChange = new EventEmitter();
+    }
+
+    onInit() {
+        this.buildPagesLinksArray();
+    }
+
+    onChanges() {
         this.buildPagesLinksArray();
     }
 
@@ -99,13 +107,15 @@ export class Paginator {
 
     goToPage(pageIndex:number) {
         this.activePage = pageIndex;
-        var pagination = new Pagination();
-        pagination.pageIndex = pageIndex;
         var firstIndex = pageIndex * this.pageSize;
         var pageSize = Math.min(this.pageSize, this.totalCount- firstIndex);
-        pagination.firstIndex = firstIndex;
-        pagination.pageSize = pageSize;
         this.buildPagesLinksArray();
+
+        var paginationDesc:any = {};
+        paginationDesc.pageIndex = pageIndex;
+        paginationDesc.firstIndex = firstIndex;
+        paginationDesc.pageSize = pageSize;
+        var pagination = PaginationFactory.Pagination(paginationDesc);
 
         this.pageChange.next(pagination);
     }

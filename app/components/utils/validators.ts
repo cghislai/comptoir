@@ -17,9 +17,9 @@ function requiredValidator(c: Control) {
 }
 @Directive({
     selector: '[validate-required]',
-    bindings: [new Binding(NgValidator, {
-        toAlias: forwardRef(()=>RequiredValidator)
-    })]
+    //bindings: [new Binding(NgValidator, {
+      //  toAlias: forwardRef(()=>RequiredValidator)
+    //})]
 })
 export class RequiredValidator {
     get validator() {
@@ -44,9 +44,9 @@ function passwordValidator(c: Control) {
 
 @Directive({
     selector: '[validate-password]',
-    bindings: [new Binding(NgValidator, {
-        toAlias: forwardRef(()=>PasswordValidator)
-    })]
+    //bindings: [new Binding(NgValidator, {
+       // toAlias: forwardRef(()=>PasswordValidator)
+    //})]
 })
 export class PasswordValidator {
     get validator() { return PasswordValidator.validate; }

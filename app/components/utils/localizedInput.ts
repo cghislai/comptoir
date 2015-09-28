@@ -4,7 +4,9 @@
 
 import {Directive,ElementRef} from 'angular2/angular2';
 
-import {Language, LocaleTexts} from 'client/utils/lang';
+import {Language, LanguageFactory, LocaleTexts} from 'client/utils/lang';
+import {List} from 'immutable';
+
 /**
  * A localized input directive. Add the 'localized' attribute on a input/textarea field to use.
  * Bind the 'language' property to a Language instance.
@@ -73,15 +75,12 @@ export class LocalizedDirective {
         if (this.localeTexts == null) {
             return null;
         }
-        var allLanguages = Language.ALL_LANGUAGES;
-        for (var lang of allLanguages) {
-            var locale = lang.locale;
-            var text = this.localeTexts[locale];
-            if (text != null && text.length > 0) {
-                return lang;
-            }
-        }
-        return null;
+        var language = LanguageFactory.ALL_LANGUAGES.valueSeq()
+            .filter((lang)=> {
+                var text:string = this.localeTexts.get(lang.locale);
+                return text != null && text.length > 0;
+            }).first();
+        return language;
     }
 
     updateRequired() {
@@ -98,7 +97,7 @@ export class LocalizedDirective {
 
     onInput(event) {
         var value = event.target.value;
-        this.localeTexts[this.language.locale] = value;
+        this.localeTexts = <LocaleTexts>this.localeTexts.set(this.language.locale, value);
         this.updateRequired();
     }
 
