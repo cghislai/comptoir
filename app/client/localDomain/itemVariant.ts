@@ -10,11 +10,11 @@ import {Picture, PictureRef, PictureClient, PictureFactory} from 'client/domain/
 import {LocalItem, LocalItemFactory} from 'client/localDomain/item';
 import {LocalAttributeValue, LocalAttributeValueFactory} from 'client/localDomain/attributeValue';
 import {LocalPicture, LocalPictureFactory} from 'client/localDomain/picture';
-import {LocaleTexts} from 'client/utils/lang';
-import {ComptoirRequest} from 'client/utils/request';
+import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 
+import {Map} from 'immutable';
 
-export class LocalItemVariant {
+export interface LocalItemVariant extends Map<string, any> {
     id:number;
     variantReference:string;
     pricing:Pricing;
@@ -24,38 +24,6 @@ export class LocalItemVariant {
     mainPicture:LocalPicture;
     item:LocalItem;
 
-    calcPrice(includeTaxes: boolean):number {
-        var vatExclusive : number = 0;
-        switch (this.pricing) {
-            case Pricing.ABSOLUTE:
-            {
-                vatExclusive = this.pricingAmount;
-                break;
-            }
-            case Pricing.ADD_TO_BASE:
-            {
-                if (this.item == null) {
-                    return null;
-                }
-                var itemVatExclusive = this.item.vatExclusive;
-                vatExclusive = itemVatExclusive + this.pricingAmount;
-                break;
-            }
-            case Pricing.PARENT_ITEM:
-            {
-                if (this.item == null) {
-                    return null;
-                }
-                vatExclusive = this.item.vatExclusive;
-                break;
-            }
-        }
-        if (!includeTaxes) {
-            return vatExclusive;
-        }
-        var vatInclusive = vatExclusive * (1 + this.item.vatRate);
-        return vatInclusive;
-    }
 }
 
 export class LocalItemVariantFactory {
@@ -63,15 +31,15 @@ export class LocalItemVariantFactory {
     static itemClient = new ItemClient();
     static pictureClient = new PictureClient();
 
-    static PRICING_ADD_TO_BASE_LABEL = {
+    static PRICING_ADD_TO_BASE_LABEL = LocaleTextsFactory.toLocaleTexts({
         'fr': 'À ajouter'
-    };
-    static PRICING_ABSOLUTE_LABEL = {
+    });
+    static PRICING_ABSOLUTE_LABEL = LocaleTextsFactory.toLocaleTexts({
         'fr': 'Prix de la variante'
-    };
-    static PRICING_PARENT_ITEM_LABEL = {
+    });
+    static PRICING_PARENT_ITEM_LABEL = LocaleTextsFactory.toLocaleTexts({
         'fr': 'Idem produit'
-    };
+    });
 
     static getPricingLabel(pricing:Pricing):LocaleTexts {
         switch (pricing) {
@@ -86,28 +54,23 @@ export class LocalItemVariantFactory {
     }
 
     static toLocalItemVariant(itemVariant:ItemVariant, authToken):Promise<LocalItemVariant> {
-        var localVariant = new LocalItemVariant();
-        return LocalItemVariantFactory.updateLocalItemVariant(localVariant, itemVariant, authToken);
-    }
+        var localVariantDesc:any = {};
+        localVariantDesc.id = itemVariant.id;
+        localVariantDesc.variantReference = itemVariant.variantReference;
+        localVariantDesc.pricing = Pricing[itemVariant.pricing];
+        localVariantDesc.pricingAmount = itemVariant.pricingAmount;
 
-
-    static updateLocalItemVariant(localItemVariant:LocalItemVariant, itemVariant:ItemVariant, authToken:string):Promise<LocalItemVariant> {
-        localItemVariant.id = itemVariant.id;
-        localItemVariant.variantReference = itemVariant.variantReference;
-        localItemVariant.pricing = Pricing[itemVariant.pricing];
-        localItemVariant.pricingAmount = itemVariant.pricingAmount;
-
-        localItemVariant.attributeValues = [];
+        localVariantDesc.attributeValues = [];
         var taskList = [];
         var attributeValueRefList = itemVariant.attributeValueRefs;
         for (var attributeValueRef of attributeValueRefList) {
-            var atributeId = attributeValueRef.id;
+            var attributeid = attributeValueRef.id;
             taskList.push(
-                LocalItemVariantFactory.attributeValueClient.getFromCacheOrServer(atributeId, authToken)
+                LocalItemVariantFactory.attributeValueClient.getFromCacheOrServer(attributeid, authToken)
                     .then((attrValue)=> {
                         return LocalAttributeValueFactory.toLocalAttributeValue(attrValue, authToken);
-                    }).then((localValue: LocalAttributeValue)=> {
-                        localItemVariant.attributeValues.push(localValue);
+                    }).then((localValue:LocalAttributeValue)=> {
+                        localVariantDesc.attributeValues.push(localValue);
                     })
             );
         }
@@ -117,8 +80,8 @@ export class LocalItemVariantFactory {
             LocalItemVariantFactory.itemClient.getFromCacheOrServer(itemRef.id, authToken)
                 .then((item)=> {
                     return LocalItemFactory.toLocalItem(item, authToken);
-                }).then((localItem: LocalItem)=> {
-                    localItemVariant.item = localItem;
+                }).then((localItem:LocalItem)=> {
+                    localVariantDesc.item = localItem;
                 })
         );
 
@@ -129,15 +92,16 @@ export class LocalItemVariantFactory {
                 LocalItemVariantFactory.pictureClient.getFromCacheOrServer(picId, authToken)
                     .then((picture)=> {
                         return LocalPictureFactory.toLocalPicture(picture, authToken);
-                    }).then((localPicture: LocalPicture)=> {
-                        localItemVariant.mainPicture = localPicture;
+                    }).then((localPicture:LocalPicture)=> {
+                        localVariantDesc.mainPicture = localPicture;
                     })
             );
         }
 
-
         return Promise.all(taskList)
             .then(()=> {
+                var localItemVariant:LocalItemVariant;
+                localItemVariant = <LocalItemVariant>Map(localVariantDesc);
                 return localItemVariant;
             });
     }
@@ -160,6 +124,39 @@ export class LocalItemVariantFactory {
         itemVariant.pricingAmount = localVariant.pricingAmount;
         itemVariant.variantReference = localVariant.variantReference;
         return itemVariant;
+    }
+
+    static calcPrice(localVariant:LocalItemVariant, includeTaxes:boolean):number {
+        var vatExclusive:number = 0;
+        switch (localVariant.pricing) {
+            case Pricing.ABSOLUTE:
+            {
+                vatExclusive = localVariant.pricingAmount;
+                break;
+            }
+            case Pricing.ADD_TO_BASE:
+            {
+                if (localVariant.item == null) {
+                    return null;
+                }
+                var itemVatExclusive = localVariant.item.vatExclusive;
+                vatExclusive = itemVatExclusive + localVariant.pricingAmount;
+                break;
+            }
+            case Pricing.PARENT_ITEM:
+            {
+                if (localVariant.item == null) {
+                    return null;
+                }
+                vatExclusive = localVariant.item.vatExclusive;
+                break;
+            }
+        }
+        if (!includeTaxes) {
+            return vatExclusive;
+        }
+        var vatInclusive = vatExclusive * (1 + localVariant.item.vatRate);
+        return vatInclusive;
     }
 
 

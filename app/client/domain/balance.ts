@@ -12,7 +12,7 @@ export class BalanceClient extends BasicClient<Balance> {
 
     private static RESOURCE_PATH:string = "/balance";
     constructor() {
-        super({
+        super(<BasicClientResourceInfo<Balance>>{
             resourcePath: BalanceClient.RESOURCE_PATH,
             jsonReviver: BalanceFactory.fromJSONBalanceReviver,
             cacheHandler: BalanceFactory.cacheHandler

@@ -13,7 +13,7 @@ export class PosClient extends BasicClient<Pos> {
     private static RESOURCE_PATH:string = "/pos";
 
     constructor() {
-        super({
+        super(<BasicClientResourceInfo<Pos>>{
             resourcePath: PosClient.RESOURCE_PATH,
             jsonReviver: PosFactory.fromJSONPosReviver,
             cacheHandler: PosFactory.cacheHandler

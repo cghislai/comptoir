@@ -11,7 +11,7 @@ export class AccountingTransactionClient extends BasicClient<AccountingTransacti
 
     private static RESOURCE_PATH:string = "/accountingTransaction";
     constructor() {
-        super({
+        super(<BasicClientResourceInfo<AccountingTransaction>>{
             resourcePath: AccountingTransactionClient.RESOURCE_PATH,
             jsonReviver: AccountingTransactionFactory.fromJSONAccountTransactionReviver,
             cacheHandler: AccountingTransactionFactory.cacheHandler

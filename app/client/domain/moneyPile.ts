@@ -12,7 +12,7 @@ export class MoneyPileClient extends BasicClient<MoneyPile> {
     private static RESOURCE_PATH:string = "/moneyPile";
 
     constructor() {
-        super({
+        super(<BasicClientResourceInfo<MoneyPile>>{
             resourcePath: MoneyPileClient.RESOURCE_PATH,
             jsonReviver: MoneyPileFactory.fromJSONMoneyPileReviver,
             cacheHandler: MoneyPileFactory.cacheHandler

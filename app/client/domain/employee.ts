@@ -10,7 +10,7 @@ export class EmployeeClient extends BasicClient<Employee> {
 
     private static RESOURCE_PATH:string = "/employee";
     constructor() {
-        super({
+        super(<BasicClientResourceInfo<Employee>>{
             resourcePath: EmployeeClient.RESOURCE_PATH,
             jsonReviver: EmployeeFactory.fromJSONEmployeeReviver,
             cacheHandler: EmployeeFactory.cacheHandler

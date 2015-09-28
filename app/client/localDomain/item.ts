@@ -5,12 +5,15 @@
 import {Item} from 'client/domain/item';
 import {Picture, PictureRef, PictureClient, PictureFactory} from 'client/domain/picture';
 import {Company, CompanyRef, CompanyClient, CompanyFactory} from 'client/domain/company';
+
 import {LocalPicture, LocalPictureFactory} from 'client/localDomain/picture';
 import {LocalCompany, LocalCompanyFactory} from 'client/localDomain/company';
-import {LocaleTexts} from 'client/utils/lang';
-import {ComptoirRequest} from 'client/utils/request';
 
-export class LocalItem {
+import {LocaleTexts} from 'client/utils/lang';
+
+import {Map} from 'immutable';
+
+export interface LocalItem extends Map<string, any> {
     id:number;
     company:LocalCompany;
     reference:string;
@@ -29,18 +32,13 @@ export class LocalItemFactory {
     static pictureClient = new PictureClient();
 
     static toLocalItem(item:Item, authToken:string):Promise<LocalItem> {
-        var localItem = new LocalItem();
-        return LocalItemFactory.updateLocalItem(localItem, item, authToken);
-    }
-
-
-    static updateLocalItem(localItem:LocalItem, item:Item, authToken:string):Promise<LocalItem> {
-        localItem.description = item.description;
-        localItem.id = item.id;
-        localItem.name = item.name;
-        localItem.reference = item.reference;
-        localItem.vatExclusive = item.vatExclusive;
-        localItem.vatRate = item.vatRate;
+        var localItemDesc:any = {};
+        localItemDesc.description = item.description;
+        localItemDesc.id = item.id;
+        localItemDesc.name = item.name;
+        localItemDesc.reference = item.reference;
+        localItemDesc.vatExclusive = item.vatExclusive;
+        localItemDesc.vatRate = item.vatRate;
 
         var taskList = [];
         var companyRef = item.companyRef;
@@ -48,8 +46,8 @@ export class LocalItemFactory {
             LocalItemFactory.companyClient.getFromCacheOrServer(companyRef.id, authToken)
                 .then((company)=> {
                     return LocalCompanyFactory.toLocalCompany(company, authToken);
-                }).then((localCompany: LocalCompany)=>{
-                    localItem.company = localCompany;
+                }).then((localCompany:LocalCompany)=> {
+                    localItemDesc.company = localCompany;
                 })
         );
 
@@ -60,13 +58,14 @@ export class LocalItemFactory {
                 LocalItemFactory.pictureClient.getFromCacheOrServer(picId, authToken)
                     .then((picture)=> {
                         return LocalPictureFactory.toLocalPicture(picture, authToken);
-                    }).then((localPicture: LocalPicture)=> {
-                        localItem.mainPicture = localPicture;
+                    }).then((localPicture:LocalPicture)=> {
+                        localItemDesc.mainPicture = localPicture;
                     })
             );
         }
         return Promise.all(taskList)
             .then(()=> {
+                var localItem:LocalItem = <LocalItem>Map(localItemDesc);
                 return localItem;
             });
     }

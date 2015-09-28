@@ -13,7 +13,7 @@ export class PictureClient extends BasicClient<Picture> {
     private static RESOURCE_PATH:string = "/picture";
 
     constructor() {
-        super({
+        super(<BasicClientResourceInfo<Picture>>{
             resourcePath: PictureClient.RESOURCE_PATH,
             jsonReviver: PictureFactory.fromJSONPictureReviver,
             cacheHandler: PictureFactory.cacheHandler

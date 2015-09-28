@@ -4,11 +4,12 @@
 
 import {ComptoirRequest, ComptoirResponse} from 'client/utils/request';
 import {Pagination} from 'client/utils/pagination';
-import {List} from 'immutable';
+
+import {Map, List} from 'immutable';
 
 export class SearchRequest<T> {
     search:any;
-    pagination:Pagination
+    pagination:Pagination;
     busy:boolean;
     private request:ComptoirRequest;
 

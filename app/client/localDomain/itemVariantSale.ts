@@ -11,7 +11,9 @@ import {LocalSale, LocalSaleFactory} from 'client/localDomain/sale';
 
 import {LocaleTexts} from 'client/utils/lang';
 
-export class LocalItemVariantSale {
+import {Map} from 'immutable';
+
+export interface LocalItemVariantSale extends Map<string, any> {
     id:number;
     dateTime:Date;
     quantity:number;
@@ -29,20 +31,15 @@ export class LocalItemVariantSaleFactory {
     static itemVariantClient = new ItemVariantClient();
 
     static toLocalItemVariantSale(itemSale:ItemVariantSale, authToken:string):Promise<LocalItemVariantSale> {
-        var localItemSale = new LocalItemVariantSale();
-        return LocalItemVariantSaleFactory.updateLocalItemVariantSale(localItemSale, itemSale, authToken);
-    }
-
-    static updateLocalItemVariantSale(localItemSale:LocalItemVariantSale,
-                                      itemSale:ItemVariantSale, authToken:string):Promise<LocalItemVariantSale> {
-        localItemSale.comment = itemSale.comment;
-        localItemSale.dateTime = itemSale.dateTime;
-        localItemSale.discountRatio = itemSale.discountRatio;
-        localItemSale.id = itemSale.id;
-        localItemSale.quantity = itemSale.quantity;
-        localItemSale.total = itemSale.total;
-        localItemSale.vatExclusive = itemSale.vatExclusive;
-        localItemSale.vatRate = itemSale.vatRate;
+        var localItemSaleDesc:any = {};
+        localItemSaleDesc.comment = itemSale.comment;
+        localItemSaleDesc.dateTime = itemSale.dateTime;
+        localItemSaleDesc.discountRatio = itemSale.discountRatio;
+        localItemSaleDesc.id = itemSale.id;
+        localItemSaleDesc.quantity = itemSale.quantity;
+        localItemSaleDesc.total = itemSale.total;
+        localItemSaleDesc.vatExclusive = itemSale.vatExclusive;
+        localItemSaleDesc.vatRate = itemSale.vatRate;
 
         var taskList = [];
 
@@ -52,7 +49,7 @@ export class LocalItemVariantSaleFactory {
                 .then((itemVariant)=> {
                     return LocalItemVariantFactory.toLocalItemVariant(itemVariant, authToken);
                 }).then((localVariant:LocalItemVariant)=> {
-                    localItemSale.itemVariant = localVariant;
+                    localItemSaleDesc.itemVariant = localVariant;
                 })
         );
 
@@ -61,19 +58,21 @@ export class LocalItemVariantSaleFactory {
             LocalItemVariantSaleFactory.saleClient.getFromCacheOrServer(saleRef.id, authToken)
                 .then((sale)=> {
                     return LocalSaleFactory.toLocalSale(sale, authToken);
-                }).then((localSale: LocalSale)=> {
-                    localItemSale.sale = localSale;
+                }).then((localSale:LocalSale)=> {
+                    localItemSaleDesc.sale = localSale;
                 })
         );
 
         return Promise.all(taskList)
             .then(()=> {
+                var localItemSale:LocalItemVariantSale;
+                localItemSale = <LocalItemVariantSale>Map(localItemSaleDesc);
                 return localItemSale;
             });
     }
 
     static fromLocalItemVariantSale(localItemSale:LocalItemVariantSale):ItemVariantSale {
-      var itemSale = new ItemVariantSale();
+        var itemSale = new ItemVariantSale();
         itemSale.comment = localItemSale.comment;
         itemSale.dateTime = localItemSale.dateTime;
         itemSale.discountRatio = localItemSale.discountRatio;

@@ -14,7 +14,7 @@ export class SaleClient extends BasicClient<Sale> {
 
     private static RESOURCE_PATH:string = "/sale";
     constructor() {
-        super({
+        super(<BasicClientResourceInfo<Sale>>{
             resourcePath: SaleClient.RESOURCE_PATH,
             jsonReviver: SaleFactory.fromJSONSaleReviver,
             cacheHandler: SaleFactory.cacheHandler

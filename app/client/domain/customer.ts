@@ -3,14 +3,14 @@
  */
 
 import {CompanyRef} from 'client/domain/company';
-import {BasicClient, BasicCacheHandler} from 'client/utils/basicClient';
+import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
 
 export class CustomerClient extends BasicClient<Customer> {
 
     private static RESOURCE_PATH:string = "/customer";
 
     constructor() {
-        super({
+        super(<BasicClientResourceInfo<Customer>>{
             resourcePath: CustomerClient.RESOURCE_PATH,
             jsonReviver: CustomerFactory.fromJSONCustomerReviver,
             cacheHandler: CustomerFactory.cacheHandler

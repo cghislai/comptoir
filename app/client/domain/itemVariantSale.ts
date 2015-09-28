@@ -15,7 +15,7 @@ export class ItemVariantSaleClient extends BasicClient<ItemVariantSale> {
     private static RESOURCE_PATH:string = "/itemVariantSale";
 
     constructor() {
-        super({
+        super(<BasicClientResourceInfo<ItemVariantSale>>{
             resourcePath: ItemVariantSaleClient.RESOURCE_PATH,
             jsonReviver: ItemVariantSaleFactory.fromJSONItemVariantSaleReviver,
             cacheHandler: ItemVariantSaleFactory.cacheHandler
@@ -29,7 +29,7 @@ export class ItemVariantSale {
     itemVariantRef: ItemVariantRef;
     quantity: number;
     saleRef: SaleRef;
-    comment: LocaleTexts = new LocaleTexts();
+    comment: LocaleTexts;
     vatExclusive: number;
     vatRate: number;
     discountRatio: number;

@@ -13,7 +13,7 @@ export class ItemClient extends BasicClient<Item> {
 
     private static RESOURCE_PATH:string = "/item";
     constructor() {
-        super({
+        super(<BasicClientResourceInfo<Item>>{
             resourcePath: ItemClient.RESOURCE_PATH,
             jsonReviver: ItemFactory.fromJSONItemReviver,
             cacheHandler: ItemFactory.cacheHandler

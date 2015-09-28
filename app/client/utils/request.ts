@@ -8,6 +8,7 @@ export class ComptoirResponse {
     code:number;
     listTotalCountHeader:string;
 }
+
 export class ComptoirError {
     static DISCARDED_ERROR = new ComptoirError("Request discarded");
 

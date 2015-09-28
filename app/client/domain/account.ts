@@ -14,7 +14,7 @@ export class AccountClient extends BasicClient<Account> {
     private static RESOURCE_PATH:string = "/account";
 
     constructor() {
-        super({
+        super(<BasicClientResourceInfo<Account>>{
             resourcePath: AccountClient.RESOURCE_PATH,
             jsonReviver: AccountFactory.fromJSONReviver,
             cacheHandler: AccountFactory.cacheHandler

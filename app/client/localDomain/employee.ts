@@ -4,9 +4,12 @@
 
 import {Employee} from 'client/domain/employee';
 import {Company, CompanyRef, CompanyClient, CompanyFactory} from 'client/domain/company';
+
 import {LocalCompany, LocalCompanyFactory} from 'client/localDomain/company';
 
-export class LocalEmployee {
+import {Map} from 'immutable';
+
+export interface LocalEmployee extends Map<string, any> {
     id: number;
     active: boolean;
     company: LocalCompany;
@@ -20,17 +23,13 @@ export class LocalEmployeeFactory {
     static companyClient = new CompanyClient();
 
     static toLocalEmployee(employee:Employee, authToken:string):Promise<LocalEmployee> {
-        var localEmployee = new LocalEmployee();
-        return LocalEmployeeFactory.updateLocalEmployee(localEmployee, employee, authToken);
-    }
-
-    static updateLocalEmployee(localEmployee:LocalEmployee, employee:Employee, authToken:string):Promise<LocalEmployee> {
-        localEmployee.active = employee.active;
-        localEmployee.firstName= employee.firstName;
-        localEmployee.id = employee.id;
-        localEmployee.lastName = employee.lastName;
-        localEmployee.locale = employee.locale;
-        localEmployee.login= employee.login;
+        var localEmployeeDesc:any = {};
+        localEmployeeDesc.active = employee.active;
+        localEmployeeDesc.firstName = employee.firstName;
+        localEmployeeDesc.id = employee.id;
+        localEmployeeDesc.lastName = employee.lastName;
+        localEmployeeDesc.locale = employee.locale;
+        localEmployeeDesc.login = employee.login;
 
         var taskList = [];
         var companyRef = employee.companyRef;
@@ -38,12 +37,14 @@ export class LocalEmployeeFactory {
             LocalEmployeeFactory.companyClient.getFromCacheOrServer(companyRef.id, authToken)
                 .then((company)=> {
                     return LocalCompanyFactory.toLocalCompany(company, authToken);
-                }).then((localCompany: LocalCompany)=>{
-                    localEmployee.company = localCompany;
+                }).then((localCompany:LocalCompany)=> {
+                    localEmployeeDesc.company = localCompany;
                 })
         );
         return Promise.all(taskList)
             .then(()=> {
+                var localEmployee:LocalEmployee;
+                localEmployee = <LocalEmployee>Map(localEmployeeDesc);
                 return localEmployee;
             });
     }

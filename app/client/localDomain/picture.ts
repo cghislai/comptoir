@@ -4,9 +4,12 @@
 
 import {Picture, PictureRef} from 'client/domain/picture';
 import {Company, CompanyRef, CompanyClient, CompanyFactory} from 'client/domain/company';
+
 import {LocalCompany, LocalCompanyFactory} from 'client/localDomain/company';
 
-export class LocalPicture {
+import {Map} from 'immutable';
+
+export interface LocalPicture extends Map<string, any> {
     id:number;
     company:LocalCompany;
     data:string;
@@ -18,15 +21,11 @@ export class LocalPictureFactory {
     static companyClient = new CompanyClient();
 
     static toLocalPicture(picture:Picture, authToken:string):Promise<LocalPicture> {
-        var localPicture = new LocalPicture();
-        return LocalPictureFactory.updateLocalPicture(localPicture, picture, authToken);
-    }
-
-    static updateLocalPicture(localPicture:LocalPicture, picture:Picture, authToken:string):Promise<LocalPicture> {
-        localPicture.id = picture.id;
-        localPicture.data = picture.data;
-        localPicture.contentType = picture.contentType;
-        localPicture.dataURI = LocalPictureFactory.toDataURI(picture);
+        var localPictureDesc:any = {};
+        localPictureDesc.id = picture.id;
+        localPictureDesc.data = picture.data;
+        localPictureDesc.contentType = picture.contentType;
+        localPictureDesc.dataURI = LocalPictureFactory.toDataURI(picture);
 
         var taskList = [];
         var companyRef = picture.companyRef;
@@ -34,12 +33,14 @@ export class LocalPictureFactory {
             LocalPictureFactory.companyClient.getFromCacheOrServer(companyRef.id, authToken)
                 .then((company)=> {
                     return LocalCompanyFactory.toLocalCompany(company, authToken);
-                }).then((localCompany: LocalCompany)=>{
-                    localPicture.company = localCompany;
+                }).then((localCompany:LocalCompany)=> {
+                    localPictureDesc.company = localCompany;
                 })
         );
         return Promise.all(taskList)
             .then(()=> {
+                var localPicture:LocalPicture;
+                localPicture = <LocalPicture>Map(localPictureDesc);
                 return localPicture;
             });
     }

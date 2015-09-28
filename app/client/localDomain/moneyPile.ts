@@ -5,16 +5,20 @@
 import {MoneyPile} from 'client/domain/moneyPile';
 import {Account, AccountRef, AccountClient, AccountFactory} from 'client/domain/account';
 import {Balance, BalanceRef, BalanceClient, BalanceFactory} from 'client/domain/balance';
+
 import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
 import {LocalBalance, LocalBalanceFactory} from 'client/localDomain/balance';
-import {LocaleTexts} from 'client/utils/lang';
 
-export class LocalMoneyPile {
+import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
+
+import {Map} from 'immutable';
+
+export interface LocalMoneyPile extends Map<string, any> {
     id:number;
     account:LocalAccount;
     dateTime:Date;
     unitAmount:number;
-    count:number;
+    unitCount:number;
     total:number;
     balance:LocalBalance;
 
@@ -27,16 +31,12 @@ export class LocalMoneyPileFactory {
     static balanceClient = new BalanceClient();
 
     static toLocalMoneyPile(moneyPile:MoneyPile, authToken:string):Promise<LocalMoneyPile> {
-        var localMoneyPile = new LocalMoneyPile();
-        return LocalMoneyPileFactory.updateLocalMoneyPile(localMoneyPile, moneyPile, authToken);
-    }
-
-    static updateLocalMoneyPile(localMoneyPile:LocalMoneyPile, moneyPile:MoneyPile, authToken:string):Promise<LocalMoneyPile> {
-        localMoneyPile.count = moneyPile.count;
-        localMoneyPile.dateTime = moneyPile.dateTime;
-        localMoneyPile.id = moneyPile.id;
-        localMoneyPile.total = moneyPile.total;
-        localMoneyPile.unitAmount = moneyPile.unitAmount;
+        var localMoneyPileDesc:any = {};
+        localMoneyPileDesc.unitCount = moneyPile.count;
+        localMoneyPileDesc.dateTime = moneyPile.dateTime;
+        localMoneyPileDesc.id = moneyPile.id;
+        localMoneyPileDesc.total = moneyPile.total;
+        localMoneyPileDesc.unitAmount = moneyPile.unitAmount;
 
         var taskList = [];
         var accountRef = moneyPile.accountRef;
@@ -45,7 +45,7 @@ export class LocalMoneyPileFactory {
                 .then((account)=> {
                     return LocalAccountFactory.toLocalAccount(account, authToken);
                 }).then((localAccount:LocalAccount)=> {
-                    localMoneyPile.account = localAccount;
+                    localMoneyPileDesc.account = localAccount;
                 })
         );
         var balanceRef = moneyPile.balanceRef;
@@ -54,12 +54,14 @@ export class LocalMoneyPileFactory {
                 .then((balance)=> {
                     return LocalBalanceFactory.toLocalBalance(balance, authToken);
                 }).then((localBalance:LocalBalance)=> {
-                    localMoneyPile.balance = localBalance;
+                    localMoneyPileDesc.balance = localBalance;
                 })
         );
 
         return Promise.all(taskList)
             .then(()=> {
+                var localMoneyPile:LocalMoneyPile;
+                localMoneyPile = <LocalMoneyPile>Map(localMoneyPileDesc);
                 return localMoneyPile;
             });
     }
@@ -68,7 +70,7 @@ export class LocalMoneyPileFactory {
         var moneyPile = new MoneyPile();
         moneyPile.accountRef = new AccountRef(localMoneyPile.account.id);
         moneyPile.balanceRef = new BalanceRef(localMoneyPile.balance.id);
-        moneyPile.count = localMoneyPile.count;
+        moneyPile.count = localMoneyPile.unitCount;
         moneyPile.dateTime = localMoneyPile.dateTime;
         moneyPile.id = localMoneyPile.id;
         moneyPile.total = localMoneyPile.total;
@@ -76,7 +78,7 @@ export class LocalMoneyPileFactory {
         return moneyPile;
     }
 
-    static getCashTypeUnitValue(type:CashType): number {
+    static getCashTypeUnitValue(type:CashType):number {
         switch (type) {
             case CashType.ONE_CENT:
                 return 0.01;
@@ -111,40 +113,41 @@ export class LocalMoneyPileFactory {
         }
         return 0;
     }
-    static getCashTypeLabel(type:CashType): LocaleTexts {
+
+    static getCashTypeLabel(type:CashType):LocaleTexts {
         switch (type) {
             case CashType.ONE_CENT:
-                return {'fr': '1 cent'};
+                return LocaleTextsFactory.toLocaleTexts({'fr': '1 cent'});
             case CashType.TWO_CENT:
-                return {'fr': '2 cent'};
+                return LocaleTextsFactory.toLocaleTexts({'fr': '2 cent'});
             case CashType.FIVE_CENT:
-                return {'fr': '5 cent'};
+                return LocaleTextsFactory.toLocaleTexts({'fr': '5 cent'});
             case CashType.TEN_CENT:
-                return {'fr': '10 cent'};
+                return LocaleTextsFactory.toLocaleTexts({'fr': '10 cent'});
             case CashType.TWENTY_CENT:
-                return {'fr': '20 cent'};
+                return LocaleTextsFactory.toLocaleTexts({'fr': '20 cent'});
             case CashType.FIFTY_CENT:
-                return {'fr': '50 cent'};
+                return LocaleTextsFactory.toLocaleTexts({'fr': '50 cent'});
             case CashType.ONE_EURO:
-                return {'fr': '1 euro'};
+                return LocaleTextsFactory.toLocaleTexts({'fr': '1 euro'});
             case CashType.TWO_EURO:
-                return {'fr': '2 euro'};
+                return LocaleTextsFactory.toLocaleTexts({'fr': '2 euro'});
             case CashType.FIVE_EURO:
-                return {'fr': '5 euro'};
+                return LocaleTextsFactory.toLocaleTexts({'fr': '5 euro'});
             case CashType.TEN_EURO:
-                return {'fr': '10 euro'};
+                return LocaleTextsFactory.toLocaleTexts({'fr': '10 euro'});
             case CashType.TWENTY_EURO:
-                return {'fr': '20 euro'};
+                return LocaleTextsFactory.toLocaleTexts({'fr': '20 euro'});
             case CashType.FIFTY_EURO:
-                return {'fr': '50 euro'};
+                return LocaleTextsFactory.toLocaleTexts({'fr': '50 euro'});
             case CashType.ONE_HUNDRED_EURO:
-                return {'fr': '100 euro'};
+                return LocaleTextsFactory.toLocaleTexts({'fr': '100 euro'});
             case CashType.TWO_HUNDRED_EURO:
-                return {'fr': '200 euro'};
+                return LocaleTextsFactory.toLocaleTexts({'fr': '200 euro'});
             case CashType.FIVE_HUNDRED_EURO:
-                return {'fr': '500 euro'};
+                return LocaleTextsFactory.toLocaleTexts({'fr': '500 euro'});
         }
-        return {};
+        return LocaleTextsFactory.toLocaleTexts({});
     }
 }
 

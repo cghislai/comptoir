@@ -11,7 +11,7 @@ export class InvoiceClient extends BasicClient<Invoice> {
 
     private static RESOURCE_PATH:string = "/invoice";
     constructor() {
-        super({
+        super(<BasicClientResourceInfo<Invoice>>{
             resourcePath: InvoiceClient.RESOURCE_PATH,
             jsonReviver: InvoiceFactory.fromJSONInvoiceReviver,
             cacheHandler: InvoiceFactory.cacheHandler

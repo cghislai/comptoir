@@ -3,22 +3,26 @@
  */
 
 import {AccountingEntry, AccountingEntryRef, AccountingEntryClient, AccountingEntryFactory} from 'client/domain/accountingEntry';
-import {AccountClient, AccountRef} from 'client/domain/account';
-import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
-import {Company, CompanyRef, CompanyClient, CompanyFactory} from 'client/domain/company';
-import {LocalCompany, LocalCompanyFactory} from 'client/localDomain/company';
 import {AccountingTransactionRef, AccountingTransaction, AccountingTransactionClient, AccountingTransactionFactory} from 'client/domain/accountingTransaction';
+import {AccountClient, AccountRef} from 'client/domain/account';
+import {Company, CompanyRef, CompanyClient, CompanyFactory} from 'client/domain/company';
 import {CustomerRef, Customer,CustomerClient, CustomerFactory} from 'client/domain/customer';
+
+import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
+import {LocalCompany, LocalCompanyFactory} from 'client/localDomain/company';
+
 import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 import {ComptoirRequest} from 'client/utils/request';
 
-export class LocalAccountingEntry {
+import {Map} from 'immutable';
+
+export interface LocalAccountingEntry extends Map<string, any> {
     id:number;
     company:LocalCompany;
-    amount:number = 0;
-    vatRate:number = 0;
+    amount:number;
+    vatRate:number;
     dateTime:Date;
-    description:LocaleTexts = new LocaleTexts();
+    description:LocaleTexts;
     accountingTransactionRef:AccountingTransactionRef;
     vatAccountingEntry:LocalAccountingEntry;
     customer:Customer;
@@ -33,29 +37,25 @@ export class LocalAccountingEntryFactory {
     static entryClient = new AccountingEntryClient();
 
     static toLocalAccountingEntry(accountingEntry:AccountingEntry, authToken:string):Promise<LocalAccountingEntry> {
-        var localAccountingEntry = new LocalAccountingEntry();
-        return LocalAccountingEntryFactory.updateLocalAccountingEntry(localAccountingEntry, accountingEntry, authToken);
-    }
-
-    static updateLocalAccountingEntry(localAccountingEntry:LocalAccountingEntry, accountingEntry:AccountingEntry, authToken:string):Promise<LocalAccountingEntry> {
-        localAccountingEntry.amount = accountingEntry.amount;
-        localAccountingEntry.dateTime = accountingEntry.dateTime;
-        localAccountingEntry.description = accountingEntry.description;
-        localAccountingEntry.id = accountingEntry.id;
-        localAccountingEntry.vatRate = accountingEntry.vatRate;
-        localAccountingEntry.accountingTransactionRef = accountingEntry.accountingTransactionRef;
+        var localAccountingEntryDesc:any = {};
+        localAccountingEntryDesc.amount = accountingEntry.amount;
+        localAccountingEntryDesc.dateTime = accountingEntry.dateTime;
+        localAccountingEntryDesc.description = accountingEntry.description;
+        localAccountingEntryDesc.id = accountingEntry.id;
+        localAccountingEntryDesc.vatRate = accountingEntry.vatRate;
+        localAccountingEntryDesc.accountingTransactionRef = accountingEntry.accountingTransactionRef;
 
         var taskList = [];
 
-        var accontRef = accountingEntry.accountRef;
-        var accountId = accontRef.id;
+        var accountRef = accountingEntry.accountRef;
+        var accountId = accountRef.id;
         taskList.push(
             LocalAccountingEntryFactory.accountClient.getFromCacheOrServer(accountId, authToken)
                 .then((account)=> {
                     return LocalAccountFactory.toLocalAccount(account, authToken);
                 })
                 .then((localAccount:LocalAccount)=> {
-                    localAccountingEntry.account = localAccount;
+                    localAccountingEntryDesc.account = localAccount;
                 })
         );
         var companyRef = accountingEntry.companyRef;
@@ -65,7 +65,7 @@ export class LocalAccountingEntryFactory {
                 .then((company)=> {
                     return LocalCompanyFactory.toLocalCompany(company, authToken);
                 }).then((localCompany:LocalCompany)=> {
-                    localAccountingEntry.company = localCompany;
+                    localAccountingEntryDesc.company = localCompany;
                 })
         );
         var customerRef = accountingEntry.customerRef;
@@ -74,7 +74,7 @@ export class LocalAccountingEntryFactory {
             taskList.push(
                 LocalAccountingEntryFactory.customerClient.getFromCacheOrServer(customerId, authToken)
                     .then((customer)=> {
-                        localAccountingEntry.customer = customer;
+                        localAccountingEntryDesc.customer = customer;
                     })
             );
         }
@@ -86,16 +86,16 @@ export class LocalAccountingEntryFactory {
                     .then((entry:AccountingEntry)=> {
                         return LocalAccountingEntryFactory.toLocalAccountingEntry(entry, authToken);
                     }).then((localEntry:LocalAccountingEntry)=> {
-                        localAccountingEntry.vatAccountingEntry = localEntry;
+                        localAccountingEntryDesc.vatAccountingEntry = localEntry;
                     })
             );
         }
 
         return Promise.all(taskList)
             .then(()=> {
+                var localAccountingEntry:LocalAccountingEntry = <LocalAccountingEntry>Map(localAccountingEntryDesc);
                 return localAccountingEntry;
             });
-
     }
 
     static fromLocalAccountingEntry(localAccountingEntry:LocalAccountingEntry) {

@@ -11,7 +11,7 @@ export class CompanyClient extends BasicClient<Company> {
 
     private static RESOURCE_PATH:string = "/company";
     constructor() {
-        super({
+        super(<BasicClientResourceInfo<Company>>{
             resourcePath: CompanyClient.RESOURCE_PATH,
             jsonReviver: CompanyFactory.fromJSONCompanyReviver,
             cacheHandler: CompanyFactory.cacheHandler

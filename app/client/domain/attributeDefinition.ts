@@ -11,7 +11,7 @@ export class AttributeDefinitionClient extends BasicClient<AttributeDefinition> 
 
     private static RESOURCE_PATH:string = "/attribute/definition";
     constructor() {
-        super({
+        super(<BasicClientResourceInfo<AttributeDefinition>>{
             resourcePath: AttributeDefinitionClient.RESOURCE_PATH,
             jsonReviver: AttributeDefinitionFactory.fromJSONAttributeDefinitionReviver,
             cacheHandler: AttributeDefinitionFactory.cacheHandler

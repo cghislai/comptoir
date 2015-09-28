@@ -13,7 +13,7 @@ export class AttributeValueClient extends BasicClient<AttributeValue> {
     private static RESOURCE_PATH:string = "/attribute/value";
 
     constructor() {
-        super({
+        super(<BasicClientResourceInfo<AttributeValue>>{
             resourcePath: AttributeValueClient.RESOURCE_PATH,
             jsonReviver: AttributeValueFactory.fromJSONAttributeValueReviver,
             cacheHandler: AttributeValueFactory.cacheHandler

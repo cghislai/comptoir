@@ -2,20 +2,24 @@
  * Created by cghislai on 07/08/15.
  */
 
-export class Pagination {
+import {Map} from 'immutable';
+
+export interface Pagination extends Map<string, any>{
     pageIndex: number;
     firstIndex: number;
     pageSize: number;
     sorts: any; // [colName]='asc'|'desc'
+}
+export class PaginationFactory {
 
-    constructor();
-    constructor(firstIndex: number, pageSize: number);
-    constructor(firstIndex?: number, pageSize?: number) {
+    static Pagination(firstIndex?: number, pageSize?: number) : Pagination{
+        var paginationDesc: any = {};
         if (firstIndex != undefined) {
-            this.firstIndex = firstIndex;
+            paginationDesc.firstIndex = firstIndex;
         }
         if (pageSize != undefined) {
-            this.pageSize = pageSize;
+            paginationDesc.pageSize = pageSize;
         }
+        return <Pagination>Map(paginationDesc);
     }
 }

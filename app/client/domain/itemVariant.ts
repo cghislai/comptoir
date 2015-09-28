@@ -15,7 +15,7 @@ export class ItemVariantClient extends BasicClient<ItemVariant> {
 
     private static RESOURCE_PATH:string = "/itemVariant";
     constructor() {
-        super({
+        super(<BasicClientResourceInfo<ItemVariant>>{
             resourcePath: ItemVariantClient.RESOURCE_PATH,
             jsonReviver: ItemVariantFactory.fromJSONItemVariantReviver,
             cacheHandler: ItemVariantFactory.cacheHandler
