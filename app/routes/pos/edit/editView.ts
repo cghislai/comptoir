@@ -1,21 +1,19 @@
 /**
  * Created by cghislai on 05/08/15.
  */
-import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
+import {Component, View, NgIf} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
 import {CompanyRef} from 'client/domain/company';
 import {Pos, PosRef} from 'client/domain/pos';
-import {LocaleText} from 'client/domain/lang';
 import {Customer, CustomerRef} from 'client/domain/customer';
-import {Language, LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 
 import {AuthService} from 'services/auth';
 import {PosService} from 'services/pos';
 import {ErrorService} from 'services/error';
 
-import {LangSelect} from 'components/lang/langSelect/langSelect';
-import {LocalizedDirective} from 'components/utils/localizedInput';
+import {LocaleTexts} from 'client/utils/lang';
+import {PossEditComponent} from 'components/pos/edit/editPos';
 
 @Component({
     selector: 'editPos'
@@ -23,7 +21,7 @@ import {LocalizedDirective} from 'components/utils/localizedInput';
 @View({
     templateUrl: './routes/pos/edit/editView.html',
     styleUrls: ['./routes/pos/edit/editView.css'],
-    directives: [NgFor, NgIf, FORM_DIRECTIVES, RouterLink, LocalizedDirective, LangSelect]
+    directives: [NgIf, RouterLink, PossEditComponent]
 })
 export class EditPosView {
     posService:PosService;
@@ -31,9 +29,7 @@ export class EditPosView {
     authService:AuthService;
     router:Router;
 
-    appLocale:string;
-    editLanguage:Language;
-    editingPos:Pos;
+    pos:Pos;
 
 
     constructor(posService:PosService, authService:AuthService, appService:ErrorService,
@@ -44,9 +40,6 @@ export class EditPosView {
         this.authService = authService;
         this.errorService = appService;
 
-        var language = authService.getEmployeeLanguage();
-        this.editLanguage = language;
-        this.appLocale = language.locale;
         this.findPos(routeParams);
     }
 
@@ -69,27 +62,29 @@ export class EditPosView {
     }
 
     getNewPos() {
-        this.editingPos = new Pos();
-        this.editingPos.description = LocaleTextsFactory.toLocaleTexts({});
+        this.pos = new Pos();
+        this.pos.companyRef = this.authService.getEmployeeCompanyRef();
+        this.pos.description = new LocaleTexts();
     }
 
     getPos(id:number) {
         this.posService.get(id)
             .then((pos)=> {
-                this.editingPos = pos;
+                this.pos = pos;
             });
     }
 
-    doSaveEdit() {
-        var company = this.authService.getEmployeeCompany();
-        var companyRef = new CompanyRef(company.id);
-        this.posService.save(this.editingPos)
-            .then((posRef)=> {
+    onSaved(pos) {
+        this.posService.save(pos)
+            .then(()=> {
                 this.router.navigate('/pos/list');
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
+    }
 
+    doCancelEdit() {
+        this.router.navigate('/pos/list');
     }
 
 }

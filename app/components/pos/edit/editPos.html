@@ -1,0 +1,34 @@
+<div class="editPos">
+
+    <form #pos-form="form" (ng-submit)="onFormSubmit()">
+        <div class="table">
+            <div>
+                <label>Langue</label>
+                <langSelect [display-language]="appLanguage"
+                            [selected-language]="editLanguage"
+                            (language-changed)="editLanguage = $event"></langSelect>
+            </div>
+
+            <div>
+                <label for="name">Nom</label>
+                <span>
+                    <input id="name" type="text"
+                           [(ng-model)]="pos.name"
+                           ng-control="name">
+                </span>
+            </div>
+            <div>
+                <label for="description">Description</label>
+             <textarea type="text" id="description" rows="3"
+                       validate-required
+                       ng-control="description"
+                       localized [language]="editLanguage"
+                       [locale-texts]="pos.description"></textarea>
+                <formMessage for="description" check-errors="['required']"></formMessage>
+            </div>
+        </div>
+        <div class="actions">
+            <button type="submit" [disabled]="!posForm.form.valid">Enregistrer</button>
+        </div>
+    </form>
+</div>

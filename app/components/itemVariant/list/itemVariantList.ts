@@ -77,7 +77,7 @@ export class ItemVariantList {
     // properties
     items:List<LocalItemVariant>;
     columns:List<ItemVariantColumn>;
-    itemSelectable:boolean;
+    rowSelectable:boolean;
     headersVisible:boolean;
     language:Language;
 

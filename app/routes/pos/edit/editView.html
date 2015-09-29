@@ -1,30 +1,8 @@
 <div class="formPage pageContent">
     <h1 class="pageTitle">Édition du point de vente</h1>
 
-    <form #f="form" (ng-submit)="doSaveEdit()"
-          *ng-if="editingPos != undefined">
-        <div class="table">
-            <div>
-                <label>Langue:</label>
-                <langSelect [display-locale]="appLocale"
-                            [selected-language]="editLanguage"
-                            (language-changed)="editLanguage = $event"></langSelect>
-            </div>
-            <div>
-                <label for="name">Nom:</label>
-                <input id="name" type="text" required
-                       [(ng-model)]="editingPos.name">
-            </div>
-            <div>
-                <label for="description">Description:</label>
-                <textarea type="text" id="description" rows="3"
-                          localized [language]="editLanguage"
-                          [locale-texts]="editingPos.description"></textarea>
-            </div>
-        </div>
-
-        <div class="actions">
-            <button type="submit" [disabled]="!f.form.valid">Enregistrer</button>
-        </div>
-    </form>
+    <posEditComponent *ng-if="pos != null"
+             [pos]="pos"
+             (saved)="onSaved($event)"
+             (cancelled)="onCancelled()"></posEditComponent>
 </div>

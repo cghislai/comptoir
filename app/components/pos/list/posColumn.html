@@ -1,0 +1,32 @@
+<div [ng-switch]="column.name">
+    <template [ng-switch-when]="'id'">
+        <span class="id">
+            {{ pos.id }}
+        </span>
+    </template>
+    <template [ng-switch-when]="'name' ">
+        <span class="name">
+               {{ pos.name }}
+        </span>
+    </template>
+    <template [ng-switch-when]="'description' ">
+        <span class="description">
+            {{ pos.description[lang.locale] }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'defaultCustomer' ">
+        <span class="defaultCustomer">
+           {{ pos.defaultCustomerRef.id }}
+        </span>
+    </template>
+
+    <template [ng-switch-when]=" 'action_remove' ">
+        <span class="action remove">
+            <a class="actionIcon "
+               (click)="onColumnAction(pos, column, $event)">
+                <i class="fi-minus red"></i>
+            </a>
+        </span>
+    </template>
+
+</div>
