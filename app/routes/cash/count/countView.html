@@ -15,18 +15,18 @@
                 Compte
             </div>
             <div class="value">
-                <div *ng-if="accountSearchResult != null" [hidden]="accountSearchResult.count < 2">
+                <div [hidden]="accountSearchResult.count < 2">
                     <select (input)="onAccountChanged($event)" [value]="accountId">
                         <option [value]="null" [hidden]="account != null"
                                 [selected]="accountId == null">Choisissez un compte</option>
                         <option *ng-for="#accountOption of accountSearchResult.list" [value]="accountOption.id"
                                 [selected]="accountId == accountOption.id">
-                            {{ accountOption.description[locale] }}
+                            {{ accountOption.description[appLanguage.locale] }}
                         </option>
                     </select>
                 </div>
-                <div *ng-if="account != null" [hidden]="accountSearchResult?.count > 1">
-                    {{ account.description[locale] }}
+                <div *ng-if="account != null" [hidden]="accountSearchResult.count > 1">
+                    {{ account.description[appLanguage.locale] }}
                 </div>
             </div>
 
@@ -42,52 +42,14 @@
                 </span>
             </div>
         </div>
-
-        <div class="actions" [hidden]="account == null">
-            <a (click)="closeBalance()">Valider la caisse</a>
-        </div>
     </div>
 
     <div class="mainPane rightPane">
-        <div class="moneyPiles" [hidden]="account == null">
-            <div *ng-for="#moneyPile of moneyPileList"
-                 class="moneyPile">
-                <span class="name">{{ moneyPile.label[locale] }}</span>
-                <span class="amount">
-                    <input type="number" min="0" step="1"
-                           [value]="moneyPile.count"
-                           [validator]="validateAmount"
-                           validate-on-blur="true"
-                           (fast-change)="onCashInputChanged(moneyPile, $event)"
-                           size="5" fast-input>
-                </span>
-                <span class="total">
-                    {{ moneyPile.total | currency:'EUR':true:'.2-2'}}
-                </span>
-            </div>
-            <div class="totalRow">
-                <span></span>
-                <span class="total">
-                    Total:
-                </span>
-                <span class="total value">
-                    <div class="value">
-                        <a (click)="startEditTotal()" [hidden]="editingTotal"
-                           class="amountLink actionlink">
-                            {{ balance.balance | currency:'EUR':true:'.2-2' }}
-                        </a>
-                    </div>
-                    <div class="editAmount">
-                        <input type="number" min="0.01" step="0.01"
-                               #totalInput *ng-if="editingTotal"
-                               [value]="balance.total"
-                               [validator]="validatePrice"
-                               (fast-change)="onTotalChanged($event)"
-                               class="number"
-                               fast-input>
-                    </div>
-                </span>
-            </div>
-        </div>
+        <balanceCountComponent *ng-if="account != null"
+                       [account]="account"
+                       (validated)="onBalanceValidated($event)"
+                       (cancelled)="onBalanceCancelled()">
+
+        </balanceCountComponent>
     </div>
 </div>

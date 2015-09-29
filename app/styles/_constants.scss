@@ -31,6 +31,10 @@ input, textarea, select, button {
 
 .blueLink {
   color: $onWhiteLinkColor;
+  @extend .actionLink;
+}
+
+.actionLink {
   &:hover {
     text-decoration: underline;
     color: black;

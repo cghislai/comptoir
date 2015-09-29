@@ -19,8 +19,11 @@ export interface LocalBalance extends Map<string, any> {
 }
 var BalanceRecord = Record({
     id: null,
-    value: null,
-    attributeDefinition: null
+    account: null,
+    dateTime: null,
+    balance: null,
+    comment: null,
+    closed: null
 });
 export function NewBalance(desc: any) : LocalBalance {
     return <any>BalanceRecord(desc);
@@ -31,6 +34,7 @@ export class LocalBalanceFactory {
 
     static toLocalBalance(balance:Balance, authToken:string):Promise<LocalBalance> {
         var localBalanceDesc:any = {};
+        localBalanceDesc.id = balance.id;
         localBalanceDesc.balance = balance.balance;
         localBalanceDesc.closed = balance.closed;
         localBalanceDesc.comment = balance.comment;
@@ -53,7 +57,6 @@ export class LocalBalanceFactory {
     }
 
     static fromLocalBalance(localBalance:LocalBalance):Balance {
-        localBalance = localBalance.toJS();
         var balance = new Balance();
         balance.accountRef = new AccountRef(localBalance.account.id);
         balance.balance = localBalance.balance;

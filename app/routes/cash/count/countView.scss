@@ -54,82 +54,10 @@ div.mainPane {
       color: darkgreen;
     }
   }
-  .actions {
-
-    text-align: center;
-
-    div.editAmount {
-      height: 2em;
-
-    }
-    > * {
-      padding: .5em;
-    }
-    input {
-      width: 6em;
-      margin: .5em;
-    }
-    a:not([hidden]) {
-      @extend .boxedHoverableLink;
-      display: inline-block;
-    }
-  }
 }
 
 .rightPane {
   padding: 0;
 
-  .moneyPiles:not([hidden]) {
-    margin: 1em;
-    display: table;
-  }
-  .moneyPile {
-    display: table-row;
 
-    > span {
-      padding: .2em;
-      padding-left: .3em;
-      padding-right: .3em;
-      display: table-cell;
-      vertical-align: middle;
-      border-bottom: .1em solid lightgray;
-    }
-    .name {
-      font-weight: bolder;
-      width: 5em;
-      text-align: right;
-    }
-
-    .amount {
-      input {
-        text-align: right;
-        width: 5em;
-        font-size: 1em;
-      }
-    }
-    .total {
-      min-width: 6.5em;
-      text-align: right;
-    }
-  }
-
-  .totalRow {
-    display: table-row;
-    font-weight: bold;
-    font-size: 1.1em;
-
-    > span {
-      padding: .3em;
-      display: table-cell;
-      text-align: right;
-      vertical-align: middle;
-    }
-    
-    input {
-      font-size: .9em;
-      margin: 0;
-      width: 4em;
-    }
-
-  }
 }

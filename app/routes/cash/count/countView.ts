@@ -1,11 +1,10 @@
 /**
  * Created by cghislai on 02/08/15.
  */
-import {Component, View, FormBuilder, FORM_DIRECTIVES, NgFor, NgIf} from 'angular2/angular2';
+import {Component, View, NgIf, NgFor} from 'angular2/angular2';
 
 import {LocalAccount} from 'client/localDomain/account';
-import {LocalBalance, LocalBalanceFactory} from 'client/localDomain/balance';
-import {LocalMoneyPile, CashType, ALL_CASH_TYPES, LocalMoneyPileFactory} from 'client/localDomain/moneyPile';
+import {LocalBalance} from 'client/localDomain/balance';
 
 import {CompanyRef} from 'client/domain/company';
 import {AccountSearch, AccountType, AccountFactory} from 'client/domain/account';
@@ -13,43 +12,37 @@ import {BalanceSearch} from 'client/domain/balance';
 import {Pos, PosRef, PosSearch} from 'client/domain/pos';
 
 import {SearchRequest, SearchResult} from 'client/utils/search';
-import {NumberUtils} from 'client/utils/number';
+import {Language} from 'client/utils/lang';
 import {Pagination, PaginationFactory} from 'client/utils/pagination';
 
 import {BalanceService} from 'services/balance';
-import {MoneyPileService} from 'services/moneyPile';
 import {PosService} from 'services/pos';
 import {AccountService} from 'services/account';
 import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
 
-import {Paginator} from 'components/utils/paginator/paginator';
 import {PosSelect} from 'components/pos/posSelect/posSelect';
-import {FastInput} from 'components/utils/fastInput'
+import {BalanceCountComponent} from 'components/cash/balance/countComponent';
 
 import {is as ImmutableIs, List, Map} from 'immutable';
 
 @Component({
-    selector: 'editCashView'
+    selector: 'countCashView'
 })
 @View({
     templateUrl: './routes/cash/count/countView.html',
     styleUrls: ['./routes/cash/count/countView.css'],
-    directives: [NgFor, NgIf, FastInput, PosSelect]
+    directives: [NgIf, NgFor, PosSelect, BalanceCountComponent]
 })
 
 export class CountCashView {
     balanceService:BalanceService;
-    moneyPileService:MoneyPileService;
     posService:PosService;
     accountService:AccountService;
     errorService:ErrorService;
     authService:AuthService;
 
     balance:LocalBalance;
-    editingTotal:boolean;
-    moneyPileList:List<LocalMoneyPile>;
-
     pos:Pos;
 
     accountSearchRequest:SearchRequest<LocalAccount>;
@@ -61,23 +54,22 @@ export class CountCashView {
     balanceSearchResult:SearchResult<LocalBalance>;
     lastBalance:LocalBalance;
 
-    locale:string;
+    appLanguage: Language;
 
-    constructor(errorService:ErrorService, balanceService:BalanceService, moneyPileservice:MoneyPileService,
+    constructor(errorService:ErrorService, balanceService:BalanceService,
                 posService:PosService, accountService:AccountService, authService:AuthService) {
         this.balanceService = balanceService;
-        this.moneyPileService = moneyPileservice;
         this.posService = posService;
         this.accountService = accountService;
         this.errorService = errorService;
         this.authService = authService;
 
-        this.reset();
-
         this.accountSearchRequest = new SearchRequest<LocalAccount>();
+        this.accountSearchResult = new SearchResult<LocalAccount>()
         this.balanceSearchRequest = new SearchRequest<LocalBalance>();
+        this.balanceSearchResult= new SearchResult<LocalBalance>();
 
-        this.locale = authService.getEmployeeLanguage().locale;
+        this.appLanguage = authService.getEmployeeLanguage();
         this.accountId = null;
         this.searchPaymentAccounts();
         this.searchLastBalance();
@@ -96,8 +88,8 @@ export class CountCashView {
         this.accountService.search(this.accountSearchRequest)
             .then((result:SearchResult<LocalAccount>)=> {
                 this.accountSearchResult = result;
-                if (this.account == null && result.count == 1) {
-                    this.setAccount(result.list[0]);
+                if (this.account == null && result.list.size == 1) {
+                    this.setAccount(result.list.get(0));
                 }
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
@@ -105,25 +97,19 @@ export class CountCashView {
     }
 
     onPosChanged(pos:Pos) {
-        if (this.pos == pos) {
-            return;
-        }
         this.pos = pos;
         this.searchPaymentAccounts();
-        this.searchLastBalance();
     }
 
 
     setAccount(account:LocalAccount) {
-        if (ImmutableIs(this.account, account)) {
-            return;
-        }
+        console.log("account set : ");
+        console.log(account);
         this.account = account;
         if (account === null) {
             return;
         }
         this.accountService.lastUsedBalanceAccount = account;
-        this.balance.account = account;
         if (account == null) {
             this.accountId = null;
             return;
@@ -134,15 +120,14 @@ export class CountCashView {
 
 
     onAccountChanged(event) {
-        var accountId = event.target.value;
+        var accountId = parseInt(event.target.value);
         if (this.accountSearchResult == null) {
             return;
         }
-        var account = this.accountSearchResult.list.valueSeq()
-            .filter((a)=> {
-                return a.id == accountId
-            })
-            .first();
+        var account = this.accountSearchResult.list
+            .find((account)=> {
+                return account.id === accountId
+            });
         this.setAccount(account);
     }
 
@@ -154,6 +139,7 @@ export class CountCashView {
         var balanceSearch = new BalanceSearch();
         balanceSearch.accountSearch = this.accountSearchRequest.search;
         balanceSearch.companyRef = this.authService.getEmployeeCompanyRef();
+        balanceSearch.closed = true;
         var pagination = PaginationFactory.Pagination({
             firstIndex: 0,
             pageSize: 1,
@@ -164,97 +150,17 @@ export class CountCashView {
         this.balanceService.search(this.balanceSearchRequest)
             .then((result:SearchResult<LocalBalance>)=> {
                 this.balanceSearchResult = result;
-                this.lastBalance = result.list[0];
+                this.lastBalance = result.list.first();
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }
 
-    onCashInputChanged(moneyPile:LocalMoneyPile, event) {
-        var amount = parseInt(event);
-        if (isNaN(amount)) {
-            amount = 0;
-        }
-        var moneyPileIndex = this.moneyPileList.indexOf(moneyPile);
-        moneyPile = <LocalMoneyPile>moneyPile
-            .set('unitCount', amount)
-            .set('account', this.account)
-            .set('balance', this.balance);
-
-        var balanceTask = Promise.resolve(this.balance);
-        if (this.balance.id == null) {
-            balanceTask = this.balanceService.save(this.balance);
-        }
-        balanceTask.then((balance)=> {
-            moneyPile.balance = balance;
-            return this.moneyPileService.save(moneyPile);
-        }).then((ref)=> {
-            return Promise.all(<Promise<any>[]>[
-                this.moneyPileService.get(ref.id),
-                this.balanceService.get(this.balance.id)
-            ]);
-        })
-            .then((result)=> {
-                moneyPile = result[0];
-                this.moneyPileList = this.moneyPileList.set(moneyPileIndex, moneyPile);
-                this.balance = result[1];
-            })
-            .catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
+    onBalanceValidated(balance) {
+        this.searchLastBalance();
     }
 
-    startEditTotal() {
-        this.editingTotal = true;
-    }
+    onBalanceCancelled() {
 
-
-    onTotalChanged(event) {
-        var total = parseFloat(event);
-        if (isNaN(total)) {
-            this.editingTotal = false;
-            return;
-        }
-        total = NumberUtils.toFixedDecimals(total, 2);
-        this.balance.balance = total;
-        this.balanceService.save(this.balance)
-            .catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
-        this.editingTotal = false;
-    }
-
-    closeBalance() {
-        this.balanceService.closeBalance(this.balance)
-            .then(()=> {
-                // Rest
-                this.reset();
-
-                this.account = this.accountService.lastUsedBalanceAccount;
-                this.balance.account = this.account;
-                if (this.account == null) {
-                    this.accountId = null;
-                    return;
-                }
-                this.accountId = this.account.id;
-                this.searchLastBalance();
-            })
-            .catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
-    }
-
-    reset() {
-        this.balance = <LocalBalance>Map({});
-        var moneyPileListArray = [];
-        for (var cashType of ALL_CASH_TYPES) {
-            var moneyPileDesc:any = {};
-            moneyPileDesc.unitAmount = LocalMoneyPileFactory.getCashTypeUnitValue(cashType);
-            moneyPileDesc.balance = this.balance;
-            moneyPileDesc.label = LocalMoneyPileFactory.getCashTypeLabel(cashType);
-            var moneyPile:LocalMoneyPile = <LocalMoneyPile>Map(moneyPileDesc);
-            moneyPileListArray.push(moneyPile);
-        }
-        this.moneyPileList = List(moneyPileListArray);
     }
 }

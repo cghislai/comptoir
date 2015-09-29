@@ -60,7 +60,6 @@ export class LocalEmployeeFactory {
     }
 
     static fromLocalEmployee(localEmployee:LocalEmployee):Employee {
-        localEmployee = localEmployee.toJS();
         var employee = new Employee();
         employee.active = localEmployee.active;
         employee.companyRef = new CompanyRef(localEmployee.company.id);

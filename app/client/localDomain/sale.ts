@@ -66,7 +66,6 @@ export class LocalSaleFactory {
     static invoiceClient = new InvoiceClient();
 
     static fromLocalSale(localSale:LocalSale):Sale {
-        localSale = localSale.toJS();
         var sale = new Sale();
         sale.id = localSale.id;
         sale.accountingTransactionRef = localSale.accountingTransactionRef;

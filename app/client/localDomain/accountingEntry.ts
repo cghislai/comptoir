@@ -113,7 +113,6 @@ export class LocalAccountingEntryFactory {
     }
 
     static fromLocalAccountingEntry(localAccountingEntry:LocalAccountingEntry) {
-        localAccountingEntry = localAccountingEntry.toJS();
         var accountingEntry = new AccountingEntry();
         accountingEntry.accountingTransactionRef = localAccountingEntry.accountingTransactionRef;
         accountingEntry.accountRef = new AccountRef(localAccountingEntry.account.id);

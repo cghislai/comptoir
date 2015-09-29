@@ -1,0 +1,29 @@
+@import "../../../styles/_constants";
+
+.moneyPileCount {
+  border-bottom: .1em solid lightgray;
+
+  > span {
+    display: inline-block;
+    padding: .2em .3em;
+    vertical-align: middle;
+  }
+
+  .name {
+    font-weight: bolder;
+    width: 5em;
+    text-align: right;
+  }
+
+  .amount {
+    input {
+      text-align: right;
+      width: 5em;
+      font-size: 1em;
+    }
+  }
+  .total {
+    min-width: 6.5em;
+    text-align: right;
+  }
+}

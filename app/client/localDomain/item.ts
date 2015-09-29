@@ -83,7 +83,6 @@ export class LocalItemFactory {
     }
 
     static fromLocalItem(localItem:LocalItem) {
-        localItem = localItem.toJS();
         var item = new Item();
         item.companyRef = new CompanyRef(localItem.company.id);
         item.description = localItem.description;

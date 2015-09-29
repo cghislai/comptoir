@@ -21,7 +21,6 @@ export interface LocalMoneyPile extends Map<string, any> {
     unitCount:number;
     total:number;
     balance:LocalBalance;
-
     //
     label: LocaleTexts;
 }
@@ -32,7 +31,8 @@ var MoneyPileRecord = Record({
     unitAmount: null,
     unitCount: null,
     total: null,
-    balance: null
+    balance: null,
+    label: null
 });
 export function NewMoneyPile(desc:any):LocalMoneyPile {
     return <any>MoneyPileRecord(desc);
@@ -77,7 +77,6 @@ export class LocalMoneyPileFactory {
     }
 
     static fromLocalMoneyPile(localMoneyPile:LocalMoneyPile):MoneyPile {
-        localMoneyPile = localMoneyPile.toJS()
         var moneyPile = new MoneyPile();
         moneyPile.accountRef = new AccountRef(localMoneyPile.account.id);
         moneyPile.balanceRef = new BalanceRef(localMoneyPile.balance.id);

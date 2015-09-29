@@ -117,7 +117,6 @@ export class LocalItemVariantFactory {
     }
 
     static fromLocalItemVariant(localVariant:LocalItemVariant) {
-        localVariant = localVariant.toJS();
         var itemVariant:ItemVariant = new ItemVariant();
         itemVariant.attributeValueRefs = [];
         for (var localAttribute of localVariant.attributeValues) {

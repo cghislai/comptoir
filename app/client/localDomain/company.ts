@@ -49,7 +49,6 @@ export class LocalCompanyFactory {
     }
 
     static fromLocalCompany(localCompany:LocalCompany):Company {
-        localCompany = localCompany.toJS();
         var company = new Company();
         company.id = localCompany.id;
         company.countryRef = new CountryRef(localCompany.country.code);

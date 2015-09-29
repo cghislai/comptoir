@@ -1,0 +1,33 @@
+<div class="balanceCount">
+    <div *ng-for="#moneyPile of moneyPiles">
+        <moneyPileCount [money-pile]="moneyPile"
+                        (changed)="onMoneyPileChanged($event)">
+        </moneyPileCount>
+    </div>
+    <div class="totalRow">
+            <span class="total" [hidden]="balance.balance == null || balance.balance <= 0">
+                Total:
+            </span>
+            <span class="total value">
+                <div class="value">
+                    <a (click)="startEditTotal()" [hidden]="editingTotal"
+                       class="actionLink">
+                        {{ balance.balance | currency:'EUR':true:'.2-2' }}
+                    </a>
+                </div>
+                <div class="editAmount">
+                    <input type="number" min="0.01" step="0.01"
+                           #totalInput *ng-if="editingTotal"
+                           [initial-value]="balance.balance"
+                           [validator]="validatePrice"
+                           (fast-change)="onTotalChanged($event)"
+                           (cancelled)="onTotalCancelled()"
+                           class="number"
+                           fast-input>
+                </div>
+            </span>
+    </div>
+    <div class="actions">
+        <button class="boxedLink" (click)="onValidateBalanceClicked()">Valider</button>
+    </div>
+</div>

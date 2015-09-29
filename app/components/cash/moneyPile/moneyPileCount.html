@@ -1,0 +1,16 @@
+<div class="moneyPileCount">
+    <span class="name">
+        {{ moneyPile.label[appLanguage.locale] }}
+    </span>
+    <span class="amount">
+        <input type="number" min="0" step="1"
+               [initial-value]="moneyPile.unitCount"
+               [validator]="validateAmount"
+               validate-on-blur="true"
+               (fast-change)="onMoneyPileChanged($event)"
+               size="5" fast-input>
+    </span>
+    <span class="total">
+        {{ moneyPile.total | currency:'EUR':true:'.2-2'}}
+    </span>
+</div>

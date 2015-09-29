@@ -1,0 +1,23 @@
+@import "../../../styles/_constants";
+@import "../../../styles/_boxedLink";
+
+.totalRow {
+  width: 100%;
+  font-weight: bold;
+  font-size: 1.1em;
+  text-align: right;
+
+  > span:not([hidden]) {
+    padding: .3em;
+    display: inline-block;
+    text-align: right;
+    vertical-align: middle;
+  }
+
+  input {
+    font-size: .9em;
+    margin: 0;
+    width: 4em;
+  }
+
+}

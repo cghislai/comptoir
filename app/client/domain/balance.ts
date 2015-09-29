@@ -54,6 +54,7 @@ export class BalanceSearch {
     accountSearch: AccountSearch;
     fromDateTime: Date;
     toDateTime : Date;
+    closed: boolean;
 }
 
 export class BalanceFactory {

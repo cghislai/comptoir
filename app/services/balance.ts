@@ -27,7 +27,7 @@ export class BalanceService extends BasicLocalService<Balance, LocalBalance> {
 
     }
 
-    closeBalance(localBalance:LocalBalance): Promise<any> {
+    closeBalance(localBalance:LocalBalance): Promise<BalanceRef> {
         var authToken = this.authService.authToken;
         return this.balanceClient.closeBalance(localBalance.id, authToken);
     }

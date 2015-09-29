@@ -8,25 +8,28 @@ import {Directive, ElementRef, EventEmitter,
 
 @Directive({
     selector: 'input[fast-input]',
-    properties: ['validator', 'initialValue'],
+    properties: ['validator', 'initialValue', 'validateOnBlur'],
     events: ['fastChange', 'cancelled'],
     host: {
         '(keyup)': 'onKeyUp($event)',
         '(input)': 'onInput($event)',
-        '(cancelled)': 'doCancel()',
-        '(validated)': 'doValidate()'
+        '(blur)': 'onBlur($event)',
+        '(cancel)': 'doCancel()',
+        '(validate)': 'doValidate()'
     }
 })
 export class FastInput implements OnInit {
-    static VALIDATE_EVENT = new Event('validated');
-    static CANCEL_EVENT = new Event('cancelled');
+    static VALIDATE_EVENT = new Event('validate');
+    static CANCEL_EVENT = new Event('cancel');
 
     validator:(any)=>boolean;
     fastChange:EventEmitter;
-    cancelled: EventEmitter;
+    cancelled:EventEmitter;
     initialValue:any;
     elementRef:ElementRef;
-    validateOnBlur: boolean = false;
+    validateOnBlur:boolean = false;
+
+    validateRequired:boolean = false;
 
     constructor(elementRef:ElementRef) {
         this.elementRef = elementRef;
@@ -35,10 +38,10 @@ export class FastInput implements OnInit {
         this.cancelled = new EventEmitter();
 
         var nativeElement = this.elementRef.nativeElement;
-        nativeElement.doValidate = ()=>{
+        nativeElement.doValidate = ()=> {
             nativeElement.dispatchEvent(FastInput.VALIDATE_EVENT);
         };
-        nativeElement.doCancel = ()=>{
+        nativeElement.doCancel = ()=> {
             nativeElement.dispatchEvent(FastInput.CANCEL_EVENT);
         };
     }
@@ -52,13 +55,15 @@ export class FastInput implements OnInit {
 
     doFocus() {
         var element = this.elementRef.nativeElement;
-        element.focus();
-        setTimeout(function () {
-            element.select();
-            if (element.type == 'text') {
-                element.setSelectionRange(0, element.value.length);
-            }
-        }, 0);
+        if (!this.validateOnBlur) {
+            element.focus();
+            setTimeout(function () {
+                element.select();
+                if (element.type == 'text') {
+                    element.setSelectionRange(0, element.value.length);
+                }
+            }, 0);
+        }
     }
 
     onKeyUp(event) {
@@ -70,30 +75,56 @@ export class FastInput implements OnInit {
             this.doCancel();
             return false;
         }
+        this.validateRequired = true;
         return false;
     }
 
     onInput(event) {
         var value = event.target.value;
-        if (this.validator != null) {
-            var valid = this.validator(value);
-            if (!valid) {
-                return false;
-            }
+        var valid = this.validate(value);
+        return valid;
+    }
+
+    onBlur(event) {
+        if (!this.validateOnBlur) {
+            return true;
         }
-        return true;
+        var value = event.target.value;
+        var valid = this.validate(value);
+        if (valid) {
+            this.triggerChange(value);
+        }
+        return valid;
+    }
+
+    validate(value):boolean {
+        if (!this.validateRequired) {
+            return true;
+        }
+        this.validateRequired = false;
+        if (value == this.elementRef.nativeElement.value) {
+            return true;
+        }
+        if (this.validator == null) {
+            return true;
+        }
+        var valid = this.validator(value);
+        if (!valid) {
+            this.elementRef.nativeElement.select();
+        }
+        return valid;
+    }
+
+    triggerChange(value) {
+        this.fastChange.next(value);
     }
 
     doValidate() {
         var value = this.elementRef.nativeElement.value;
-        if (this.validator != null) {
-            var valid = this.validator(value);
-            if (!valid) {
-                this.elementRef.nativeElement.select();
-                return;
-            }
+        var valid = this.validate(value);
+        if (valid) {
+            this.triggerChange(value);
         }
-        this.fastChange.next(value);
     }
 
     doCancel() {
