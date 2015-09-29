@@ -146,10 +146,7 @@ export class ComptoirRequest {
             }
 
             if (this.objectToSend != null) {
-                console.log("sending...");
-                console.log(this.objectToSend);
                 var stringifiedJSON = JSON.stringify(this.objectToSend, JSONFactory.toJSONReplacer);
-                console.log(stringifiedJSON);
                 this.request.send(stringifiedJSON);
             } else {
                 this.request.send();

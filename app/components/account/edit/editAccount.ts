@@ -59,7 +59,6 @@ export class AccountsEditComponent implements OnInit {
     }
 
     onInit() {
-        console.log(this.account);
         this.accountModel = this.account.toJS();
     }
 

@@ -68,12 +68,10 @@ export class BalanceCountComponent {
                 });
             })
             .toList();
-        console.log(this.account);
         this.balance = NewBalance({
             account: this.account,
             company: this.authService.getEmployeeCompany()
         });
-        console.log(this.balance.account.id);
     }
 
     onMoneyPileChanged(moneyPile) {
@@ -101,7 +99,6 @@ export class BalanceCountComponent {
                 var newBalance = results[1];
                 this.balance = newBalance;
                 this.moneyPiles = this.moneyPiles.set(listIndex, newMoneyPile);
-                console.log(this.moneyPiles);
             })
             .catch((error)=> {
                 this.errorService.handleRequestError(error);

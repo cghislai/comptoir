@@ -103,8 +103,6 @@ export class CountCashView {
 
 
     setAccount(account:LocalAccount) {
-        console.log("account set : ");
-        console.log(account);
         this.account = account;
         if (account === null) {
             return;
