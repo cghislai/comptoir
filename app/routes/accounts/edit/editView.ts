@@ -1,46 +1,34 @@
 /**
  * Created by cghislai on 05/08/15.
  */
-import {Component, View, NgFor, NgIf, FORM_DIRECTIVES, ChangeDetectionStrategy} from 'angular2/angular2';
-import {RouteParams, Router, RouterLink} from 'angular2/router';
+import {Component, View, NgIf, ChangeDetectionStrategy} from 'angular2/angular2';
+import {RouteParams, Router, RouterLink, OnActivate} from 'angular2/router';
 
-import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
-
-import {Account, AccountType, ALL_ACCOUNT_TYPES} from 'client/domain/account';
-import {CompanyRef} from 'client/domain/company';
-
-import {Language, LocaleTexts, LanguageFactory, LocaleTextsFactory} from 'client/utils/lang';
+import {LocalAccount, LocalAccountFactory, NewAccount} from 'client/localDomain/account';
+import {LocaleTexts} from 'client/utils/lang';
 
 import {AuthService} from 'services/auth';
 import {AccountService} from 'services/account';
 import {ErrorService} from 'services/error';
 
-import {LangSelect} from 'components/lang/langSelect/langSelect';
-import {LocalizedDirective} from 'components/utils/localizedInput';
-import {RequiredValidator} from 'components/utils/validators';
-import {FormMessage} from 'components/utils/formMessage/formMessage';
+import {AccountsEditComponent} from 'components/account/edit/editAccount';
 
 @Component({
-    selector: 'editAccount'
+    selector: 'editAccount',
+    changeDetection: ChangeDetectionStrategy.Default
 })
 @View({
     templateUrl: './routes/accounts/edit/editView.html',
     styleUrls: ['./routes/accounts/edit/editView.css'],
-    directives: [NgFor, NgIf, FORM_DIRECTIVES, RouterLink, LangSelect, LocalizedDirective,
-        RequiredValidator, FormMessage]
+    directives: [NgIf, RouterLink, AccountsEditComponent]
 })
-export class AccountsEditView {
+export class AccountsEditView implements OnActivate {
     accountId:number;
+    account:LocalAccount;
     accountService:AccountService;
     errorService:ErrorService;
     authService:AuthService;
     router:Router;
-
-    editingAccount:LocalAccount;
-    editingLanguage:Language;
-    appLanguage: Language;
-
-    allAccountTypes = ALL_ACCOUNT_TYPES;
 
     constructor(accountService:AccountService, authService:AuthService, errorService:ErrorService,
                 routeParams:RouteParams, router:Router) {
@@ -53,38 +41,35 @@ export class AccountsEditView {
         this.accountService = accountService;
         this.authService = authService;
         this.errorService = errorService;
-        var language = authService.getEmployeeLanguage();
-        this.editingLanguage = language;
-        this.appLanguage = language;
-
         this.findAccount();
     }
 
-    findAccount() {
-        if (this.accountId == null) {
-            this.editingAccount = LocalAccountFactory.newLocalAccount();
-            return;
-        }
-        this.accountService.get(this.accountId)
+    onActivate() {
+        return this.findAccount()
             .then((account:LocalAccount)=> {
-                this.editingAccount = account;
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
+                this.account = account;
             });
     }
 
-    getAccountTypeLabel(accountType:AccountType) {
-        return LocalAccountFactory.getAccountTypeLabel(accountType).get(this.appLanguage.locale);
+    findAccount():Promise<LocalAccount> {
+        if (this.accountId == null) {
+            var accountDef = {
+                company: this.authService.getEmployeeCompany(),
+                description: new LocaleTexts()
+            };
+            var account = NewAccount(accountDef);
+            return Promise.resolve(account);
+        }
+        return this.accountService.get(this.accountId);
     }
 
-    doSaveEdit() {
-        this.accountService.save(this.editingAccount)
-            .then(()=> {
-                this.router.navigate('/accounts/list');
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
-
+    onAccountSaved(account) {
+        var instruction = this.router.generate(['../List']);
+        this.router.navigateInstruction(instruction);
     }
 
+    onCancelled() {
+        var instruction = this.router.generate(['../List']);
+        this.router.navigateInstruction(instruction);
+    }
 }

@@ -97,7 +97,7 @@ export class LocalizedDirective {
 
     onInput(event) {
         var value = event.target.value;
-        this.localeTexts = <LocaleTexts>this.localeTexts.set(this.language.locale, value);
+        this.localeTexts[this.language.locale] =  value;
         this.updateRequired();
     }
 

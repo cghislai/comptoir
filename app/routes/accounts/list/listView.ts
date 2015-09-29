@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 06/08/15.
  */
-import {Component, View, NgFor, NgIf, FORM_DIRECTIVES, ChangeDetectionStrategy} from 'angular2/angular2';
+import {Component, View} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
 import {CompanyRef} from 'client/domain/company';
@@ -17,16 +17,18 @@ import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
 
 import {Paginator} from 'components/utils/paginator/paginator';
+import {AccountList, AccountColumn} from 'components/account/list/accountList';
+
+import {List} from 'immutable';
 
 @Component({
-    selector: "accountsList"
+    selector: "accountListView"
 })
 
 @View({
     templateUrl: './routes/accounts/list/listView.html',
     styleUrls: ['./routes/accounts/list/listView.css'],
-    directives: [NgFor, NgIf, Paginator, FORM_DIRECTIVES],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    directives: [AccountList, Paginator]
 })
 
 export class AccountsListView {
@@ -36,6 +38,7 @@ export class AccountsListView {
 
     searchRequest:SearchRequest<LocalAccount>;
     searchResult:SearchResult<LocalAccount>;
+    columns:List<AccountColumn>;
     accountsPerPage:number = 25;
 
     language:Language;
@@ -50,11 +53,21 @@ export class AccountsListView {
         var accountSearch = new AccountSearch();
         accountSearch.companyRef = new CompanyRef(authService.auth.employee.company.id);
 
-        var pagination =PaginationFactory.Pagination({firstIndex: 0, pageSize: this.accountsPerPage});
+        var pagination = PaginationFactory.Pagination({firstIndex: 0, pageSize: this.accountsPerPage});
         this.searchRequest.search = accountSearch;
         this.searchRequest.pagination = pagination;
+        this.searchResult = new SearchResult<LocalAccount>();
 
         this.language = authService.getEmployeeLanguage();
+        this.columns = List.of(
+            AccountColumn.NAME,
+            AccountColumn.DESCRIPTION,
+            AccountColumn.TYPE,
+            AccountColumn.ACCOUNTING_NUMBER,
+            AccountColumn.IBAN,
+            AccountColumn.BIC,
+            AccountColumn.ACTION_REMOVE
+        );
         this.searchAccounts();
     }
 
@@ -68,22 +81,19 @@ export class AccountsListView {
             });
     }
 
-    getAccountTypeLabel(accountType:AccountType):any {
-        if (accountType == null) {
-            return null;
-        }
-        var label = LocalAccountFactory.getAccountTypeLabel(accountType);
-        if (label == null) {
-            return null;
-        }
-        return label.get(this.language.locale);
-    }
-
     onPageChanged(pagination:Pagination) {
         this.searchRequest.pagination
-        = <Pagination>this.searchRequest.pagination.set('firstIndex', pagination.firstIndex)
+            = <Pagination>this.searchRequest.pagination.set('firstIndex', pagination.firstIndex)
             .set('pageSize', pagination.pageSize);
         this.searchAccounts();
+    }
+
+    onColumnAction(event) {
+        var account:LocalAccount = event.account;
+        var column:AccountColumn = event.column;
+        if (column == AccountColumn.ACTION_REMOVE) {
+            this.doRemoveAccount(account);
+        }
     }
 
     doEditAccount(account:LocalAccount) {

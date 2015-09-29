@@ -1,0 +1,61 @@
+<div class="editAccout">
+
+    <form #account-form="form" (ng-submit)="onFormSubmit()">
+        <div class="table">
+            <div>
+                <label>Langue</label>
+                <langSelect [display-language]="appLanguage"
+                            [selected-language]="editLanguage"
+                            (language-changed)="editLanguage = $event"></langSelect>
+            </div>
+            <div>
+                <label for="type">Type</label>
+                <span>
+                    <select id="type" validate-required autofocus
+                            ng-control="accountType"
+                            [(ng-model)]="accountModel.accountType">
+                        <option *ng-for="#accountType of allAccountTypes"
+                                [value]="accountType">
+                            {{ getAccountTypeLabel(accountType) }}
+                        </option>
+                    </select>
+                    <formMessage for="accountType" check-errors="['required']"></formMessage>
+                </span>
+            </div>
+            <div>
+                <label for="name">Nom</label>
+                <span>
+                    <input id="name" type="text" validate-required
+                           [(ng-model)]="accountModel.name"
+                           ng-control="name">
+                    <formMessage for="name" check-errors="['required']"></formMessage>
+                </span>
+            </div>
+            <div>
+                <label for="description">Description</label>
+             <textarea type="text" id="description" rows="3"
+                       localized [language]="editLanguage"
+                       [locale-texts]="accountModel.description"></textarea>
+            </div>
+            <div>
+                <label for="number">Numéro de comptabilité</label>
+                <input type="text" id="number"
+                       [(ng-model)]="accountModel.accountingNumber">
+            </div>
+            <div>
+                <label for="iban">IBAN</label>
+                <input type="text" id="iban"
+                       [(ng-model)]="accountModel.iban">
+            </div>
+            <div>
+                <label for="bic">BIC</label>
+                <input type="text" id="bic"
+                       [(ng-model)]="accountModel.bic">
+            </div>
+
+        </div>
+        <div class="actions">
+            <button type="submit" [disabled]="!accountForm.form.valid">Enregistrer</button>
+        </div>
+    </form>
+</div>

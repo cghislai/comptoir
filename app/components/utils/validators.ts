@@ -17,9 +17,12 @@ function requiredValidator(c: Control) {
 }
 @Directive({
     selector: '[validate-required]',
-    //bindings: [new Binding(NgValidator, {
-      //  toAlias: forwardRef(()=>RequiredValidator)
-    //})]
+    bindings: [new Binding(NgValidator, {
+        toAlias: forwardRef(()=>RequiredValidator)
+    })],
+    host: {
+        '[class.required]': 'true'
+    }
 })
 export class RequiredValidator {
     get validator() {

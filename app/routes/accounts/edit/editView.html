@@ -1,62 +1,8 @@
 <div class="pageContent">
     <h1 class="pageTitle">Édition du compte</h1>
 
-    <form #f="form" (ng-submit)="doSaveEdit()">
-        <div class="table">
-            <div>
-                <label>Langue</label>
-                <langSelect [display-language]="appLanguage"
-                            [selected-language]="editingLanguage"
-                            (language-changed)="editingLanguage = $event"></langSelect>
-            </div>
-            <div>
-                <label for="type">Type</label>
-                <span>
-                    <select id="type" validate-required
-                            ng-control="accountType"
-                            [(ng-model)]="editingAccount.accountType">
-                        <option *ng-for="#accountType of allAccountTypes"
-                                [value]="accountType">
-                            {{ getAccountTypeLabel(accountType) }}
-                        </option>
-                    </select>
-                    <formMessage for="accountType" check-errors="['required']"></formMessage>
-                </span>
-            </div>
-            <div>
-                <label for="name">Nom</label>
-                <span>
-                    <input id="name" type="text" validate-required
-                           [(ng-model)]="editingAccount.name"
-                           ng-control="name">
-                    <formMessage for="name" check-errors="['required']"></formMessage>
-                </span>
-            </div>
-            <div>
-                <label for="description">Description</label>
-             <textarea type="text" id="description" rows="3"
-                       localized [language]="editingLanguage"
-                       [locale-texts]="editingAccount.description"></textarea>
-            </div>
-            <div>
-                <label for="number">Numéro de comptabilité</label>
-                <input type="text" id="number"
-                       [(ng-model)]="editingAccount.accountingNumber">
-            </div>
-            <div>
-                <label for="iban">IBAN</label>
-                <input type="text" id="iban"
-                       [(ng-model)]="editingAccount.iban">
-            </div>
-            <div>
-                <label for="bic">BIC</label>
-                <input type="text" id="bic"
-                       [(ng-model)]="editingAccount.bic">
-            </div>
-
-        </div>
-        <div class="actions">
-            <button type="submit" [disabled]="!f.form.valid">Enregistrer</button>
-        </div>
-    </form>
+    <accountEditComponent *ng-if="account != null"
+                          [account]="account"
+                          (saved)="onAccountSaved($event)"
+                          (cancelled)="onCancelled()"></accountEditComponent>
 </div>

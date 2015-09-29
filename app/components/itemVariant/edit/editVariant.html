@@ -117,13 +117,13 @@
                             (language-changed)="editLanguage = $event"></langSelect>
             </div>
             <div class="attribute">
-                <input class="definition" required
+                <input class="definition"  validate-required
                        ng-control="definition"
                        placeholder="Clef"
                        localized [language]="editLanguage"
                        [locale-texts]="newAttributeValue.attributeDefinition.name"
                        #definition="form">
-                <input class="value" required
+                <input class="value"  validate-required
                        ng-control="value"
                        placeholder="Valeur"
                        localized [language]="editLanguage"

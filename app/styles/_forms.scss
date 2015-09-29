@@ -7,6 +7,10 @@ form {
   input, button, textarea, select {
     font-size: 1em;
     padding: .1em;
+
+    &.ng-invalid {
+      outline: .08em solid red;
+    }
   }
   textarea {
     font-size: .9em;
@@ -35,16 +39,15 @@ form {
       text-align: left;
       padding: .3em;
 
-      >input, >textarea, >select {
-          margin: .3em;
+      > input, > textarea, > select {
+        margin: .3em;
       }
-      >:not(input):not(textarea):not(select) {
-          padding: .3em;
+      > :not(input):not(textarea):not(select) {
+        padding: .3em;
       }
       > *:not([hidden]) {
         display: table-cell;
         vertical-align: middle;
-
 
         &:first-child {
           text-align: right;
@@ -58,7 +61,7 @@ form {
 
     }
   }
-  >div:not(.table) {
+  > div:not(.table) {
     margin: .5em;
   }
   div.actions {

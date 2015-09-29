@@ -3,37 +3,21 @@
 
     <img class="busy"
          src="../../../res/img/spinner-2-black.gif"
-         [hidden]="searchRequest.request == null">
+         [hidden]="!searchRequest.busy">
 
     <div class="topActions">
     </div>
 
-    <paginator *ng-if="searchResult != null"
-               [total-count]="searchResult.count"
+    <paginator [total-count]="searchResult.count"
                [page-size]="accountsPerPage"
                show-prev-next="true" show-first-last="true"
                (page-change)="onPageChanged($event)"></paginator>
 
-    <table class="dataTable" *ng-if="searchResult != null">
-        <thead>
-        <tr>
-            <th>Type</th>
-            <th>Nom</th>
-            <th>Description</th>
-            <th class="actions"></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ng-for="#account of searchResult.list" class="account selectable">
-            <td class="type" (click)="doEditAccount(account)">{{ getAccountTypeLabel(account.accountType) }}</td>
-            <td class="name" (click)="doEditAccount(account)">{{ account.name }}</td>
-            <td class="desc" (click)="doEditAccount(account)">{{ account.description[locale] }}</td>
-            <td class="actions">
-                <a class="remove actionIcon" (click)="doRemoveAccount(account)">
-                    <i class="fi-minus red"></i>
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <accountList [accounts]="searchResult.list"
+                 [columns]="columns"
+                 [row-selectable]="true"
+                 [headers-visible]="true"
+                 (columns-action)="onColumnAction($event)"
+                 (row-clicked)="doEditAccount($event)"></accountList>
+
 </div>

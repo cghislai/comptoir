@@ -1,0 +1,46 @@
+<div [ng-switch]="column.name">
+    <template [ng-switch-when]=" 'id'">
+        <span class="id">
+            {{ account.id }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'accountingNumber'">
+        <span class="accountingNumber">
+            {{ account.accountingNumber }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'iban'">
+        <span class="iban">
+            {{ account.iban }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'bic'">
+        <span class="bic">
+            {{ account.bic }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'name'">
+        <span class="name">
+           {{ account.name }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'description'">
+        <span class="description">
+           {{ account.description[lang.locale] }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'type'">
+        <span class="type">
+            {{ account.accountTypeLabel[lang.locale] }}
+        </span>
+    </template>
+     <template [ng-switch-when]=" 'action_remove'">
+        <span class="action remove">
+            <a class="actionIcon"
+               (click)="onColumnAction(item, column, $event)">
+                <i class="fi-minus red"></i>
+            </a>
+        </span>
+    </template>
+</div>
+
