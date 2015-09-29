@@ -6,21 +6,27 @@ import {LocaleText, LocaleTextFactory} from 'client/domain/lang';
 
 import {Map, List,Record} from 'immutable';
 
-export interface LocaleTexts extends Map<string, any> {
-    // field used in the client/utils/factory JSONreplacer
-    _isLocalTexts: boolean;
+export class LocaleTexts  {
+    get(key:string): string {
+        if (this.hasOwnProperty(key)) {
+            return this[key];
+        }
+        return null;
+    }
+    set(key: string, value:string) {
+        this[key] = value;
+        return this;
+    }
 }
 
 export class LocaleTextsFactory {
     static fromLocaleTextArrayReviver = (jsonArray)=> {
-        var localeTextsDesc:any = {};
+        var localeTexts:LocaleTexts = new LocaleTexts();
         for (var localeText of jsonArray) {
             var lang = localeText.locale;
             var text = localeText.text;
-            localeTextsDesc[lang] = text;
+            localeTexts[lang] = text;
         }
-        var localeTexts:LocaleTexts;
-        localeTexts = LocaleTextsFactory.toLocaleTexts(localeTextsDesc);
         return localeTexts;
     };
 
@@ -43,8 +49,11 @@ export class LocaleTextsFactory {
     };
 
     static toLocaleTexts(text:any):LocaleTexts {
-        text._isLocalTexts = true;
-        return <LocaleTexts>Map(text);
+        var localeTexts: LocaleTexts = new LocaleTexts();
+        for (var key in text) {
+            localeTexts[key] = text[key];
+        }
+        return localeTexts;
     }
 }
 

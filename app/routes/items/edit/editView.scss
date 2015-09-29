@@ -3,6 +3,8 @@
 div.pageContent {
   .itemPicturePreview {
     display: block;
+    max-width: 10em;
+    max-height: 10em;
   }
 
   >.column {

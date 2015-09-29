@@ -4,7 +4,7 @@
 import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
-import {LocalPicture, LocalPictureFactory} from 'client/localDomain/picture';
+import {LocalPicture, LocalPictureFactory, NewPicture} from 'client/localDomain/picture';
 import {LocalItem, NewItem} from 'client/localDomain/item';
 import {LocalItemVariant} from 'client/localDomain/itemVariant';
 
@@ -112,6 +112,7 @@ export class ItemEditView {
         var itemDesc:any = {};
         itemDesc.description = LocaleTextsFactory.toLocaleTexts({});
         itemDesc.name = LocaleTextsFactory.toLocaleTexts({});
+        itemDesc.company = this.authService.getEmployeeCompany();
         this.item = NewItem(itemDesc);
         this.itemJS = this.item.toJS();
 
@@ -167,7 +168,7 @@ export class ItemEditView {
 
     private saveItem():Promise<LocalItem> {
         if (this.itemPictureTouched) {
-            var picture = this.item.mainPicture;
+            var picture = NewPicture(this.itemJS.mainPicture);
             return this.pictureService.save(picture)
                 .then((localPic:LocalPicture)=> {
                     this.itemJS.mainPicture = localPic;
@@ -208,13 +209,14 @@ export class ItemEditView {
             };
             reader.readAsDataURL(file);
         }).then((data:string)=> {
-                var mainPicture: LocalPicture = <LocalPicture>Map({
-                    dataURI: data
+                var mainPicture: LocalPicture = NewPicture({
+                    dataURI: data,
+                    company: this.authService.getEmployeeCompany()
                 });
                 if (thisView.item.mainPicture !== null) {
                     mainPicture = <LocalPicture>thisView.item.mainPicture.merge(mainPicture);
                 }
-                thisView.item = <LocalItem>thisView.item.set('mainPicture', mainPicture);
+                thisView.itemJS.mainPicture = mainPicture.toJS();
                 thisView.itemPictureTouched = true;
             });
     }

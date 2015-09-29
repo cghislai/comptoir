@@ -4,7 +4,8 @@
 @import './_constants';
 
 img.busy {
-  float: right;
+  position: absolute;
+  right: 1em;
 }
 table.dataTable {
   width: 100%;

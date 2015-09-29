@@ -6,7 +6,7 @@ import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
 
 export class JSONFactory {
     static toJSONReplacer(key:string, value:any):any {
-        if (value !== undefined && value != null && value._isLocalTexts) {
+        if (value !== undefined && value != null && value instanceof LocaleTexts) {
             var localeTextArray = LocaleTextsFactory.toJSONArrayLocaleTextsTransformer(value);
             return localeTextArray;
         }

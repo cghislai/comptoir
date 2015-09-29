@@ -54,7 +54,6 @@ export class LocalPictureFactory {
     }
 
     static fromLocalPicture(localPicture:LocalPicture):Picture {
-        localPicture = localPicture.toJS();
         var picture = new Picture();
         picture.id = localPicture.id;
         picture.companyRef = new CompanyRef(localPicture.company.id);
