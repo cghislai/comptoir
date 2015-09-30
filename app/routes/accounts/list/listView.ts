@@ -10,7 +10,7 @@ import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
 import {Account, AccountType, AccountSearch} from 'client/domain/account';
 import {SearchResult, SearchRequest} from 'client/utils/search';
 import {LocaleTexts, Language} from 'client/utils/lang';
-import {Pagination, PaginationFactory} from 'client/utils/pagination';
+import {Pagination, PaginationFactory, ApplyPageChangeEvent, PageChangeEvent} from 'client/utils/pagination';
 
 import {AccountService} from 'services/account';
 import {ErrorService} from 'services/error';
@@ -81,10 +81,8 @@ export class AccountsListView {
             });
     }
 
-    onPageChanged(pagination:Pagination) {
-        this.searchRequest.pagination
-            = <Pagination>this.searchRequest.pagination.set('firstIndex', pagination.firstIndex)
-            .set('pageSize', pagination.pageSize);
+    onPageChanged(pageChange:PageChangeEvent) {
+        this.searchRequest.pagination = ApplyPageChangeEvent(this.searchRequest.pagination, pageChange);
         this.searchAccounts();
     }
 

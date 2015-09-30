@@ -3,7 +3,7 @@
  */
 
 import {Component, View, EventEmitter, NgFor, OnInit, OnChanges, ChangeDetectionStrategy} from 'angular2/angular2';
-import {Pagination, PaginationFactory} from 'client/utils/pagination';
+import {Pagination, PageChangeEvent, PaginationFactory} from 'client/utils/pagination';
 import {SearchResult} from 'client/utils/search';
 
 @Component({
@@ -111,13 +111,12 @@ export class Paginator implements OnInit, OnChanges {
         var pageSize = Math.min(this.pageSize, this.totalCount- firstIndex);
         this.buildPagesLinksArray();
 
-        var paginationDesc:any = {};
-        paginationDesc.pageIndex = pageIndex;
-        paginationDesc.firstIndex = firstIndex;
-        paginationDesc.pageSize = pageSize;
-        var pagination = PaginationFactory.Pagination(paginationDesc);
+        var pageChange: PageChangeEvent = new PageChangeEvent();
+        pageChange.firstIndex = firstIndex;
+        pageChange.pageIndex = pageIndex;
+        pageChange.pageSize = pageSize;
 
-        this.pageChange.next(pagination);
+        this.pageChange.next(pageChange);
     }
 
 }
