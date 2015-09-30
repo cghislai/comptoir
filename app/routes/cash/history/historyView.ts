@@ -2,7 +2,7 @@
  * Created by cghislai on 02/08/15.
  */
 
-import {Component, View, NgFor, NgIf} from 'angular2/angular2';
+import {Component, View, NgIf} from 'angular2/angular2';
 
 import {CompanyRef} from 'client/domain/company';
 import {LocalBalance} from 'client/localDomain/balance';
@@ -15,6 +15,9 @@ import {ErrorService} from 'services/error';
 import {BalanceService} from 'services/balance';
 
 import {Paginator} from 'components/utils/paginator/paginator';
+import {BalanceList, BalanceColumn} from 'components/cash/list/balanceList';
+
+import {List} from 'immutable';
 
 @Component({
     selector: 'historyCashView'
@@ -22,7 +25,7 @@ import {Paginator} from 'components/utils/paginator/paginator';
 @View({
     templateUrl: './routes/cash/history/historyView.html',
     styleUrls: ['./routes/cash/history/historyView.css'],
-    directives: [Paginator, NgFor, NgIf]
+    directives: [Paginator, NgIf, BalanceList]
 })
 export class CashHistoryView {
     balanceService:BalanceService;
@@ -31,6 +34,8 @@ export class CashHistoryView {
     searchRequest:SearchRequest<LocalBalance>;
     searchResult:SearchResult<LocalBalance>;
     itemsPerPage:number = 25;
+
+    columns: List<BalanceColumn>;
 
     constructor(balanceService:BalanceService, errorService:ErrorService, authService:AuthService) {
         this.errorService = errorService;
@@ -50,6 +55,12 @@ export class CashHistoryView {
         this.searchRequest.search = balanceSearch;
         this.searchResult = new SearchResult<LocalBalance>();
 
+        this.columns = List.of(
+            BalanceColumn.DATETIME,
+            BalanceColumn.COMMENT,
+            BalanceColumn.CLOSED,
+            BalanceColumn.BALANCE
+        );
         this.searchBalances();
     }
 
@@ -67,4 +78,6 @@ export class CashHistoryView {
         this.searchRequest.pagination = ApplyPageChangeEvent(this.searchRequest.pagination, pageChange);
         this.searchBalances();
     }
+
+
 }

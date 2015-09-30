@@ -1,0 +1,43 @@
+<div [ng-switch]="column.name">
+    <template [ng-switch-when]=" 'id'">
+        <span class="id">
+            {{ balance.id }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'account'">
+        <span class="account">
+            {{ balance.account.name }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'dateTime'">
+        <span class="dateTime">
+            {{ balance.dateTime | date:'ddMMyyyy HHmm' }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'balance'">
+        <span class="balance">
+            {{ balance.balance | currency:'EUR':true:'.2-2' }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'comment'">
+        <span class="comment">
+           {{ balance.comment }}
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'closed'">
+        <span class="closed">
+           <i class="fi-check" [hidden]="!balance.closed"></i>
+            <i class="fi-x" [hidden]="balance.closed"></i>
+        </span>
+    </template>
+    <template [ng-switch-when]=" 'type'">
+     <template [ng-switch-when]=" 'action_remove'">
+        <span class="action remove">
+            <a class="actionIcon"
+               (click)="onColumnAction(balance, column, $event)">
+                <i class="fi-minus red"></i>
+            </a>
+        </span>
+    </template>
+</div>
+
