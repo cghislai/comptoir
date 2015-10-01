@@ -12,7 +12,7 @@ import {LocaleTexts, Language} from 'client/utils/lang';
 import {PosService} from 'services/pos';
 import {ErrorService} from 'services/error';
 import {AuthService} from 'services/auth';
-import {Pagination, PaginationFactory} from 'client/utils/pagination';
+import {Pagination, PaginationFactory, PageChangeEvent, ApplyPageChangeEvent} from 'client/utils/pagination';
 import {SearchResult, SearchRequest} from 'client/utils/search';
 
 import {Paginator} from 'components/utils/paginator/paginator';
@@ -80,9 +80,8 @@ export class PosListView {
     }
 
 
-    onPageChanged(pagination:Pagination) {
-        this.searchRequest.pagination = <Pagination>
-            this.searchRequest.pagination.merge(pagination);
+    onPageChanged(pageChange:PageChangeEvent) {
+        this.searchRequest.pagination = ApplyPageChangeEvent(this.searchRequest.pagination, pageChange);
         this.searchPosList();
     }
 

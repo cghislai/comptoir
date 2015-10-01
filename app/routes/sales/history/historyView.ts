@@ -8,7 +8,7 @@ import {LocalSale} from 'client/localDomain/sale';
 import {SaleSearch} from 'client/domain/sale';
 import {CompanyRef} from 'client/domain/company';
 
-import {Pagination, PaginationFactory} from 'client/utils/pagination';
+import {Pagination, PaginationFactory, PageChangeEvent, ApplyPageChangeEvent} from 'client/utils/pagination';
 import {SearchRequest, SearchResult} from 'client/utils/search';
 
 import {ErrorService} from 'services/error';
@@ -87,9 +87,8 @@ export class SaleHistoryView {
             });
     }
 
-    onPageChanged(pagination:Pagination) {
-        this.searchRequest.pagination = <Pagination>
-            this.searchRequest.pagination.merge(pagination);
+    onPageChanged(pageChange:PageChangeEvent) {
+        this.searchRequest.pagination = ApplyPageChangeEvent(this.searchRequest.pagination, pageChange);
         this.searchSales();
     }
 
