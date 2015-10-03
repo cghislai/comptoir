@@ -97,13 +97,36 @@ table {
           &.unneeded {
             display: none;
           }
-        }
-        .comment {
-          a {
-            color: gray !important;
+
+          .comment {
+            a {
+              color: gray !important;
+            }
+            font-size: .8em;
+            font-weight: normal;
           }
+        }
+
+        .attributeValue {
           font-size: .8em;
-          font-weight: normal;
+          color: #555555;
+
+          &:not(:last-child) {
+            &::after {
+              content: ' | ';
+              font-size: 1em;
+            }
+          }
+          .def {
+            padding: 0;
+            font-weight: bold;
+            &::after {
+              content: ':';
+            }
+          }
+          .value {
+            font-weight: lighter;;
+          }
         }
       }
       &.quantity {

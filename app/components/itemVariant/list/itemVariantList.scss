@@ -1,71 +1,70 @@
 @import '../../../styles/_dataTable';
 
-.itemList {
+.itemVariantList {
   position: relative;
-}
 
-.name {
-  font-size: 1em;
-  font-weight: bold;
-}
-
-.model {
-  font-size: .8em;
-  font-weight: lighter;
-
-}
-
-.price {
-  text-align: right;
-  font-size: 1.1em;
-}
-
-.ref {
-  font-size: .8em;
-  font-family: monospace;
-  text-align: left;
-  max-width: 10%;
-}
-
-.description {
-  font-size: .8em;
-  max-width: 20%;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-.picture {
-
-  img {
-    max-height: 3em;
-    display: inline-block;
-    vertical-align: middle;
-  }
-  .imagePlaceover {
-    font-size: 3em;
-  }
-}
-
-.attributeValue {
-  font-size: .8em;
-  color: #555555;
-
-  &:not(:last-child) {
-    &::after {
-      content: ' | ';
-      font-size: 1em;
-    }
-  }
-  .def {
-    padding: 0;
+  .name {
+    font-size: 1em;
     font-weight: bold;
-    &::after {
-      content: ':';
+  }
+
+  .model {
+    font-size: .8em;
+    font-weight: lighter;
+
+  }
+
+  .price {
+    text-align: right;
+    font-size: 1.1em;
+  }
+
+  .ref {
+    font-size: .8em;
+    font-family: monospace;
+    text-align: left;
+    max-width: 10%;
+  }
+
+  .description {
+    font-size: .8em;
+    max-width: 20%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  .picture {
+
+    img {
+      max-height: 3em;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .imagePlaceover {
+      font-size: 3em;
     }
   }
-  .value
-  {
-    font-weight: lighter;;
+
+  .attributeValue {
+    font-size: .8em;
+    color: #555555;
+
+    &:not(:last-child) {
+      &::after {
+        content: ' | ';
+        font-size: 1em;
+      }
+    }
+    .def {
+      padding: 0;
+      font-weight: bold;
+      &::after {
+        content: ':';
+      }
+    }
+    .value {
+      font-weight: lighter;;
+    }
   }
 }
