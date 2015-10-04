@@ -98,12 +98,12 @@ export class ItemColumn {
     static REFERENCE:ItemColumn;
     static NAME:ItemColumn;
     static DESCRIPTION:ItemColumn;
+    static NAME_AND_DESCRIPTION:ItemColumn;
     static VAT_EXCLUSIVE:ItemColumn;
     static VAT_RATE:ItemColumn;
     static VAT_INCLUSIVE:ItemColumn;
     static PICTURE:ItemColumn;
     static ACTION_REMOVE:ItemColumn;
-    static ALL_COLUMNS:ItemColumn[];
 
     title:LocaleTexts;
     name:string;
@@ -133,6 +133,12 @@ export class ItemColumn {
         ItemColumn.DESCRIPTION.name = 'description';
         ItemColumn.DESCRIPTION.title = LocaleTextsFactory.toLocaleTexts({
             'fr': "Description"
+        });
+
+        ItemColumn.NAME_AND_DESCRIPTION = new ItemColumn();
+        ItemColumn.NAME_AND_DESCRIPTION.name = 'name_and_description';
+        ItemColumn.NAME_AND_DESCRIPTION.title = LocaleTextsFactory.toLocaleTexts({
+            'fr': "Nom / Description"
         });
 
         ItemColumn.VAT_EXCLUSIVE = new ItemColumn();

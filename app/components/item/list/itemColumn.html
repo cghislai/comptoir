@@ -19,6 +19,14 @@
             {{ item.description.get(lang.locale) }}
         </span>
     </template>
+    <template [ng-switch-when]=" 'name_and_description'">
+        <div class="name">
+            {{ item.name.get(lang.locale) }}
+        </div>
+        <div class="desc">
+            {{ item.description.get(lang.locale) }}
+        </div>
+    </template>
     <template [ng-switch-when]=" 'picture'">
         <span class="picture">
            <img [src]="item.mainPicture.dataURI" *ng-if="item.mainPicture?.dataURI !== null">

@@ -4,19 +4,22 @@
 
 import {Component, View, NgFor, NgIf, EventEmitter, ChangeDetectionStrategy} from 'angular2/angular2';
 
+import {LocalItem} from 'client/localDomain/item';
 import {LocalItemVariant} from 'client/localDomain/itemVariant';
 import {LocalPicture} from 'client/localDomain/picture';
 
 import {CompanyRef} from 'client/domain/company';
-import {ItemSearch} from 'client/domain/item';
+import {ItemSearch, ItemRef} from 'client/domain/item';
 import {ItemVariantSearch} from 'client/domain/itemVariant';
 import {SearchResult, SearchRequest} from 'client/utils/search';
 import {Pagination, PaginationFactory} from 'client/utils/pagination';
 
 import {AuthService} from 'services/auth';
 import {ErrorService} from 'services/error';
+import {ItemService} from 'services/item';
 import {ItemVariantService} from 'services/itemVariant';
 
+import {ItemList, ItemColumn} from 'components/item/list/itemList';
 import {ItemVariantList, ItemVariantColumn} from 'components/itemVariant/list/itemVariantList';
 import {AutoFocusDirective} from 'components/utils/autoFocus';
 import {FocusableDirective} from 'components/utils/focusable';
@@ -24,61 +27,92 @@ import {List} from 'immutable';
 
 @Component({
     selector: 'itemListView',
-    events: ['itemClicked'],
+    events: ['itemClicked', 'variantSelected'],
     changeDetection: ChangeDetectionStrategy.Default
 })
 
 @View({
     templateUrl: './components/sales/sale/itemList/listView.html',
     styleUrls: ['./components/sales/sale/itemList/listView.css'],
-    directives: [NgFor, NgIf, AutoFocusDirective, FocusableDirective, ItemVariantList]
+    directives: [NgFor, NgIf, AutoFocusDirective, FocusableDirective, ItemList, ItemVariantList]
 })
 
 export class ItemListView {
+    itemService:ItemService;
     itemVariantService:ItemVariantService;
     errorService:ErrorService;
-    authService: AuthService;
+    authService:AuthService;
 
     itemClicked = new EventEmitter();
-    columns:List<ItemVariantColumn>;
+    variantSelected = new EventEmitter();
     // Delay keyevent for 500ms
     keyboardTimeoutSet:boolean;
     keyboardTimeout:number = 200;
     //
-    searchRequest:SearchRequest<LocalItemVariant>;
-    searchResult:SearchResult<LocalItemVariant>;
-    itemList: List<LocalItemVariant>;
+    searchRequest:SearchRequest<LocalItem>;
+    searchResult:SearchResult<LocalItem>;
+    columns:List<ItemColumn>;
 
-    constructor(errorService:ErrorService, itemVariantService:ItemVariantService, authService: AuthService) {
-        this.itemVariantService = itemVariantService;
+    variantRequest:SearchRequest<LocalItemVariant>;
+    variantResult:SearchResult<LocalItemVariant>;
+    variantColumns:List<ItemVariantColumn>;
+    variantSelection:boolean;
+
+    constructor(errorService:ErrorService, itemService:ItemService,
+                itemVariantService:ItemVariantService, authService:AuthService) {
+        this.itemService = itemService;
         this.errorService = errorService;
         this.authService = authService;
+        this.itemVariantService = itemVariantService;
 
         var itemSearch = new ItemSearch();
         itemSearch.multiSearch = null;
         itemSearch.companyRef = authService.getEmployeeCompanyRef();
-        var itemVariantSearch = new ItemVariantSearch();
-        itemVariantSearch.itemSearch = itemSearch;
         var pagination = PaginationFactory.Pagination({firstIndex: 0, pageSize: 20});
-        this.searchRequest = new SearchRequest<LocalItemVariant>();
-        this.searchRequest.search = itemVariantSearch;
+        this.searchRequest = new SearchRequest<LocalItem>();
+        this.searchRequest.search = itemSearch;
         this.searchRequest.pagination = pagination;
-        this.searchResult = new SearchResult<LocalItemVariant>();
+        this.searchResult = new SearchResult<LocalItem>();
+
+        var variantSearch = new ItemVariantSearch();
+        variantSearch.itemSearch = new ItemSearch();
+        variantSearch.itemSearch.companyRef = authService.getEmployeeCompanyRef();
+        var variantPagination = PaginationFactory.Pagination({firstIndex: 0, pageSize: 20});
+        this.variantRequest = new SearchRequest<LocalItemVariant>();
+        this.variantRequest.search = variantSearch;
+        this.variantRequest.pagination = variantPagination;
+        this.variantResult = new SearchResult<LocalItemVariant>();
+        this.variantSelection = false;
 
         this.columns = List.of(
+            ItemColumn.REFERENCE,
+            ItemColumn.PICTURE,
+            ItemColumn.NAME_AND_DESCRIPTION,
+            ItemColumn.VAT_INCLUSIVE
+        );
+        this.variantColumns = List.of(
             ItemVariantColumn.VARIANT_REFERENCE,
             ItemVariantColumn.PICTURE,
-            ItemVariantColumn.ITEM_NAME_VARIANT_ATTRIBUTES,
+            ItemVariantColumn.ATTRIBUTES,
             ItemVariantColumn.TOTAL_PRICE
         );
         this.searchItems();
     }
 
     searchItems() {
-        this.itemVariantService.search(this.searchRequest)
-            .then((result)=>{
+        this.itemService.search(this.searchRequest)
+            .then((result)=> {
                 this.searchResult = result;
-                this.itemList = List(result.list);
+            })
+            .catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });
+    }
+
+    searchItemVariants() {
+        this.itemVariantService.search(this.variantRequest)
+            .then((result)=> {
+                this.variantResult = result;
             })
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
@@ -102,16 +136,46 @@ export class ItemListView {
     }
 
     applyFilter(filterValue:string) {
-        var itemSearch = this.searchRequest.search.itemSearch;
-        if (itemSearch.multiSearch == filterValue) {
-            return;
+        if (this.variantSelection) {
+            var itemSearch = this.variantRequest.search.itemSearch;
+            if (itemSearch.multiSearch == filterValue) {
+                return;
+            }
+            itemSearch.multiSearch = filterValue;
+            this.searchItemVariants();
+        } else {
+            var itemSearch = this.searchRequest.search;
+            if (itemSearch.multiSearch == filterValue) {
+                return;
+            }
+            itemSearch.multiSearch = filterValue;
+            this.searchItems();
         }
-        itemSearch.multiSearch = filterValue;
-        this.searchItems();
     }
 
-    onItemClicked(item:LocalItemVariant) {
+    onItemClicked(item:LocalItem) {
         this.itemClicked.next(item);
+        var variantSearch = this.variantRequest.search;
+        var itemRef = new ItemRef(item.id);
+        variantSearch.itemRef = itemRef;
+        this.applyFilter('');
+        this.itemVariantService.search(this.variantRequest)
+            .then((results)=> {
+                this.variantResult = results;
+                if (results.count == 1) {
+                    var variant = results.list.get(0);
+                    this.onVariantSelected(variant);
+                } else {
+                    this.variantSelection = true;
+                }
+            }).catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });
+    }
+
+    onVariantSelected(variant:LocalItemVariant) {
+        this.variantSelected.next(variant);
+        this.variantSelection = false;
     }
 
     focus() {
