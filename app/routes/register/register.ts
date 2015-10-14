@@ -64,6 +64,7 @@ export class RegisterView {
         var registration = new Registration();
         var localCompany:LocalCompany = NewCompany(this.editingCompany);
         var company = LocalCompanyFactory.fromLocalCompany(localCompany);
+        this.editingEmployee.locale = this.editingEmployee.language.locale;
         var localEmployee:LocalEmployee = NewEmployee(this.editingEmployee);
         var employee = LocalEmployeeFactory.fromLocalEmployee(localEmployee);
         registration.company =company;

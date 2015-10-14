@@ -67,6 +67,7 @@ export class ItemListView {
 
         var itemSearch = new ItemSearch();
         itemSearch.multiSearch = null;
+        itemSearch.locale = authService.getEmployeeLanguage().locale;
         itemSearch.companyRef = authService.getEmployeeCompanyRef();
         var pagination = PaginationFactory.Pagination({firstIndex: 0, pageSize: 20});
         this.searchRequest = new SearchRequest<LocalItem>();
@@ -77,6 +78,7 @@ export class ItemListView {
         var variantSearch = new ItemVariantSearch();
         variantSearch.itemSearch = new ItemSearch();
         variantSearch.itemSearch.companyRef = authService.getEmployeeCompanyRef();
+        variantSearch.itemSearch.locale = authService.getEmployeeLanguage().locale;
         var variantPagination = PaginationFactory.Pagination({firstIndex: 0, pageSize: 20});
         this.variantRequest = new SearchRequest<LocalItemVariant>();
         this.variantRequest.search = variantSearch;
