@@ -58,6 +58,7 @@ export class CashHistoryView {
         this.columns = List.of(
             BalanceColumn.DATETIME,
             BalanceColumn.COMMENT,
+            BalanceColumn.ACCOUNT,
             BalanceColumn.CLOSED,
             BalanceColumn.BALANCE
         );
