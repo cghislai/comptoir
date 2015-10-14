@@ -7,7 +7,7 @@ import {LocalAccount} from 'client/localDomain/account';
 import {LocalBalance} from 'client/localDomain/balance';
 
 import {CompanyRef} from 'client/domain/company';
-import {AccountSearch, AccountType, AccountFactory} from 'client/domain/account';
+import {AccountSearch, AccountType, AccountFactory, AccountRef} from 'client/domain/account';
 import {BalanceSearch} from 'client/domain/balance';
 import {Pos, PosRef, PosSearch} from 'client/domain/pos';
 
@@ -138,6 +138,7 @@ export class CountCashView {
         balanceSearch.accountSearch = this.accountSearchRequest.search;
         balanceSearch.companyRef = this.authService.getEmployeeCompanyRef();
         balanceSearch.closed = true;
+        balanceSearch.accountRef = new AccountRef(this.account.id);
         var pagination = PaginationFactory.Pagination({
             firstIndex: 0,
             pageSize: 1,

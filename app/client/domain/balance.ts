@@ -51,6 +51,7 @@ export class BalanceRef {
 
 export class BalanceSearch {
     companyRef: CompanyRef;
+    accountRef: AccountRef;
     accountSearch: AccountSearch;
     fromDateTime: Date;
     toDateTime : Date;
