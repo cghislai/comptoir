@@ -38,6 +38,7 @@ export class AttributeDefinitionSearch {
     nameContains: string;
     valueContains: string;
     multiSearch: string;
+    locale: string;
 }
 
 

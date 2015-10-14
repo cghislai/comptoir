@@ -50,6 +50,7 @@ export class ItemsListView {
         this.searchRequest = new SearchRequest<LocalItem>();
         var itemSearch = new ItemSearch();
         itemSearch.companyRef = authService.getEmployeeCompanyRef();
+        itemSearch.locale = authService.getEmployeeLanguage().locale;
         var pagination = PaginationFactory.Pagination({firstIndex: 0, pageSize: this.itemsPerPage});
         this.searchRequest.search = itemSearch;
         this.searchRequest.pagination = pagination;

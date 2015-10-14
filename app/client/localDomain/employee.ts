@@ -62,7 +62,9 @@ export class LocalEmployeeFactory {
     static fromLocalEmployee(localEmployee:LocalEmployee):Employee {
         var employee = new Employee();
         employee.active = localEmployee.active;
-        employee.companyRef = new CompanyRef(localEmployee.company.id);
+        if (localEmployee.company != null) {
+            employee.companyRef = new CompanyRef(localEmployee.company.id);
+        }
         employee.firstName = localEmployee.firstName;
         employee.id = localEmployee.id;
         employee.lastName = localEmployee.lastName;

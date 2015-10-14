@@ -50,6 +50,7 @@ export class ItemSearch {
     descriptionContains:string;
     reference:string;
     referenceContains:string;
+    locale: string;
 }
 
 export class ItemFactory {

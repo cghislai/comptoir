@@ -3,16 +3,17 @@
 <div class="registerView pageContent">
     <h1 class="pageTitle">Création d'un nouveau compte</h1>
 
-    <form (submit)="doRegister($event)">
+    <form (submit)="doRegister($event)" #register-form="form">
         <h2>Compagnie</h2>
 
         <div class="table">
             <div>
-                <label for="editLanguage">Langue</label>
-                <langSelect id="editLanguage"
-                            [display-locale]="appLocale"
+                <label for="editLanguageInput">Langue</label>
+                <langSelect id="editLanguageInput"
+                            [display-language]="appLanguage"
                             [selected-language]="editLanguage"
-                            (language-changed)="editLanguage = $event"></langSelect>
+                            (language-changed)="editLanguage = $event"
+                            ng-control="editLanguage"></langSelect>
             </div>
             <div>
                 <label for="companyName">Nom</label>
@@ -47,11 +48,9 @@
                 <label for="employeeLanguage">Langue</label>
                 <span>
                     <langSelect id="employeeLanguage"
-                                [display-locale]="appLocale"
-                                [selected-language]="getLanguage(editingEmployee.locale)"
-                                (language-changed)="editingEmployee.locale = $event.locale"
-                                ng-control="employeeLanguage" validate-required></langSelect>
-                    <formMessage for="employeeLanguage" check-errors="['required']"></formMessage>
+                                [display-language]="appLanguage"
+                                [selected-language]="editingEmployee.language"
+                                (language-changed)="editingEmployee.language = $event"></langSelect>
                 </span>
             </div>
             <div>
