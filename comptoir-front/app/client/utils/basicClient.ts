@@ -2,7 +2,7 @@
  * Created by cghislai on 07/09/15.
  */
 
-import {ServiceConfig} from 'client/utils/service';
+import {ServiceConfig} from 'config/service';
 import {Pagination} from 'client/utils/pagination';
 import {ComptoirRequest} from 'client/utils/request';
 import {SearchResult} from 'client/utils/search';

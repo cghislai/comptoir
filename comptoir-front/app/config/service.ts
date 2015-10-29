@@ -3,5 +3,5 @@
  */
 
 export class ServiceConfig {
-    static URL: string ="https://cghislai:8181/comptoir-ws";
+    static URL: string ="https://localhost:9181/comptoir-ws";
 }
