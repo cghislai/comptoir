@@ -5,7 +5,7 @@
 import {Registration, Auth, AuthFactory} from 'client/domain/auth';
 import {CompanyRef} from 'client/domain/company';
 import {ComptoirRequest} from 'client/utils/request';
-import {ServiceConfig} from 'client/utils/service';
+import {ServiceConfig} from 'config/service';
 
 export class AuthClient {
 
