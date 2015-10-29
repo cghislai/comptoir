@@ -5,7 +5,7 @@
 
 import {Country, CountryRef, CountryFactory} from 'client/domain/country';
 import {ComptoirRequest} from 'client/utils/request';
-import {ServiceConfig} from 'client/utils/service';
+import {ServiceConfig} from 'config/service';
 
 
 export class CountryClient {
