@@ -3,7 +3,7 @@
  */
 
 import {Component, View, NgFor, NgIf, NgSwitch, NgSwitchWhen,
-    ChangeDetectionStrategy,
+    ChangeDetectionStrategy, OnInit,
     EventEmitter, ViewEncapsulation} from 'angular2/angular2';
 
 import {LocalItem} from '../../../client/localDomain/item';
@@ -14,6 +14,7 @@ import {Language, LanguageFactory, LocaleTexts, LocaleTextsFactory} from '../../
 import {AuthService} from '../../../services/auth';
 
 import {FocusableDirective} from '../../utils/focusable';
+import {Column} from '../../utils/column';
 
 import * as Immutable from 'immutable';
 /****
@@ -64,19 +65,30 @@ export class ItemColumnComponent {
     directives: [NgFor, NgIf, FocusableDirective, ItemColumnComponent]
 })
 
-export class ItemList {
+export class ItemList implements OnInit {
     // properties
     items:Immutable.List<LocalItem>;
     columns:Immutable.List<ItemColumn>;
     itemSelectable:boolean;
     headersVisible:boolean;
-    language: Language;
+    language:Language;
+    columnWeightToPercentage:number;
 
     rowClicked = new EventEmitter();
     columnAction = new EventEmitter();
 
     constructor(authService:AuthService) {
         this.language = authService.getEmployeeLanguage();
+    }
+
+    onInit() {
+        this.calcColumnWeightFactor();
+    }
+
+    calcColumnWeightFactor() {
+        let totWeight = this.columns.valueSeq()
+            .reduce((r, col)=>r + col.weight, 0);
+        this.columnWeightToPercentage = 100.0 / totWeight;
     }
 
 
@@ -92,7 +104,7 @@ export class ItemList {
 
 }
 
-export class ItemColumn {
+export class ItemColumn extends Column {
 
     static ID:ItemColumn;
     static REFERENCE:ItemColumn;
@@ -105,73 +117,73 @@ export class ItemColumn {
     static PICTURE:ItemColumn;
     static ACTION_REMOVE:ItemColumn;
 
-    title:LocaleTexts;
-    name:string;
-    alignRight:boolean;
-    alignCenter:boolean;
-
     static init() {
-        ItemColumn.ID = new ItemColumn();
-        ItemColumn.ID.name = 'id';
-        ItemColumn.ID.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Id"
-        });
+        ItemColumn.ID = new ItemColumn(
+            'id', 1,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "Id"
+            })
+        );
 
-        ItemColumn.REFERENCE = new ItemColumn();
-        ItemColumn.REFERENCE.name = 'ref';
-        ItemColumn.REFERENCE.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Ref"
-        });
+        ItemColumn.REFERENCE = new ItemColumn(
+            'ref', 1,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "Ref"
+            })
+        );
 
-        ItemColumn.NAME = new ItemColumn();
-        ItemColumn.NAME.name = 'name';
-        ItemColumn.NAME.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Nom"
-        });
+        ItemColumn.NAME = new ItemColumn(
+            'name', 3,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "Nom"
+            })
+        );
 
-        ItemColumn.DESCRIPTION = new ItemColumn();
-        ItemColumn.DESCRIPTION.name = 'description';
-        ItemColumn.DESCRIPTION.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Description"
-        });
+        ItemColumn.DESCRIPTION = new ItemColumn(
+            'description', 5,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "Description"
+            })
+        );
 
-        ItemColumn.NAME_AND_DESCRIPTION = new ItemColumn();
-        ItemColumn.NAME_AND_DESCRIPTION.name = 'name_and_description';
-        ItemColumn.NAME_AND_DESCRIPTION.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Nom / Description"
-        });
+        ItemColumn.NAME_AND_DESCRIPTION = new ItemColumn(
+            'name_and_description', 5,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "Nom / Description"
+            })
+        );
 
-        ItemColumn.VAT_EXCLUSIVE = new ItemColumn();
-        ItemColumn.VAT_EXCLUSIVE.name = 'vat_exclusive';
-        ItemColumn.VAT_EXCLUSIVE.alignRight = true;
-        ItemColumn.VAT_EXCLUSIVE.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Prix HTVA"
-        });
+        ItemColumn.VAT_EXCLUSIVE = new ItemColumn(
+            'vat_exclusive', 2,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "Prix HTVA"
+            }), true
+        );
 
-        ItemColumn.VAT_RATE = new ItemColumn();
-        ItemColumn.VAT_RATE.name = 'vat_rate';
-        ItemColumn.VAT_RATE.alignRight = true;
-        ItemColumn.VAT_RATE.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Taux TVA"
-        });
+        ItemColumn.VAT_RATE = new ItemColumn(
+            'vat_rate', 2,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "Taux TVA"
+            }), true
+        );
 
-        ItemColumn.VAT_INCLUSIVE = new ItemColumn();
-        ItemColumn.VAT_INCLUSIVE.name = 'vat_inclusive';
-        ItemColumn.VAT_INCLUSIVE.alignRight = true;
-        ItemColumn.VAT_INCLUSIVE.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Prix"
-        });
+        ItemColumn.VAT_INCLUSIVE = new ItemColumn(
+            'vat_inclusive', 2,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "Prix"
+            }), true
+        );
 
-        ItemColumn.PICTURE = new ItemColumn();
-        ItemColumn.PICTURE.name = 'picture';
-        ItemColumn.PICTURE.alignCenter = true;
-        ItemColumn.PICTURE.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Image"
-        });
+        ItemColumn.PICTURE = new ItemColumn(
+            'picture', 2,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "Image"
+            }), false, true
+        );
 
-        ItemColumn.ACTION_REMOVE = new ItemColumn();
-        ItemColumn.ACTION_REMOVE.name = 'action_remove';
-        ItemColumn.ACTION_REMOVE.title = null;
+        ItemColumn.ACTION_REMOVE = new ItemColumn(
+            'action_remove', 1
+        );
     }
 }
 

@@ -3,7 +3,7 @@
  */
 
 import {Component, View, NgFor, NgIf, NgSwitch, NgSwitchWhen,
-    ChangeDetectionStrategy,
+    ChangeDetectionStrategy, OnInit,
     EventEmitter, ViewEncapsulation} from 'angular2/angular2';
 
 import {LocalAccount} from '../../../client/localDomain/account';
@@ -13,6 +13,7 @@ import {Language, LanguageFactory, LocaleTexts, LocaleTextsFactory} from '../../
 import {AuthService} from '../../../services/auth';
 
 import {FocusableDirective} from '../../utils/focusable';
+import {Column} from '../../utils/column';
 
 import * as Immutable from 'immutable';
 /****
@@ -63,13 +64,14 @@ export class AccountColumnComponent {
     directives: [NgFor, NgIf, FocusableDirective, AccountColumnComponent]
 })
 
-export class AccountList {
+export class AccountList implements OnInit {
     // properties
     accounts:Immutable.List<LocalAccount>;
     columns:Immutable.List<AccountColumn>;
     accountSelectable:boolean;
     headersVisible:boolean;
-    language: Language;
+    language:Language;
+    columnWeightToPercentage:number;
 
     rowClicked = new EventEmitter();
     columnAction = new EventEmitter();
@@ -78,6 +80,14 @@ export class AccountList {
         this.language = authService.getEmployeeLanguage();
     }
 
+    onInit() {
+        this.calcColumnWeightFactor();
+    }
+    calcColumnWeightFactor() {
+        let totWeight = this.columns.valueSeq()
+            .reduce((r, col)=>r + col.weight, 0);
+        this.columnWeightToPercentage = 100.0 / totWeight;
+    }
 
     onAccountClick(account:LocalAccount, event) {
         this.rowClicked.next(account);
@@ -91,7 +101,7 @@ export class AccountList {
 
 }
 
-export class AccountColumn {
+export class AccountColumn extends Column {
 
     static ID:AccountColumn;
     static ACCOUNTING_NUMBER:AccountColumn;
@@ -102,60 +112,55 @@ export class AccountColumn {
     static TYPE:AccountColumn;
     static ACTION_REMOVE:AccountColumn;
 
-    title:LocaleTexts;
-    name:string;
-    alignRight:boolean;
-    alignCenter:boolean;
-
     static init() {
-        AccountColumn.ID = new AccountColumn();
-        AccountColumn.ID.name = 'id';
-        AccountColumn.ID.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Id"
-        });
+        AccountColumn.ID = new AccountColumn(
+            'id', 1,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "Id"
+            }));
 
-        AccountColumn.ACCOUNTING_NUMBER = new AccountColumn();
-        AccountColumn.ACCOUNTING_NUMBER.name = 'accountingNumber';
-        AccountColumn.ACCOUNTING_NUMBER.alignRight = true;
-        AccountColumn.ACCOUNTING_NUMBER.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Numéro de comptabilité"
-        });
+        AccountColumn.ACCOUNTING_NUMBER = new AccountColumn(
+            'accountingNumber', 3,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "Numéro de comptabilité"
+            }), true);
 
-        AccountColumn.IBAN = new AccountColumn();
-        AccountColumn.IBAN.name = 'iban';
-        AccountColumn.IBAN.alignRight = true;
-        AccountColumn.IBAN.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "IBAN"
-        });
+        AccountColumn.IBAN = new AccountColumn(
+            'iban', 3,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "IBAN"
+            }), true);
 
-        AccountColumn.BIC = new AccountColumn();
-        AccountColumn.BIC.name = 'bic';
-        AccountColumn.BIC.alignRight = true;
-        AccountColumn.BIC.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "BIC"
-        });
+        AccountColumn.BIC = new AccountColumn(
+            'bic', 3,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "BIC"
+            }), true);
 
-        AccountColumn.NAME = new AccountColumn();
-        AccountColumn.NAME.name = 'name';
-        AccountColumn.NAME.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Nom"
-        });
+        AccountColumn.NAME = new AccountColumn(
+            'name', 3,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "Nom"
+            })
+        );
 
-        AccountColumn.DESCRIPTION = new AccountColumn();
-        AccountColumn.DESCRIPTION.name = 'description';
-        AccountColumn.DESCRIPTION.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Description"
-        });
+        AccountColumn.DESCRIPTION = new AccountColumn(
+            'description', 5,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "Description"
+            })
+        );
 
-        AccountColumn.TYPE = new AccountColumn();
-        AccountColumn.TYPE.name = 'type';
-        AccountColumn.TYPE.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Type"
-        });
+        AccountColumn.TYPE = new AccountColumn(
+            'type', 2,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "Type"
+            })
+        );
 
-        AccountColumn.ACTION_REMOVE = new AccountColumn();
-        AccountColumn.ACTION_REMOVE.name = 'action_remove';
-        AccountColumn.ACTION_REMOVE.title = null;
+        AccountColumn.ACTION_REMOVE = new AccountColumn(
+            'action_remove', 1
+        );
     }
 }
 

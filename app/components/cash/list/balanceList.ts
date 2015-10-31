@@ -3,7 +3,7 @@
  */
 
 import {Component, View, NgFor, NgIf, NgSwitch, NgSwitchWhen,
-    ChangeDetectionStrategy,
+    ChangeDetectionStrategy, OnInit,
     EventEmitter, ViewEncapsulation} from 'angular2/angular2';
 
 import {LocalBalance} from '../../../client/localDomain/balance';
@@ -13,6 +13,7 @@ import {Language, LanguageFactory, LocaleTexts, LocaleTextsFactory} from '../../
 import {AuthService} from '../../../services/auth';
 
 import {FocusableDirective} from '../../utils/focusable';
+import {Column} from '../../utils/column';
 
 import * as Immutable from 'immutable';
 /****
@@ -63,19 +64,30 @@ export class BalanceColumnComponent {
     directives: [NgFor, NgIf, FocusableDirective, BalanceColumnComponent]
 })
 
-export class BalanceList {
+export class BalanceList implements OnInit {
     // properties
     balances:Immutable.List<LocalBalance>;
     columns:Immutable.List<BalanceColumn>;
     rowSelectable:boolean;
     headersVisible:boolean;
     language:Language;
+    columnWeightToPercentage:number;
 
     rowClicked = new EventEmitter();
     columnAction = new EventEmitter();
 
     constructor(authService:AuthService) {
         this.language = authService.getEmployeeLanguage();
+    }
+
+    onInit() {
+        this.calcColumnWeightFactor();
+    }
+
+    calcColumnWeightFactor() {
+        let totWeight = this.columns.valueSeq()
+            .reduce((r, col)=>r + col.weight, 0);
+        this.columnWeightToPercentage = 100.0 / totWeight;
     }
 
 
@@ -91,7 +103,7 @@ export class BalanceList {
 
 }
 
-export class BalanceColumn {
+export class BalanceColumn extends Column {
 
     static ID:BalanceColumn;
     static ACCOUNT:BalanceColumn;
@@ -101,53 +113,51 @@ export class BalanceColumn {
     static CLOSED:BalanceColumn;
     static ACTION_REMOVE:BalanceColumn;
 
-    title:LocaleTexts;
-    name:string;
-    alignRight:boolean;
-    alignCenter:boolean;
-
     static init() {
-        BalanceColumn.ID = new BalanceColumn();
-        BalanceColumn.ID.name = 'id';
-        BalanceColumn.ID.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Id"
-        });
+        BalanceColumn.ID = new BalanceColumn(
+            'id', 1,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "Id"
+            })
+        );
+        BalanceColumn.ACCOUNT = new BalanceColumn(
+            'account', 2,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "Compte"
+            })
+        );
 
-        BalanceColumn.ACCOUNT = new BalanceColumn();
-        BalanceColumn.ACCOUNT.name = 'account';
-        BalanceColumn.ACCOUNT.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Compte"
-        });
+        BalanceColumn.DATETIME = new BalanceColumn(
+            'dateTime', 2,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "Date"
+            })
+        );
 
-        BalanceColumn.DATETIME = new BalanceColumn();
-        BalanceColumn.DATETIME.name = 'dateTime';
-        BalanceColumn.DATETIME.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Date"
-        });
+        BalanceColumn.BALANCE = new BalanceColumn(
+            'balance', 2,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "Solde"
+            }), true
+        );
 
-        BalanceColumn.BALANCE = new BalanceColumn();
-        BalanceColumn.BALANCE.name = 'balance';
-        BalanceColumn.BALANCE.alignRight = true;
-        BalanceColumn.BALANCE.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Solde"
-        });
+        BalanceColumn.COMMENT = new BalanceColumn(
+            'comment', 4,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "Commentaire"
+            })
+        );
 
-        BalanceColumn.COMMENT = new BalanceColumn();
-        BalanceColumn.COMMENT.name = 'comment';
-        BalanceColumn.COMMENT.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Commentaire"
-        });
+        BalanceColumn.CLOSED = new BalanceColumn(
+            'closed', 1,
+            LocaleTextsFactory.toLocaleTexts({
+                'fr': "Clôturée"
+            }), false, true
+        );
 
-        BalanceColumn.CLOSED = new BalanceColumn();
-        BalanceColumn.CLOSED.name = 'closed';
-        BalanceColumn.CLOSED.alignCenter = true;
-        BalanceColumn.CLOSED.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Clôturée"
-        });
-
-        BalanceColumn.ACTION_REMOVE = new BalanceColumn();
-        BalanceColumn.ACTION_REMOVE.name = 'action_remove';
-        BalanceColumn.ACTION_REMOVE.title = null;
+        BalanceColumn.ACTION_REMOVE = new BalanceColumn(
+            'action_remove', 1
+        );
     }
 }
 

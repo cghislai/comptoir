@@ -26,8 +26,8 @@
     </template>
     <template [ng-switch-when]=" 'closed'">
         <span class="closed">
-           <i class="fa fa-check" [hidden]="!balance.closed"></i>
-            <i class="fa fa-times" [hidden]="balance.closed"></i>
+              <i class="fa fa-check" *ng-if="!balance.closed"></i>
+              <i class="fa fa-times" *ng-if="balance.closed"></i>
         </span>
     </template>
     <template [ng-switch-when]=" 'type'">

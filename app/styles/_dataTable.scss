@@ -12,6 +12,7 @@ table.dataTable {
   font-size: 1em;
   border-collapse: collapse;
   position: relative;
+  table-layout: fixed;
 
   th {
     padding-bottom: .3em;
@@ -19,6 +20,9 @@ table.dataTable {
   td, th {
     padding: .3em .3em;
     text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     &.right {
       text-align: right;

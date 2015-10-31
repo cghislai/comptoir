@@ -17,6 +17,7 @@
             (click)="onBalanceClick(account, $event)"
             [attr.focusable]="rowSelectable">
             <td *ng-for="#col of columns"
+                width="{{ col.weight * columnWeightToPercentage}}%"
                 [class.right]="col.alignRight"
                 [class.center]="col.alignCenter">
                 <balanceColumn class="column"

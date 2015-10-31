@@ -16,6 +16,7 @@ import {AuthService} from '../../../services/auth';
 
 import {ItemList, ItemColumn} from '../../../components/item/list/itemList';
 import {Paginator} from '../../../components/utils/paginator/paginator';
+import * as Immutable from 'immutable';
 
 @Component({
     selector: "productList"
@@ -34,7 +35,7 @@ export class ItemsListView {
 
     searchRequest: SearchRequest<LocalItem>;
     searchResult:SearchResult<LocalItem>;
-    columns:ItemColumn[];
+    columns:Immutable.List<ItemColumn>;
     itemsPerPage:number = 25;
 
     // Delay filter input keyevent for 200ms
@@ -55,7 +56,7 @@ export class ItemsListView {
         this.searchRequest.search = itemSearch;
         this.searchRequest.pagination = pagination;
 
-        this.columns = [
+        this.columns = Immutable.List.of(
             ItemColumn.REFERENCE,
             ItemColumn.PICTURE,
             ItemColumn.NAME,
@@ -63,7 +64,7 @@ export class ItemsListView {
             ItemColumn.VAT_RATE,
             ItemColumn.VAT_INCLUSIVE,
             ItemColumn.ACTION_REMOVE
-        ];
+        );
         this.searchItems();
     }
 

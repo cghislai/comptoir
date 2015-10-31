@@ -52,9 +52,14 @@ header {
 }
 
 table {
+  table-layout: auto !important;
+
   td, th {
     white-space: nowrap;
 
+    &.name {
+      max-width: 5em;
+    }
     &.quantity {
       padding-right: 1em;
     }
