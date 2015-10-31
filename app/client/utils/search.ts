@@ -2,8 +2,8 @@
  * Created by cghislai on 11/08/15.
  */
 
-import {ComptoirRequest, ComptoirResponse} from 'client/utils/request';
-import {Pagination} from 'client/utils/pagination';
+import {ComptoirRequest, ComptoirResponse} from './request';
+import {Pagination} from './pagination';
 
 import {Map, List} from 'immutable';
 

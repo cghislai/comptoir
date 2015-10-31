@@ -3,25 +3,25 @@
  */
 
 
-import {CompanyRef, Company, CompanyClient, CompanyFactory} from 'client/domain/company';
-import {CustomerRef, Customer, CustomerClient, CustomerFactory} from 'client/domain/customer';
-import {InvoiceRef, Invoice, InvoiceFactory, InvoiceClient} from 'client/domain/invoice';
+import {CompanyRef, Company, CompanyClient, CompanyFactory} from '../domain/company';
+import {CustomerRef, Customer, CustomerClient, CustomerFactory} from '../domain/customer';
+import {InvoiceRef, Invoice, InvoiceFactory, InvoiceClient} from '../domain/invoice';
 import {AccountingTransactionRef, AccountingTransaction,
-    AccountingTransactionClient, AccountingTransactionFactory} from 'client/domain/accountingTransaction'
-import {Account} from 'client/domain/account';
-import {ItemVariant, ItemVariantRef} from 'client/domain/itemVariant';
-import {Sale, SaleRef} from 'client/domain/sale';
-import {Pos} from 'client/domain/pos';
-import {ItemVariantSale} from 'client/domain/itemVariantSale';
+    AccountingTransactionClient, AccountingTransactionFactory} from '../domain/accountingTransaction'
+import {Account} from '../domain/account';
+import {ItemVariant, ItemVariantRef} from '../domain/itemVariant';
+import {Sale, SaleRef} from '../domain/sale';
+import {Pos} from '../domain/pos';
+import {ItemVariantSale} from '../domain/itemVariantSale';
 
-import {LocalItem} from 'client/localDomain/item';
-import {LocalPicture} from 'client/localDomain/picture';
-import {LocalItemVariant, LocalItemVariantFactory} from 'client/localDomain/itemvariant';
-import {LocalAccountingEntry} from 'client/localDomain/accountingEntry';
-import {LocalCompany, LocalCompanyFactory} from 'client/localDomain/company';
+import {LocalItem} from './item';
+import {LocalPicture} from './picture';
+import {LocalItemVariant, LocalItemVariantFactory} from './itemvariant';
+import {LocalAccountingEntry} from './accountingEntry';
+import {LocalCompany, LocalCompanyFactory} from './company';
 
-import {LocaleTexts} from 'client/utils/lang';
-import {NumberUtils} from 'client/utils/number';
+import {LocaleTexts} from '../utils/lang';
+import {NumberUtils} from '../utils/number';
 
 import {Map, Record} from 'immutable';
 

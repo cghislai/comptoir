@@ -2,14 +2,14 @@
  * Created by cghislai on 08/09/15.
  */
 
-import {MoneyPile} from 'client/domain/moneyPile';
-import {Account, AccountRef, AccountClient, AccountFactory} from 'client/domain/account';
-import {Balance, BalanceRef, BalanceClient, BalanceFactory} from 'client/domain/balance';
+import {MoneyPile} from '../domain/moneyPile';
+import {Account, AccountRef, AccountClient, AccountFactory} from '../domain/account';
+import {Balance, BalanceRef, BalanceClient, BalanceFactory} from '../domain/balance';
 
-import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
-import {LocalBalance, LocalBalanceFactory} from 'client/localDomain/balance';
+import {LocalAccount, LocalAccountFactory} from './account';
+import {LocalBalance, LocalBalanceFactory} from './balance';
 
-import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
+import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
 
 import {Map, Record} from 'immutable';
 

@@ -2,12 +2,12 @@
  * Created by cghislai on 14/08/15.
  */
 
-import {CompanyRef} from 'client/domain/company';
-import {ItemVariantRef} from 'client/domain/itemVariant';
-import {SaleRef} from 'client/domain/sale';
-import {Price} from 'client/domain/price';
-import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
-import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {CompanyRef} from './company';
+import {ItemVariantRef} from './itemVariant';
+import {SaleRef} from './sale';
+import {Price} from './price';
+import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
+import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
 
 
 export class ItemVariantSaleClient extends BasicClient<ItemVariantSale> {

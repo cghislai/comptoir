@@ -4,16 +4,16 @@
 import {Component, View, NgIf} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
-import {LocalItemVariant, LocalItemVariantFactory, NewItemVariant} from 'client/localDomain/itemVariant';
-import {LocalItem} from 'client/localDomain/item';
-import {Pricing} from 'client/domain/itemVariant';
+import {LocalItemVariant, LocalItemVariantFactory, NewItemVariant} from '../../../../client/localDomain/itemVariant';
+import {LocalItem} from '../../../../client/localDomain/item';
+import {Pricing} from '../../../../client/domain/itemVariant';
 
-import {ItemService} from 'services/item';
-import {ItemVariantService} from 'services/itemVariant';
-import {ErrorService} from 'services/error';
-import {AuthService} from 'services/auth';
+import {ItemService} from '../../../../services/item';
+import {ItemVariantService} from '../../../../services/itemVariant';
+import {ErrorService} from '../../../../services/error';
+import {AuthService} from '../../../../services/auth';
 
-import {ItemVariantEditComponent} from 'components/itemVariant/edit/editVariant';
+import {ItemVariantEditComponent} from '../../../../components/itemVariant/edit/editVariant';
 
 import {Map} from 'immutable';
 

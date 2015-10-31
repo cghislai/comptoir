@@ -2,14 +2,14 @@
  * Created by cghislai on 08/09/15.
  */
 
-import {ItemVariantSale} from 'client/domain/itemVariantSale';
-import {Sale, SaleRef, SaleClient, SaleFactory} from 'client/domain/sale';
-import {ItemVariant, ItemVariantRef, ItemVariantClient, ItemVariantFactory} from 'client/domain/itemVariant';
+import {ItemVariantSale} from '../domain/itemVariantSale';
+import {Sale, SaleRef, SaleClient, SaleFactory} from '../domain/sale';
+import {ItemVariant, ItemVariantRef, ItemVariantClient, ItemVariantFactory} from '../domain/itemVariant';
 
-import {LocalItemVariant, LocalItemVariantFactory} from 'client/localDomain/itemVariant';
-import {LocalSale, LocalSaleFactory} from 'client/localDomain/sale';
+import {LocalItemVariant, LocalItemVariantFactory} from './itemVariant';
+import {LocalSale, LocalSaleFactory} from './sale';
 
-import {LocaleTexts} from 'client/utils/lang';
+import {LocaleTexts} from '../utils/lang';
 
 import {Map, Record} from 'immutable';
 

@@ -2,12 +2,10 @@
  * Created by cghislai on 04/08/15.
  */
 
-import {CompanyRef} from 'client/domain/company';
-import {PosRef} from 'client/domain/pos';
-import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
-
-import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
-
+import {CompanyRef} from './company';
+import {PosRef} from './pos';
+import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
+import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
 
 export class AccountClient extends BasicClient<Account> {
 

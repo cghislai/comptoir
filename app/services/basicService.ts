@@ -2,12 +2,13 @@
  * Created by cghislai on 08/09/15.
  */
 
-import {WithId, BasicClient} from 'client/utils/basicClient';
-import {SearchRequest, SearchResult} from 'client/utils/search';
-import {ComptoirResponse} from 'client/utils/request';
-
-import {AuthService} from 'services/auth';
 import {List} from 'immutable';
+
+import {WithId, BasicClient} from '../client/utils/basicClient';
+import {SearchRequest, SearchResult} from '../client/utils/search';
+import {ComptoirResponse} from '../client/utils/request';
+
+import {AuthService} from './auth';
 
 export class BasicServiceInfo<T extends WithId> {
     client:BasicClient<T>;

@@ -5,12 +5,12 @@
 import {Component, View} from 'angular2/angular2';
 import {Router, RouteConfig,RouterOutlet,RouterLink, Location} from 'angular2/router';
 
-import {AppHeader} from 'components/app/header/appHeader';
-import {AppTab} from 'components/app/header/tab/appTab';
+import {AppHeader} from '../../components/app/header/appHeader';
+import {AppTab} from '../../components/app/header/tab/appTab';
 
 
-import {CountCashView} from 'routes/cash/count/countView';
-import {CashHistoryView} from 'routes/cash/history/historyView';
+import {CountCashView} from './count/countView';
+import {CashHistoryView} from './history/historyView';
 
 @Component({
     selector: 'cashView'

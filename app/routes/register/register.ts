@@ -4,20 +4,20 @@
 import {Component, View, FORM_DIRECTIVES, NgFor, DefaultValueAccessor} from 'angular2/angular2';
 import {Router, RouterLink} from 'angular2/router';
 
-import {AppHeader} from 'components/app/header/appHeader';
-import {FormMessage} from 'components/utils/formMessage/formMessage';
-import {LangSelect, LangSelectControl} from 'components/lang/langSelect/langSelect';
-import {RequiredValidator, PasswordValidator} from 'components/utils/validators';
-import {LocalizedDirective} from 'components/utils/localizedInput';
+import {AppHeader} from '../../components/app/header/appHeader';
+import {FormMessage} from '../../components/utils/formMessage/formMessage';
+import {LangSelect, LangSelectControl} from '../../components/lang/langSelect/langSelect';
+import {RequiredValidator, PasswordValidator} from '../../components/utils/validators';
+import {LocalizedDirective} from '../../components/utils/localizedInput';
 
-import {Country, CountryFactory} from 'client/domain/country';
-import {LocalCompany, LocalCompanyFactory, NewCompany} from 'client/localDomain/company';
-import {LocalEmployee, LocalEmployeeFactory, NewEmployee} from 'client/localDomain/employee';
-import {Registration} from 'client/domain/auth';
-import {LocaleTexts, Language, LanguageFactory, LocaleTextsFactory, NewLanguage} from 'client/utils/lang';
+import {Country, CountryFactory} from '../../client/domain/country';
+import {LocalCompany, LocalCompanyFactory, NewCompany} from '../../client/localDomain/company';
+import {LocalEmployee, LocalEmployeeFactory, NewEmployee} from '../../client/localDomain/employee';
+import {Registration} from '../../client/domain/auth';
+import {LocaleTexts, Language, LanguageFactory, LocaleTextsFactory, NewLanguage} from '../../client/utils/lang';
 
-import {AuthService} from 'services/auth';
-import {ErrorService} from 'services/error';
+import {AuthService} from '../../services/auth';
+import {ErrorService} from '../../services/error';
 
 import {List, Map} from 'immutable';
 

@@ -3,14 +3,14 @@
  */
 import {Inject} from 'angular2/angular2';
 
-import {LocalPicture, LocalPictureFactory} from 'client/localDomain/picture';
-import {PictureClient, Picture, PictureRef, PictureSearch} from 'client/domain/picture';
+import {LocalPicture, LocalPictureFactory} from '../client/localDomain/picture';
+import {PictureClient, Picture, PictureRef, PictureSearch} from '../client/domain/picture';
 
-import {BasicClient} from 'client/utils/basicClient';
-import {SearchRequest, SearchResult} from 'client/utils/search';
+import {BasicClient} from '../client/utils/basicClient';
+import {SearchRequest, SearchResult} from '../client/utils/search';
 
-import {BasicLocalService, BasicLocalServiceInfo} from 'services/basicService';
-import {AuthService} from 'services/auth';
+import {BasicLocalService, BasicLocalServiceInfo} from './basicService';
+import {AuthService} from './auth';
 
 export class PictureService extends BasicLocalService<Picture, LocalPicture> {
 

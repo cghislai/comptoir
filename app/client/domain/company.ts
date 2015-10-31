@@ -2,10 +2,10 @@
  * Created by cghislai on 04/08/15.
  */
 
-import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
-import {CountryRef} from 'client/domain/country';
-import {ComptoirRequest} from 'client/utils/request';
-import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
+import {CountryRef} from './country';
+import {ComptoirRequest} from '../utils/request';
+import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
 
 export class CompanyClient extends BasicClient<Company> {
 

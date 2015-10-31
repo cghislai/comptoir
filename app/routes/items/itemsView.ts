@@ -5,12 +5,12 @@
 import {Component, View} from 'angular2/angular2';
 import {Router, RouteConfig,RouterOutlet,RouterLink, Location} from 'angular2/router';
 
-import {AppHeader} from 'components/app/header/appHeader';
-import {AppTab} from 'components/app/header/tab/appTab';
+import {AppHeader} from '../../components/app/header/appHeader';
+import {AppTab} from '../../components/app/header/tab/appTab';
 
-import {EditItemRedirect} from 'routes/items/edit/editRedirect';
-import {ItemsListView} from 'routes/items/list/listView';
-import {ItemsImportView} from 'routes/items/import/importView';
+import {EditItemRedirect} from './edit/editRedirect';
+import {ItemsListView} from './list/listView';
+import {ItemsImportView} from './import/importView';
 
 @Component({
     selector: 'itemsView'

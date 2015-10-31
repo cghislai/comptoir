@@ -2,10 +2,10 @@
  * Created by cghislai on 16/08/15.
  */
 
-import {AccountRef, AccountSearch} from 'client/domain/account';
-import {CompanyRef} from 'client/domain/company';
-import {BasicClient,BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
-import {ComptoirRequest} from 'client/utils/request';
+import {AccountRef, AccountSearch} from './account';
+import {CompanyRef} from './company';
+import {BasicClient,BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
+import {ComptoirRequest} from '../utils/request';
 
 
 export class BalanceClient extends BasicClient<Balance> {

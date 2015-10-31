@@ -2,10 +2,10 @@
  * Created by cghislai on 08/09/15.
  */
 
-import {Employee} from 'client/domain/employee';
-import {Company, CompanyRef, CompanyClient, CompanyFactory} from 'client/domain/company';
+import {Employee} from '../domain/employee';
+import {Company, CompanyRef, CompanyClient, CompanyFactory} from '../domain/company';
 
-import {LocalCompany, LocalCompanyFactory} from 'client/localDomain/company';
+import {LocalCompany, LocalCompanyFactory} from './company';
 
 import {Map, Record} from 'immutable';
 

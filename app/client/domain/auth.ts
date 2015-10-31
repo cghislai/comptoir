@@ -2,8 +2,8 @@
  * Created by cghislai on 07/08/15.
  */
 
-import {Company, CompanyRef} from 'client/domain/company';
-import {Employee, EmployeeRef} from 'client/domain/employee';
+import {Company, CompanyRef} from './company';
+import {Employee, EmployeeRef} from './employee';
 
 export class Registration {
     company:Company;

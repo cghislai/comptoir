@@ -2,10 +2,10 @@
  * Created by cghislai on 07/09/15.
  */
 
-import {ServiceConfig} from 'config/service';
-import {Pagination} from 'client/utils/pagination';
-import {ComptoirRequest} from 'client/utils/request';
-import {SearchResult} from 'client/utils/search';
+import {ServiceConfig} from '../../config/service';
+import {Pagination} from './pagination';
+import {ComptoirRequest} from './request';
+import {SearchResult} from './search';
 import {List} from 'immutable';
 
 export interface WithId {

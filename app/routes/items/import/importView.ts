@@ -4,11 +4,11 @@
 import {Component, View, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Router, RouterLink} from 'angular2/router';
 
-import {CompanyRef, CompanyClient} from 'client/domain/company';
-import {Language, LocaleTexts} from 'client/utils/lang';
+import {CompanyRef, CompanyClient} from '../../../client/domain/company';
+import {Language, LocaleTexts} from '../../../client/utils/lang';
 
-import {ErrorService} from 'services/error';
-import {AuthService} from 'services/auth';
+import {ErrorService} from '../../../services/error';
+import {AuthService} from '../../../services/auth';
 
 
 @Component({

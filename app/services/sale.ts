@@ -3,21 +3,21 @@
  */
 import {Inject} from 'angular2/angular2';
 
-import {LocalSale, LocalSaleFactory} from 'client/localDomain/sale';
-import {LocalItemVariant} from 'client/localDomain/itemVariant';
-import {LocalItemVariantSale, LocalItemVariantSaleFactory} from 'client/localDomain/itemVariantSale';
+import {LocalSale, LocalSaleFactory} from '../client/localDomain/sale';
+import {LocalItemVariant} from '../client/localDomain/itemVariant';
+import {LocalItemVariantSale, LocalItemVariantSaleFactory} from '../client/localDomain/itemVariantSale';
 
-import {CompanyRef} from 'client/domain/company';
-import {SaleClient, Sale, SaleRef, SaleSearch} from 'client/domain/sale';
-import {ItemVariantRef} from 'client/domain/itemVariant';
-import {ItemVariantSale, ItemVariantSaleRef, ItemVariantSaleClient, ItemVariantSaleFactory, ItemVariantSaleSearch} from 'client/domain/itemVariantSale';
+import {CompanyRef} from '../client/domain/company';
+import {SaleClient, Sale, SaleRef, SaleSearch} from '../client/domain/sale';
+import {ItemVariantRef} from '../client/domain/itemVariant';
+import {ItemVariantSale, ItemVariantSaleRef, ItemVariantSaleClient, ItemVariantSaleFactory, ItemVariantSaleSearch} from '../client/domain/itemVariantSale';
 
-import {LocaleTexts} from 'client/utils/lang';
-import {BasicClient} from 'client/utils/basicClient';
-import {SearchRequest, SearchResult} from 'client/utils/search';
+import {LocaleTexts} from '../client/utils/lang';
+import {BasicClient} from '../client/utils/basicClient';
+import {SearchRequest, SearchResult} from '../client/utils/search';
 
-import {BasicLocalService, BasicLocalServiceInfo} from 'services/basicService';
-import {AuthService} from 'services/auth';
+import {BasicLocalService, BasicLocalServiceInfo} from './basicService';
+import {AuthService} from './auth';
 
 export class SaleService extends BasicLocalService<Sale, LocalSale> {
 
@@ -25,7 +25,7 @@ export class SaleService extends BasicLocalService<Sale, LocalSale> {
 
     activeSale:LocalSale;
 
-    constructor(@Inject authService:AuthService) {
+    constructor(authService:AuthService) {
         this.saleClient = new SaleClient();
         super(<BasicLocalServiceInfo<Sale, LocalSale>>{
             client: this.saleClient,

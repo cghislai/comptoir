@@ -2,13 +2,13 @@
  * Created by cghislai on 14/08/15.
  */
 
-import {CompanyRef} from 'client/domain/company';
-import {CustomerRef} from 'client/domain/customer';
-import {InvoiceRef} from 'client/domain/invoice';
-import {AccountingTransactionRef} from 'client/domain/accountingTransaction'
+import {CompanyRef} from './company';
+import {CustomerRef} from './customer';
+import {InvoiceRef} from './invoice';
+import {AccountingTransactionRef} from './accountingTransaction'
 
-import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
-import {ComptoirRequest} from 'client/utils/request';
+import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
+import {ComptoirRequest} from '../utils/request';
 
 export class SaleClient extends BasicClient<Sale> {
 

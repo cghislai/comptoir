@@ -3,8 +3,8 @@
  */
 
 import {Component, View, EventEmitter, NgFor, OnInit, OnChanges, ChangeDetectionStrategy} from 'angular2/angular2';
-import {Pagination, PageChangeEvent, PaginationFactory} from 'client/utils/pagination';
-import {SearchResult} from 'client/utils/search';
+import {Pagination, PageChangeEvent, PaginationFactory} from '../../../client/utils/pagination';
+import {SearchResult} from '../../../client/utils/search';
 
 @Component({
     selector: 'paginator',

@@ -5,13 +5,13 @@
 import {Component, View} from 'angular2/angular2';
 import {Router, RouteConfig,RouterOutlet,RouterLink, Location} from 'angular2/router';
 
-import {SaleView} from 'routes/sales/sale/saleView';
-import {ActiveSalesView} from 'routes/sales/actives/listView';
-import {SaleHistoryView} from 'routes/sales/history/historyView';
+import {SaleView} from './sale/saleView';
+import {ActiveSalesView} from './actives/listView';
+import {SaleHistoryView} from './history/historyView';
 
-import {AppHeader} from 'components/app/header/appHeader';
-import {AppMenu} from 'components/app/header/menu/appMenu';
-import {AppTab} from 'components/app/header/tab/appTab';
+import {AppHeader} from '../../components/app/header/appHeader';
+import {AppMenu} from '../../components/app/header/menu/appMenu';
+import {AppTab} from '../../components/app/header/tab/appTab';
 
 @Component({
     selector: 'salesView'

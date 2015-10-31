@@ -3,7 +3,7 @@
  */
 import {Directive, Control, Binding, NgValidator, forwardRef} from 'angular2/angular2';
 
-import {NumberUtils} from 'client/utils/number';
+import {NumberUtils} from '../../client/utils/number';
 
 // FIXME: will be broken with next alpha 37 (and doesn't compile right with alpha 36)
 

@@ -4,25 +4,25 @@
 
 import {Inject} from 'angular2/angular2';
 
-import {CompanyRef} from 'client/domain/company';
-import {Sale, SaleRef, SaleClient} from 'client/domain/sale';
-import {AccountClient, Account, AccountSearch} from 'client/domain/account';
-import {AccountingEntryClient, AccountingEntry, AccountingEntrySearch} from 'client/domain/accountingEntry';
-import {AccountingTransactionRef} from 'client/domain/accountingTransaction';
-import {ItemVariantSale, ItemVariantSaleClient, ItemVariantSaleSearch} from 'client/domain/itemVariantSale';
-import {Pos, PosRef} from 'client/domain/pos';
+import {CompanyRef} from '../../../client/domain/company';
+import {Sale, SaleRef, SaleClient} from '../../../client/domain/sale';
+import {AccountClient, Account, AccountSearch} from '../../../client/domain/account';
+import {AccountingEntryClient, AccountingEntry, AccountingEntrySearch} from '../../../client/domain/accountingEntry';
+import {AccountingTransactionRef} from '../../../client/domain/accountingTransaction';
+import {ItemVariantSale, ItemVariantSaleClient, ItemVariantSaleSearch} from '../../../client/domain/itemVariantSale';
+import {Pos, PosRef} from '../../../client/domain/pos';
 
-import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
-import {LocalAccountingEntry, LocalAccountingEntryFactory} from 'client/localDomain/accountingEntry';
-import {LocalSale, LocalSaleFactory, NewSale} from 'client/localDomain/sale';
-import {LocalItemVariant, LocalItemVariantFactory} from 'client/localDomain/itemVariant';
-import {LocalItemVariantSale, LocalItemVariantSaleFactory, NewItemVariantSale} from 'client/localDomain/itemVariantSale';
+import {LocalAccount, LocalAccountFactory} from '../../../client/localDomain/account';
+import {LocalAccountingEntry, LocalAccountingEntryFactory} from '../../../client/localDomain/accountingEntry';
+import {LocalSale, LocalSaleFactory, NewSale} from '../../../client/localDomain/sale';
+import {LocalItemVariant, LocalItemVariantFactory} from '../../../client/localDomain/itemVariant';
+import {LocalItemVariantSale, LocalItemVariantSaleFactory, NewItemVariantSale} from '../../../client/localDomain/itemVariantSale';
 
-import {SearchRequest, SearchResult} from 'client/utils/search';
-import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
+import {SearchRequest, SearchResult} from '../../../client/utils/search';
+import {LocaleTexts, LocaleTextsFactory} from '../../../client/utils/lang';
 
-import {AuthService} from 'services/auth';
-import {BasicLocalService, BasicLocalServiceInfo} from 'services/basicService';
+import {AuthService} from '../../../services/auth';
+import {BasicLocalService, BasicLocalServiceInfo} from '../../../services/basicService';
 import {List, Map} from 'immutable';
 
 export class ActiveSaleService {

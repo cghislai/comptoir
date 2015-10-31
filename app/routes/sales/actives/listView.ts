@@ -4,19 +4,19 @@
 import {Component, View, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
-import {LocalSale} from 'client/localDomain/sale';
-import {SaleSearch} from 'client/domain/sale';
-import {CompanyRef} from 'client/domain/company';
+import {LocalSale} from '../../../client/localDomain/sale';
+import {SaleSearch} from '../../../client/domain/sale';
+import {CompanyRef} from '../../../client/domain/company';
 
-import {Pagination, PaginationFactory, PageChangeEvent, ApplyPageChangeEvent} from 'client/utils/pagination';
-import {SearchResult, SearchRequest} from 'client/utils/search';
-import {Paginator} from 'components/utils/paginator/paginator';
+import {Pagination, PaginationFactory, PageChangeEvent, ApplyPageChangeEvent} from '../../../client/utils/pagination';
+import {SearchResult, SearchRequest} from '../../../client/utils/search';
 
-import {ErrorService} from 'services/error';
-import {AuthService} from 'services/auth';
-import {SaleService} from 'services/sale';
+import {ErrorService} from '../../../services/error';
+import {AuthService} from '../../../services/auth';
+import {SaleService} from '../../../services/sale';
 
-import {SaleListComponent, SaleColumn} from 'components/sales/list/saleList';
+import {Paginator} from '../../../components/utils/paginator/paginator';
+import {SaleListComponent, SaleColumn} from '../../../components/sales/list/saleList';
 
 @Component({
     selector: "salesActiveView"

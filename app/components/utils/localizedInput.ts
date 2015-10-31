@@ -4,7 +4,7 @@
 
 import {Directive,ElementRef} from 'angular2/angular2';
 
-import {Language, LanguageFactory, LocaleTexts} from 'client/utils/lang';
+import {Language, LanguageFactory, LocaleTexts} from '../../client/utils/lang';
 import {List} from 'immutable';
 
 /**

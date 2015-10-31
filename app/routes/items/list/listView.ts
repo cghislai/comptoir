@@ -4,18 +4,18 @@
 import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
-import {LocalItem} from 'client/localDomain/item';
-import {ItemSearch} from 'client/domain/item';
-import {SearchResult, SearchRequest} from 'client/utils/search';
-import {LocaleTexts} from 'client/utils/lang';
-import {Pagination, PaginationFactory, PageChangeEvent, ApplyPageChangeEvent} from 'client/utils/pagination';
+import {LocalItem} from '../../../client/localDomain/item';
+import {ItemSearch} from '../../../client/domain/item';
+import {SearchResult, SearchRequest} from '../../../client/utils/search';
+import {LocaleTexts} from '../../../client/utils/lang';
+import {Pagination, PaginationFactory, PageChangeEvent, ApplyPageChangeEvent} from '../../../client/utils/pagination';
 
-import {ErrorService} from 'services/error';
-import {ItemService} from 'services/item';
-import {AuthService} from 'services/auth';
+import {ErrorService} from '../../../services/error';
+import {ItemService} from '../../../services/item';
+import {AuthService} from '../../../services/auth';
 
-import {ItemList, ItemColumn} from 'components/item/list/itemList';
-import {Paginator} from 'components/utils/paginator/paginator';
+import {ItemList, ItemColumn} from '../../../components/item/list/itemList';
+import {Paginator} from '../../../components/utils/paginator/paginator';
 
 @Component({
     selector: "productList"

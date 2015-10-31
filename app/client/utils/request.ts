@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 04/08/15.
  */
-import {JSONFactory} from 'client/utils/factory';
+import {JSONFactory} from './factory';
 
 export class ComptoirResponse {
     text:string;

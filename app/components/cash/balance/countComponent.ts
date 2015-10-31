@@ -3,20 +3,20 @@
  */
 import {Component, View, NgFor, NgIf, EventEmitter, ChangeDetectionStrategy, OnInit} from 'angular2/angular2';
 
-import {LocalAccount} from 'client/localDomain/account';
-import {LocalBalance, LocalBalanceFactory, NewBalance} from 'client/localDomain/balance';
+import {LocalAccount} from '../../../client/localDomain/account';
+import {LocalBalance, LocalBalanceFactory, NewBalance} from '../../../client/localDomain/balance';
 import {LocalMoneyPile, CashType, ALL_CASH_TYPES,
-    NewMoneyPile, LocalMoneyPileFactory} from 'client/localDomain/moneyPile';
+    NewMoneyPile, LocalMoneyPileFactory} from '../../../client/localDomain/moneyPile';
 
-import {NumberUtils} from 'client/utils/number';
+import {NumberUtils} from '../../../client/utils/number';
 
-import {BalanceService} from 'services/balance';
-import {MoneyPileService} from 'services/moneyPile';
-import {ErrorService} from 'services/error';
-import {AuthService} from 'services/auth';
+import {BalanceService} from '../../../services/balance';
+import {MoneyPileService} from '../../../services/moneyPile';
+import {ErrorService} from '../../../services/error';
+import {AuthService} from '../../../services/auth';
 
-import {MoneyPileCountComponent} from 'components/cash/moneyPile/moneyPileCount';
-import {FastInput} from 'components/utils/fastInput';
+import {MoneyPileCountComponent} from '../../cash/moneyPile/moneyPileCount';
+import {FastInput} from '../../utils/fastInput';
 
 import {List} from 'immutable';
 

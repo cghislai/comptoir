@@ -4,14 +4,14 @@
 import {Component, View, NgIf, ChangeDetectionStrategy} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink, OnActivate} from 'angular2/router';
 
-import {LocalAccount, LocalAccountFactory, NewAccount} from 'client/localDomain/account';
-import {LocaleTexts} from 'client/utils/lang';
+import {LocalAccount, LocalAccountFactory, NewAccount} from '../../../client/localDomain/account';
+import {LocaleTexts} from '../../../client/utils/lang';
 
-import {AuthService} from 'services/auth';
-import {AccountService} from 'services/account';
-import {ErrorService} from 'services/error';
+import {AuthService} from '../../../services/auth';
+import {AccountService} from '../../../services/account';
+import {ErrorService} from '../../../services/error';
 
-import {AccountsEditComponent} from 'components/account/edit/editAccount';
+import {AccountsEditComponent} from '../../../components/account/edit/editAccount';
 
 @Component({
     selector: 'editAccount',

@@ -5,12 +5,12 @@
 import {Component, View} from 'angular2/angular2';
 import {Router, RouteConfig,RouterOutlet,RouterLink, Location} from 'angular2/router';
 
-import {AppHeader} from 'components/app/header/appHeader';
-import {AppMenu} from 'components/app/header/menu/appMenu';
-import {AppTab} from 'components/app/header/tab/appTab';
+import {AppHeader} from '../../components/app/header/appHeader';
+import {AppMenu} from '../../components/app/header/menu/appMenu';
+import {AppTab} from '../../components/app/header/tab/appTab';
 
-import {AccountsListView} from 'routes/accounts/list/listView';
-import {AccountsEditView} from 'routes/accounts/edit/editView';
+import {AccountsListView} from './list/listView';
+import {AccountsEditView} from './edit/editView';
 
 @Component({
     selector: 'accountsView'

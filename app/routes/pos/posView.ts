@@ -5,12 +5,12 @@
 import {Component, View} from 'angular2/angular2';
 import {Router, RouteConfig,RouterOutlet,RouterLink, Location} from 'angular2/router';
 
-import {AppHeader} from 'components/app/header/appHeader';
-import {AppTab} from 'components/app/header/tab/appTab';
+import {AppHeader} from '../../components/app/header/appHeader';
+import {AppTab} from '../../components/app/header/tab/appTab';
 
 
-import {PosListView} from 'routes/pos/list/listView';
-import {EditPosView} from 'routes/pos/edit/editView';
+import {PosListView} from './list/listView';
+import {EditPosView} from './edit/editView';
 
 @Component({
     selector: 'posView'

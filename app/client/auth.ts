@@ -2,10 +2,10 @@
  * Created by cghislai on 07/08/15.
  */
 
-import {Registration, Auth, AuthFactory} from 'client/domain/auth';
-import {CompanyRef} from 'client/domain/company';
-import {ComptoirRequest} from 'client/utils/request';
-import {ServiceConfig} from 'config/service';
+import {Registration, Auth, AuthFactory} from './domain/auth';
+import {CompanyRef} from './domain/company';
+import {ComptoirRequest} from './utils/request';
+import {ServiceConfig} from '../config/service';
 
 export class AuthClient {
 

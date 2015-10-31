@@ -5,13 +5,13 @@
 import {Component, View, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Router, RouterLink} from 'angular2/router';
 
-import {AppHeader} from 'components/app/header/appHeader';
-import {FormMessage} from 'components/utils/formMessage/formMessage';
-import {RequiredValidator} from 'components/utils/validators';
+import {AppHeader} from '../../components/app/header/appHeader';
+import {FormMessage} from '../../components/utils/formMessage/formMessage';
+import {RequiredValidator} from '../../components/utils/validators';
 
-import {AuthService, LoginRequiredReason} from 'services/auth';
-import {ErrorService} from 'services/error';
-import {MD5} from 'components/utils/md5';
+import {AuthService, LoginRequiredReason} from '../../services/auth';
+import {ErrorService} from '../../services/error';
+import {MD5} from '../../components/utils/md5';
 
 
 

@@ -2,35 +2,35 @@
 import {Component, View,  bootstrap, NgIf} from 'angular2/angular2';
 import {RouteConfig, Router, RouterOutlet, RouterLink, ROUTER_BINDINGS, Location} from 'angular2/router';
 
-import {AccountService} from 'services/account';
-import {AccountingEntryService} from 'services/accountingEntry';
-import {ApplicationService} from 'services/application';
-import {AttributeDefinitionService} from 'services/attributeDefinition';
-import {AttributeValueService} from 'services/attributeValue';
-import {AuthService} from 'services/auth';
-import {BalanceService} from 'services/balance';
-import {CompanyService} from 'services/company';
-import {EmployeeService} from 'services/employee';
-import {ErrorService} from 'services/error';
-import {FileUploadService} from "services/fileUpload";
-import {ItemService} from 'services/item';
-import {ItemVariantService} from 'services/itemVariant';
-import {ItemVariantSaleService} from 'services/itemVariantSale';
-import {MoneyPileService} from 'services/moneyPile';
-import {PictureService} from 'services/picture';
-import {PosService} from 'services/pos';
-import {SaleService} from 'services/sale';
+import {AccountService} from './services/account';
+import {AccountingEntryService} from './services/accountingEntry';
+import {ApplicationService} from './services/application';
+import {AttributeDefinitionService} from './services/attributeDefinition';
+import {AttributeValueService} from './services/attributeValue';
+import {AuthService} from './services/auth';
+import {BalanceService} from './services/balance';
+import {CompanyService} from './services/company';
+import {EmployeeService} from './services/employee';
+import {ErrorService} from './services/error';
+import {FileUploadService} from './services/fileUpload';
+import {ItemService} from './services/item';
+import {ItemVariantService} from './services/itemVariant';
+import {ItemVariantSaleService} from './services/itemVariantSale';
+import {MoneyPileService} from './services/moneyPile';
+import {PictureService} from './services/picture';
+import {PosService} from './services/pos';
+import {SaleService} from './services/sale';
 
-import {DialogView} from 'components/utils/dialog/dialog';
+import {DialogView} from './components/utils/dialog/dialog';
 
-import {LoginView} from 'routes/login/loginView';
-import {RegisterView} from 'routes/register/register';
+import {LoginView} from './routes/login/loginView';
+import {RegisterView} from './routes/register/register';
 
-import {SalesView} from 'routes/sales/salesView';
-import {ItemsView} from 'routes/items/itemsView';
-import {AccountsView} from 'routes/accounts/accountsView';
-import {CashView} from 'routes/cash/cashView';
-import {PosView} from 'routes/pos/posView';
+import {SalesView} from './routes/sales/salesView';
+import {ItemsView} from './routes/items/itemsView';
+import {AccountsView} from './routes/accounts/accountsView';
+import {CashView} from './routes/cash/cashView';
+import {PosView} from './routes/pos/posView';
 
 
 @Component({

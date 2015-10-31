@@ -2,9 +2,9 @@
  * Created by cghislai on 08/09/15.
  */
 
-import {AttributeValue, AttributeValueRef} from 'client/domain/attributeValue';
-import {AttributeDefinition, AttributeDefinitionRef,AttributeDefinitionClient, AttributeDefinitionFactory} from 'client/domain/attributeDefinition';
-import {LocaleTexts} from 'client/utils/lang';
+import {AttributeValue, AttributeValueRef} from '../domain/attributeValue';
+import {AttributeDefinition, AttributeDefinitionRef,AttributeDefinitionClient, AttributeDefinitionFactory} from '../domain/attributeDefinition';
+import {LocaleTexts} from '../utils/lang';
 import {Map, Record} from 'immutable';
 
 export interface LocalAttributeValue extends Map<string, any>{

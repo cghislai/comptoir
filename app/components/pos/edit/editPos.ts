@@ -3,18 +3,18 @@
  */
 import {Component, View, NgFor, NgIf, FORM_DIRECTIVES, ChangeDetectionStrategy, EventEmitter, OnInit} from 'angular2/angular2';
 
-import {Pos} from 'client/domain/pos';
+import {Pos} from '../../../client/domain/pos';
 
-import {Language, LocaleTexts, LanguageFactory, LocaleTextsFactory} from 'client/utils/lang';
+import {Language, LocaleTexts, LanguageFactory, LocaleTextsFactory} from '../../../client/utils/lang';
 
-import {AuthService} from 'services/auth';
-import {PosService} from 'services/pos';
-import {ErrorService} from 'services/error';
+import {AuthService} from '../../../services/auth';
+import {PosService} from '../../../services/pos';
+import {ErrorService} from '../../../services/error';
 
-import {LangSelect} from 'components/lang/langSelect/langSelect';
-import {LocalizedDirective} from 'components/utils/localizedInput';
-import {RequiredValidator} from 'components/utils/validators';
-import {FormMessage} from 'components/utils/formMessage/formMessage';
+import {LangSelect} from '../../lang/langSelect/langSelect';
+import {LocalizedDirective} from '../../utils/localizedInput';
+import {RequiredValidator} from '../../utils/validators';
+import {FormMessage} from '../../utils/formMessage/formMessage';
 
 import {List} from 'immutable';
 

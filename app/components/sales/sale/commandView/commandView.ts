@@ -6,28 +6,28 @@ import {Component, View, NgFor, NgIf, EventEmitter,
     FORM_DIRECTIVES, ChangeDetectionStrategy} from 'angular2/angular2';
 import {List} from 'immutable';
 
-import {CompanyRef} from 'client/domain/company';
-import {SaleRef} from 'client/domain/sale';
-import {ItemVariantSaleSearch} from 'client/domain/itemVariantSale';
+import {CompanyRef} from '../../../../client/domain/company';
+import {SaleRef} from '../../../../client/domain/sale';
+import {ItemVariantSaleSearch} from '../../../../client/domain/itemVariantSale';
 
-import {LocalSale} from 'client/localDomain/sale';
-import {LocalItemVariant} from 'client/localDomain/itemVariant';
-import {LocalItemVariantSale} from 'client/localDomain/itemVariantSale';
+import {LocalSale} from '../../../../client/localDomain/sale';
+import {LocalItemVariant} from '../../../../client/localDomain/itemVariant';
+import {LocalItemVariantSale} from '../../../../client/localDomain/itemVariantSale';
 
-import {LocaleTexts, Language, LanguageFactory, LocaleTextsFactory} from 'client/utils/lang';
-import {NumberUtils} from 'client/utils/number';
-import {SearchRequest, SearchResult} from 'client/utils/search';
+import {LocaleTexts, Language, LanguageFactory, LocaleTextsFactory} from '../../../../client/utils/lang';
+import {NumberUtils} from '../../../../client/utils/number';
+import {SearchRequest, SearchResult} from '../../../../client/utils/search';
 
-import {ActiveSaleService} from 'routes/sales/sale/activeSale';
-import {SaleService} from 'services/sale';
-import {ItemVariantSaleService} from 'services/itemVariantSale';
-import {ErrorService} from 'services/error';
-import {AuthService} from 'services/auth';
+import {ActiveSaleService} from '../../../../routes/sales/sale/activeSale';
+import {SaleService} from '../../../../services/sale';
+import {ItemVariantSaleService} from '../../../../services/itemVariantSale';
+import {ErrorService} from '../../../../services/error';
+import {AuthService} from '../../../../services/auth';
 
-import {AutoFocusDirective} from 'components/utils/autoFocus';
-import {FastInput} from 'components/utils/fastInput';
-import {LangSelect} from 'components/lang/langSelect/langSelect';
-import {LocalizedDirective} from 'components/utils/localizedInput'
+import {AutoFocusDirective} from '../../../utils/autoFocus';
+import {FastInput} from '../../../utils/fastInput';
+import {LangSelect} from '../../../lang/langSelect/langSelect';
+import {LocalizedDirective} from '../../../utils/localizedInput'
 
 
 @Component({

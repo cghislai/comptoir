@@ -2,8 +2,8 @@
  * Created by cghislai on 07/08/15.
  */
 
-import {CompanyRef} from 'client/domain/company';
-import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {CompanyRef} from './company';
+import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
 
 
 export class EmployeeClient extends BasicClient<Employee> {

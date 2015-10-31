@@ -3,21 +3,21 @@
  */
 import {Inject} from 'angular2/angular2';
 
-import {Auth, Registration, AuthFactory} from 'client/domain/auth';
-import {LocalAuth, LocalAuthFactory, NewAuth} from 'client/localDomain/auth';
-import {LocalEmployee} from 'client/localDomain/employee';
-import {LocalCompany} from 'client/localDomain/company';
-import {CompanyRef} from 'client/domain/company';
+import {Auth, Registration, AuthFactory} from '../client/domain/auth';
+import {LocalAuth, LocalAuthFactory, NewAuth} from '../client/localDomain/auth';
+import {LocalEmployee} from '../client/localDomain/employee';
+import {LocalCompany} from '../client/localDomain/company';
+import {CompanyRef} from '../client/domain/company';
 
-import {Language, LanguageFactory} from 'client/utils/lang';
-import {JSONFactory} from 'client/utils/factory';
-import {ComptoirRequest,ComptoirResponse} from 'client/utils/request';
+import {Language, LanguageFactory} from '../client/utils/lang';
+import {JSONFactory} from '../client/utils/factory';
+import {ComptoirRequest,ComptoirResponse} from '../client/utils/request';
 
-import {AuthClient} from 'client/auth';
+import {AuthClient} from '../client/auth';
 
-import {ErrorService} from 'services/error';
+import {ErrorService} from './error';
 
-import {MD5} from 'components/utils/md5';
+import {MD5} from '../components/utils/md5';
 
 export enum LoginRequiredReason {
     NO_SESSION,

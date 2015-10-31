@@ -2,7 +2,7 @@
  * Created by cghislai on 08/08/15.
  */
 
-import {LocaleText, LocaleTextFactory} from 'client/domain/lang';
+import {LocaleText, LocaleTextFactory} from '../domain/lang';
 
 import {Map, List,Record} from 'immutable';
 

@@ -4,8 +4,8 @@
 
 import {Component, View, Directive, ChangeDetectionStrategy, NgControl,
     EventEmitter, NgFor,  NgIf, ElementRef, Attribute, ControlValueAccessor} from 'angular2/angular2';
-import {Language, LanguageFactory, LocaleTexts, NewLanguage} from 'client/utils/lang';
-import {AuthService} from 'services/auth';
+import {Language, LanguageFactory, LocaleTexts, NewLanguage} from '../../../client/utils/lang';
+import {AuthService} from '../../../services/auth';
 import {List} from 'immutable';
 /**
  * A language selection component.

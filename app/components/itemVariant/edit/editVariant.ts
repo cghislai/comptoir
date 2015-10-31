@@ -4,27 +4,27 @@
 import {Component, View, NgFor, NgIf, FORM_DIRECTIVES, EventEmitter, OnInit, ChangeDetectionStrategy} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
-import {LocalPicture, LocalPictureFactory, NewPicture} from 'client/localDomain/picture';
-import {LocalAttributeValue, LocalAttributeValueFactory, NewAttributeValue} from 'client/localDomain/attributeValue';
-import {LocalItemVariant, LocalItemVariantFactory, NewItemVariant} from 'client/localDomain/itemVariant';
-import {LocalItem} from 'client/localDomain/item';
-import {AttributeDefinition, AttributeDefinitionSearch} from 'client/domain/attributeDefinition';
-import {ItemVariant, Pricing} from 'client/domain/itemVariant';
-import {Language, LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
-import {NumberUtils} from 'client/utils/number';
-import {SearchRequest, SearchResult} from 'client/utils/search';
+import {LocalPicture, LocalPictureFactory, NewPicture} from '../../../client/localDomain/picture';
+import {LocalAttributeValue, LocalAttributeValueFactory, NewAttributeValue} from '../../../client/localDomain/attributeValue';
+import {LocalItemVariant, LocalItemVariantFactory, NewItemVariant} from '../../../client/localDomain/itemVariant';
+import {LocalItem} from '../../../client/localDomain/item';
+import {AttributeDefinition, AttributeDefinitionSearch} from '../../../client/domain/attributeDefinition';
+import {ItemVariant, Pricing} from '../../../client/domain/itemVariant';
+import {Language, LocaleTexts, LocaleTextsFactory} from '../../../client/utils/lang';
+import {NumberUtils} from '../../../client/utils/number';
+import {SearchRequest, SearchResult} from '../../../client/utils/search';
 
-import {ItemVariantService} from 'services/itemVariant';
-import {AttributeDefinitionService} from 'services/attributeDefinition';
-import {AttributeValueService} from 'services/attributeValue';
-import {PictureService} from 'services/picture';
-import {ErrorService} from 'services/error';
-import {AuthService} from 'services/auth';
+import {ItemVariantService} from '../../../services/itemVariant';
+import {AttributeDefinitionService} from '../../../services/attributeDefinition';
+import {AttributeValueService} from '../../../services/attributeValue';
+import {PictureService} from '../../../services/picture';
+import {ErrorService} from '../../../services/error';
+import {AuthService} from '../../../services/auth';
 
-import {LangSelect} from 'components/lang/langSelect/langSelect';
-import {FormMessage} from 'components/utils/formMessage/formMessage';
-import {RequiredValidator} from 'components/utils/validators';
-import {LocalizedDirective} from 'components/utils/localizedInput';
+import {LangSelect} from '../../lang/langSelect/langSelect';
+import {FormMessage} from '../../utils/formMessage/formMessage';
+import {RequiredValidator} from '../../utils/validators';
+import {LocalizedDirective} from '../../utils/localizedInput';
 
 import {List, is as ImmutableIs} from 'immutable';
 

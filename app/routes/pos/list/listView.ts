@@ -5,21 +5,21 @@ import {Component, View, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
 
-import {CompanyRef} from 'client/domain/company';
-import {Pos, PosRef, PosSearch} from 'client/domain/pos';
-import {LocaleTexts, Language} from 'client/utils/lang';
+import {CompanyRef} from '../../../client/domain/company';
+import {Pos, PosRef, PosSearch} from '../../../client/domain/pos';
+import {LocaleTexts, Language} from '../../../client/utils/lang';
 
-import {PosService} from 'services/pos';
-import {ErrorService} from 'services/error';
-import {AuthService} from 'services/auth';
-import {Pagination, PaginationFactory, PageChangeEvent, ApplyPageChangeEvent} from 'client/utils/pagination';
-import {SearchResult, SearchRequest} from 'client/utils/search';
+import {PosService} from '../../../services/pos';
+import {ErrorService} from '../../../services/error';
+import {AuthService} from '../../../services/auth';
+import {Pagination, PaginationFactory, PageChangeEvent, ApplyPageChangeEvent} from '../../../client/utils/pagination';
+import {SearchResult, SearchRequest} from '../../../client/utils/search';
 
-import {Paginator} from 'components/utils/paginator/paginator';
-import {AutoFocusDirective} from 'components/utils/autoFocus'
-import {FocusableDirective} from 'components/utils/focusable'
+import {Paginator} from '../../../components/utils/paginator/paginator';
+import {AutoFocusDirective} from '../../../components/utils/autoFocus'
+import {FocusableDirective} from '../../../components/utils/focusable'
 
-import {PosList, PosColumn} from 'components/pos/list/posList';
+import {PosList, PosColumn} from '../../../components/pos/list/posList';
 
 import {List} from 'immutable';
 

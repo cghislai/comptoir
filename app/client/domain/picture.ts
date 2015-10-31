@@ -2,10 +2,10 @@
  * Created by cghislai on 02/09/15.
  */
 
-import {CompanyRef} from 'client/domain/company';
-import {ItemRef} from 'client/domain/item';
-import {ItemVariantRef} from 'client/domain/itemVariant';
-import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {CompanyRef} from './company';
+import {ItemRef} from './item';
+import {ItemVariantRef} from './itemVariant';
+import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
 
 
 export class PictureClient extends BasicClient<Picture> {

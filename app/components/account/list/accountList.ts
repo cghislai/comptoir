@@ -6,13 +6,13 @@ import {Component, View, NgFor, NgIf, NgSwitch, NgSwitchWhen,
     ChangeDetectionStrategy,
     EventEmitter, ViewEncapsulation} from 'angular2/angular2';
 
-import {LocalAccount} from 'client/localDomain/account';
+import {LocalAccount} from '../../../client/localDomain/account';
 
-import {Language, LanguageFactory, LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
+import {Language, LanguageFactory, LocaleTexts, LocaleTextsFactory} from '../../../client/utils/lang';
 
-import {AuthService} from 'services/auth';
+import {AuthService} from '../../../services/auth';
 
-import {FocusableDirective} from 'components/utils/focusable';
+import {FocusableDirective} from '../../utils/focusable';
 
 import {List} from 'immutable';
 /****

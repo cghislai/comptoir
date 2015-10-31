@@ -2,15 +2,15 @@
  * Created by cghislai on 01/09/15.
  */
 
-import {AttributeValue, AttributeValueRef, AttributeValueClient, AttributeValueFactory} from 'client/domain/attributeValue';
-import {ItemVariant, Pricing} from 'client/domain/itemVariant';
-import {Item, ItemRef, ItemClient, ItemFactory} from 'client/domain/item';
-import {Picture, PictureRef, PictureClient, PictureFactory} from 'client/domain/picture';
+import {AttributeValue, AttributeValueRef, AttributeValueClient, AttributeValueFactory} from '../domain/attributeValue';
+import {ItemVariant, Pricing} from '../domain/itemVariant';
+import {Item, ItemRef, ItemClient, ItemFactory} from '../domain/item';
+import {Picture, PictureRef, PictureClient, PictureFactory} from '../domain/picture';
 
-import {LocalItem, LocalItemFactory} from 'client/localDomain/item';
-import {LocalAttributeValue, LocalAttributeValueFactory} from 'client/localDomain/attributeValue';
-import {LocalPicture, LocalPictureFactory} from 'client/localDomain/picture';
-import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
+import {LocalItem, LocalItemFactory} from './item';
+import {LocalAttributeValue, LocalAttributeValueFactory} from './attributeValue';
+import {LocalPicture, LocalPictureFactory} from './picture';
+import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
 
 import {Map, Record} from 'immutable';
 

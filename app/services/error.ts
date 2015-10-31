@@ -2,7 +2,7 @@
  * Created by cghislai on 31/08/15.
  */
 
-import {ComptoirError} from 'client/utils/request';
+import {ComptoirError} from '../client/utils/request';
 
 export class ErrorService {
     hasError:boolean = false;

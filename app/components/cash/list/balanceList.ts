@@ -6,13 +6,13 @@ import {Component, View, NgFor, NgIf, NgSwitch, NgSwitchWhen,
     ChangeDetectionStrategy,
     EventEmitter, ViewEncapsulation} from 'angular2/angular2';
 
-import {LocalBalance} from 'client/localDomain/balance';
+import {LocalBalance} from '../../../client/localDomain/balance';
 
-import {Language, LanguageFactory, LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
+import {Language, LanguageFactory, LocaleTexts, LocaleTextsFactory} from '../../../client/utils/lang';
 
-import {AuthService} from 'services/auth';
+import {AuthService} from '../../../services/auth';
 
-import {FocusableDirective} from 'components/utils/focusable';
+import {FocusableDirective} from '../../utils/focusable';
 
 import {List} from 'immutable';
 /****
@@ -58,7 +58,7 @@ export class BalanceColumnComponent {
 })
 
 @View({
-    templateUrl: './components/cash/list/balanceList.html',
+    templateUrl: './compoonents/cash/list/balanceList.html',
     styleUrls: ['./components/cash/list/balanceList.css'],
     directives: [NgFor, NgIf, FocusableDirective, BalanceColumnComponent]
 })

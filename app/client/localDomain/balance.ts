@@ -2,10 +2,10 @@
  * Created by cghislai on 08/09/15.
  */
 
-import {Balance} from 'client/domain/balance';
-import {Account, AccountRef, AccountClient, AccountFactory} from 'client/domain/account';
+import {Balance} from '../domain/balance';
+import {Account, AccountRef, AccountClient, AccountFactory} from '../domain/account';
 
-import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
+import {LocalAccount, LocalAccountFactory} from './account';
 
 import {Map, Record} from 'immutable';
 

@@ -2,14 +2,14 @@
  * Created by cghislai on 01/09/15.
  */
 
-import {Item} from 'client/domain/item';
-import {Picture, PictureRef, PictureClient, PictureFactory} from 'client/domain/picture';
-import {Company, CompanyRef, CompanyClient, CompanyFactory} from 'client/domain/company';
+import {Item} from '../domain/item';
+import {Picture, PictureRef, PictureClient, PictureFactory} from '../domain/picture';
+import {Company, CompanyRef, CompanyClient, CompanyFactory} from '../domain/company';
 
-import {LocalPicture, LocalPictureFactory} from 'client/localDomain/picture';
-import {LocalCompany, LocalCompanyFactory} from 'client/localDomain/company';
+import {LocalPicture, LocalPictureFactory} from './picture';
+import {LocalCompany, LocalCompanyFactory} from './company';
 
-import {LocaleTexts} from 'client/utils/lang';
+import {LocaleTexts} from '../utils/lang';
 
 import {Map, Record} from 'immutable';
 

@@ -4,30 +4,30 @@
 import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
-import {LocalPicture, LocalPictureFactory, NewPicture} from 'client/localDomain/picture';
-import {LocalItem, NewItem} from 'client/localDomain/item';
-import {LocalItemVariant} from 'client/localDomain/itemVariant';
+import {LocalPicture, LocalPictureFactory, NewPicture} from '../../../client/localDomain/picture';
+import {LocalItem, NewItem} from '../../../client/localDomain/item';
+import {LocalItemVariant} from '../../../client/localDomain/itemVariant';
 
-import {CompanyRef} from 'client/domain/company';
-import {Item, ItemRef, ItemSearch} from 'client/domain/item';
-import {ItemVariant, ItemVariantSearch} from 'client/domain/itemVariant';
-import {Language, LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
-import {NumberUtils} from 'client/utils/number';
-import {SearchRequest, SearchResult} from 'client/utils/search';
+import {CompanyRef} from '../../../client/domain/company';
+import {Item, ItemRef, ItemSearch} from '../../../client/domain/item';
+import {ItemVariant, ItemVariantSearch} from '../../../client/domain/itemVariant';
+import {Language, LocaleTexts, LocaleTextsFactory} from '../../../client/utils/lang';
+import {NumberUtils} from '../../../client/utils/number';
+import {SearchRequest, SearchResult} from '../../../client/utils/search';
 
-import {ItemService} from 'services/item';
-import {ItemVariantService} from 'services/itemVariant';
-import {ErrorService} from 'services/error';
-import {AuthService} from 'services/auth';
-import {PictureService} from 'services/picture';
+import {ItemService} from '../../../services/item';
+import {ItemVariantService} from '../../../services/itemVariant';
+import {ErrorService} from '../../../services/error';
+import {AuthService} from '../../../services/auth';
+import {PictureService} from '../../../services/picture';
 
-import {LangSelect} from 'components/lang/langSelect/langSelect';
-import {FormMessage} from 'components/utils/formMessage/formMessage';
-import {RequiredValidator} from 'components/utils/validators';
-import {LocalizedDirective} from 'components/utils/localizedInput';
-import {ItemVariantList, ItemVariantColumn} from 'components/itemVariant/list/itemVariantList';
+import {LangSelect} from '../../../components/lang/langSelect/langSelect';
+import {FormMessage} from '../../../components/utils/formMessage/formMessage';
+import {RequiredValidator} from '../../../components/utils/validators';
+import {LocalizedDirective} from '../../../components/utils/localizedInput';
+import {ItemVariantList, ItemVariantColumn} from '../../../components/itemVariant/list/itemVariantList';
 
-import {ItemVariantEditView} from 'routes/items/edit/editVariant/editVariantView';
+import {ItemVariantEditView} from './editVariant/editVariantView';
 import {List, Map} from 'immutable';
 
 

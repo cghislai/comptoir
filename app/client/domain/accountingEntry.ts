@@ -2,12 +2,12 @@
  * Created by cghislai on 14/08/15.
  */
 
-import {CompanyRef} from 'client/domain/company';
-import {AccountRef, AccountSearch} from 'client/domain/account';
-import {AccountingTransactionRef} from 'client/domain/accountingTransaction';
-import {CustomerRef} from 'client/domain/customer';
-import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
-import {BasicClient,BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {CompanyRef} from './company';
+import {AccountRef, AccountSearch} from './account';
+import {AccountingTransactionRef} from './accountingTransaction';
+import {CustomerRef} from './customer';
+import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
+import {BasicClient,BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
 
 
 export class AccountingEntryClient extends BasicClient<AccountingEntry> {

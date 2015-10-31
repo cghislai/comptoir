@@ -4,13 +4,13 @@
 
 import {Inject} from 'angular2/angular2';
 
-import {AttributeDefinition, AttributeDefinitionRef, AttributeDefinitionClient, AttributeDefinitionFactory} from 'client/domain/attributeDefinition';
+import {AttributeDefinition, AttributeDefinitionRef, AttributeDefinitionClient, AttributeDefinitionFactory} from '../client/domain/attributeDefinition';
 
-import {BasicClient} from 'client/utils/basicClient';
-import {SearchRequest, SearchResult} from 'client/utils/search';
+import {BasicClient} from '../client/utils/basicClient';
+import {SearchRequest, SearchResult} from '../client/utils/search';
 
-import {BasicService, BasicServiceInfo} from 'services/basicService';
-import {AuthService} from 'services/auth';
+import {BasicService, BasicServiceInfo} from './basicService';
+import {AuthService} from './auth';
 
 
 export class AttributeDefinitionService extends BasicService<AttributeDefinition> {

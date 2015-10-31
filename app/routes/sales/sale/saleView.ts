@@ -5,24 +5,24 @@
 import {Component, View, NgIf, OnInit} from 'angular2/angular2';
 import {Router, RouteParams, Location} from 'angular2/router';
 
-import {LocalSale, NewSale} from 'client/localDomain/sale';
-import {LocalItemVariantSale} from 'client/localDomain/itemVariantSale';
-import {LocalItemVariant} from 'client/localDomain/itemVariant';
+import {LocalSale, NewSale} from '../../../client/localDomain/sale';
+import {LocalItemVariantSale} from '../../../client/localDomain/itemVariantSale';
+import {LocalItemVariant} from '../../../client/localDomain/itemVariant';
 
-import {Sale, SaleRef} from 'client/domain/sale';
-import {Item, ItemRef} from 'client/domain/item';
-import {Pos} from 'client/domain/pos';
-import {LocaleTexts} from 'client/utils/lang';
+import {Sale, SaleRef} from '../../../client/domain/sale';
+import {Item, ItemRef} from '../../../client/domain/item';
+import {Pos} from '../../../client/domain/pos';
+import {LocaleTexts} from '../../../client/utils/lang';
 
-import {ErrorService} from 'services/error';
-import {SaleService} from 'services/sale';
-import {ActiveSaleService} from 'routes/sales/sale/activeSale';
-import {AuthService} from 'services/auth';
+import {ErrorService} from '../../../services/error';
+import {SaleService} from '../../../services/sale';
+import {AuthService} from '../../../services/auth';
 
-import {ItemListView} from 'components/sales/sale/itemList/listView';
-import {CommandView} from 'components/sales/sale/commandView/commandView';
-import {PayView} from 'components/sales/sale/payView/payView'
-import {PosSelect} from 'components/pos/posSelect/posSelect';
+import {ActiveSaleService} from './activeSale';
+import {ItemListView} from '../../../components/sales/sale/itemList/listView';
+import {CommandView} from '../../../components/sales/sale/commandView/commandView';
+import {PayView} from '../../../components/sales/sale/payView/payView'
+import {PosSelect} from '../../../components/pos/posSelect/posSelect';
 
 @Component({
     selector: 'saleView',

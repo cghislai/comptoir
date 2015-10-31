@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 14/08/15.
  */
-import {BasicCacheHandler} from 'client/utils/basicClient';
+import {BasicCacheHandler} from '../utils/basicClient';
 
 export class Price {
     id: number;

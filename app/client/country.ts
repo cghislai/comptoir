@@ -3,9 +3,9 @@
  */
 
 
-import {Country, CountryRef, CountryFactory} from 'client/domain/country';
-import {ComptoirRequest} from 'client/utils/request';
-import {ServiceConfig} from 'config/service';
+import {Country, CountryRef, CountryFactory} from './domain/country';
+import {ComptoirRequest} from './utils/request';
+import {ServiceConfig} from '../config/service';
 
 
 export class CountryClient {

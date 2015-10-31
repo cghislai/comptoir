@@ -3,26 +3,26 @@
  */
 import {Component, View, NgIf, NgFor} from 'angular2/angular2';
 
-import {LocalAccount} from 'client/localDomain/account';
-import {LocalBalance} from 'client/localDomain/balance';
+import {LocalAccount} from '../../../client/localDomain/account';
+import {LocalBalance} from '../../../client/localDomain/balance';
 
-import {CompanyRef} from 'client/domain/company';
-import {AccountSearch, AccountType, AccountFactory, AccountRef} from 'client/domain/account';
-import {BalanceSearch} from 'client/domain/balance';
-import {Pos, PosRef, PosSearch} from 'client/domain/pos';
+import {CompanyRef} from '../../../client/domain/company';
+import {AccountSearch, AccountType, AccountFactory, AccountRef} from '../../../client/domain/account';
+import {BalanceSearch} from '../../../client/domain/balance';
+import {Pos, PosRef, PosSearch} from '../../../client/domain/pos';
 
-import {SearchRequest, SearchResult} from 'client/utils/search';
-import {Language} from 'client/utils/lang';
-import {Pagination, PaginationFactory} from 'client/utils/pagination';
+import {SearchRequest, SearchResult} from '../../../client/utils/search';
+import {Language} from '../../../client/utils/lang';
+import {Pagination, PaginationFactory} from '../../../client/utils/pagination';
 
-import {BalanceService} from 'services/balance';
-import {PosService} from 'services/pos';
-import {AccountService} from 'services/account';
-import {ErrorService} from 'services/error';
-import {AuthService} from 'services/auth';
+import {BalanceService} from '../../../services/balance';
+import {PosService} from '../../../services/pos';
+import {AccountService} from '../../../services/account';
+import {ErrorService} from '../../../services/error';
+import {AuthService} from '../../../services/auth';
 
-import {PosSelect} from 'components/pos/posSelect/posSelect';
-import {BalanceCountComponent} from 'components/cash/balance/countComponent';
+import {PosSelect} from '../../../components/pos/posSelect/posSelect';
+import {BalanceCountComponent} from '../../../components/cash/balance/countComponent';
 
 import {is as ImmutableIs, List, Map} from 'immutable';
 

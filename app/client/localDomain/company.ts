@@ -2,10 +2,10 @@
  * Created by cghislai on 08/09/15.
  */
 
-import {Company, CompanyRef} from 'client/domain/company';
-import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
-import {Country, CountryRef, CountryFactory} from 'client/domain/country';
-import {CountryClient} from 'client/country';
+import {Company, CompanyRef} from '../domain/company';
+import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
+import {Country, CountryRef, CountryFactory} from '../domain/country';
+import {CountryClient} from '../country';
 
 import {Map, Record} from 'immutable';
 

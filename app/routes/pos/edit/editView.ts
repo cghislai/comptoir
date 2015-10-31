@@ -4,16 +4,16 @@
 import {Component, View, NgIf} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
-import {CompanyRef} from 'client/domain/company';
-import {Pos, PosRef} from 'client/domain/pos';
-import {Customer, CustomerRef} from 'client/domain/customer';
+import {CompanyRef} from '../../../client/domain/company';
+import {Pos, PosRef} from '../../../client/domain/pos';
+import {Customer, CustomerRef} from '../../../client/domain/customer';
 
-import {AuthService} from 'services/auth';
-import {PosService} from 'services/pos';
-import {ErrorService} from 'services/error';
+import {AuthService} from '../../../services/auth';
+import {PosService} from '../../../services/pos';
+import {ErrorService} from '../../../services/error';
 
-import {LocaleTexts} from 'client/utils/lang';
-import {PossEditComponent} from 'components/pos/edit/editPos';
+import {LocaleTexts} from '../../../client/utils/lang';
+import {PossEditComponent} from '../../../components/pos/edit/editPos';
 
 @Component({
     selector: 'editPos'

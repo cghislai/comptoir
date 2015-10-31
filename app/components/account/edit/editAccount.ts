@@ -3,21 +3,21 @@
  */
 import {Component, View, NgFor, NgIf, FORM_DIRECTIVES, ChangeDetectionStrategy, EventEmitter, OnInit} from 'angular2/angular2';
 
-import {LocalAccount, LocalAccountFactory, NewAccount} from 'client/localDomain/account';
+import {LocalAccount, LocalAccountFactory, NewAccount} from '../../../client/localDomain/account';
 
-import {Account, AccountType, ALL_ACCOUNT_TYPES} from 'client/domain/account';
-import {CompanyRef} from 'client/domain/company';
+import {Account, AccountType, ALL_ACCOUNT_TYPES} from '../../../client/domain/account';
+import {CompanyRef} from '../../../client/domain/company';
 
-import {Language, LocaleTexts, LanguageFactory, LocaleTextsFactory} from 'client/utils/lang';
+import {Language, LocaleTexts, LanguageFactory, LocaleTextsFactory} from '../../../client/utils/lang';
 
-import {AuthService} from 'services/auth';
-import {AccountService} from 'services/account';
-import {ErrorService} from 'services/error';
+import {AuthService} from '../../../services/auth';
+import {AccountService} from '../../../services/account';
+import {ErrorService} from '../../../services/error';
 
-import {LangSelect} from 'components/lang/langSelect/langSelect';
-import {LocalizedDirective} from 'components/utils/localizedInput';
-import {RequiredValidator} from 'components/utils/validators';
-import {FormMessage} from 'components/utils/formMessage/formMessage';
+import {LangSelect} from '../../lang/langSelect/langSelect';
+import {LocalizedDirective} from '../../utils/localizedInput';
+import {RequiredValidator} from '../../utils/validators';
+import {FormMessage} from '../../utils/formMessage/formMessage';
 
 import {List} from 'immutable';
 

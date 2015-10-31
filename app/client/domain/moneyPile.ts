@@ -2,9 +2,9 @@
  * Created by cghislai on 16/08/15.
  */
 
-import {AccountRef} from 'client/domain/account';
-import {BalanceRef} from 'client/domain/balance';
-import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {AccountRef} from './account';
+import {BalanceRef} from './balance';
+import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
 
 
 export class MoneyPileClient extends BasicClient<MoneyPile> {

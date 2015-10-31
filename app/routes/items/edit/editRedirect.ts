@@ -4,8 +4,8 @@
 import {Component, View} from 'angular2/angular2';
 import {Router, RouteConfig, RouterOutlet} from 'angular2/router';
 
-import {ItemEditView} from 'routes/items/edit/editView';
-import {ItemVariantEditView} from 'routes/items/edit/editVariant/editVariantView';
+import {ItemEditView} from './editView';
+import {ItemVariantEditView} from './editVariant/editVariantView';
 
 
 @Component({

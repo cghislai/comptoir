@@ -4,13 +4,13 @@
 
 import {Component, View, NgIf, NgFor, EventEmitter, ChangeDetectionStrategy} from 'angular2/angular2';
 
-import {Pos, PosRef, PosSearch} from 'client/domain/pos';
-import {SearchResult, SearchRequest} from 'client/utils/search';
-import {Language, LanguageFactory} from 'client/utils/lang';
+import {Pos, PosRef, PosSearch} from '../../../client/domain/pos';
+import {SearchResult, SearchRequest} from '../../../client/utils/search';
+import {Language, LanguageFactory} from '../../../client/utils/lang';
 
-import {PosService} from 'services/pos';
-import {AuthService} from 'services/auth';
-import {ErrorService} from 'services/error';
+import {PosService} from '../../../services/pos';
+import {AuthService} from '../../../services/auth';
+import {ErrorService} from '../../../services/error';
 import {List} from 'immutable';
 
 @Component({

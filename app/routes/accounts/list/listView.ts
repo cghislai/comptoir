@@ -4,20 +4,20 @@
 import {Component, View} from 'angular2/angular2';
 import {Router} from 'angular2/router';
 
-import {CompanyRef} from 'client/domain/company';
+import {CompanyRef} from '../../../client/domain/company';
 
-import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
-import {Account, AccountType, AccountSearch} from 'client/domain/account';
-import {SearchResult, SearchRequest} from 'client/utils/search';
-import {LocaleTexts, Language} from 'client/utils/lang';
-import {Pagination, PaginationFactory, ApplyPageChangeEvent, PageChangeEvent} from 'client/utils/pagination';
+import {LocalAccount, LocalAccountFactory} from '../../../client/localDomain/account';
+import {Account, AccountType, AccountSearch} from '../../../client/domain/account';
+import {SearchResult, SearchRequest} from '../../../client/utils/search';
+import {LocaleTexts, Language} from '../../../client/utils/lang';
+import {Pagination, PaginationFactory, ApplyPageChangeEvent, PageChangeEvent} from '../../../client/utils/pagination';
 
-import {AccountService} from 'services/account';
-import {ErrorService} from 'services/error';
-import {AuthService} from 'services/auth';
+import {AccountService} from '../../../services/account';
+import {ErrorService} from '../../../services/error';
+import {AuthService} from '../../../services/auth';
 
-import {Paginator} from 'components/utils/paginator/paginator';
-import {AccountList, AccountColumn} from 'components/account/list/accountList';
+import {Paginator} from '../../../components/utils/paginator/paginator';
+import {AccountList, AccountColumn} from '../../../components/account/list/accountList';
 
 import {List} from 'immutable';
 

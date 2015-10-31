@@ -2,9 +2,9 @@
  * Created by cghislai on 08/09/15.
  */
 
-import {Auth} from 'client/domain/auth';
-import {Employee, EmployeeRef, EmployeeClient, EmployeeFactory} from 'client/domain/employee';
-import {LocalEmployee, LocalEmployeeFactory} from 'client/localDomain/employee';
+import {Auth} from '../domain/auth';
+import {Employee, EmployeeRef, EmployeeClient, EmployeeFactory} from '../domain/employee';
+import {LocalEmployee, LocalEmployeeFactory} from './employee';
 
 import {Map, Record} from 'immutable';
 

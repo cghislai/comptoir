@@ -2,12 +2,12 @@
  * Created by cghislai on 02/09/15.
  */
 
-import {Account, AccountType, AccountFactory} from 'client/domain/account';
-import {Company, CompanyRef, CompanyFactory, CompanyClient} from 'client/domain/company';
+import {Account, AccountType, AccountFactory} from '../domain/account';
+import {Company, CompanyRef, CompanyFactory, CompanyClient} from '../domain/company';
 
-import {LocalCompany, LocalCompanyFactory} from 'client/localDomain/company';
+import {LocalCompany, LocalCompanyFactory} from './company';
 
-import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
+import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
 
 import {Record, Map} from 'immutable';
 

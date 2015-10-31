@@ -2,13 +2,13 @@
  * Created by cghislai on 07/08/15.
  */
 
-import {AttributeDefinitionRef} from 'client/domain/attributeDefinition';
-import {AttributeValue, AttributeValueRef} from 'client/domain/attributeValue';
-import {ItemRef,ItemSearch } from 'client/domain/item';
-import {CompanyRef} from 'client/domain/company';
-import {PictureRef} from 'client/domain/picture';
-import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
-import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from 'client/utils/basicClient';
+import {AttributeDefinitionRef} from './attributeDefinition';
+import {AttributeValue, AttributeValueRef} from './attributeValue';
+import {ItemRef,ItemSearch } from './item';
+import {CompanyRef} from './company';
+import {PictureRef} from './picture';
+import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
+import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
 
 
 export class ItemVariantClient extends BasicClient<ItemVariant> {

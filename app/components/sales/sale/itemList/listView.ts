@@ -4,25 +4,25 @@
 
 import {Component, View, NgFor, NgIf, EventEmitter, ChangeDetectionStrategy} from 'angular2/angular2';
 
-import {LocalItem} from 'client/localDomain/item';
-import {LocalItemVariant} from 'client/localDomain/itemVariant';
-import {LocalPicture} from 'client/localDomain/picture';
+import {LocalItem} from '../../../../client/localDomain/item';
+import {LocalItemVariant} from '../../../../client/localDomain/itemVariant';
+import {LocalPicture} from '../../../../client/localDomain/picture';
 
-import {CompanyRef} from 'client/domain/company';
-import {ItemSearch, ItemRef} from 'client/domain/item';
-import {ItemVariantSearch} from 'client/domain/itemVariant';
-import {SearchResult, SearchRequest} from 'client/utils/search';
-import {Pagination, PaginationFactory} from 'client/utils/pagination';
+import {CompanyRef} from '../../../../client/domain/company';
+import {ItemSearch, ItemRef} from '../../../../client/domain/item';
+import {ItemVariantSearch} from '../../../../client/domain/itemVariant';
+import {SearchResult, SearchRequest} from '../../../../client/utils/search';
+import {Pagination, PaginationFactory} from '../../../../client/utils/pagination';
 
-import {AuthService} from 'services/auth';
-import {ErrorService} from 'services/error';
-import {ItemService} from 'services/item';
-import {ItemVariantService} from 'services/itemVariant';
+import {AuthService} from '../../../../services/auth';
+import {ErrorService} from '../../../../services/error';
+import {ItemService} from '../../../../services/item';
+import {ItemVariantService} from '../../../../services/itemVariant';
 
-import {ItemList, ItemColumn} from 'components/item/list/itemList';
-import {ItemVariantList, ItemVariantColumn} from 'components/itemVariant/list/itemVariantList';
-import {AutoFocusDirective} from 'components/utils/autoFocus';
-import {FocusableDirective} from 'components/utils/focusable';
+import {ItemList, ItemColumn} from '../../../item/list/itemList';
+import {ItemVariantList, ItemVariantColumn} from '../../../itemVariant/list/itemVariantList';
+import {AutoFocusDirective} from '../../../utils/autoFocus';
+import {FocusableDirective} from '../../../utils/focusable';
 import {List} from 'immutable';
 
 @Component({

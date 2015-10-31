@@ -2,17 +2,17 @@
  * Created by cghislai on 02/09/15.
  */
 
-import {AccountingEntry, AccountingEntryRef, AccountingEntryClient, AccountingEntryFactory} from 'client/domain/accountingEntry';
-import {AccountingTransactionRef, AccountingTransaction, AccountingTransactionClient, AccountingTransactionFactory} from 'client/domain/accountingTransaction';
-import {AccountClient, AccountRef} from 'client/domain/account';
-import {Company, CompanyRef, CompanyClient, CompanyFactory} from 'client/domain/company';
-import {CustomerRef, Customer,CustomerClient, CustomerFactory} from 'client/domain/customer';
+import {AccountingEntry, AccountingEntryRef, AccountingEntryClient, AccountingEntryFactory} from '../domain/accountingEntry';
+import {AccountingTransactionRef, AccountingTransaction, AccountingTransactionClient, AccountingTransactionFactory} from '../domain/accountingTransaction';
+import {AccountClient, AccountRef} from '../domain/account';
+import {Company, CompanyRef, CompanyClient, CompanyFactory} from '../domain/company';
+import {CustomerRef, Customer,CustomerClient, CustomerFactory} from '../domain/customer';
 
-import {LocalAccount, LocalAccountFactory} from 'client/localDomain/account';
-import {LocalCompany, LocalCompanyFactory} from 'client/localDomain/company';
+import {LocalAccount, LocalAccountFactory} from './account';
+import {LocalCompany, LocalCompanyFactory} from './company';
 
-import {LocaleTexts, LocaleTextsFactory} from 'client/utils/lang';
-import {ComptoirRequest} from 'client/utils/request';
+import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
+import {ComptoirRequest} from '../utils/request';
 
 import {Map, Record} from 'immutable';
 

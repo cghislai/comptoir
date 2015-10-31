@@ -4,26 +4,26 @@
 
 import {Component, View, EventEmitter, NgFor, NgIf, ChangeDetectionStrategy} from 'angular2/angular2';
 
-import {LocalSale} from 'client/localDomain/sale';
-import {LocalAccount} from 'client/localDomain/account';
-import {LocalAccountingEntry, LocalAccountingEntryFactory, NewAccountingEntry } from 'client/localDomain/accountingEntry';
+import {LocalSale} from '../../../../client/localDomain/sale';
+import {LocalAccount} from '../../../../client/localDomain/account';
+import {LocalAccountingEntry, LocalAccountingEntryFactory, NewAccountingEntry } from '../../../../client/localDomain/accountingEntry';
 
-import {AccountingEntry, AccountingEntrySearch} from 'client/domain/accountingEntry';
-import {Account, AccountRef, AccountType, AccountSearch} from 'client/domain/account';
-import {Pos, PosRef} from 'client/domain/pos';
-import {SaleClient} from 'client/domain/sale';
-import {CompanyRef} from 'client/domain/company';
-import {AccountingTransactionRef} from 'client/domain/accountingTransaction';
-import {SearchRequest, SearchResult} from 'client/utils/search';
-import {NumberUtils} from 'client/utils/number';
-import {LocaleTexts, LocaleTextsFactory, Language} from 'client/utils/lang';
-import {ComptoirRequest, ComptoirResponse} from 'client/utils/request';
+import {AccountingEntry, AccountingEntrySearch} from '../../../../client/domain/accountingEntry';
+import {Account, AccountRef, AccountType, AccountSearch} from '../../../../client/domain/account';
+import {Pos, PosRef} from '../../../../client/domain/pos';
+import {SaleClient} from '../../../../client/domain/sale';
+import {CompanyRef} from '../../../../client/domain/company';
+import {AccountingTransactionRef} from '../../../../client/domain/accountingTransaction';
+import {SearchRequest, SearchResult} from '../../../../client/utils/search';
+import {NumberUtils} from '../../../../client/utils/number';
+import {LocaleTexts, LocaleTextsFactory, Language} from '../../../../client/utils/lang';
+import {ComptoirRequest, ComptoirResponse} from '../../../../client/utils/request';
 
-import {ActiveSaleService} from 'routes/sales/sale/activeSale';
-import {ErrorService} from 'services/error';
-import {AuthService} from 'services/auth';
+import {ActiveSaleService} from '../../../../routes/sales/sale/activeSale';
+import {ErrorService} from '../../../../services/error';
+import {AuthService} from '../../../../services/auth';
 
-import {FastInput} from 'components/utils/fastInput'
+import {FastInput} from '../../../utils/fastInput'
 import {List} from 'immutable';
 
 @Component({
