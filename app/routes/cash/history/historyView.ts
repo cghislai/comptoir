@@ -17,7 +17,7 @@ import {BalanceService} from '../../../services/balance';
 import {Paginator} from '../../../components/utils/paginator/paginator';
 import {BalanceList, BalanceColumn} from '../../../components/cash/list/balanceList';
 
-import {List} from 'immutable';
+import * as Immutable from 'immutable';
 
 @Component({
     selector: 'historyCashView'
@@ -35,7 +35,7 @@ export class CashHistoryView {
     searchResult:SearchResult<LocalBalance>;
     itemsPerPage:number = 25;
 
-    columns: List<BalanceColumn>;
+    columns: Immutable.List<BalanceColumn>;
 
     constructor(balanceService:BalanceService, errorService:ErrorService, authService:AuthService) {
         this.errorService = errorService;
@@ -55,7 +55,7 @@ export class CashHistoryView {
         this.searchRequest.search = balanceSearch;
         this.searchResult = new SearchResult<LocalBalance>();
 
-        this.columns = List.of(
+        this.columns = Immutable.List.of(
             BalanceColumn.DATETIME,
             BalanceColumn.COMMENT,
             BalanceColumn.ACCOUNT,

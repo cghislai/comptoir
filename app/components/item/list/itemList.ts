@@ -15,7 +15,7 @@ import {AuthService} from '../../../services/auth';
 
 import {FocusableDirective} from '../../utils/focusable';
 
-import {List} from 'immutable';
+import * as Immutable from 'immutable';
 /****
  * Column component
  */
@@ -66,8 +66,8 @@ export class ItemColumnComponent {
 
 export class ItemList {
     // properties
-    items:List<LocalItem>;
-    columns:List<ItemColumn>;
+    items:Immutable.List<LocalItem>;
+    columns:Immutable.List<ItemColumn>;
     itemSelectable:boolean;
     headersVisible:boolean;
     language: Language;

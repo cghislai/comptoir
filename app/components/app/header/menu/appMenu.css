@@ -1,0 +1,76 @@
+@charset "UTF-8";
+h1.pageTitle {
+  font-size: 1.6em;
+  margin: .5em 0; }
+
+div.pageContent {
+  text-align: center;
+  font-size: 1em;
+  margin: .5em; }
+
+input, textarea, select, button {
+  font-size: 1em; }
+
+.blueLink {
+  color: #6981B8; }
+
+.actionLink:hover, .blueLink:hover {
+  text-decoration: underline;
+  color: black;
+  cursor: pointer; }
+
+.actionLink.disabled, .disabled.blueLink {
+  color: lightgray;
+  pointer-events: none; }
+
+div.appMenu {
+  color: white;
+  display: inline-block;
+  margin: .5em; }
+  div.appMenu > a {
+    display: inline-block;
+    padding: .2em;
+    text-decoration: none;
+    color: white; }
+    div.appMenu > a:not(.inactive):hover {
+      color: yellow;
+      cursor: pointer; }
+    div.appMenu > a:not(.inactive) h1::after {
+      content: " ▼"; }
+    div.appMenu > a:not(.inactive):focus {
+      outline: 0.1em solid #FFFBA1;
+      box-shadow: 0 0 0.2em 0.1em #FFFBA1; }
+    div.appMenu > a.inactive {
+      pointer-events: none; }
+    div.appMenu > a.active {
+      outline: 0.1em solid #FFFBA1;
+      box-shadow: 0 0 0.2em 0.1em #FFFBA1;
+      color: #FFFBA1; }
+    div.appMenu > a h1 {
+      font-size: 2em;
+      font-weight: bold;
+      margin: .2em .2em .2em 0; }
+
+div#appMenu {
+  position: absolute;
+  left: .5em;
+  top: 2em;
+  margin: .5em;
+  border: .1em solid white;
+  padding: .5em 1em;
+  font-size: 1.3em;
+  font-weight: bold;
+  z-index: 3;
+  background-color: #8BAAF2; }
+  div#appMenu:not([hidden]) {
+    display: inline-block; }
+  div#appMenu > a {
+    display: block;
+    text-decoration: none;
+    color: white; }
+    div#appMenu > a.active {
+      pointer-events: none;
+      color: #FFFBA1;
+      text-decoration: none; }
+    div#appMenu > a:not(.active):hover {
+      color: yellow; }

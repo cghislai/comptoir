@@ -11,9 +11,9 @@ import {LocalSale, LocalSaleFactory} from './sale';
 
 import {LocaleTexts} from '../utils/lang';
 
-import {Map, Record} from 'immutable';
+import * as Immutable from 'immutable';
 
-export interface LocalItemVariantSale extends Map<string, any> {
+export interface LocalItemVariantSale extends Immutable.Map<string, any> {
     id:number;
     dateTime:Date;
     quantity:number;
@@ -25,7 +25,7 @@ export interface LocalItemVariantSale extends Map<string, any> {
     itemVariant:LocalItemVariant;
     sale:LocalSale;
 }
-var ItemVariantSaleRecord = Record({
+var ItemVariantSaleRecord = Immutable.Record({
     id: null,
     dateTime: null,
     quantity: null,

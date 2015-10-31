@@ -23,9 +23,9 @@ import {LocalCompany, LocalCompanyFactory} from './company';
 import {LocaleTexts} from '../utils/lang';
 import {NumberUtils} from '../utils/number';
 
-import {Map, Record} from 'immutable';
+import * as Immutable from 'immutable';
 
-export interface LocalSale extends Map<string, any> {
+export interface LocalSale extends Immutable.Map<string, any> {
     id:number;
     company:LocalCompany;
     customer:Customer;
@@ -41,7 +41,7 @@ export interface LocalSale extends Map<string, any> {
 
     totalPaid:number;
 }
-var SaleRecord = Record({
+var SaleRecord = Immutable.Record({
     id: null,
     company: null,
     customer: null,

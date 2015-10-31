@@ -13,7 +13,7 @@ import {AuthService} from '../../../services/auth';
 
 import {FocusableDirective} from '../../utils/focusable';
 
-import {List} from 'immutable';
+import * as Immutable from 'immutable';
 
 /****
  * Column component
@@ -65,8 +65,8 @@ export class PosColumnComponent {
 
 export class PosList {
     // properties
-    posList:List<Pos>;
-    columns:List<PosColumn>;
+    posList:Immutable.List<Pos>;
+    columns:Immutable.List<PosColumn>;
     rowSelectable:boolean;
     headersVisible:boolean;
     language:Language;

@@ -7,9 +7,9 @@ import {Account, AccountRef, AccountClient, AccountFactory} from '../domain/acco
 
 import {LocalAccount, LocalAccountFactory} from './account';
 
-import {Map, Record} from 'immutable';
+import * as Immutable from 'immutable';
 
-export interface LocalBalance extends Map<string, any> {
+export interface LocalBalance extends Immutable.Map<string, any> {
     id:number;
     account:LocalAccount;
     dateTime:Date;
@@ -17,7 +17,7 @@ export interface LocalBalance extends Map<string, any> {
     comment:string;
     closed:boolean;
 }
-var BalanceRecord = Record({
+var BalanceRecord = Immutable.Record({
     id: null,
     account: null,
     dateTime: null,

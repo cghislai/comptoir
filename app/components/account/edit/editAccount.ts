@@ -19,7 +19,7 @@ import {LocalizedDirective} from '../../utils/localizedInput';
 import {RequiredValidator} from '../../utils/validators';
 import {FormMessage} from '../../utils/formMessage/formMessage';
 
-import {List} from 'immutable';
+import * as Immutable from 'immutable';
 
 @Component({
     selector: 'accountEditComponent',
@@ -46,7 +46,7 @@ export class AccountsEditComponent implements OnInit {
     saved = new EventEmitter();
     cancelled = new EventEmitter();
 
-    allAccountTypes:List<AccountType>;
+    allAccountTypes:Immutable.List<AccountType>;
 
     constructor(accountService:AccountService, authService:AuthService, errorService:ErrorService) {
         this.accountService = accountService;
@@ -55,7 +55,7 @@ export class AccountsEditComponent implements OnInit {
         var language = authService.getEmployeeLanguage();
         this.editLanguage = language;
         this.appLanguage = language;
-        this.allAccountTypes = List(ALL_ACCOUNT_TYPES);
+        this.allAccountTypes = Immutable.List(ALL_ACCOUNT_TYPES);
     }
 
     onInit() {

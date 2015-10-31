@@ -4,7 +4,7 @@
 
 import {Component, View, NgFor, NgIf, EventEmitter,
     FORM_DIRECTIVES, ChangeDetectionStrategy} from 'angular2/angular2';
-import {List} from 'immutable';
+import * as Immutable from 'immutable';
 
 import {CompanyRef} from '../../../../client/domain/company';
 import {SaleRef} from '../../../../client/domain/sale';
@@ -135,7 +135,7 @@ export class CommandViewTable {
     activeSaleService:ActiveSaleService;
     errorService:ErrorService;
 
-    items:List<LocalItemVariantSale>;
+    items:Immutable.List<LocalItemVariantSale>;
     validated:boolean;
     noInput:boolean;
     itemRemoved = new EventEmitter();

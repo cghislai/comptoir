@@ -21,7 +21,7 @@ import {FocusableDirective} from '../../../components/utils/focusable'
 
 import {PosList, PosColumn} from '../../../components/pos/list/posList';
 
-import {List} from 'immutable';
+import * as Immutable from 'immutable';
 
 @Component({
     selector: "posListView"
@@ -41,7 +41,7 @@ export class PosListView {
     searchRequest:SearchRequest<Pos>;
     searchResult:SearchResult<Pos>;
     posPerPage:number = 25;
-    columns: List<PosColumn>;
+    columns: Immutable.List<PosColumn>;
 
     appLanguage:Language;
     loading:boolean;
@@ -61,7 +61,7 @@ export class PosListView {
         this.searchResult = new SearchResult<Pos>();
 
         this.appLanguage= authService.getEmployeeLanguage();
-        this.columns = List.of(
+        this.columns = Immutable.List.of(
             PosColumn.NAME,
             PosColumn.DESCRIPTION,
             PosColumn.ACTION_REMOVE

@@ -2,7 +2,7 @@
  * Created by cghislai on 08/09/15.
  */
 
-import {List} from 'immutable';
+import * as Immutable from 'immutable';
 
 import {WithId, BasicClient} from '../client/utils/basicClient';
 import {SearchRequest, SearchResult} from '../client/utils/search';
@@ -135,7 +135,7 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
                     .then((results)=> {
                         var localResult = new SearchResult<U>();
                         localResult.count = result.count;
-                        localResult.list = List(results);
+                        localResult.list = Immutable.List(results);
                         searchRequest.setRequest(null);
                         searchRequest.busy = false;
                         return localResult;

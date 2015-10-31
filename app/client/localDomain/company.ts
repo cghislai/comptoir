@@ -7,15 +7,15 @@ import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
 import {Country, CountryRef, CountryFactory} from '../domain/country';
 import {CountryClient} from '../country';
 
-import {Map, Record} from 'immutable';
+import * as Immutable from 'immutable';
 
-export interface LocalCompany extends Map<string, any> {
+export interface LocalCompany extends Immutable.Map<string, any> {
     id: number;
     name: LocaleTexts;
     description: LocaleTexts;
     country: Country;
 }
-var CompanyRecord = Record({
+var CompanyRecord = Immutable.Record({
     id: null,
     name: null,
     description: null,

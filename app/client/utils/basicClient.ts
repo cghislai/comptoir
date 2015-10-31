@@ -6,7 +6,6 @@ import {ServiceConfig} from '../../config/service';
 import {Pagination} from './pagination';
 import {ComptoirRequest} from './request';
 import {SearchResult} from './search';
-import {List} from 'immutable';
 
 export interface WithId {
     id: number;

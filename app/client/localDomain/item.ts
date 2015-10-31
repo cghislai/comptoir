@@ -11,9 +11,9 @@ import {LocalCompany, LocalCompanyFactory} from './company';
 
 import {LocaleTexts} from '../utils/lang';
 
-import {Map, Record} from 'immutable';
+import * as Immutable from 'immutable';
 
-export interface LocalItem extends Map<string, any> {
+export interface LocalItem extends Immutable.Map<string, any> {
     id:number;
     company:LocalCompany;
     reference:string;
@@ -25,7 +25,7 @@ export interface LocalItem extends Map<string, any> {
 
     mainPicture:LocalPicture;
 }
-var ItemRecord = Record({
+var ItemRecord = Immutable.Record({
     id: null,
     company: null,
     reference: null,

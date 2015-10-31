@@ -26,7 +26,7 @@ import {FormMessage} from '../../utils/formMessage/formMessage';
 import {RequiredValidator} from '../../utils/validators';
 import {LocalizedDirective} from '../../utils/localizedInput';
 
-import {List, is as ImmutableIs} from 'immutable';
+import * as Immutable from 'immutable';
 
 @Component({
     selector: 'editItemVariantComponent',
@@ -52,9 +52,9 @@ export class ItemVariantEditComponent implements OnInit {
     picture: LocalPicture;
 
     newAttributeValue:LocalAttributeValue;
-    unsavedAttributes:List<LocalAttributeValue>;
+    unsavedAttributes:Immutable.List<LocalAttributeValue>;
 
-    allPricings:List<Pricing>;
+    allPricings:Immutable.List<Pricing>;
     pricingAmountRequired:boolean;
     pictureTouched: boolean;
 
@@ -76,12 +76,12 @@ export class ItemVariantEditComponent implements OnInit {
 
         this.appLanguage = authService.getEmployeeLanguage();
         this.editLanguage = authService.getEmployeeLanguage();
-        this.allPricings = List([
+        this.allPricings = Immutable.List([
             Pricing.ABSOLUTE,
             Pricing.ADD_TO_BASE,
             Pricing.PARENT_ITEM
         ]);
-        this.unsavedAttributes = List([]);
+        this.unsavedAttributes = Immutable.List([]);
 
         this.resetNewAttributeValue();
     }
@@ -128,7 +128,7 @@ export class ItemVariantEditComponent implements OnInit {
                     });
                     return Promise.all(newAttributeTask)
                         .then((results:LocalAttributeValue[])=> {
-                            this.unsavedAttributes = List([]);
+                            this.unsavedAttributes = Immutable.List([]);
                             var allAttributes = this.itemVariant.attributeValues;
                             for (var savedValue of results) {
                                 allAttributes.push(savedValue);
@@ -297,7 +297,7 @@ export class ItemVariantEditComponent implements OnInit {
     doRemoveAttribute(attributeValue:LocalAttributeValue) {
         var attributeSaved = attributeValue.id != null;
         if (attributeSaved) {
-            var newAttributes = List(this.itemVariantModel.attributeValues)
+            var newAttributes = Immutable.List(this.itemVariantModel.attributeValues)
                 .filter((existingAttribute: LocalAttributeValue)=> {
                     return existingAttribute.id != attributeValue.id;
                 }).toArray();
@@ -313,7 +313,7 @@ export class ItemVariantEditComponent implements OnInit {
         } else {
             var newUnsavedAttributes = this.unsavedAttributes
                 .filter((attribute)=> {
-                    return !ImmutableIs(attribute, attributeValue);
+                    return !Immutable.is(attribute, attributeValue);
                 }).toList();
             this.unsavedAttributes = newUnsavedAttributes;
         }

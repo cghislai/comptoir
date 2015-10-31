@@ -7,16 +7,16 @@ import {Company, CompanyRef, CompanyClient, CompanyFactory} from '../domain/comp
 
 import {LocalCompany, LocalCompanyFactory} from './company';
 
-import {Map, Record} from 'immutable';
+import * as Immutable from 'immutable';
 
-export interface LocalPicture extends Map<string, any> {
+export interface LocalPicture extends Immutable.Map<string, any> {
     id:number;
     company:LocalCompany;
     data:string;
     contentType:string;
     dataURI:string;
 }
-var PictureRecord = Record({
+var PictureRecord = Immutable.Record({
     id: null,
     company: null,
     data: null,

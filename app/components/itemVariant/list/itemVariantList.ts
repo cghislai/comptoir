@@ -15,7 +15,7 @@ import {AuthService} from '../../../services/auth';
 
 import {FocusableDirective} from '../../utils/focusable';
 
-import {List} from 'immutable';
+import * as Immutable from 'immutable';
 
 /****
  * Column component
@@ -75,8 +75,8 @@ export class ItemVariantColumnComponent {
 
 export class ItemVariantList {
     // properties
-    items:List<LocalItemVariant>;
-    columns:List<ItemVariantColumn>;
+    items:Immutable.List<LocalItemVariant>;
+    columns:Immutable.List<ItemVariantColumn>;
     rowSelectable:boolean;
     headersVisible:boolean;
     language:Language;

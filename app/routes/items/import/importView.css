@@ -1,0 +1,67 @@
+/**
+ * Created by cghislai on 03/09/15.
+ */
+h1.pageTitle {
+  font-size: 1.6em;
+  margin: .5em 0; }
+
+div.pageContent {
+  text-align: center;
+  font-size: 1em;
+  margin: .5em; }
+
+input, textarea, select, button {
+  font-size: 1em; }
+
+.blueLink {
+  color: #6981B8; }
+
+.actionLink:hover, .blueLink:hover {
+  text-decoration: underline;
+  color: black;
+  cursor: pointer; }
+
+.actionLink.disabled, .disabled.blueLink {
+  color: lightgray;
+  pointer-events: none; }
+
+.boxedLink {
+  border: 0.1em solid #8BAAF2;
+  font-weight: bolder;
+  padding: .3em;
+  margin: .3em;
+  color: black;
+  text-decoration: none;
+  background-color: white; }
+  .boxedLink:not([hidden]) {
+    display: inline-block; }
+  .boxedLink:hover {
+    background-color: rgba(139, 170, 242, 0.5);
+    cursor: pointer;
+    text-decoration: none; }
+  .boxedLink:focus {
+    background-color: rgba(139, 170, 242, 0.5); }
+  .boxedLink[disabled], .boxedLink[disabled]:focus, .boxedLink[disabled]:hover {
+    border-color: lightgray;
+    background-color: white;
+    text-decoration: none;
+    color: darkgray;
+    cursor: default; }
+
+form {
+  display: inline-block; }
+
+.fileInfo {
+  font-size: .8em;
+  margin: 1em;
+  border: .1em solid lightgray;
+  padding: .5em; }
+  .fileInfo h2 {
+    margin: .1em;
+    font-size: .9em; }
+  .fileInfo table {
+    width: 100%; }
+    .fileInfo table td:first-child {
+      text-align: left; }
+    .fileInfo table td:last-child {
+      text-align: right; }

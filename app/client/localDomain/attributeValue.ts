@@ -5,15 +5,15 @@
 import {AttributeValue, AttributeValueRef} from '../domain/attributeValue';
 import {AttributeDefinition, AttributeDefinitionRef,AttributeDefinitionClient, AttributeDefinitionFactory} from '../domain/attributeDefinition';
 import {LocaleTexts} from '../utils/lang';
-import {Map, Record} from 'immutable';
+import * as Immutable from 'immutable';
 
-export interface LocalAttributeValue extends Map<string, any>{
+export interface LocalAttributeValue extends Immutable.Map<string, any>{
     id:number;
     value:LocaleTexts;
 
     attributeDefinition:AttributeDefinition;
 }
-var AttributeValueRecord = Record({
+var AttributeValueRecord = Immutable.Record({
     id: null,
     value: null,
     attributeDefinition: null

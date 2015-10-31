@@ -2,15 +2,15 @@
  * Created by cghislai on 07/08/15.
  */
 
-import {Map, Record} from 'immutable';
+import * as Immutable from 'immutable';
 
-export interface Pagination extends Map<string, any>{
+export interface Pagination extends Immutable.Map<string, any>{
     pageIndex: number;
     firstIndex: number;
     pageSize: number;
     sorts: any; // [colName]='asc'|'desc'
 }
-var PaginationRecord = Record({
+var PaginationRecord = Immutable.Record({
     pageIndex: null,
     firstIndex: null,
     pageSize: null,

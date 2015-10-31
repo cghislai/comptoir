@@ -28,7 +28,7 @@ import {LocalizedDirective} from '../../../components/utils/localizedInput';
 import {ItemVariantList, ItemVariantColumn} from '../../../components/itemVariant/list/itemVariantList';
 
 import {ItemVariantEditView} from './editVariant/editVariantView';
-import {List, Map} from 'immutable';
+import * as Immutable from 'immutable';
 
 
 @Component({
@@ -60,7 +60,7 @@ export class ItemEditView {
 
     itemVariantSearchRequest:SearchRequest<LocalItemVariant>;
     itemVariantSearchResult:SearchResult<LocalItemVariant>;
-    itemVariantListColumns:List<ItemVariantColumn>;
+    itemVariantListColumns:Immutable.List<ItemVariantColumn>;
 
     constructor(itemService:ItemService, errorService:ErrorService, pictureService:PictureService,
                 authService:AuthService, itemVariantService:ItemVariantService,
@@ -75,7 +75,7 @@ export class ItemEditView {
         this.appLanguage = authService.getEmployeeLanguage();
         this.editLanguage = authService.getEmployeeLanguage();
 
-        this.itemVariantListColumns = List.of(
+        this.itemVariantListColumns = Immutable.List.of(
             ItemVariantColumn.VARIANT_REFERENCE,
             ItemVariantColumn.PICTURE_NO_ITEM_FALLBACK,
             ItemVariantColumn.ATTRIBUTES,
@@ -85,7 +85,7 @@ export class ItemEditView {
         this.itemVariantSearchRequest = new SearchRequest<LocalItemVariant>();
 
         this.itemVariantSearchResult = new SearchResult<LocalItemVariant>();
-        this.itemVariantSearchResult.list = List([]);
+        this.itemVariantSearchResult.list = Immutable.List([]);
 
         this.findItem(routeParams);
     }

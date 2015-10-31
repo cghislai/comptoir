@@ -6,16 +6,16 @@ import {Auth} from '../domain/auth';
 import {Employee, EmployeeRef, EmployeeClient, EmployeeFactory} from '../domain/employee';
 import {LocalEmployee, LocalEmployeeFactory} from './employee';
 
-import {Map, Record} from 'immutable';
+import * as Immutable from 'immutable';
 
-export interface LocalAuth extends Map<string, any> {
+export interface LocalAuth extends Immutable.Map<string, any> {
     id: number;
     employee:LocalEmployee;
     token:string;
     refreshToken: string;
     expirationDateTime: Date;
 }
-var AuthRecord = Record({
+var AuthRecord = Immutable.Record({
     id: null,
     employee: null,
     token: null,

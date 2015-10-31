@@ -18,7 +18,7 @@ import {SaleService} from '../../../services/sale';
 import {Paginator} from '../../../components/utils/paginator/paginator';
 import {SaleListComponent, SaleColumn} from '../../../components/sales/list/saleList';
 
-import {List} from 'immutable';
+import * as Immutable from 'immutable';
 
 @Component({
     selector: "salesHistoryView"
@@ -38,7 +38,7 @@ export class SaleHistoryView {
     searchRequest:SearchRequest<LocalSale>;
     searchResult:SearchResult<LocalSale>;
 
-    columns:List<SaleColumn>;
+    columns:Immutable.List<SaleColumn>;
     salesPerPage:number = 25;
 
     loading:boolean;
@@ -66,7 +66,7 @@ export class SaleHistoryView {
         this.searchRequest.search = saleSearch;
         this.searchResult = new SearchResult<LocalSale>();
 
-        this.columns = List.of(
+        this.columns = Immutable.List.of(
             SaleColumn.ID,
             SaleColumn.REFERENCE,
             SaleColumn.DATETIME,

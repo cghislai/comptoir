@@ -23,7 +23,7 @@ import {ItemList, ItemColumn} from '../../../item/list/itemList';
 import {ItemVariantList, ItemVariantColumn} from '../../../itemVariant/list/itemVariantList';
 import {AutoFocusDirective} from '../../../utils/autoFocus';
 import {FocusableDirective} from '../../../utils/focusable';
-import {List} from 'immutable';
+import * as Immutable from 'immutable';
 
 @Component({
     selector: 'itemListView',
@@ -51,11 +51,11 @@ export class ItemListView {
     //
     searchRequest:SearchRequest<LocalItem>;
     searchResult:SearchResult<LocalItem>;
-    columns:List<ItemColumn>;
+    columns:Immutable.List<ItemColumn>;
 
     variantRequest:SearchRequest<LocalItemVariant>;
     variantResult:SearchResult<LocalItemVariant>;
-    variantColumns:List<ItemVariantColumn>;
+    variantColumns:Immutable.List<ItemVariantColumn>;
     variantSelection:boolean;
 
     constructor(errorService:ErrorService, itemService:ItemService,
@@ -86,13 +86,13 @@ export class ItemListView {
         this.variantResult = new SearchResult<LocalItemVariant>();
         this.variantSelection = false;
 
-        this.columns = List.of(
+        this.columns = Immutable.List.of(
             ItemColumn.REFERENCE,
             ItemColumn.PICTURE,
             ItemColumn.NAME_AND_DESCRIPTION,
             ItemColumn.VAT_INCLUSIVE
         );
-        this.variantColumns = List.of(
+        this.variantColumns = Immutable.List.of(
             ItemVariantColumn.VARIANT_REFERENCE,
             ItemVariantColumn.PICTURE,
             ItemVariantColumn.ATTRIBUTES,

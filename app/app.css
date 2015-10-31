@@ -1,0 +1,268 @@
+h1.pageTitle {
+  font-size: 1.6em;
+  margin: .5em 0; }
+
+div.pageContent {
+  text-align: center;
+  font-size: 1em;
+  margin: .5em; }
+
+input, textarea, select, button {
+  font-size: 1em; }
+
+.blueLink {
+  color: #6981B8; }
+
+.actionLink:hover, .blueLink:hover {
+  text-decoration: underline;
+  color: black;
+  cursor: pointer; }
+
+.actionLink.disabled, .disabled.blueLink {
+  color: lightgray;
+  pointer-events: none; }
+
+.coloredHeader:not([hidden]) {
+  background: #8BAAF2;
+  color: white;
+  display: table;
+  width: 100%;
+  height: 3.5em; }
+  .coloredHeader:not([hidden]).inactive {
+    background: lightgray; }
+  .coloredHeader:not([hidden]) > *:not([hidden]) {
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%; }
+  .coloredHeader:not([hidden]) h1:not([hidden]) {
+    display: inline-block;
+    margin: 0;
+    padding: .5em;
+    font-size: 1.6em; }
+  .coloredHeader:not([hidden]) .actions {
+    float: right;
+    text-align: right;
+    padding: .5em; }
+    .coloredHeader:not([hidden]) .actions .action:not([hidden]) {
+      font-weight: bolder;
+      cursor: pointer;
+      display: inline-block;
+      padding: .5em;
+      border: .1em solid transparent; }
+    .coloredHeader:not([hidden]) .actions .action:hover {
+      border: .1em solid yellow;
+      color: yellow; }
+  .coloredHeader:not([hidden]) .busy {
+    height: 100%; }
+    .coloredHeader:not([hidden]) .busy img:not([hidden]) {
+      position: relative;
+      display: inline-block;
+      vertical-align: middle; }
+
+.boxedHoverableLink {
+  border: 0.1em solid #8BAAF2;
+  font-weight: bolder;
+  padding: .3em;
+  margin: .3em;
+  color: black;
+  text-decoration: none;
+  background-color: white; }
+  .boxedHoverableLink:hover {
+    background-color: rgba(139, 170, 242, 0.5);
+    cursor: pointer;
+    text-decoration: none; }
+  .boxedHoverableLink:focus {
+    background-color: rgba(139, 170, 242, 0.5); }
+  .boxedHoverableLink[disabled], .boxedHoverableLink[disabled]:focus, .boxedHoverableLink[disabled]:hover {
+    border-color: lightgray;
+    background-color: white;
+    text-decoration: none;
+    cursor: default; }
+
+.lightBlueLink {
+  color: #6981B8; }
+
+.lightBlueLink:hover {
+  text-decoration: underline;
+  color: black;
+  cursor: pointer; }
+
+input {
+  font-size: 1em;
+  padding: .1em;
+  outline: .1em solid transparent; }
+  input.number {
+    text-align: right;
+    width: 5em; }
+
+select {
+  outline: .1em solid transparent; }
+
+:focus {
+  outline: 0.1em solid rgba(139, 170, 242, 0.5);
+  box-shadow: 0 0 0.2em 0.1em rgba(139, 170, 242, 0.5); }
+
+.coloredHeader :focus {
+  outline: 0.1em solid rgba(139, 170, 242, 0.5);
+  box-shadow: 0 0 0.2em 0.1em rgba(139, 170, 242, 0.5); }
+
+table.dataTable, div.dataTable {
+  width: 100%;
+  font-size: 1em;
+  border-collapse: collapse;
+  position: relative; }
+  table.dataTable tr, table.dataTable .dataTableRow, div.dataTable tr, div.dataTable .dataTableRow {
+    height: 1.5em; }
+  table.dataTable tbody tr:not(:last-child), table.dataTable tbody .dataTableRow:not(:last-child), table.dataTable .dataTableBody tr:not(:last-child), table.dataTable .dataTableBody .dataTableRow:not(:last-child), div.dataTable tbody tr:not(:last-child), div.dataTable tbody .dataTableRow:not(:last-child), div.dataTable .dataTableBody tr:not(:last-child), div.dataTable .dataTableBody .dataTableRow:not(:last-child) {
+    border: 0.1em solid transparent;
+    border-bottom: .1em solid lightgray; }
+  table.dataTable tbody tr:hover, table.dataTable tbody .dataTableRow:hover, table.dataTable .dataTableBody tr:hover, table.dataTable .dataTableBody .dataTableRow:hover, div.dataTable tbody tr:hover, div.dataTable tbody .dataTableRow:hover, div.dataTable .dataTableBody tr:hover, div.dataTable .dataTableBody .dataTableRow:hover {
+    background-color: rgba(128, 128, 128, 0.1); }
+  table.dataTable tbody tr[focusable]:focus, table.dataTable tbody .dataTableRow[focusable]:focus, table.dataTable .dataTableBody tr[focusable]:focus, table.dataTable .dataTableBody .dataTableRow[focusable]:focus, div.dataTable tbody tr[focusable]:focus, div.dataTable tbody .dataTableRow[focusable]:focus, div.dataTable .dataTableBody tr[focusable]:focus, div.dataTable .dataTableBody .dataTableRow[focusable]:focus {
+    background-color: rgba(139, 170, 242, 0.5); }
+  table.dataTable thead tr, table.dataTable thead .dataTableRow, table.dataTable .dataTableHead tr, table.dataTable .dataTableHead .dataTableRow, div.dataTable thead tr, div.dataTable thead .dataTableRow, div.dataTable .dataTableHead tr, div.dataTable .dataTableHead .dataTableRow {
+    border-bottom: .1em solid lightgray;
+    margin-bottom: 1em; }
+  table.dataTable td, table.dataTable th, table.dataTable .dataTableCell, div.dataTable td, div.dataTable th, div.dataTable .dataTableCell {
+    padding: .2em;
+    vertical-align: middle;
+    text-align: left; }
+  table.dataTable td.center, table.dataTable th.center, div.dataTable td.center, div.dataTable th.center {
+    text-align: center; }
+  table.dataTable td.number, table.dataTable td.total, table.dataTable th.number, table.dataTable th.total, div.dataTable td.number, div.dataTable td.total, div.dataTable th.number, div.dataTable th.total {
+    text-align: right; }
+  table.dataTable td, table.dataTable .dataTableCell, div.dataTable td, div.dataTable .dataTableCell {
+    padding: .3em .3em .3em; }
+    table.dataTable td a.actionIcon:not([hidden]), table.dataTable .dataTableCell a.actionIcon:not([hidden]), div.dataTable td a.actionIcon:not([hidden]), div.dataTable .dataTableCell a.actionIcon:not([hidden]) {
+      font-size: 1em;
+      display: inline-block;
+      vertical-align: middle; }
+      table.dataTable td a.actionIcon:not([hidden]):not(.noBlur), table.dataTable .dataTableCell a.actionIcon:not([hidden]):not(.noBlur), div.dataTable td a.actionIcon:not([hidden]):not(.noBlur), div.dataTable .dataTableCell a.actionIcon:not([hidden]):not(.noBlur) {
+        color: gainsboro;
+        -webkit-filter: blur(0.1em); }
+      table.dataTable td a.actionIcon:not([hidden]).noBlur .red, table.dataTable .dataTableCell a.actionIcon:not([hidden]).noBlur .red, div.dataTable td a.actionIcon:not([hidden]).noBlur .red, div.dataTable .dataTableCell a.actionIcon:not([hidden]).noBlur .red {
+        color: red; }
+      table.dataTable td a.actionIcon:not([hidden]).noBlur .green, table.dataTable .dataTableCell a.actionIcon:not([hidden]).noBlur .green, div.dataTable td a.actionIcon:not([hidden]).noBlur .green, div.dataTable .dataTableCell a.actionIcon:not([hidden]).noBlur .green {
+        color: darkgreen; }
+    table.dataTable td .actionIcon, table.dataTable .dataTableCell .actionIcon, div.dataTable td .actionIcon, div.dataTable .dataTableCell .actionIcon {
+      padding-left: .3em; }
+  table.dataTable tr:hover td a.actionIcon:not([hidden]), table.dataTable .dataTableRow:hover .dataTableCell a.actionIcon:not([hidden]), div.dataTable tr:hover td a.actionIcon:not([hidden]), div.dataTable .dataTableRow:hover .dataTableCell a.actionIcon:not([hidden]) {
+    -webkit-filter: none;
+    color: black; }
+    table.dataTable tr:hover td a.actionIcon:not([hidden]) .red, table.dataTable .dataTableRow:hover .dataTableCell a.actionIcon:not([hidden]) .red, div.dataTable tr:hover td a.actionIcon:not([hidden]) .red, div.dataTable .dataTableRow:hover .dataTableCell a.actionIcon:not([hidden]) .red {
+      color: red; }
+    table.dataTable tr:hover td a.actionIcon:not([hidden]) .green, table.dataTable .dataTableRow:hover .dataTableCell a.actionIcon:not([hidden]) .green, div.dataTable tr:hover td a.actionIcon:not([hidden]) .green, div.dataTable .dataTableRow:hover .dataTableCell a.actionIcon:not([hidden]) .green {
+      color: darkgreen; }
+  table.dataTable tr:hover td a.actionIcon:not([hidden]):hover, table.dataTable .dataTableRow:hover .dataTableCell a.actionIcon:not([hidden]):hover, div.dataTable tr:hover td a.actionIcon:not([hidden]):hover, div.dataTable .dataTableRow:hover .dataTableCell a.actionIcon:not([hidden]):hover {
+    cursor: pointer;
+    color: gray; }
+    table.dataTable tr:hover td a.actionIcon:not([hidden]):hover .red, table.dataTable .dataTableRow:hover .dataTableCell a.actionIcon:not([hidden]):hover .red, div.dataTable tr:hover td a.actionIcon:not([hidden]):hover .red, div.dataTable .dataTableRow:hover .dataTableCell a.actionIcon:not([hidden]):hover .red {
+      color: #ff9999; }
+    table.dataTable tr:hover td a.actionIcon:not([hidden]):hover .green, table.dataTable .dataTableRow:hover .dataTableCell a.actionIcon:not([hidden]):hover .green, div.dataTable tr:hover td a.actionIcon:not([hidden]):hover .green, div.dataTable .dataTableRow:hover .dataTableCell a.actionIcon:not([hidden]):hover .green {
+      color: #00fd00; }
+
+div.dataTable:not([hidden]) {
+  display: table; }
+  div.dataTable:not([hidden]) .dataTableRow:not([hidden]) {
+    display: table-row; }
+    div.dataTable:not([hidden]) .dataTableRow:not([hidden]) .dataTableCell:not([hidden]) {
+      display: table-cell; }
+  div.dataTable:not([hidden]) .dataTableHead:not([hidden]) {
+    display: table-header-group; }
+  div.dataTable:not([hidden]) .dataTableBody:not([hidden]) {
+    display: table-row-group; }
+
+.actionlink:not([hidden]) {
+  color: black; }
+
+.actionlink.green:not([hidden]) {
+  color: darkgreen; }
+
+.actionlink.red:not([hidden]) {
+  color: red; }
+
+.actionlink:not([hidden]):hover {
+  text-decoration: underline;
+  cursor: pointer;
+  color: gray; }
+
+.actionlink.green:not([hidden]):hover {
+  color: #00fd00; }
+
+.actionlink.red:not([hidden]):hover {
+  color: #ff9999; }
+
+.fi-2em {
+  font-size: 2em; }
+
+.fi-3em {
+  font-size: 3em; }
+
+span.valignAnchor {
+  display: inline-block;
+  vertical-align: middle;
+  height: 100%; }
+
+img.itemPicture.medium {
+  max-width: 15vw;
+  max-height: 15vh; }
+
+img.itemPicture.large {
+  max-width: 25vw;
+  max-height: 25vh; }
+
+img.itemPicture.list {
+  max-width: 5em;
+  max-height: 2em; }
+
+a.disabled, a.disabled:hover {
+  color: lightgray !important;
+  text-decoration: none !important;
+  cursor: default !important; }
+
+.menuPaneView {
+  width: 100%;
+  overflow-y: auto;
+  display: table;
+  min-height: 90vh; }
+  .menuPaneView > * {
+    position: relative; }
+  .menuPaneView .menu {
+    display: table-cell;
+    height: 100%;
+    vertical-align: top;
+    padding: 1em;
+    background-color: #8BAAF2; }
+    .menuPaneView .menu a {
+      color: white;
+      font-size: 1.2em;
+      font-weight: bolder;
+      text-decoration: none;
+      padding: .3em;
+      margin: .2em;
+      margin-bottom: .7em;
+      display: block;
+      background-color: transparent; }
+    .menuPaneView .menu a.active {
+      color: yellow; }
+    .menuPaneView .menu a:hover {
+      color: yellow; }
+  .menuPaneView .view {
+    display: table-cell;
+    vertical-align: top;
+    width: 100%; }
+
+section {
+  min-height: 90vh;
+  overflow-y: auto; }
+
+section > * {
+  height: 100%; }
+
+footer {
+  color: white;
+  background-color: gray;
+  font-size: 1.5vh; }
+
+p.errorMessage {
+  font-size: .8em; }

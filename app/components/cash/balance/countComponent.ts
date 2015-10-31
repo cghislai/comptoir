@@ -18,7 +18,7 @@ import {AuthService} from '../../../services/auth';
 import {MoneyPileCountComponent} from '../../cash/moneyPile/moneyPileCount';
 import {FastInput} from '../../utils/fastInput';
 
-import {List} from 'immutable';
+import * as Immutable from 'immutable';
 
 @Component({
     selector: 'balanceCountComponent',
@@ -40,7 +40,7 @@ export class BalanceCountComponent {
 
     account:LocalAccount;
     balance:LocalBalance;
-    moneyPiles:List<LocalMoneyPile>;
+    moneyPiles:Immutable.List<LocalMoneyPile>;
 
     editingTotal:boolean;
 
@@ -58,7 +58,7 @@ export class BalanceCountComponent {
     }
 
     onInit() {
-        this.moneyPiles = List(ALL_CASH_TYPES)
+        this.moneyPiles = Immutable.List(ALL_CASH_TYPES)
             .map((cashType)=> {
                 return NewMoneyPile({
                     account: this.account,

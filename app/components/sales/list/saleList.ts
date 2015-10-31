@@ -13,7 +13,7 @@ import {AuthService} from '../../../services/auth';
 
 import {FocusableDirective} from '../../utils/focusable';
 
-import {List} from 'immutable';
+import * as Immutable from 'immutable';
 
 
 /****
@@ -66,8 +66,8 @@ export class SaleColumnComponent {
 
 export class SaleListComponent {
     // properties
-    sales:List<LocalSale>;
-    columns:List<SaleColumn>;
+    sales:Immutable.List<LocalSale>;
+    columns:Immutable.List<SaleColumn>;
     selectable:boolean;
     headers:boolean;
     language:Language;

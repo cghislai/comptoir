@@ -4,7 +4,7 @@
 
 import {LocaleText, LocaleTextFactory} from '../domain/lang';
 
-import {Map, List,Record} from 'immutable';
+import * as Immutable from 'immutable';
 
 export class LocaleTexts  {
     get(key:string): string {
@@ -31,7 +31,7 @@ export class LocaleTextsFactory {
     };
 
     static toJSONArrayLocaleTextsTransformer = (texts:any)=> {
-        var textArray:any[] = Map(texts)
+        var textArray:any[] = Immutable.Map(texts)
             .filter((value, key)=> {
                 return key != '_isLocalTexts';
             })
@@ -58,11 +58,11 @@ export class LocaleTextsFactory {
 }
 
 
-export interface Language extends Map<string, any> {
+export interface Language extends Immutable.Map<string, any> {
     locale: string;
     label: LocaleTexts;
 }
-var LanguageRecord = Record({
+var LanguageRecord = Immutable.Record({
     locale: null,
     label: null
 });
@@ -75,7 +75,7 @@ export class LanguageFactory {
     static DUTCH = LanguageFactory.toLanguage('nl', LocaleTextsFactory.toLocaleTexts({'fr': 'Néerlandais'}));
     static ENGLISH = LanguageFactory.toLanguage('en', LocaleTextsFactory.toLocaleTexts({'fr': 'Anglais'}));
 
-    static ALL_LANGUAGES:List<Language> = List.of(LanguageFactory.FRENCH, LanguageFactory.DUTCH, LanguageFactory.ENGLISH);
+    static ALL_LANGUAGES:Immutable.List<Language> = Immutable.List.of(LanguageFactory.FRENCH, LanguageFactory.DUTCH, LanguageFactory.ENGLISH);
     static DEFAULT_LANGUAGE = LanguageFactory.FRENCH;
 
     public locale:string;

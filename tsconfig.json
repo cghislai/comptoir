@@ -15,7 +15,9 @@
         "./app/app.ts"
     ],
     "filesGlob": [
-        "./app/**/*.ts"
+        "./app/**/*.ts",
+        "./gulpfile.ts",
+        "./tools/**/*.ts"
     ],
     "compileOnSave": false
 }

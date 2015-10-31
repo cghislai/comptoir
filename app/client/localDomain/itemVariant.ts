@@ -12,9 +12,9 @@ import {LocalAttributeValue, LocalAttributeValueFactory} from './attributeValue'
 import {LocalPicture, LocalPictureFactory} from './picture';
 import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
 
-import {Map, Record} from 'immutable';
+import * as Immutable from 'immutable';
 
-export interface LocalItemVariant extends Map<string, any> {
+export interface LocalItemVariant extends Immutable.Map<string, any> {
     id:number;
     variantReference:string;
     pricing:Pricing;
@@ -25,7 +25,7 @@ export interface LocalItemVariant extends Map<string, any> {
     item:LocalItem;
 
 }
-var ItemVariantRecord = Record({
+var ItemVariantRecord = Immutable.Record({
     id: null,
     variantReference: null,
     pricing: null,

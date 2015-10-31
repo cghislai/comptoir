@@ -19,7 +19,7 @@ import {AuthService} from '../../../services/auth';
 import {Paginator} from '../../../components/utils/paginator/paginator';
 import {AccountList, AccountColumn} from '../../../components/account/list/accountList';
 
-import {List} from 'immutable';
+import * as Immutable from 'immutable';
 
 @Component({
     selector: "accountListView"
@@ -38,7 +38,7 @@ export class AccountsListView {
 
     searchRequest:SearchRequest<LocalAccount>;
     searchResult:SearchResult<LocalAccount>;
-    columns:List<AccountColumn>;
+    columns:Immutable.List<AccountColumn>;
     accountsPerPage:number = 25;
 
     language:Language;
@@ -59,7 +59,7 @@ export class AccountsListView {
         this.searchResult = new SearchResult<LocalAccount>();
 
         this.language = authService.getEmployeeLanguage();
-        this.columns = List.of(
+        this.columns = Immutable.List.of(
             AccountColumn.NAME,
             AccountColumn.DESCRIPTION,
             AccountColumn.TYPE,

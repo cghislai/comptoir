@@ -11,9 +11,9 @@ import {LocalBalance, LocalBalanceFactory} from './balance';
 
 import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
 
-import {Map, Record} from 'immutable';
+import * as Immutable from 'immutable';
 
-export interface LocalMoneyPile extends Map<string, any> {
+export interface LocalMoneyPile extends Immutable.Map<string, any> {
     id:number;
     account:LocalAccount;
     dateTime:Date;
@@ -24,7 +24,7 @@ export interface LocalMoneyPile extends Map<string, any> {
     //
     label: LocaleTexts;
 }
-var MoneyPileRecord = Record({
+var MoneyPileRecord = Immutable.Record({
     id: null,
     account: null,
     dateTime: null,

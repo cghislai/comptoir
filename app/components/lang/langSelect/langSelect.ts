@@ -6,7 +6,7 @@ import {Component, View, Directive, ChangeDetectionStrategy, NgControl,
     EventEmitter, NgFor,  NgIf, ElementRef, Attribute, ControlValueAccessor} from 'angular2/angular2';
 import {Language, LanguageFactory, LocaleTexts, NewLanguage} from '../../../client/utils/lang';
 import {AuthService} from '../../../services/auth';
-import {List} from 'immutable';
+import * as Immutable from 'immutable';
 /**
  * A language selection component.
  */
@@ -25,7 +25,7 @@ export class LangSelect  {
 
     displayLanguage:Language;
     selectedLanguage:Language;
-    allLanguages: List<Language>;
+    allLanguages: Immutable.List<Language>;
     languageChanged:EventEmitter = new EventEmitter();
 
     dropDown:boolean;
@@ -63,7 +63,7 @@ export class LangSelectControl  implements ControlValueAccessor {
 
     displayLanguage:Language;
     selectedLanguage:Language;
-    allLanguages: List<Language>;
+    allLanguages: Immutable.List<Language>;
     languageChanged:EventEmitter = new EventEmitter();
 
     dropDown:boolean;

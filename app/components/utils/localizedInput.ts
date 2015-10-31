@@ -5,7 +5,7 @@
 import {Directive,ElementRef} from 'angular2/angular2';
 
 import {Language, LanguageFactory, LocaleTexts} from '../../client/utils/lang';
-import {List} from 'immutable';
+import * as Immutable from 'immutable';
 
 /**
  * A localized input directive. Add the 'localized' attribute on a input/textarea field to use.

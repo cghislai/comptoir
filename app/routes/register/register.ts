@@ -19,7 +19,7 @@ import {LocaleTexts, Language, LanguageFactory, LocaleTextsFactory, NewLanguage}
 import {AuthService} from '../../services/auth';
 import {ErrorService} from '../../services/error';
 
-import {List, Map} from 'immutable';
+import * as Immutable from 'immutable';
 
 @Component({
     selector: "registerView"

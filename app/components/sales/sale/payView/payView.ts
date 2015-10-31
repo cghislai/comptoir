@@ -24,7 +24,7 @@ import {ErrorService} from '../../../../services/error';
 import {AuthService} from '../../../../services/auth';
 
 import {FastInput} from '../../../utils/fastInput'
-import {List} from 'immutable';
+import * as Immutable from 'immutable';
 
 @Component({
     selector: "payView",
@@ -48,7 +48,7 @@ export class PayView {
     saleTotal:number;
     paidAmount: number;
     sale: LocalSale;
-    accountingEntries: List<LocalAccountingEntry>;
+    accountingEntries: Immutable.List<LocalAccountingEntry>;
 
     paid = new EventEmitter();
 

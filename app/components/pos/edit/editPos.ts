@@ -16,7 +16,7 @@ import {LocalizedDirective} from '../../utils/localizedInput';
 import {RequiredValidator} from '../../utils/validators';
 import {FormMessage} from '../../utils/formMessage/formMessage';
 
-import {List} from 'immutable';
+import * as Immutable from 'immutable';
 
 @Component({
     selector: 'posEditComponent',

@@ -11,7 +11,7 @@ import {Language, LanguageFactory} from '../../../client/utils/lang';
 import {PosService} from '../../../services/pos';
 import {AuthService} from '../../../services/auth';
 import {ErrorService} from '../../../services/error';
-import {List} from 'immutable';
+import * as Immutable from 'immutable';
 
 @Component({
     selector: 'posSelect',
@@ -28,7 +28,7 @@ export class PosSelect {
     errorService:ErrorService;
 
     searchRequest:SearchRequest<Pos>;
-    posList:List<Pos>;
+    posList:Immutable.List<Pos>;
     pos:Pos;
     language:Language;
 
@@ -46,7 +46,7 @@ export class PosSelect {
         var posSearch = new PosSearch();
         posSearch.companyRef = authService.getEmployeeCompanyRef();
         this.searchRequest.search = posSearch;
-        this.posList = List([]);
+        this.posList = Immutable.List([]);
         this.searchPos();
     }
 

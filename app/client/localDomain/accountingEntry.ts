@@ -14,9 +14,9 @@ import {LocalCompany, LocalCompanyFactory} from './company';
 import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
 import {ComptoirRequest} from '../utils/request';
 
-import {Map, Record} from 'immutable';
+import * as Immutable from 'immutable';
 
-export interface LocalAccountingEntry extends Map<string, any> {
+export interface LocalAccountingEntry extends Immutable.Map<string, any> {
     id:number;
     company:LocalCompany;
     amount:number;
@@ -29,7 +29,7 @@ export interface LocalAccountingEntry extends Map<string, any> {
 
     account:LocalAccount;
 }
-var AccountingEntryRecord = Record({
+var AccountingEntryRecord = Immutable.Record({
     id: null,
     company: null,
     amount: null,

@@ -14,7 +14,7 @@ import {AuthService} from '../../../services/auth';
 
 import {FocusableDirective} from '../../utils/focusable';
 
-import {List} from 'immutable';
+import * as Immutable from 'immutable';
 /****
  * Column component
  */
@@ -65,8 +65,8 @@ export class AccountColumnComponent {
 
 export class AccountList {
     // properties
-    accounts:List<LocalAccount>;
-    columns:List<AccountColumn>;
+    accounts:Immutable.List<LocalAccount>;
+    columns:Immutable.List<AccountColumn>;
     accountSelectable:boolean;
     headersVisible:boolean;
     language: Language;

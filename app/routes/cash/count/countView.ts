@@ -24,7 +24,7 @@ import {AuthService} from '../../../services/auth';
 import {PosSelect} from '../../../components/pos/posSelect/posSelect';
 import {BalanceCountComponent} from '../../../components/cash/balance/countComponent';
 
-import {is as ImmutableIs, List, Map} from 'immutable';
+import * as Immutable from 'immutable';
 
 @Component({
     selector: 'countCashView'

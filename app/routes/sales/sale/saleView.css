@@ -1,0 +1,52 @@
+h1.pageTitle {
+  font-size: 1.6em;
+  margin: .5em 0; }
+
+div.pageContent {
+  text-align: center;
+  font-size: 1em;
+  margin: .5em; }
+
+input, textarea, select, button {
+  font-size: 1em; }
+
+.blueLink {
+  color: #6981B8; }
+
+.actionLink:hover, .blueLink:hover {
+  text-decoration: underline;
+  color: black;
+  cursor: pointer; }
+
+.actionLink.disabled, .disabled.blueLink {
+  color: lightgray;
+  pointer-events: none; }
+
+.header form {
+  margin: .1em; }
+  .header form > *:not([hidden]) {
+    display: inline; }
+  .header form select {
+    font-size: 1em; }
+
+.wrapper {
+  overflow-x: hidden; }
+  .wrapper .saleViewContainer {
+    width: 150vw;
+    position: relative;
+    left: 0; }
+    .wrapper .saleViewContainer:not(.no-anim) {
+      -webkit-transition: left 300ms ease-in-out;
+      -moz-transition: left 300ms ease-in-out;
+      -ms-transition: left 300ms ease-in-out;
+      -o-transition: left 300ms ease-in-out;
+      transition: left 300ms ease-in-out; }
+    .wrapper .saleViewContainer.slide-left {
+      left: -50vw; }
+    .wrapper .saleViewContainer > * {
+      display: inline-block;
+      position: relative;
+      vertical-align: top;
+      width: 49vw; }
+      .wrapper .saleViewContainer > * > * {
+        margin: 1em; }

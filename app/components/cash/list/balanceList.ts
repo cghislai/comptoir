@@ -14,7 +14,7 @@ import {AuthService} from '../../../services/auth';
 
 import {FocusableDirective} from '../../utils/focusable';
 
-import {List} from 'immutable';
+import * as Immutable from 'immutable';
 /****
  * Column component
  */
@@ -58,18 +58,18 @@ export class BalanceColumnComponent {
 })
 
 @View({
-    templateUrl: './compoonents/cash/list/balanceList.html',
+    templateUrl: './components/cash/list/balanceList.html',
     styleUrls: ['./components/cash/list/balanceList.css'],
     directives: [NgFor, NgIf, FocusableDirective, BalanceColumnComponent]
 })
 
 export class BalanceList {
     // properties
-    balances:List<LocalBalance>;
-    columns:List<BalanceColumn>;
+    balances:Immutable.List<LocalBalance>;
+    columns:Immutable.List<BalanceColumn>;
     rowSelectable:boolean;
     headersVisible:boolean;
-    language: Language;
+    language:Language;
 
     rowClicked = new EventEmitter();
     columnAction = new EventEmitter();

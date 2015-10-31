@@ -15,7 +15,7 @@ import {AuthService} from '../../../../services/auth';
 
 import {ItemVariantEditComponent} from '../../../../components/itemVariant/edit/editVariant';
 
-import {Map} from 'immutable';
+import * as Immutable from 'immutable';
 
 @Component({
     selector: 'editItemVariant'
