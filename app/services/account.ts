@@ -16,7 +16,7 @@ export class AccountService extends BasicLocalService<Account, LocalAccount> {
 
     lastUsedBalanceAccount:LocalAccount;
 
-    constructor(authService:AuthService) {
+    constructor(@Inject(AuthService) authService:AuthService) {
         var client = new AccountClient();
         super(<BasicLocalServiceInfo<Account, LocalAccount>>{
             client: client,

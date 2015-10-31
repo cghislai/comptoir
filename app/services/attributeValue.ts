@@ -16,7 +16,7 @@ import {AuthService} from './auth';
 
 export class AttributeValueService extends BasicLocalService<AttributeValue, LocalAttributeValue> {
 
-    constructor( authService:AuthService) {
+    constructor(@Inject(AuthService) authService:AuthService) {
         var client = new AttributeValueClient();
         super(<BasicLocalServiceInfo<AttributeValue, LocalAttributeValue>>{
             client: client,

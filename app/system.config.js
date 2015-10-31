@@ -1,3 +1,6 @@
 System.config({
-  defaultJSExtensions: true
+  defaultJSExtensions: true,
+  map: {
+    'immutable': 'lib/immutable.min.js'
+  }
 });

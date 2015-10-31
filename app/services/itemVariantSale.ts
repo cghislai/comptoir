@@ -15,7 +15,7 @@ import {AuthService} from './auth';
 export class ItemVariantSaleService extends BasicLocalService<ItemVariantSale, LocalItemVariantSale> {
 
 
-    constructor( authService:AuthService) {
+    constructor(@Inject(AuthService) authService:AuthService) {
         var client = new ItemVariantSaleClient();
         super(<BasicLocalServiceInfo<ItemVariantSale, LocalItemVariantSale>>{
             client: client,

@@ -15,7 +15,7 @@ import {AuthService} from './auth';
 export class PictureService extends BasicLocalService<Picture, LocalPicture> {
 
 
-    constructor( authService:AuthService) {
+    constructor(@Inject(AuthService) authService:AuthService) {
         var client = new PictureClient();
         super(<BasicLocalServiceInfo<Picture, LocalPicture>>{
             client: client,

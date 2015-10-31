@@ -25,7 +25,7 @@ export class SaleService extends BasicLocalService<Sale, LocalSale> {
 
     activeSale:LocalSale;
 
-    constructor(authService:AuthService) {
+    constructor(@Inject(AuthService)  authService:AuthService) {
         this.saleClient = new SaleClient();
         super(<BasicLocalServiceInfo<Sale, LocalSale>>{
             client: this.saleClient,

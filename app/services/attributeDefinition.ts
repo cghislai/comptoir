@@ -15,7 +15,7 @@ import {AuthService} from './auth';
 
 export class AttributeDefinitionService extends BasicService<AttributeDefinition> {
 
-    constructor( authService:AuthService) {
+    constructor(@Inject(AuthService) authService:AuthService) {
         var client = new AttributeDefinitionClient();
         super({
             client: client,

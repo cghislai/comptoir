@@ -34,10 +34,31 @@ import {PosView} from './routes/pos/posView';
 
 
 @Component({
-    selector: 'app'
+    selector: 'app',
+    viewBindings: [
+        AuthService,
+
+        AccountService,
+        AccountingEntryService,
+        ApplicationService,
+        AttributeDefinitionService,
+        AttributeValueService,
+        BalanceService,
+        CompanyService,
+        EmployeeService,
+        ErrorService,
+        FileUploadService,
+        ItemService,
+        ItemVariantService,
+        ItemVariantSaleService,
+        MoneyPileService,
+        PictureService,
+        PosService,
+        SaleService
+    ]
 })
 @View({
-    templateUrl: './app.html?v=<%= VERSION %>',
+    templateUrl: './app.html',
     styleUrls: ['./app.css'],
     directives: [ROUTER_DIRECTIVES, NgIf, DialogView]
 })
@@ -103,25 +124,5 @@ export class App {
 
 
 bootstrap(App, [
-    ROUTER_BINDINGS,
-
-    AuthService,
-
-    AccountService,
-    AccountingEntryService,
-    ApplicationService,
-    AttributeDefinitionService,
-    AttributeValueService,
-    BalanceService,
-    CompanyService,
-    EmployeeService,
-    ErrorService,
-    FileUploadService,
-    ItemService,
-    ItemVariantService,
-    ItemVariantSaleService,
-    MoneyPileService,
-    PictureService,
-    PosService,
-    SaleService
+    ROUTER_BINDINGS
 ]);
