@@ -58,6 +58,8 @@ export const PATH = {
                 resolve('systemjs/dist/system-polyfills.js.map')
             ],
             csslib: [
+                resolve('font-awesome/css/font-awesome.css'),
+                resolve('font-awesome/css/font-awesome.css.map')
             ]
         },
         prod: {
@@ -76,9 +78,16 @@ export const PATH = {
                 resolve('systemjs/dist/system-polyfills.js')
             ],
             csslib: [
+                resolve('font-awesome/css/font-awesome.min.css')
             ]
         },
         fonts: [
+            resolve('font-awesome/fonts/FontAwesome.otf'),
+            resolve('font-awesome/fonts/fontawesome-webfont.eot'),
+            resolve('font-awesome/fonts/fontawesome-webfont.svg'),
+            resolve('font-awesome/fonts/fontawesome-webfont.ttf'),
+            resolve('font-awesome/fonts/fontawesome-webfont.woff'),
+            resolve('font-awesome/fonts/fontawesome-webfont.woff2')
         ]
     }
 };

@@ -26,8 +26,8 @@
     </template>
     <template [ng-switch-when]=" 'closed' ">
         <span class="closed">
-             <i class="fi-x" [hidden]="sale.closed"></i>
-             <i class="fi-check" [hidden]="!sale.closed"></i>
+             <i class="fa fa-times" [hidden]="sale.closed"></i>
+             <i class="fa fa-check" [hidden]="!sale.closed"></i>
         </span>
     </template>
     <template [ng-switch-when]=" 'ref' ">
@@ -38,7 +38,7 @@
     <template [ng-switch-when]=" 'action_remove' ">
         <a class="actionIcon "
            (click)="onColumnAction(sale, column, $event)">
-            <i class="fi-minus red"></i>
+            <i class="fa fa-minus red"></i>
         </a>
     </template>
 </div>

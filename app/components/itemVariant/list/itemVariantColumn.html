@@ -18,7 +18,7 @@
                      *ng-if="itemVariant.item?.mainPicture?.dataURI != undefined">
 
                 <div class="imagePlaceover" *ng-if="itemVariant.item?.mainPicture?.dataURI == undefined">
-                    <i class="fi-book"></i>
+                    <i class="fa fa-book"></i>
                 </div>
             </div>
         </span>
@@ -28,7 +28,7 @@
             <img [src]="itemVariant.mainPicture.dataURI" *ng-if="itemVariant.mainPicture?.dataURI != undefined">
 
             <div class="imagePlaceover" *ng-if="itemVariant.mainPicture?.dataURI == undefined">
-                <i class="fi-book"></i>
+                <i class="fa fa-book"></i>
             </div>
         </span>
     </template>
@@ -116,7 +116,7 @@
         <span class="action remove">
             <a class="actionIcon "
                (click)="onColumnAction(itemVariant, column, $event)">
-                <i class="fi-minus red"></i>
+                <i class="fa fa-minus red"></i>
             </a>
         </span>
     </template>

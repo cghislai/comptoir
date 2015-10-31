@@ -32,7 +32,7 @@
            <img [src]="item.mainPicture.dataURI" *ng-if="item.mainPicture?.dataURI !== null">
 
             <div class="imagePlaceover" *ng-if="item.mainPicture?.dataURI === null">
-                <i class="fi-book"></i>
+                <i class="fa fa-book"></i>
             </div>
         </span>
     </template>
@@ -55,7 +55,7 @@
         <span class="action remove">
             <a class="actionIcon"
                (click)="onColumnAction(item, column, $event)">
-                <i class="fi-minus red"></i>
+                <i class="fa fa-minus red"></i>
             </a>
         </span>
     </template>

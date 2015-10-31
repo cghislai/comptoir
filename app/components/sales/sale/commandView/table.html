@@ -121,17 +121,17 @@
         <a class="actionIcon noBlur validate"
            (click)="doValidateInput(row)"
            [hidden]="!isEditingItem(saleItem)">
-            <i class="fi-check green"></i>
+            <i class="fa fa-check green"></i>
         </a>
         <a class="actionIcon noBlur validate"
            (click)="doCancelInput(row)"
            [hidden]="!isEditingItem(saleItem)">
-            <i class="fi-x red"></i>
+            <i class="fa fa-times red"></i>
         </a>
         <a class="actionIcon remove"
            [hidden]="isEditing()"
            (click)="doRemoveItem(saleItem)">
-            <i class="fi-minus red"></i>
+            <i class="fa fa-minus red"></i>
         </a>
         <a class="actionIcon setReductionLink"
            (click)="doEditItemDiscount(saleItem)"
@@ -141,7 +141,7 @@
         <a class="actionIcon commentLink"
            (click)="doEditItemComment(saleItem)"
            [hidden]="hasComment(saleItem) || isEditing()">
-           <i class="fi-comment"></i>
+           <i class="fa fa-comment"></i>
         </a>
     </td>
 </tr>
