@@ -46,7 +46,7 @@ export class ActiveSaleService {
     saleService:BasicLocalService<Sale, LocalSale>;
     itemVariantSaleService:BasicLocalService<ItemVariantSale, LocalItemVariantSale>;
 
-    constructor(authService:AuthService) {
+    constructor(@Inject(AuthService) authService:AuthService) {
         this.sale = null;
         this.pos = null;
 
