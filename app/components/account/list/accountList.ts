@@ -8,7 +8,7 @@ import {Component, View, NgFor, NgIf, NgSwitch, NgSwitchWhen,
 
 import {LocalAccount} from '../../../client/localDomain/account';
 
-import {Language, LanguageFactory, LocaleTexts, LocaleTextsFactory} from '../../../client/utils/lang';
+import {Language, LocaleTextsFactory} from '../../../client/utils/lang';
 
 import {AuthService} from '../../../services/auth';
 
@@ -20,7 +20,7 @@ import * as Immutable from 'immutable';
  * Column component
  */
 @Component({
-    selector: "accountColumn",
+    selector: 'accountColumn',
     inputs: ['account', 'column', 'lang'],
     outputs: ['action'],
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -116,45 +116,45 @@ export class AccountColumn extends Column {
         AccountColumn.ID = new AccountColumn(
             'id', 1,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Id"
+                'fr': 'Id'
             }));
 
         AccountColumn.ACCOUNTING_NUMBER = new AccountColumn(
             'accountingNumber', 3,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Numéro de comptabilité"
+                'fr': 'Numéro de comptabilité'
             }), true);
 
         AccountColumn.IBAN = new AccountColumn(
             'iban', 3,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "IBAN"
+                'fr': 'IBAN'
             }), true);
 
         AccountColumn.BIC = new AccountColumn(
             'bic', 3,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "BIC"
+                'fr': 'BIC'
             }), true);
 
         AccountColumn.NAME = new AccountColumn(
             'name', 3,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Nom"
+                'fr': 'Nom'
             })
         );
 
         AccountColumn.DESCRIPTION = new AccountColumn(
             'description', 5,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Description"
+                'fr': 'Description'
             })
         );
 
         AccountColumn.TYPE = new AccountColumn(
             'type', 2,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Type"
+                'fr': 'Type'
             })
         );
 

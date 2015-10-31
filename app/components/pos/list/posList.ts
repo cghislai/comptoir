@@ -7,7 +7,7 @@ import {Component, View, NgFor, NgIf, NgSwitch, NgSwitchWhen, ChangeDetectionStr
 
 import {Pos} from '../../../client/domain/pos';
 
-import {Language, LanguageFactory, LocaleTexts, LocaleTextsFactory} from '../../../client/utils/lang';
+import {Language, LocaleTexts, LocaleTextsFactory} from '../../../client/utils/lang';
 
 import {AuthService} from '../../../services/auth';
 
@@ -19,7 +19,7 @@ import * as Immutable from 'immutable';
  * Column component
  */
 @Component({
-    selector: "posColumn",
+    selector: 'posColumn',
     inputs: ['pos', 'column', 'lang'],
     outputs: ['action'],
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -29,8 +29,7 @@ import * as Immutable from 'immutable';
     styleUrls: ['./components/pos/list/posList.css'],
     directives: [NgIf, NgFor, NgSwitch, NgSwitchWhen],
     // eases styling
-    encapsulation: ViewEncapsulation.None,
-
+    encapsulation: ViewEncapsulation.None
 })
 export class PosColumnComponent {
     action = new EventEmitter();
@@ -109,25 +108,25 @@ export class PosColumn {
         PosColumn.ID = new PosColumn();
         PosColumn.ID.name = 'id';
         PosColumn.ID.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Id"
+            'fr': 'Id'
         });
 
         PosColumn.NAME = new PosColumn();
         PosColumn.NAME.name = 'name';
         PosColumn.NAME.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Nom"
+            'fr': 'Nom'
         });
 
         PosColumn.DESCRIPTION = new PosColumn();
         PosColumn.DESCRIPTION.name = 'description';
         PosColumn.DESCRIPTION.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Description"
+            'fr': 'Description'
         });
 
         PosColumn.DEFAULT_CUSTOMER = new PosColumn();
         PosColumn.DEFAULT_CUSTOMER.name = 'defaultCustomer';
         PosColumn.DEFAULT_CUSTOMER.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Client par défaut"
+            'fr': 'Client par défaut'
         });
 
 

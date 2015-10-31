@@ -44,7 +44,7 @@ export class MoneyPileSearch {
 export class MoneyPileFactory {
     static cacheHandler = new BasicCacheHandler<MoneyPile>();
     static fromJSONMoneyPileReviver=(key,value)=>{
-        if (key == 'dateTime') {
+        if (key ==='dateTime') {
             var date = new Date(value);
             return date;
         }

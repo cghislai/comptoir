@@ -15,7 +15,7 @@ export class AutoFocusDirective {
 
     constructor(element:ElementRef) {
         this.element = element.nativeElement;
-        if ( this.element == null) {
+        if ( this.element === null) {
             return;
         }
     }
@@ -29,7 +29,7 @@ export class AutoFocusDirective {
         var element = this.element;
         setTimeout(function () {
             element.select();
-            if (element.type == 'text') {
+            if (element.type === 'text') {
                 element.setSelectionRange(0, element.value.length);
             }
         }, 0);

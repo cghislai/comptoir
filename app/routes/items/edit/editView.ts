@@ -4,14 +4,14 @@
 import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
-import {LocalPicture, LocalPictureFactory, NewPicture} from '../../../client/localDomain/picture';
+import {LocalPicture, NewPicture} from '../../../client/localDomain/picture';
 import {LocalItem, NewItem} from '../../../client/localDomain/item';
 import {LocalItemVariant} from '../../../client/localDomain/itemVariant';
 
 import {CompanyRef} from '../../../client/domain/company';
-import {Item, ItemRef, ItemSearch} from '../../../client/domain/item';
-import {ItemVariant, ItemVariantSearch} from '../../../client/domain/itemVariant';
-import {Language, LocaleTexts, LocaleTextsFactory} from '../../../client/utils/lang';
+import {ItemRef, ItemSearch} from '../../../client/domain/item';
+import {ItemVariantSearch} from '../../../client/domain/itemVariant';
+import {Language, LocaleTextsFactory} from '../../../client/utils/lang';
 import {NumberUtils} from '../../../client/utils/number';
 import {SearchRequest, SearchResult} from '../../../client/utils/search';
 
@@ -27,7 +27,6 @@ import {RequiredValidator} from '../../../components/utils/validators';
 import {LocalizedDirective} from '../../../components/utils/localizedInput';
 import {ItemVariantList, ItemVariantColumn} from '../../../components/itemVariant/list/itemVariantList';
 
-import {ItemVariantEditView} from './editVariant/editVariantView';
 import * as Immutable from 'immutable';
 
 
@@ -50,10 +49,10 @@ export class ItemEditView {
     router:Router;
 
     item:LocalItem;
-    itemJS: any;
-    itemTotalPrice: number;
-    itemVatPercentage: number;
-    itemVatPercentageString: string;
+    itemJS:any;
+    itemTotalPrice:number;
+    itemVatPercentage:number;
+    itemVatPercentageString:string;
     itemPictureTouched:boolean;
     appLanguage:Language;
     editLanguage:Language;
@@ -91,14 +90,14 @@ export class ItemEditView {
     }
 
     findItem(routeParams:RouteParams) {
-        if (routeParams == null || routeParams.params == null) {
+        if (routeParams === null || routeParams.params === null) {
             this.getNewItem();
             return;
         }
         var idParam = routeParams.get('itemId');
         var idNumber = parseInt(idParam);
         if (isNaN(idNumber)) {
-            if (idParam == 'new') {
+            if (idParam === 'new') {
                 this.getNewItem();
                 return;
             }
@@ -136,7 +135,7 @@ export class ItemEditView {
 
     findItemVariants() {
         var itemId = this.item.id;
-        if (itemId == null) {
+        if (itemId === null) {
             return;
         }
         var variantSearch = new ItemVariantSearch();
@@ -147,7 +146,7 @@ export class ItemEditView {
         this.itemVariantSearchRequest.search = variantSearch;
 
         this.itemVariantService.search(this.itemVariantSearchRequest)
-            .then((result)=>{
+            .then((result)=> {
                 this.itemVariantSearchResult = result;
             })
             .catch((error)=> {
@@ -164,6 +163,97 @@ export class ItemEditView {
                 this.errorService.handleRequestError(error);
             });
         ;
+    }
+
+
+    onPictureFileSelected(event) {
+        var files = event.target.files;
+        if (files.length !== 1) {
+            return;
+        }
+        var file = files[0];
+        var thisView = this;
+
+        new Promise<string>((resolve, reject)=> {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var data = reader.result;
+                resolve(data);
+            };
+            reader.readAsDataURL(file);
+        }).then((data:string)=> {
+                var mainPicture:LocalPicture = NewPicture({
+                    dataURI: data,
+                    company: this.authService.getEmployeeCompany()
+                });
+                if (thisView.item.mainPicture !== null) {
+                    mainPicture = <LocalPicture>thisView.item.mainPicture.merge(mainPicture);
+                }
+                thisView.itemJS.mainPicture = mainPicture.toJS();
+                thisView.itemPictureTouched = true;
+            });
+    }
+
+    setItemVatRate(event) {
+        var valueString = event.target.value;
+        var valueNumber:number = parseInt(valueString);
+        if (isNaN(valueNumber)) {
+            return;
+        }
+        var vatRate = NumberUtils.toFixedDecimals(valueNumber / 100, 2);
+        this.itemJS.vatRate = vatRate;
+        this.calcTotalPrice();
+        this.calcVatPercentage();
+    }
+
+    setItemTotalPrice(event) {
+        var valueString = event.target.value;
+        var valueNumber:number = parseFloat(valueString);
+        if (isNaN(valueNumber)) {
+            return;
+        }
+        var vatExclusive = NumberUtils.toFixedDecimals(valueNumber / (1 + this.item.vatRate), 2);
+        this.itemJS.vatExclusive = vatExclusive;
+        this.calcTotalPrice();
+    }
+
+    doAddNewVariant() {
+        this.saveItem().then((item)=> {
+            this.router.navigate(['/Items/Edit/EditVariant/', {itemId: item.id, variandId: 'new'}]);
+        }).catch((error)=> {
+            this.errorService.handleRequestError(error);
+        });
+    }
+
+    onVariantRowSelected(localVariant:LocalItemVariant) {
+        var variantId = localVariant.id;
+        var itemId = this.item.id;
+        var nextTask = Promise.resolve();
+        if (itemId === null) {
+            nextTask.then(()=> {
+                this.itemService.save(this.item);
+            });
+        }
+        nextTask.then(()=> {
+            this.router.navigate(['/Items/Edit/EditVariant', {itemId: itemId, variantId: variantId}]);
+        }).catch((error)=> {
+            this.errorService.handleRequestError(error);
+        });
+    }
+
+    onVariantColumnAction(event) {
+        var column = event.column;
+        var itemVariant:LocalItemVariant = event.itemVariant;
+        ;
+        if (column === ItemVariantColumn.ACTION_REMOVE) {
+            this.itemVariantService.remove(itemVariant)
+                .then(()=> {
+                    this.findItemVariants();
+                })
+                .catch((error)=> {
+                    this.errorService.handleRequestError(error);
+                });
+        }
     }
 
     private saveItem():Promise<LocalItem> {
@@ -190,96 +280,8 @@ export class ItemEditView {
     private calcVatPercentage() {
         var vatPercentage = NumberUtils.toInt(this.itemJS.vatRate * 100);
         this.itemVatPercentage = vatPercentage;
-        this.itemVatPercentageString = vatPercentage+'';
+        this.itemVatPercentageString = vatPercentage + '';
     }
 
-    onPictureFileSelected(event) {
-        var files = event.target.files;
-        if (files.length != 1) {
-            return;
-        }
-        var file = files[0];
-        var thisView = this;
-
-        new Promise<string>((resolve, reject)=> {
-            var reader = new FileReader();
-            reader.onload = function () {
-                var data = reader.result;
-                resolve(data);
-            };
-            reader.readAsDataURL(file);
-        }).then((data:string)=> {
-                var mainPicture: LocalPicture = NewPicture({
-                    dataURI: data,
-                    company: this.authService.getEmployeeCompany()
-                });
-                if (thisView.item.mainPicture !== null) {
-                    mainPicture = <LocalPicture>thisView.item.mainPicture.merge(mainPicture);
-                }
-                thisView.itemJS.mainPicture = mainPicture.toJS();
-                thisView.itemPictureTouched = true;
-            });
-    }
-
-    setItemVatRate(event) {
-        var valueString = event.target.value;
-        var valueNumber: number = parseInt(valueString);
-        if (isNaN(valueNumber)) {
-            return;
-        }
-        var vatRate = NumberUtils.toFixedDecimals(valueNumber / 100, 2);
-        this.itemJS.vatRate = vatRate;
-        this.calcTotalPrice();
-        this.calcVatPercentage();
-    }
-
-    setItemTotalPrice(event) {
-        var valueString = event.target.value;
-        var valueNumber: number = parseFloat(valueString);
-        if (isNaN(valueNumber)) {
-            return;
-        }
-        var vatExclusive = NumberUtils.toFixedDecimals(valueNumber / (1 + this.item.vatRate), 2);
-        this.itemJS.vatExclusive = vatExclusive;
-        this.calcTotalPrice();
-    }
-
-    doAddNewVariant() {
-        this.saveItem().then((item)=> {
-            this.router.navigate(['/Items/Edit/EditVariant/', {itemId: item.id, variandId: 'new'}]);
-        }).catch((error)=> {
-            this.errorService.handleRequestError(error);
-        });
-    }
-
-    onVariantRowSelected(localVariant:LocalItemVariant) {
-        var variantId = localVariant.id;
-        var itemId = this.item.id;
-        var nextTask = Promise.resolve();
-        if (itemId == null) {
-            nextTask.then(()=> {
-                this.itemService.save(this.item)
-            });
-        }
-        nextTask.then(()=> {
-            this.router.navigate(['/Items/Edit/EditVariant', {itemId: itemId, variantId: variantId}]);
-        }).catch((error)=> {
-            this.errorService.handleRequestError(error);
-        });
-    }
-
-    onVariantColumnAction(event) {
-        var column = event.column;
-        var itemVariant:LocalItemVariant = event.itemVariant;
-        ;
-        if (column == ItemVariantColumn.ACTION_REMOVE) {
-            this.itemVariantService.remove(itemVariant)
-                .then(()=> {
-                    this.findItemVariants();
-                })
-                .catch((error)=> {
-                    this.errorService.handleRequestError(error);
-                });
-        }
-    }
 }
+

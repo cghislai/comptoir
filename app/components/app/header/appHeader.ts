@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 28/08/15.
  */
-import {Component, View,  bootstrap, NgIf} from 'angular2/angular2';
+import {Component, View} from 'angular2/angular2';
 import {AppMenu} from '../../app/header/menu/appMenu';
 @Component({
     selector: 'appHeader',
@@ -17,7 +17,4 @@ export class AppHeader {
     title:string;
     inactive: boolean;
 
-    constructor() {
-
-    }
 }

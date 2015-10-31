@@ -62,7 +62,7 @@ export class ItemVariantFactory {
     static cacheHandler = new BasicCacheHandler<ItemVariant>();
 
     static fromJSONItemVariantReviver = (key, value)=> {
-        if (key == 'name' || key == "description") {
+        if (key ==='name' || key ==="description") {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
         return value;

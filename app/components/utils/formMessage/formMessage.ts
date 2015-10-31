@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 28/08/15.
  */
-import {Component, View, NgForm,  AbstractControl, Control, Host} from 'angular2/angular2';
+import {Component, View, NgForm,  AbstractControl,  Host} from 'angular2/angular2';
 
 @Component({
     selector: 'formMessage',
@@ -9,18 +9,9 @@ import {Component, View, NgForm,  AbstractControl, Control, Host} from 'angular2
 })
 @View({
     templateUrl: './components/utils/formMessage/formMessage.html',
-    styleUrls: ['./components/utils/formMessage/formMessage.css'],
+    styleUrls: ['./components/utils/formMessage/formMessage.css']
 })
 export class FormMessage {
-    controlPath:string;
-    checkErrors:string[];
-    message:string;
-    inlinePos:string = 'false';
-    error:boolean = true;
-    info:boolean = false;
-    formDir:NgForm;
-    locale:string;
-
     static ERROR_MESSAGES = {
         'required': {
             'fr': 'Veuillez entrer une valeur'
@@ -30,12 +21,22 @@ export class FormMessage {
         }
     };
 
+    controlPath:string;
+    checkErrors:string[];
+    message:string;
+    inlinePos:string = 'false';
+    error:boolean = true;
+    info:boolean = false;
+    formDir:NgForm;
+    locale:string;
+
+
     constructor(@Host() formDir:NgForm) {
         this.formDir = formDir;
     }
 
     get errorMessage() {
-        if (this.checkErrors == null) {
+        if (this.checkErrors === null) {
             return this.message;
         }
         var c:AbstractControl = this.formDir.form.find(this.controlPath);
@@ -48,7 +49,7 @@ export class FormMessage {
     }
 
     isPresent(c:AbstractControl) {
-        if (c == null) {
+        if (c === null) {
             return false;
         }
         var value = c.value;
@@ -56,11 +57,11 @@ export class FormMessage {
     }
 
     getMessage(error:string) {
-        if (this.message != null) {
+        if (this.message !== null) {
             return this.message;
         }
         var messages = FormMessage.ERROR_MESSAGES[error];
-        if (messages == null) {
+        if (messages === null) {
             return null;
         }
         return messages[this.locale];

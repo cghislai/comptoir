@@ -1,11 +1,11 @@
 /**
  * Created by cghislai on 29/09/15.
  */
-import {Component, View, NgFor, NgIf, EventEmitter, ChangeDetectionStrategy, OnInit} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, EventEmitter, ChangeDetectionStrategy} from 'angular2/angular2';
 
 import {LocalAccount} from '../../../client/localDomain/account';
-import {LocalBalance, LocalBalanceFactory, NewBalance} from '../../../client/localDomain/balance';
-import {LocalMoneyPile, CashType, ALL_CASH_TYPES,
+import {LocalBalance, NewBalance} from '../../../client/localDomain/balance';
+import {LocalMoneyPile, ALL_CASH_TYPES,
     NewMoneyPile, LocalMoneyPileFactory} from '../../../client/localDomain/moneyPile';
 
 import {NumberUtils} from '../../../client/utils/number';
@@ -105,19 +105,6 @@ export class BalanceCountComponent {
             });
     }
 
-    private saveBalanceIfRequired():Promise<LocalBalance> {
-        if (this.balance.id != null) {
-            return Promise.resolve(this.balance);
-        }
-        return this.balanceService.save(this.balance)
-            .then((ref)=> {
-                return this.balanceService.get(ref.id);
-            })
-            .then((balance:LocalBalance)=> {
-                this.balance = balance;
-                return balance;
-            });
-    }
 
     startEditTotal() {
         this.editingTotal = true;
@@ -162,6 +149,20 @@ export class BalanceCountComponent {
             })
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
+            });
+    }
+
+    private saveBalanceIfRequired():Promise<LocalBalance> {
+        if (this.balance.id !== null) {
+            return Promise.resolve(this.balance);
+        }
+        return this.balanceService.save(this.balance)
+            .then((ref)=> {
+                return this.balanceService.get(ref.id);
+            })
+            .then((balance:LocalBalance)=> {
+                this.balance = balance;
+                return balance;
             });
     }
 

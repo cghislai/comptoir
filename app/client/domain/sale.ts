@@ -92,7 +92,7 @@ export class SaleFactory {
     static cacheHandler = new BasicCacheHandler<Sale>();
 
     static fromJSONSaleReviver = (key, value)=> {
-        if (key == 'dateTime') {
+        if (key ==='dateTime') {
             var date = new Date(value);
             return date;
         }

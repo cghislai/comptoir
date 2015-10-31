@@ -18,7 +18,7 @@ export class FocusableDirective {
     }
 
     onFocusKeyUp(event) {
-         if (event.which == 13) {
+         if (event.which === 13) {
             this.elementRef.nativeElement.click();
         }
     }

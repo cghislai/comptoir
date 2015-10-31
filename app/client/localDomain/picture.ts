@@ -59,17 +59,17 @@ export class LocalPictureFactory {
         picture.companyRef = new CompanyRef(localPicture.company.id);
         picture.data = localPicture.data;
         picture.contentType = localPicture.contentType;
-        if (localPicture.dataURI != null) {
+        if (localPicture.dataURI !== null) {
             LocalPictureFactory.fromDataURI(localPicture.dataURI, picture);
         }
         return picture;
     }
 
     static toDataURI(picture:Picture):string {
-        if (picture == undefined) {
+        if (picture ===undefined) {
             return undefined;
         }
-        if (picture.contentType != undefined && picture.data != undefined
+        if (picture.contentType !== undefined && picture.data !== undefined
             && picture.data.length > 0) {
             var uri = "data:" + picture.contentType;
             uri += ";base64," + picture.data;
@@ -79,7 +79,7 @@ export class LocalPictureFactory {
     }
 
     static fromDataURI(dataURI:string, picture:Picture) {
-        if (picture == undefined) {
+        if (picture ===undefined) {
             return;
         }
         var contentTypeStartIndex = 5; // 'data:' ...

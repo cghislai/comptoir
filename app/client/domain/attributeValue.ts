@@ -40,7 +40,7 @@ export class AttributeValueRef {
 export class AttributeValueFactory {
 
     static fromJSONAttributeValueReviver = (key, value)=> {
-        if (key == 'value') {
+        if (key ==='value') {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
         return value;

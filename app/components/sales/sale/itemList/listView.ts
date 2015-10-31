@@ -6,13 +6,11 @@ import {Component, View, NgFor, NgIf, EventEmitter, ChangeDetectionStrategy} fro
 
 import {LocalItem} from '../../../../client/localDomain/item';
 import {LocalItemVariant} from '../../../../client/localDomain/itemVariant';
-import {LocalPicture} from '../../../../client/localDomain/picture';
 
-import {CompanyRef} from '../../../../client/domain/company';
 import {ItemSearch, ItemRef} from '../../../../client/domain/item';
 import {ItemVariantSearch} from '../../../../client/domain/itemVariant';
 import {SearchResult, SearchRequest} from '../../../../client/utils/search';
-import {Pagination, PaginationFactory} from '../../../../client/utils/pagination';
+import { PaginationFactory} from '../../../../client/utils/pagination';
 
 import {AuthService} from '../../../../services/auth';
 import {ErrorService} from '../../../../services/error';
@@ -140,14 +138,14 @@ export class ItemListView {
     applyFilter(filterValue:string) {
         if (this.variantSelection) {
             var itemSearch = this.variantRequest.search.itemSearch;
-            if (itemSearch.multiSearch == filterValue) {
+            if (itemSearch.multiSearch === filterValue) {
                 return;
             }
             itemSearch.multiSearch = filterValue;
             this.searchItemVariants();
         } else {
             var itemSearch = this.searchRequest.search;
-            if (itemSearch.multiSearch == filterValue) {
+            if (itemSearch.multiSearch === filterValue) {
                 return;
             }
             itemSearch.multiSearch = filterValue;
@@ -164,7 +162,7 @@ export class ItemListView {
         this.itemVariantService.search(this.variantRequest)
             .then((results)=> {
                 this.variantResult = results;
-                if (results.count == 1) {
+                if (results.count === 1) {
                     var variant = results.list.get(0);
                     this.onVariantSelected(variant);
                 } else {

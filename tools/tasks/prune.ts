@@ -1,6 +1,5 @@
 import * as async from 'async';
 import * as del from 'del';
-import {join} from 'path';
 import {APP_DEST} from '../config';
 
 export = function clean(gulp, plugins, option) {

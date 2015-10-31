@@ -24,7 +24,7 @@ export class CompanyClient extends BasicClient<Company> {
 
 
         var self = this;
-        if (progressCallback != null) {
+        if (progressCallback !== null) {
             request.upload.addEventListener("progress", function (e: ProgressEvent) {
                 if (e.lengthComputable) {
                     var percentage = Math.round((e.loaded * 100) / e.total);
@@ -40,10 +40,10 @@ export class CompanyClient extends BasicClient<Company> {
             request.open("POST",url);
 
             request.onreadystatechange = function () {
-                if (request.readyState != 4) {
+                if (request.readyState !== 4) {
                     return;
                 }
-                if (request.status != 200 && request.status != 204) {
+                if (request.status !== 200 && request.status !== 204) {
                     reject(new Error('XMLHttpRequest Error: ' + request.status+" : " + request.statusText));
                     return;
                 }
@@ -54,7 +54,7 @@ export class CompanyClient extends BasicClient<Company> {
             };
 
             request.setRequestHeader('Content-Type', 'multipart/form-data; charset=UTF-8');
-            if (authToken != null) {
+            if (authToken !== null) {
                 request.setRequestHeader(ComptoirRequest.HEADER_OAUTH_TOKEN, 'Bearer '+authToken);
             }
             request.send(data);
@@ -80,7 +80,7 @@ export class CompanyRef {
 export class CompanyFactory {
     static cacheHandler = new BasicCacheHandler<Company>();
     static fromJSONCompanyReviver=(key,value)=>{
-      if (key == 'name' || key == "description") {
+      if (key ==='name' || key ==="description") {
           return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
       }
         return value;

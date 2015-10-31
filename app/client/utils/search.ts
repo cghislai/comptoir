@@ -14,7 +14,7 @@ export class SearchRequest<T> {
     private request:ComptoirRequest;
 
     discardRequest() {
-        if (this.request == null) {
+        if (this.request === null) {
             return;
         }
         this.request.discardRequest();

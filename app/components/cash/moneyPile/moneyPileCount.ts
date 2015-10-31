@@ -3,14 +3,13 @@
  */
 import {Component, View, EventEmitter, ChangeDetectionStrategy} from 'angular2/angular2';
 
-import {LocalMoneyPile, CashType,  NewMoneyPile} from '../../../client/localDomain/moneyPile';
+import {LocalMoneyPile,  NewMoneyPile} from '../../../client/localDomain/moneyPile';
 
-import {NumberUtils} from '../../../client/utils/number';
 import {Language} from '../../../client/utils/lang';
 
 import {AuthService} from '../../../services/auth';
 
-import {FastInput} from '../../utils/fastInput'
+import {FastInput} from '../../utils/fastInput';
 
 
 @Component({

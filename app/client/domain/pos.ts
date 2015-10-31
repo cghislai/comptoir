@@ -44,7 +44,7 @@ export class PosSearch {
 export class PosFactory {
     static cacheHandler = new BasicCacheHandler<Pos>();
     static fromJSONPosReviver = (key, value)=> {
-        if (key == 'description') {
+        if (key ==='description') {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
         return value;

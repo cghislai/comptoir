@@ -22,8 +22,8 @@ export class DialogView {
 
     constructor(@Attribute('modal') modal:string,
                 @Attribute('closable') closable:string) {
-        this.isModal = modal == "true";
-        this.isClosable = closable == "true";
+        this.isModal = modal === 'true';
+        this.isClosable = closable === 'true';
         this.visible = true;
     }
 

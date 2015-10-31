@@ -21,7 +21,7 @@ export class Auth {
 
 export class AuthFactory {
     static fromJSONAuthReviver = (key, value)=> {
-        if (key == 'expirationDateTime') {
+        if (key ==='expirationDateTime') {
             return new Date(value);
         }
         return value;

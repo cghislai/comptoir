@@ -4,7 +4,7 @@
 import {Component, View, NgIf, ChangeDetectionStrategy} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink, OnActivate} from 'angular2/router';
 
-import {LocalAccount, LocalAccountFactory, NewAccount} from '../../../client/localDomain/account';
+import {LocalAccount, NewAccount} from '../../../client/localDomain/account';
 import {LocaleTexts} from '../../../client/utils/lang';
 
 import {AuthService} from '../../../services/auth';
@@ -52,7 +52,7 @@ export class AccountsEditView implements OnActivate {
     }
 
     findAccount():Promise<LocalAccount> {
-        if (this.accountId == null) {
+        if (this.accountId === null) {
             var accountDef = {
                 company: this.authService.getEmployeeCompany(),
                 description: new LocaleTexts()

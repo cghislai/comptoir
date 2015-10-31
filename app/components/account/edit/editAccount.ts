@@ -1,14 +1,13 @@
 /**
  * Created by cghislai on 05/08/15.
  */
-import {Component, View, NgFor, NgIf, FORM_DIRECTIVES, ChangeDetectionStrategy, EventEmitter, OnInit} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, FORM_DIRECTIVES, EventEmitter, OnInit} from 'angular2/angular2';
 
 import {LocalAccount, LocalAccountFactory, NewAccount} from '../../../client/localDomain/account';
 
-import {Account, AccountType, ALL_ACCOUNT_TYPES} from '../../../client/domain/account';
-import {CompanyRef} from '../../../client/domain/company';
+import {AccountType, ALL_ACCOUNT_TYPES} from '../../../client/domain/account';
 
-import {Language, LocaleTexts, LanguageFactory, LocaleTextsFactory} from '../../../client/utils/lang';
+import {Language} from '../../../client/utils/lang';
 
 import {AuthService} from '../../../services/auth';
 import {AccountService} from '../../../services/account';
@@ -67,18 +66,6 @@ export class AccountsEditComponent implements OnInit {
     }
 
 
-    private saveAccount(account:LocalAccount):Promise<LocalAccount> {
-        return this.accountService.save(account)
-            .then((ref)=> {
-                return this.accountService.get(ref.id);
-            })
-            .then((account:LocalAccount)=> {
-                this.account = account;
-                this.accountModel = account.toJS();
-                return account;
-            });
-    }
-
     onFormSubmit() {
         var account = NewAccount(this.accountModel);
         this.saveAccount(account)
@@ -92,6 +79,18 @@ export class AccountsEditComponent implements OnInit {
 
     onCancelClicked() {
         this.cancelled.next(null);
+    }
+
+    private saveAccount(account:LocalAccount):Promise<LocalAccount> {
+        return this.accountService.save(account)
+            .then((ref)=> {
+                return this.accountService.get(ref.id);
+            })
+            .then((account:LocalAccount)=> {
+                this.account = account;
+                this.accountModel = account.toJS();
+                return account;
+            });
     }
 
 }

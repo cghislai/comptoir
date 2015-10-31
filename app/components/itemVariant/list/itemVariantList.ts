@@ -7,10 +7,9 @@ import {Component, View, NgFor, NgIf, NgSwitch, NgSwitchWhen,
     EventEmitter, ViewEncapsulation} from 'angular2/angular2';
 
 import {LocalItemVariant, LocalItemVariantFactory} from '../../../client/localDomain/itemVariant';
-import {LocalPicture} from '../../../client/localDomain/picture';
-import {Pricing, ItemVariantFactory} from '../../../client/domain/itemVariant';
+import {Pricing} from '../../../client/domain/itemVariant';
 
-import {Language, LanguageFactory, LocaleTexts, LocaleTextsFactory} from '../../../client/utils/lang';
+import {Language, LocaleTextsFactory} from '../../../client/utils/lang';
 
 import {AuthService} from '../../../services/auth';
 
@@ -23,7 +22,7 @@ import * as Immutable from 'immutable';
  * Column component
  */
 @Component({
-    selector: "itemVariantColumn",
+    selector: 'itemVariantColumn',
     inputs: ['itemVariant', 'column', 'lang'],
     outputs: ['action'],
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -33,8 +32,7 @@ import * as Immutable from 'immutable';
     styleUrls: ['./components/itemVariant/list/itemVariantList.css'],
     directives: [NgIf, NgFor, NgSwitch, NgSwitchWhen, FocusableDirective],
     // eases styling
-    encapsulation: ViewEncapsulation.None,
-
+    encapsulation: ViewEncapsulation.None
 })
 export class ItemVariantColumnComponent {
     action = new EventEmitter();
@@ -141,105 +139,105 @@ export class ItemVariantColumn extends Column {
         ItemVariantColumn.ID = new ItemVariantColumn(
             'id', 1,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Id"
+                'fr': 'Id'
             })
         );
 
         ItemVariantColumn.VARIANT_REFERENCE = new ItemVariantColumn(
             'variantReference', 1,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Ref"
+                'fr': 'Ref'
             })
         );
 
         ItemVariantColumn.PICTURE = new ItemVariantColumn(
             'picture', 2,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Image"
+                'fr': 'Image'
             }), false, true
         );
 
         ItemVariantColumn.PICTURE_NO_ITEM_FALLBACK = new ItemVariantColumn(
             'pictureNoItemFallback', 2,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Image"
+                'fr': 'Image'
             }), false, true
         );
 
         ItemVariantColumn.PRICING = new ItemVariantColumn(
             'pricing', 2,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Mode tarification"
+                'fr': 'Mode tarification'
             })
         );
 
         ItemVariantColumn.PRICING_AMOUNT = new ItemVariantColumn(
             'pricingAmount', 2,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Valeur tarification"
+                'fr': 'Valeur tarification'
             }), true
         );
 
         ItemVariantColumn.ATTRIBUTES = new ItemVariantColumn(
             'attributes', 5,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Attributs"
+                'fr': 'Attributs'
             })
         );
 
         ItemVariantColumn.ITEM_REFERENCE = new ItemVariantColumn(
             'itemReference', 2,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Ref (parent)"
+                'fr': 'Ref (parent)'
             })
         );
 
         ItemVariantColumn.ITEM_NAME = new ItemVariantColumn(
             'itemName', 3,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Nom"
+                'fr': 'Nom'
             })
         );
 
         ItemVariantColumn.ITEM_DESCRIPTION = new ItemVariantColumn(
             'itemDescription', 5,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Description"
+                'fr': 'Description'
             })
         );
 
         ItemVariantColumn.ITEM_NAME_VARIANT_ATTRIBUTES = new ItemVariantColumn(
             'itemNameVariantAttributes', 5,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Nom / Attributs"
+                'fr': 'Nom / Attributs'
             })
         );
 
         ItemVariantColumn.ITEM_VAT_EXCLUSIVE = new ItemVariantColumn(
             'itemVatExclusive', 2,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Prix HTVA (parent)"
+                'fr': 'Prix HTVA (parent)'
             }), true
         );
 
         ItemVariantColumn.ITEM_VAT_RATE = new ItemVariantColumn(
             'itemVatRate', 2,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Taux TVA"
+                'fr': 'Taux TVA'
             }), true
         );
 
         ItemVariantColumn.ITEM_VAT_INCLUSIVE = new ItemVariantColumn(
             'itemVatInclusive', 2,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Prix (parent)"
+                'fr': 'Prix (parent)'
             }), true
         );
 
         ItemVariantColumn.TOTAL_PRICE = new ItemVariantColumn(
             'totalPrice', 2,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Prix total"
+                'fr': 'Prix total'
             }), true
         );
 

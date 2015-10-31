@@ -3,14 +3,13 @@
  */
 
 import {Component, View, EventEmitter, NgFor, OnInit, OnChanges, ChangeDetectionStrategy} from 'angular2/angular2';
-import {Pagination, PageChangeEvent, PaginationFactory} from '../../../client/utils/pagination';
-import {SearchResult} from '../../../client/utils/search';
+import {PageChangeEvent} from '../../../client/utils/pagination';
 
 @Component({
     selector: 'paginator',
     outputs: ['pageChange'],
     inputs: ['totalCount', 'pageSize',
-        "showPrevNextLink", 'showFirstLastLink'],
+        'showPrevNextLink', 'showFirstLastLink'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 @View({
@@ -45,13 +44,12 @@ export class Paginator implements OnInit, OnChanges {
     }
 
     buildPagesLinksArray() {
-        if (this.totalCount == null) {
+        if (this.totalCount === null) {
             return;
         }
         this.pages = [];
         this.pageCount = Math.ceil(this.totalCount / this.pageSize);
 
-        var pageLinkShown = 0;
         var firstIndex = this.activePage - this.maxPageLinks / 2;
         firstIndex = Math.max(firstIndex, 0);
         var lastIndex = firstIndex + this.maxPageLinks;
@@ -84,7 +82,7 @@ export class Paginator implements OnInit, OnChanges {
     }
 
     goToPrev() {
-        if (this.activePage == 0) {
+        if (this.activePage === 0) {
             return;
         }
         this.goToPage(this.activePage - 1);

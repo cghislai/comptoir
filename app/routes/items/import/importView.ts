@@ -5,7 +5,7 @@ import {Component, View, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Router, RouterLink} from 'angular2/router';
 
 import {CompanyRef, CompanyClient} from '../../../client/domain/company';
-import {Language, LocaleTexts} from '../../../client/utils/lang';
+import {Language} from '../../../client/utils/lang';
 
 import {ErrorService} from '../../../services/error';
 import {AuthService} from '../../../services/auth';
@@ -54,21 +54,20 @@ export class ItemsImportView {
 
     onFileSelected(form, event) {
         var files = event.target.files;
-        if (files.length != 1) {
+        if (files.length !== 1) {
             return;
         }
         this.toUploadFile = files[0];
         var size = this.toUploadFile.size;
 
-        this.toUploadFileSizeLabel = size + " bytes";
+        this.toUploadFileSizeLabel = size + ' bytes';
         // optional code for multiples approximation
-        for (var aMultiples = ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"], nMultiple = 0, nApprox = size / 1024; nApprox > 1; nApprox /= 1024, nMultiple++) {
-            this.toUploadFileSizeLabel = nApprox.toFixed(3) + " " + aMultiples[nMultiple];// + " (" + size + " bytes)";
+        for (var aMultiples = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'], nMultiple = 0, nApprox = size / 1024; nApprox > 1; nApprox /= 1024, nMultiple++) {
+            this.toUploadFileSizeLabel = nApprox.toFixed(3) + ' ' + aMultiples[nMultiple];// + ' (' + size + ' bytes)';
         }
 
         new Promise<ArrayBuffer>((resolve, reject)=> {
             var reader = new FileReader();
-            var thisView = this;
             reader.onload = function () {
                 resolve(reader.result);
             };

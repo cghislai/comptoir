@@ -2,8 +2,7 @@
  * Created by cghislai on 23/08/15.
  */
 
-import {Directive, ElementRef, EventEmitter,
-    Observable, Attribute, OnInit} from 'angular2/angular2';
+import {Directive, ElementRef, EventEmitter, OnInit} from 'angular2/angular2';
 
 
 @Directive({
@@ -47,7 +46,7 @@ export class FastInput implements OnInit {
     }
 
     onInit() {
-        if (this.initialValue != null) {
+        if (this.initialValue !== null) {
             this.elementRef.nativeElement.value = this.initialValue;
         }
         this.doFocus();
@@ -59,7 +58,7 @@ export class FastInput implements OnInit {
             element.focus();
             setTimeout(function () {
                 element.select();
-                if (element.type == 'text') {
+                if (element.type === 'text') {
                     element.setSelectionRange(0, element.value.length);
                 }
             }, 0);
@@ -67,11 +66,11 @@ export class FastInput implements OnInit {
     }
 
     onKeyUp(event) {
-        if (event.which == 13) { // Enter
+        if (event.which === 13) { // Enter
             this.doValidate();
             return false;
         }
-        if (event.which == 27) { // Escape
+        if (event.which === 27) { // Escape
             this.doCancel();
             return false;
         }
@@ -102,10 +101,10 @@ export class FastInput implements OnInit {
             return true;
         }
         this.validateRequired = false;
-        if (value == this.elementRef.nativeElement.value) {
+        if (value === this.elementRef.nativeElement.value) {
             return true;
         }
-        if (this.validator == null) {
+        if (this.validator === null) {
             return true;
         }
         var valid = this.validator(value);

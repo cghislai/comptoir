@@ -6,11 +6,11 @@ import {Router} from 'angular2/router';
 
 import {CompanyRef} from '../../../client/domain/company';
 
-import {LocalAccount, LocalAccountFactory} from '../../../client/localDomain/account';
-import {Account, AccountType, AccountSearch} from '../../../client/domain/account';
+import {LocalAccount} from '../../../client/localDomain/account';
+import {AccountSearch} from '../../../client/domain/account';
 import {SearchResult, SearchRequest} from '../../../client/utils/search';
-import {LocaleTexts, Language} from '../../../client/utils/lang';
-import {Pagination, PaginationFactory, ApplyPageChangeEvent, PageChangeEvent} from '../../../client/utils/pagination';
+import {Language} from '../../../client/utils/lang';
+import {PaginationFactory, ApplyPageChangeEvent, PageChangeEvent} from '../../../client/utils/pagination';
 
 import {AccountService} from '../../../services/account';
 import {ErrorService} from '../../../services/error';
@@ -22,7 +22,7 @@ import {AccountList, AccountColumn} from '../../../components/account/list/accou
 import * as Immutable from 'immutable';
 
 @Component({
-    selector: "accountListView"
+    selector: 'accountListView'
 })
 
 @View({
@@ -89,7 +89,7 @@ export class AccountsListView {
     onColumnAction(event) {
         var account:LocalAccount = event.account;
         var column:AccountColumn = event.column;
-        if (column == AccountColumn.ACTION_REMOVE) {
+        if (column === AccountColumn.ACTION_REMOVE) {
             this.doRemoveAccount(account);
         }
     }
@@ -109,6 +109,4 @@ export class AccountsListView {
                 this.errorService.handleRequestError(error);
             });
     }
-
-
 }

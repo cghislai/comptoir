@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 28/08/15.
  */
-import {Component, View,  bootstrap, NgIf} from 'angular2/angular2';
+import {Component, View} from 'angular2/angular2';
 import {RouterLink, Location} from 'angular2/router';
 
 @Component({
@@ -14,22 +14,22 @@ import {RouterLink, Location} from 'angular2/router';
     directives: [RouterLink]
 })
 export class AppMenu {
-    location: Location;
+    location:Location;
     title:string;
     inactive:boolean;
     menuVisible:boolean;
 
     closeMenuListener;
 
-    constructor(location: Location) {
+    constructor(location:Location) {
         this.location = location;
-        this.closeMenuListener = (event)=>{
+        this.closeMenuListener = (event) => {
             if (this.menuVisible) {
                 this.closeMenu();
                 event.preventDefault();
                 event.stopPropagation();
             }
-        }
+        };
     }
 
     openCloseMenu(event) {
@@ -38,8 +38,8 @@ export class AppMenu {
         } else {
             this.openMenu();
         }
-        if (event != null) {
-            event.preventDefault()
+        if (event !== null) {
+            event.preventDefault();
             event.stopPropagation();
         }
     }
@@ -54,8 +54,8 @@ export class AppMenu {
         document.removeEventListener('click', this.closeMenuListener);
     }
 
-    isActive(path: string) {
+    isActive(path:string) {
         var locationPath = this.location.path();
-        return locationPath.indexOf(path) == 0;
+        return locationPath.indexOf(path) === 0;
     }
 }

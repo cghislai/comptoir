@@ -18,7 +18,7 @@ export class ComptoirError {
     request:ComptoirRequest;
 
     constructor(message?:string) {
-        if (message != null) {
+        if (message !== null) {
             this.text = message;
         }
     }
@@ -102,15 +102,15 @@ export class ComptoirRequest {
                     reject(ComptoirError.DISCARDED_ERROR);
                     return;
                 }
-                if (this.request.readyState != 4) {
+                if (this.request.readyState !== 4) {
                     return;
                 }
-                if (this.request.status != 200 && this.request.status != 204) {
+                if (this.request.status !== 200 && this.request.status !== 204) {
                     var error = new ComptoirError();
                     error.code = this.request.status;
                     error.text = this.request.statusText;
                     error.request = this;
-                    if (this.request.response != null) {
+                    if (this.request.response !== null) {
                         error.response = this.request.response.text;
                     }
                     reject(error);
@@ -131,7 +131,7 @@ export class ComptoirRequest {
                 error.code = this.request.status;
                 error.text = this.request.statusText;
                 error.request = this;
-                if (this.request.response != null) {
+                if (this.request.response !== null) {
                     error.response = this.request.response.text;
                 }
                 reject(error);
@@ -141,11 +141,11 @@ export class ComptoirRequest {
             this.request.open(this.method, this.url, true);
             this.request.setRequestHeader('Accept', this.acceptContentType);
             this.request.setRequestHeader('Content-Type', this.contentType + '; charset=' + this.charset);
-            if (this.authToken != null) {
+            if (this.authToken !== null) {
                 this.request.setRequestHeader(ComptoirRequest.HEADER_OAUTH_TOKEN, 'Bearer ' + this.authToken);
             }
 
-            if (this.objectToSend != null) {
+            if (this.objectToSend !== null) {
                 var stringifiedJSON = JSON.stringify(this.objectToSend, JSONFactory.toJSONReplacer);
                 this.request.send(stringifiedJSON);
             } else {

@@ -6,14 +6,13 @@ import {Component, View, NgIf, NgFor} from 'angular2/angular2';
 import {LocalAccount} from '../../../client/localDomain/account';
 import {LocalBalance} from '../../../client/localDomain/balance';
 
-import {CompanyRef} from '../../../client/domain/company';
-import {AccountSearch, AccountType, AccountFactory, AccountRef} from '../../../client/domain/account';
+import {AccountSearch, AccountType, AccountRef} from '../../../client/domain/account';
 import {BalanceSearch} from '../../../client/domain/balance';
-import {Pos, PosRef, PosSearch} from '../../../client/domain/pos';
+import {Pos, PosRef} from '../../../client/domain/pos';
 
 import {SearchRequest, SearchResult} from '../../../client/utils/search';
 import {Language} from '../../../client/utils/lang';
-import {Pagination, PaginationFactory} from '../../../client/utils/pagination';
+import {PaginationFactory} from '../../../client/utils/pagination';
 
 import {BalanceService} from '../../../services/balance';
 import {PosService} from '../../../services/pos';
@@ -23,8 +22,6 @@ import {AuthService} from '../../../services/auth';
 
 import {PosSelect} from '../../../components/pos/posSelect/posSelect';
 import {BalanceCountComponent} from '../../../components/cash/balance/countComponent';
-
-import * as Immutable from 'immutable';
 
 @Component({
     selector: 'countCashView'
@@ -65,7 +62,7 @@ export class CountCashView {
         this.authService = authService;
 
         this.accountSearchRequest = new SearchRequest<LocalAccount>();
-        this.accountSearchResult = new SearchResult<LocalAccount>()
+        this.accountSearchResult = new SearchResult<LocalAccount>();
         this.balanceSearchRequest = new SearchRequest<LocalBalance>();
         this.balanceSearchResult= new SearchResult<LocalBalance>();
 
@@ -79,7 +76,7 @@ export class CountCashView {
     searchPaymentAccounts() {
         var accountSearch = new AccountSearch();
         accountSearch.type = AccountType[AccountType.PAYMENT];
-        if (this.pos != null) {
+        if (this.pos !== null) {
             accountSearch.posRef = new PosRef(this.pos.id);
         }
         accountSearch.companyRef = this.authService.getEmployeeCompanyRef();
@@ -88,7 +85,7 @@ export class CountCashView {
         this.accountService.search(this.accountSearchRequest)
             .then((result:SearchResult<LocalAccount>)=> {
                 this.accountSearchResult = result;
-                if (this.account == null && result.list.size == 1) {
+                if (this.account === null && result.list.size === 1) {
                     this.setAccount(result.list.get(0));
                 }
             }).catch((error)=> {
@@ -108,7 +105,7 @@ export class CountCashView {
             return;
         }
         this.accountService.lastUsedBalanceAccount = account;
-        if (account == null) {
+        if (account === null) {
             this.accountId = null;
             return;
         }
@@ -119,19 +116,19 @@ export class CountCashView {
 
     onAccountChanged(event) {
         var accountId = parseInt(event.target.value);
-        if (this.accountSearchResult == null) {
+        if (this.accountSearchResult === null) {
             return;
         }
         var account = this.accountSearchResult.list
             .find((account)=> {
-                return account.id === accountId
+                return account.id === accountId;
             });
         this.setAccount(account);
     }
 
 
     searchLastBalance() {
-        if (this.account == null) {
+        if (this.account === null) {
             return;
         }
         var balanceSearch = new BalanceSearch();

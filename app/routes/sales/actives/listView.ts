@@ -8,7 +8,7 @@ import {LocalSale} from '../../../client/localDomain/sale';
 import {SaleSearch} from '../../../client/domain/sale';
 import {CompanyRef} from '../../../client/domain/company';
 
-import {Pagination, PaginationFactory, PageChangeEvent, ApplyPageChangeEvent} from '../../../client/utils/pagination';
+import {PaginationFactory, PageChangeEvent, ApplyPageChangeEvent} from '../../../client/utils/pagination';
 import {SearchResult, SearchRequest} from '../../../client/utils/search';
 
 import {ErrorService} from '../../../services/error';
@@ -19,7 +19,7 @@ import {Paginator} from '../../../components/utils/paginator/paginator';
 import {SaleListComponent, SaleColumn} from '../../../components/sales/list/saleList';
 
 @Component({
-    selector: "salesActiveView"
+    selector: 'salesActiveView'
 })
 
 @View({
@@ -96,7 +96,7 @@ export class ActiveSalesView {
     onColumnAction(event) {
         var col = event.column;
         var sale = event.sale;
-        if (col == SaleColumn.ACTION_REMOVE) {
+        if (col === SaleColumn.ACTION_REMOVE) {
             this.doRemoveSale(sale);
         }
     }

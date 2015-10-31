@@ -56,7 +56,7 @@ export class ItemSearch {
 export class ItemFactory {
     static cacheHandler = new BasicCacheHandler<Item>();
     static fromJSONItemReviver = (key, value)=> {
-        if (key == 'name' || key == "description") {
+        if (key ==='name' || key ==="description") {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
         return value;

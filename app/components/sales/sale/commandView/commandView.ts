@@ -6,29 +6,17 @@ import {Component, View, NgFor, NgIf, EventEmitter,
     FORM_DIRECTIVES, ChangeDetectionStrategy} from 'angular2/angular2';
 import * as Immutable from 'immutable';
 
-import {CompanyRef} from '../../../../client/domain/company';
-import {SaleRef} from '../../../../client/domain/sale';
-import {ItemVariantSaleSearch} from '../../../../client/domain/itemVariantSale';
-
 import {LocalSale} from '../../../../client/localDomain/sale';
-import {LocalItemVariant} from '../../../../client/localDomain/itemVariant';
 import {LocalItemVariantSale} from '../../../../client/localDomain/itemVariantSale';
 
-import {LocaleTexts, Language, LanguageFactory, LocaleTextsFactory} from '../../../../client/utils/lang';
+import {LocaleTexts, Language} from '../../../../client/utils/lang';
 import {NumberUtils} from '../../../../client/utils/number';
-import {SearchRequest, SearchResult} from '../../../../client/utils/search';
 
 import {ActiveSaleService} from '../../../../routes/sales/sale/activeSale';
-import {SaleService} from '../../../../services/sale';
-import {ItemVariantSaleService} from '../../../../services/itemVariantSale';
 import {ErrorService} from '../../../../services/error';
 import {AuthService} from '../../../../services/auth';
 
-import {AutoFocusDirective} from '../../../utils/autoFocus';
 import {FastInput} from '../../../utils/fastInput';
-import {LangSelect} from '../../../lang/langSelect/langSelect';
-import {LocalizedDirective} from '../../../utils/localizedInput'
-
 
 @Component({
     selector: 'commandViewHeader',
@@ -57,7 +45,7 @@ export class CommandViewHeader {
 
     get isNewSale():boolean {
         var sale = this.activeSaleService.sale;
-        return sale != null && sale.id == null;
+        return sale !== null && sale.id === null;
     }
 
     get sale():LocalSale {
@@ -66,12 +54,12 @@ export class CommandViewHeader {
 
     get isSearching():boolean {
         var request = this.activeSaleService.saleItemsRequest;
-        return request != null && request.busy;
+        return request !== null && request.busy;
     }
 
     get hasItems():boolean {
         var result = this.activeSaleService.saleItemsResult;
-        return result != null && result.count > 0;
+        return result !== null && result.count > 0;
     }
 
     doEditSaleDiscount() {
@@ -96,7 +84,7 @@ export class CommandViewHeader {
         if (isNaN(discountPercentage)) {
             discountPercentage = null;
         }
-        if (discountPercentage != null) {
+        if (discountPercentage !== null) {
             var discountRatio = NumberUtils.toFixedDecimals(discountPercentage / 100, 2);
             this.activeSaleService.doSetSaleDiscountRatio(discountRatio)
                 .catch((error)=> {
@@ -170,11 +158,11 @@ export class CommandViewTable {
     }
 
     isEditing() {
-        return this.editingItem != null;
+        return this.editingItem !== null;
     }
 
     isEditingItem(item:LocalItemVariantSale) {
-        return item == this.editingItem;
+        return item === this.editingItem;
     }
 
     isEditingDiscount(item) {
@@ -182,22 +170,22 @@ export class CommandViewTable {
     }
 
     hasComment(localItemVariantSale:LocalItemVariantSale) {
-        if (localItemVariantSale.comment == null) {
+        if (localItemVariantSale.comment === null) {
             return false;
         }
         var text = localItemVariantSale.comment.get(this.language.locale);
-        if (text != null && text.trim().length > 0) {
+        if (text !== null && text.trim().length > 0) {
             return true;
         }
         return false;
     }
 
     getComment(localItemVariantSale:LocalItemVariantSale) {
-        if (localItemVariantSale.comment == null) {
+        if (localItemVariantSale.comment === null) {
             return '';
         }
         var text = localItemVariantSale.comment.get(this.language.locale);
-        if (text != null && text.trim().length > 0) {
+        if (text !== null && text.trim().length > 0) {
             return text;
         }
         return '';
@@ -212,7 +200,7 @@ export class CommandViewTable {
 
     onItemCommentChange(event) {
         var commentTexts = this.editingItem.comment;
-        if (commentTexts.get(this.language.locale) == event) {
+        if (commentTexts.get(this.language.locale) === event) {
             this.cancelEdits();
             return;
         }
@@ -239,7 +227,7 @@ export class CommandViewTable {
         } else if (quantity < 1) {
             quantity = 1;
         }
-        if (this.editingItem.quantity == quantity) {
+        if (this.editingItem.quantity === quantity) {
             this.cancelEdits();
             return;
         }
@@ -332,7 +320,7 @@ export class CommandViewTable {
 
     doValidateInput(container) {
         var input = this.doFindInput(container);
-        if (input == null) {
+        if (input === null) {
             return;
         }
         input.dispatchEvent(FastInput.VALIDATE_EVENT);
@@ -340,14 +328,14 @@ export class CommandViewTable {
 
     doCancelInput(container) {
         var input = this.doFindInput(container);
-        if (input == null) {
+        if (input === null) {
             return;
         }
         input.dispatchEvent(FastInput.CANCEL_EVENT);
     }
 
     doFindInput(container:HTMLElement) {
-        var inputList = container.getElementsByTagName("input");
+        var inputList = container.getElementsByTagName('input');
         if (inputList.length > 0) {
             return inputList[0];
         }
@@ -384,13 +372,11 @@ export class CommandViewTable {
     inputs: ['noInput', 'validated'],
     changeDetection: ChangeDetectionStrategy.Default
 })
-
 @View({
     templateUrl: './components/sales/sale/commandView/commandView.html',
     styleUrls: ['./components/sales/sale/commandView/commandView.css'],
     directives: [CommandViewHeader, CommandViewTable]
 })
-
 export class CommandView {
     activeSaleService:ActiveSaleService;
     errorService:ErrorService;
@@ -415,9 +401,8 @@ export class CommandView {
 
     onItemRemoved() {
         var searchResult = this.activeSaleService.saleItemsResult;
-        if (searchResult.list.size == 0) {
+        if (searchResult.list.size === 0) {
             this.saleEmptied.next(null);
         }
     }
-
 }

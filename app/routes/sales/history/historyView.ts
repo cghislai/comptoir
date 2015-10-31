@@ -8,7 +8,7 @@ import {LocalSale} from '../../../client/localDomain/sale';
 import {SaleSearch} from '../../../client/domain/sale';
 import {CompanyRef} from '../../../client/domain/company';
 
-import {Pagination, PaginationFactory, PageChangeEvent, ApplyPageChangeEvent} from '../../../client/utils/pagination';
+import {PaginationFactory, PageChangeEvent, ApplyPageChangeEvent} from '../../../client/utils/pagination';
 import {SearchRequest, SearchResult} from '../../../client/utils/search';
 
 import {ErrorService} from '../../../services/error';
@@ -21,7 +21,7 @@ import {SaleListComponent, SaleColumn} from '../../../components/sales/list/sale
 import * as Immutable from 'immutable';
 
 @Component({
-    selector: "salesHistoryView"
+    selector: 'salesHistoryView'
 })
 
 @View({
@@ -58,7 +58,7 @@ export class SaleHistoryView {
         var pagination = PaginationFactory.Pagination({
             firstIndex: 0,
             pageSize: this.salesPerPage,
-            sorts:{
+            sorts: {
                 'DATETIME': 'desc'
             }
         });

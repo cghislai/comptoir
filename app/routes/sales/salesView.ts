@@ -3,7 +3,7 @@
  */
 
 import {Component, View} from 'angular2/angular2';
-import {Router, RouteConfig,RouterOutlet,RouterLink, Location} from 'angular2/router';
+import {RouteConfig,RouterOutlet,RouterLink, Location} from 'angular2/router';
 
 import {SaleView} from './sale/saleView';
 import {ActiveSalesView} from './actives/listView';

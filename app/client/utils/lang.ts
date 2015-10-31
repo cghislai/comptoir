@@ -33,7 +33,7 @@ export class LocaleTextsFactory {
     static toJSONArrayLocaleTextsTransformer = (texts:any)=> {
         var textArray:any[] = Immutable.Map(texts)
             .filter((value, key)=> {
-                return key != '_isLocalTexts';
+                return key !== '_isLocalTexts';
             })
             .reduce((textArray, value, key)=> {
                 var lang = key;

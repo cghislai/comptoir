@@ -2,9 +2,9 @@
  * Created by cghislai on 20/08/15.
  */
 
-import {Component, View, Directive, ChangeDetectionStrategy, NgControl,
-    EventEmitter, NgFor,  NgIf, ElementRef, Attribute, ControlValueAccessor} from 'angular2/angular2';
-import {Language, LanguageFactory, LocaleTexts, NewLanguage} from '../../../client/utils/lang';
+import {Component, View, ChangeDetectionStrategy, NgControl,
+    EventEmitter, NgFor,  NgIf, Attribute, ControlValueAccessor} from 'angular2/angular2';
+import {Language, LanguageFactory} from '../../../client/utils/lang';
 import {AuthService} from '../../../services/auth';
 import * as Immutable from 'immutable';
 /**
@@ -31,7 +31,7 @@ export class LangSelect  {
     dropDown:boolean;
     id:string;
 
-    constructor(authService:AuthService, @Attribute("id") id:string) {
+    constructor(authService:AuthService, @Attribute('id') id:string) {
         this.id = id;
         this.allLanguages = LanguageFactory.ALL_LANGUAGES;
     }
@@ -42,7 +42,7 @@ export class LangSelect  {
     }
 
     getId(locale: string) {
-        return this.id+"_"+locale;
+        return this.id+'_'+locale;
     }
 }
 
@@ -69,7 +69,7 @@ export class LangSelectControl  implements ControlValueAccessor {
     dropDown:boolean;
     id:string;
 
-    constructor(authService:AuthService, @Attribute("id") id:string, cd: NgControl) {
+    constructor(authService:AuthService, @Attribute('id') id:string, cd: NgControl) {
         this.id = id;
         this.allLanguages = LanguageFactory.ALL_LANGUAGES;
         this.onChange = (_) => {};
@@ -84,7 +84,7 @@ export class LangSelectControl  implements ControlValueAccessor {
     }
 
     getId(locale: string) {
-        return this.id+"_"+locale;
+        return this.id+'_'+locale;
     }
 
     registerOnChange(fn:any):void {
@@ -96,7 +96,7 @@ export class LangSelectControl  implements ControlValueAccessor {
     }
 
     writeValue(obj:any):void {
-        if (obj != null) {
+        if (obj !== null) {
             this.onLanguageSelected(obj);
         }
     }

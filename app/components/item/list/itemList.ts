@@ -7,9 +7,8 @@ import {Component, View, NgFor, NgIf, NgSwitch, NgSwitchWhen,
     EventEmitter, ViewEncapsulation} from 'angular2/angular2';
 
 import {LocalItem} from '../../../client/localDomain/item';
-import {LocalPicture} from '../../../client/localDomain/picture';
 
-import {Language, LanguageFactory, LocaleTexts, LocaleTextsFactory} from '../../../client/utils/lang';
+import {Language, LocaleTextsFactory} from '../../../client/utils/lang';
 
 import {AuthService} from '../../../services/auth';
 
@@ -21,7 +20,7 @@ import * as Immutable from 'immutable';
  * Column component
  */
 @Component({
-    selector: "itemColumn",
+    selector: 'itemColumn',
     inputs: ['item', 'column', 'lang'],
     outputs: ['action'],
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -121,63 +120,63 @@ export class ItemColumn extends Column {
         ItemColumn.ID = new ItemColumn(
             'id', 1,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Id"
+                'fr': 'Id'
             })
         );
 
         ItemColumn.REFERENCE = new ItemColumn(
             'ref', 1,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Ref"
+                'fr': 'Ref'
             })
         );
 
         ItemColumn.NAME = new ItemColumn(
             'name', 3,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Nom"
+                'fr': 'Nom'
             })
         );
 
         ItemColumn.DESCRIPTION = new ItemColumn(
             'description', 5,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Description"
+                'fr': 'Description'
             })
         );
 
         ItemColumn.NAME_AND_DESCRIPTION = new ItemColumn(
             'name_and_description', 5,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Nom / Description"
+                'fr': 'Nom / Description'
             })
         );
 
         ItemColumn.VAT_EXCLUSIVE = new ItemColumn(
             'vat_exclusive', 2,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Prix HTVA"
+                'fr': 'Prix HTVA'
             }), true
         );
 
         ItemColumn.VAT_RATE = new ItemColumn(
             'vat_rate', 2,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Taux TVA"
+                'fr': 'Taux TVA'
             }), true
         );
 
         ItemColumn.VAT_INCLUSIVE = new ItemColumn(
             'vat_inclusive', 2,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Prix"
+                'fr': 'Prix'
             }), true
         );
 
         ItemColumn.PICTURE = new ItemColumn(
             'picture', 2,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Image"
+                'fr': 'Image'
             }), false, true
         );
 

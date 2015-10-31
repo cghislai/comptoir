@@ -4,7 +4,7 @@
 import {Component, View, NgIf} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
-import {LocalItemVariant, LocalItemVariantFactory, NewItemVariant} from '../../../../client/localDomain/itemVariant';
+import {LocalItemVariant, NewItemVariant} from '../../../../client/localDomain/itemVariant';
 import {LocalItem} from '../../../../client/localDomain/item';
 import {Pricing} from '../../../../client/domain/itemVariant';
 
@@ -14,8 +14,6 @@ import {ErrorService} from '../../../../services/error';
 import {AuthService} from '../../../../services/auth';
 
 import {ItemVariantEditComponent} from '../../../../components/itemVariant/edit/editVariant';
-
-import * as Immutable from 'immutable';
 
 @Component({
     selector: 'editItemVariant'
@@ -55,7 +53,7 @@ export class ItemVariantEditView {
     }
 
     findItem(routeParams:RouteParams):Promise<any> {
-        if (routeParams == null || routeParams.params == null) {
+        if (routeParams === null || routeParams.params === null) {
             throw 'no route params';
         }
         var idParam = routeParams.get('itemId');
@@ -76,14 +74,14 @@ export class ItemVariantEditView {
     }
 
     findItemVariant(routeParams:RouteParams) {
-        if (routeParams == null || routeParams.params == null) {
+        if (routeParams === null || routeParams.params === null) {
             this.getNewItemVariant();
             return;
         }
         var idParam = routeParams.get('variantId');
         var idNumber = parseInt(idParam);
         if (isNaN(idNumber)) {
-            if (idParam == 'new') {
+            if (idParam === 'new') {
                 this.getNewItemVariant();
                 return;
             }

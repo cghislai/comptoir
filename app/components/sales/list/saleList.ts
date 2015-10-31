@@ -7,7 +7,7 @@ import {Component, View, NgFor, NgIf, NgSwitch, NgSwitchWhen,
     EventEmitter, ViewEncapsulation} from 'angular2/angular2';
 
 import {LocalSale} from '../../../client/localDomain/sale';
-import {Language, LanguageFactory, LocaleTexts, LocaleTextsFactory} from '../../../client/utils/lang';
+import {Language, LocaleTexts, LocaleTextsFactory} from '../../../client/utils/lang';
 
 import {AuthService} from '../../../services/auth';
 
@@ -20,7 +20,7 @@ import * as Immutable from 'immutable';
  * Column component
  */
 @Component({
-    selector: "saleColumn",
+    selector: 'saleColumn',
     inputs: ['sale', 'column', 'lang'],
     outputs: ['action'],
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -110,46 +110,46 @@ export class SaleColumn {
         SaleColumn.ID = new SaleColumn();
         SaleColumn.ID.name = 'id';
         SaleColumn.ID.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Id"
+            'fr': 'Id'
         });
 
         SaleColumn.DATETIME = new SaleColumn();
         SaleColumn.DATETIME.name = 'dateTime';
         SaleColumn.DATETIME.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Date"
+            'fr': 'Date'
         });
 
         SaleColumn.VAT_EXCLUSIVE_AMOUNT = new SaleColumn();
         SaleColumn.VAT_EXCLUSIVE_AMOUNT.name = 'vatExclusive';
         SaleColumn.VAT_EXCLUSIVE_AMOUNT.alignRight = true;
         SaleColumn.VAT_EXCLUSIVE_AMOUNT.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Total HTVA"
+            'fr': 'Total HTVA'
         });
 
         SaleColumn.VAT_INCLUSIVE_AMOUNT = new SaleColumn();
         SaleColumn.VAT_INCLUSIVE_AMOUNT.name = 'vatInclusive';
         SaleColumn.VAT_INCLUSIVE_AMOUNT.alignRight = true;
         SaleColumn.VAT_INCLUSIVE_AMOUNT.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Total"
+            'fr': 'Total'
         });
 
         SaleColumn.VAT_AMOUNT = new SaleColumn();
         SaleColumn.VAT_AMOUNT.name = 'vat';
         SaleColumn.VAT_AMOUNT.alignRight = true;
         SaleColumn.VAT_AMOUNT.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "TVA"
+            'fr': 'TVA'
         });
 
         SaleColumn.CLOSED = new SaleColumn();
         SaleColumn.CLOSED.name = 'closed';
         SaleColumn.CLOSED.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Clôturée"
+            'fr': 'Clôturée'
         });
 
         SaleColumn.REFERENCE = new SaleColumn();
         SaleColumn.REFERENCE.name = 'ref';
         SaleColumn.REFERENCE.title = LocaleTextsFactory.toLocaleTexts({
-            'fr': "Référence"
+            'fr': 'Référence'
         });
 
         SaleColumn.ACTION_REMOVE = new SaleColumn();

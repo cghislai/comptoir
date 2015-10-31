@@ -63,7 +63,7 @@ export class AccountFactory {
     static cacheHandler = new BasicCacheHandler<Account>();
 
     static fromJSONReviver = (key, value)=>{
-        if (key == 'description') {
+        if (key ==='description') {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
         return value;

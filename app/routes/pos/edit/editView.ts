@@ -4,9 +4,7 @@
 import {Component, View, NgIf} from 'angular2/angular2';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
-import {CompanyRef} from '../../../client/domain/company';
-import {Pos, PosRef} from '../../../client/domain/pos';
-import {Customer, CustomerRef} from '../../../client/domain/customer';
+import {Pos} from '../../../client/domain/pos';
 
 import {AuthService} from '../../../services/auth';
 import {PosService} from '../../../services/pos';
@@ -44,14 +42,14 @@ export class EditPosView {
     }
 
     findPos(routeParams:RouteParams) {
-        if (routeParams == null || routeParams.params == null) {
+        if (routeParams === null || routeParams.params === null) {
             this.getNewPos();
             return;
         }
         var itemIdParam = routeParams.get('id');
         var posId = parseInt(itemIdParam);
         if (isNaN(posId)) {
-            if (itemIdParam == 'new') {
+            if (itemIdParam === 'new') {
                 this.getNewPos();
                 return;
             }

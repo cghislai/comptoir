@@ -1,11 +1,11 @@
 /**
  * Created by cghislai on 05/08/15.
  */
-import {Component, View, NgFor, NgIf, FORM_DIRECTIVES, ChangeDetectionStrategy, EventEmitter, OnInit} from 'angular2/angular2';
+import {Component, View, NgFor, NgIf, FORM_DIRECTIVES, EventEmitter, OnInit} from 'angular2/angular2';
 
 import {Pos} from '../../../client/domain/pos';
 
-import {Language, LocaleTexts, LanguageFactory, LocaleTextsFactory} from '../../../client/utils/lang';
+import {Language} from '../../../client/utils/lang';
 
 import {AuthService} from '../../../services/auth';
 import {PosService} from '../../../services/pos';
@@ -16,7 +16,6 @@ import {LocalizedDirective} from '../../utils/localizedInput';
 import {RequiredValidator} from '../../utils/validators';
 import {FormMessage} from '../../utils/formMessage/formMessage';
 
-import * as Immutable from 'immutable';
 
 @Component({
     selector: 'posEditComponent',
@@ -57,15 +56,6 @@ export class PossEditComponent implements OnInit {
     }
 
 
-    private savePos(pos:Pos):Promise<Pos> {
-        return this.posService.save(pos)
-            .then((pos:Pos)=> {
-                this.pos = pos;
-                this.posModel = pos;
-                return pos;
-            });
-    }
-
     onFormSubmit() {
         this.savePos(this.pos)
             .then((pos)=> {
@@ -78,6 +68,16 @@ export class PossEditComponent implements OnInit {
 
     onCancelClicked() {
         this.cancelled.next(null);
+    }
+
+
+    private savePos(pos:Pos):Promise<Pos> {
+        return this.posService.save(pos)
+            .then((pos:Pos)=> {
+                this.pos = pos;
+                this.posModel = pos;
+                return pos;
+            });
     }
 
 }

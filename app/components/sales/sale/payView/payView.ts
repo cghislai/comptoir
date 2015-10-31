@@ -6,28 +6,20 @@ import {Component, View, EventEmitter, NgFor, NgIf, ChangeDetectionStrategy} fro
 
 import {LocalSale} from '../../../../client/localDomain/sale';
 import {LocalAccount} from '../../../../client/localDomain/account';
-import {LocalAccountingEntry, LocalAccountingEntryFactory, NewAccountingEntry } from '../../../../client/localDomain/accountingEntry';
+import {LocalAccountingEntry, NewAccountingEntry } from '../../../../client/localDomain/accountingEntry';
 
-import {AccountingEntry, AccountingEntrySearch} from '../../../../client/domain/accountingEntry';
-import {Account, AccountRef, AccountType, AccountSearch} from '../../../../client/domain/account';
-import {Pos, PosRef} from '../../../../client/domain/pos';
-import {SaleClient} from '../../../../client/domain/sale';
-import {CompanyRef} from '../../../../client/domain/company';
-import {AccountingTransactionRef} from '../../../../client/domain/accountingTransaction';
-import {SearchRequest, SearchResult} from '../../../../client/utils/search';
 import {NumberUtils} from '../../../../client/utils/number';
-import {LocaleTexts, LocaleTextsFactory, Language} from '../../../../client/utils/lang';
-import {ComptoirRequest, ComptoirResponse} from '../../../../client/utils/request';
+import {LocaleTextsFactory, Language} from '../../../../client/utils/lang';
 
 import {ActiveSaleService} from '../../../../routes/sales/sale/activeSale';
 import {ErrorService} from '../../../../services/error';
 import {AuthService} from '../../../../services/auth';
 
-import {FastInput} from '../../../utils/fastInput'
+import {FastInput} from '../../../utils/fastInput';
 import * as Immutable from 'immutable';
 
 @Component({
-    selector: "payView",
+    selector: 'payView',
     outputs: ['paid'],
     inputs: ['saleTotal', 'paidAmount', 'noInput', 'sale', 'accountingEntries'],
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -61,7 +53,7 @@ export class PayView {
     }
 
     hasSale():boolean {
-        return this.sale != null && this.sale.id != null;
+        return this.sale !== null && this.sale.id !== null;
     }
 
     isSearching():boolean {
@@ -69,7 +61,7 @@ export class PayView {
     }
 
     isEditing(entry: LocalAccountingEntry) {
-        return this.editingEntry != null && this.editingEntry.id == entry.id;
+        return this.editingEntry !== null && this.editingEntry.id === entry.id;
     }
 
 
@@ -97,10 +89,10 @@ export class PayView {
     }
 
     startEditEntry(localAccountingEntry:LocalAccountingEntry) {
-        if (this.editingEntry != null) {
+        if (this.editingEntry !== null) {
             this.cancelEditEntry();
         }
-        if (localAccountingEntry.amount == null || localAccountingEntry.amount <= 0) {
+        if (localAccountingEntry.amount === null || localAccountingEntry.amount <= 0) {
             this.editingEntry = <LocalAccountingEntry>localAccountingEntry.set('amount', this.toPayAmount);
         } else {
             this.editingEntry = localAccountingEntry;

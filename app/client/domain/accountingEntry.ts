@@ -55,7 +55,7 @@ export class AccountingEntrySearch {
 export class AccountingEntryFactory {
     static cacheHandler = new BasicCacheHandler<AccountingEntry>();
     static fromJSONAccountingEntryReviver = (key, value)=>{
-        if (key == 'description') {
+        if (key ==='description') {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
         return value;

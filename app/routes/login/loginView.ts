@@ -9,7 +9,7 @@ import {AppHeader} from '../../components/app/header/appHeader';
 import {FormMessage} from '../../components/utils/formMessage/formMessage';
 import {RequiredValidator} from '../../components/utils/validators';
 
-import {AuthService, LoginRequiredReason} from '../../services/auth';
+import {AuthService} from '../../services/auth';
 import {ErrorService} from '../../services/error';
 import {MD5} from '../../components/utils/md5';
 
@@ -52,10 +52,10 @@ export class LoginView {
             .then(function (employee) {
                 thisView.router.navigate(['/Sales/Sale', {id: 'active'}]);
             }).catch(function (error) {
-                if(error.code == 401) {
+                if(error.code === 401) {
                     thisView.invalidCredentials = true;
                     return;
-                } else if (error.code == 404)  {
+                } else if (error.code === 404)  {
                     thisView.invalidCredentials = true;
                     return;
                 }

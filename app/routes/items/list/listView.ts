@@ -7,8 +7,7 @@ import {Router} from 'angular2/router';
 import {LocalItem} from '../../../client/localDomain/item';
 import {ItemSearch} from '../../../client/domain/item';
 import {SearchResult, SearchRequest} from '../../../client/utils/search';
-import {LocaleTexts} from '../../../client/utils/lang';
-import {Pagination, PaginationFactory, PageChangeEvent, ApplyPageChangeEvent} from '../../../client/utils/pagination';
+import { PaginationFactory, PageChangeEvent, ApplyPageChangeEvent} from '../../../client/utils/pagination';
 
 import {ErrorService} from '../../../services/error';
 import {ItemService} from '../../../services/item';
@@ -19,7 +18,7 @@ import {Paginator} from '../../../components/utils/paginator/paginator';
 import * as Immutable from 'immutable';
 
 @Component({
-    selector: "productList"
+    selector: 'productList'
 })
 
 @View({
@@ -85,7 +84,7 @@ export class ItemsListView {
     onColumnAction(event) {
         var item:LocalItem = event.item;
         var column:ItemColumn = event.column;
-        if (column == ItemColumn.ACTION_REMOVE) {
+        if (column === ItemColumn.ACTION_REMOVE) {
             this.doRemoveItem(item);
         }
     }

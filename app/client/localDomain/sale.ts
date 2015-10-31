@@ -3,7 +3,7 @@
  */
 
 
-import {CompanyRef, Company, CompanyClient, CompanyFactory} from '../domain/company';
+import {CompanyRef, CompanyClient} from '../domain/company';
 import {CustomerRef, Customer, CustomerClient, CustomerFactory} from '../domain/customer';
 import {InvoiceRef, Invoice, InvoiceFactory, InvoiceClient} from '../domain/invoice';
 import {AccountingTransactionRef, AccountingTransaction,
@@ -70,16 +70,16 @@ export class LocalSaleFactory {
         sale.id = localSale.id;
         sale.accountingTransactionRef = localSale.accountingTransactionRef;
         sale.closed = localSale.closed;
-        if (localSale.company != null) {
+        if (localSale.company !== null) {
             sale.companyRef = new CompanyRef(localSale.company.id);
         }
-        if (localSale.customer != null) {
+        if (localSale.customer !== null) {
             sale.customerRef = new CustomerRef(localSale.customer.id);
         }
         sale.dateTime = localSale.dateTime;
         sale.discountAmount = localSale.discountAmount;
         sale.discountRatio = localSale.discountRatio;
-        if (localSale.invoice != null) {
+        if (localSale.invoice !== null) {
             sale.invoiceRef = new InvoiceRef(localSale.invoice.id);
         }
         sale.reference = localSale.reference;
@@ -112,7 +112,7 @@ export class LocalSaleFactory {
                 })
         );
         var customerRef = sale.customerRef;
-        if (customerRef != null) {
+        if (customerRef !== null) {
             taskList.push(
                 LocalSaleFactory.customerClient.getFromCacheOrServer(customerRef.id, authToken)
                     .then((customer)=> {
@@ -121,7 +121,7 @@ export class LocalSaleFactory {
             );
         }
         var invoiceRef = sale.invoiceRef;
-        if (invoiceRef != null) {
+        if (invoiceRef !== null) {
             taskList.push(
                 LocalSaleFactory.invoiceClient.getFromCacheOrServer(invoiceRef.id, authToken)
                     .then((invoice)=> {

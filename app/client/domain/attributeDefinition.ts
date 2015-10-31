@@ -45,7 +45,7 @@ export class AttributeDefinitionSearch {
 export class AttributeDefinitionFactory {
 
     static fromJSONAttributeDefinitionReviver = (key, value)=>{
-        if (key == 'name') {
+        if (key ==='name') {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
         return value;

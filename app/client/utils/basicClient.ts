@@ -18,7 +18,7 @@ export class BasicCacheHandler<T extends WithId> {
 
     putInCache(entity:T) {
         var id = entity.id;
-        if (id == null) {
+        if (id ===null) {
             throw 'no id';
         }
         this.cache[id] = entity;
@@ -38,7 +38,7 @@ export class BasicCacheHandler<T extends WithId> {
 
     cancelRequest(id: number) {
         var request = this.requestCache[id];
-        if (request != null) {
+        if (request !== null) {
             request.discardRequest();
         }
     }
@@ -71,7 +71,7 @@ export class BasicClient<T extends WithId> {
 
     protected getResourceUrl(id?:number) {
         var url = ServiceConfig.URL + this.resourceInfo.resourcePath;
-        if (id != undefined) {
+        if (id !== undefined) {
             url += "/" + id;
         }
         return url;
@@ -80,12 +80,12 @@ export class BasicClient<T extends WithId> {
     protected getSearchUrl(pagination:Pagination) {
         var url = ServiceConfig.URL + this.resourceInfo.resourcePath;
         url += '/search';
-        if (pagination != null) {
+        if (pagination !== null) {
             url += '?offset=';
             url += pagination.firstIndex;
             url += "&length=";
             url += pagination.pageSize;
-            if (pagination.sorts != null) {
+            if (pagination.sorts !== null) {
                 url += "&sort="
                 for (var column in pagination.sorts) {
                     url += column;
@@ -99,11 +99,11 @@ export class BasicClient<T extends WithId> {
 
     getFromCacheOrServer(id:number, authToken:string):Promise<T> {
         var entityFromCache = this.resourceInfo.cacheHandler.getFromCache(id);
-        if (entityFromCache != null) {
+        if (entityFromCache !== null) {
             return Promise.resolve(entityFromCache);
         } else {
             var getPromise = this.resourceInfo.cacheHandler.getPromises[id];
-            if (getPromise != null) {
+            if (getPromise !== null) {
                 return getPromise;
             }
             return this.get(id, authToken);
@@ -143,7 +143,7 @@ export class BasicClient<T extends WithId> {
         var getPromise = request
             .run()
             .then((response) => {
-                if (response.text == null || response.text.length == 0) {
+                if (response.text ===null || response.text.length ===0) {
                     return null;
                 }
                 var entity:T = JSON.parse(response.text, reviver);
@@ -181,7 +181,7 @@ export class BasicClient<T extends WithId> {
     }
 
     save(entity:T, authToken:string):Promise<WithId> {
-        if (entity.id == null) {
+        if (entity.id ===null) {
             return this.create(entity, authToken);
         } else {
             return this.update(entity, authToken);

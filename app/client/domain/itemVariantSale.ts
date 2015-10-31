@@ -50,7 +50,7 @@ export class ItemVariantSaleSearch {
 export class ItemVariantSaleFactory {
     static cacheHandler = new BasicCacheHandler<ItemVariantSale>();
     static fromJSONItemVariantSaleReviver = (key, value)=>{
-        if (key == 'comment') {
+        if (key ==='comment') {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
         return value;

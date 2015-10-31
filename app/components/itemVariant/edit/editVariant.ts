@@ -2,15 +2,14 @@
  * Created by cghislai on 05/08/15.
  */
 import {Component, View, NgFor, NgIf, FORM_DIRECTIVES, EventEmitter, OnInit, ChangeDetectionStrategy} from 'angular2/angular2';
-import {RouteParams, Router, RouterLink} from 'angular2/router';
+import {RouterLink} from 'angular2/router';
 
-import {LocalPicture, LocalPictureFactory, NewPicture} from '../../../client/localDomain/picture';
-import {LocalAttributeValue, LocalAttributeValueFactory, NewAttributeValue} from '../../../client/localDomain/attributeValue';
+import {LocalPicture,  NewPicture} from '../../../client/localDomain/picture';
+import {LocalAttributeValue, NewAttributeValue} from '../../../client/localDomain/attributeValue';
 import {LocalItemVariant, LocalItemVariantFactory, NewItemVariant} from '../../../client/localDomain/itemVariant';
-import {LocalItem} from '../../../client/localDomain/item';
 import {AttributeDefinition, AttributeDefinitionSearch} from '../../../client/domain/attributeDefinition';
-import {ItemVariant, Pricing} from '../../../client/domain/itemVariant';
-import {Language, LocaleTexts, LocaleTextsFactory} from '../../../client/utils/lang';
+import {Pricing} from '../../../client/domain/itemVariant';
+import {Language, LocaleTextsFactory} from '../../../client/utils/lang';
 import {NumberUtils} from '../../../client/utils/number';
 import {SearchRequest, SearchResult} from '../../../client/utils/search';
 
@@ -43,20 +42,20 @@ export class ItemVariantEditComponent implements OnInit {
     itemVariantService:ItemVariantService;
     attributeValueService:AttributeValueService;
     attributeDefinitionService:AttributeDefinitionService;
-    pictureService: PictureService;
+    pictureService:PictureService;
     errorService:ErrorService;
     authService:AuthService;
 
     itemVariant:LocalItemVariant;
     itemVariantModel:any;
-    picture: LocalPicture;
+    picture:LocalPicture;
 
     newAttributeValue:LocalAttributeValue;
     unsavedAttributes:Immutable.List<LocalAttributeValue>;
 
     allPricings:Immutable.List<Pricing>;
     pricingAmountRequired:boolean;
-    pictureTouched: boolean;
+    pictureTouched:boolean;
 
     appLanguage:Language;
     editLanguage:Language;
@@ -65,7 +64,7 @@ export class ItemVariantEditComponent implements OnInit {
     cancelled = new EventEmitter();
 
     constructor(itemVariantService:ItemVariantService, attributeDefinitionService:AttributeDefinitionService,
-                pictureService: PictureService,
+                pictureService:PictureService,
                 errorService:ErrorService, authService:AuthService, attributeValueService:AttributeValueService) {
         this.itemVariantService = itemVariantService;
         this.attributeDefinitionService = attributeDefinitionService;
@@ -100,6 +99,135 @@ export class ItemVariantEditComponent implements OnInit {
 
     getPricingLabel(pricing:Pricing) {
         return LocalItemVariantFactory.getPricingLabel(pricing).get(this.appLanguage.locale);
+    }
+
+
+    public onFormSubmit() {
+        var itemVariant = NewItemVariant(this.itemVariantModel);
+        this.saveItemVariant(itemVariant)
+            .then((itemVariant)=> {
+                this.saved.next(itemVariant);
+            }).catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });
+        ;
+    }
+
+    // TODO: add warning for pending changes
+    public onCancelClicked() {
+        this.cancelled.next(null);
+    }
+
+    onPictureFileSelected(event) {
+        var files = event.target.files;
+        if (files.length !== 1) {
+            return;
+        }
+        var file = files[0];
+        new Promise<string>((resolve, reject)=> {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var data = reader.result;
+                resolve(data);
+            };
+            reader.readAsDataURL(file);
+        }).then((data:string)=> {
+                var mainPicture:LocalPicture;
+                var currentPicture = this.itemVariant.mainPicture;
+                if (currentPicture === null) {
+                    var picDesc = {
+                        dataURI: data,
+                        company: this.authService.getEmployeeCompany()
+                    };
+                    mainPicture = NewPicture(picDesc);
+                } else {
+                    mainPicture = <LocalPicture>currentPicture.set('dataURI', data);
+                }
+                this.itemVariantModel.mainPicture = mainPicture.toJS();
+                this.picture = mainPicture;
+                this.pictureTouched = true;
+            }).catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });
+    }
+
+
+    onPricingChanged(event) {
+        var pricing:Pricing = parseInt(event.target.value);
+        this.itemVariantModel.pricing = pricing;
+        this.checkPricingAmountRequired();
+    }
+
+    setPricingAmount(event) {
+        var valueString = event.target.value;
+        var valueNumber:number = parseFloat(valueString);
+        if (isNaN(valueNumber)) {
+            return;
+        }
+        valueNumber = NumberUtils.toFixedDecimals(valueNumber, 2);
+        this.itemVariantModel.pricingAmount = valueNumber;
+    }
+
+    checkPricingAmountRequired() {
+        var required = true;
+        if (this.itemVariantModel.pricing === Pricing.PARENT_ITEM) {
+            required = false;
+        }
+        this.pricingAmountRequired = required;
+    }
+
+    doAddAttribute() {
+        var attributeToAdd = this.newAttributeValue;
+        if (this.itemVariantModel.id !== null) {
+            this.saveAttributeValue(attributeToAdd)
+                .then((attributeValue)=> {
+                    var curAttributes = this.itemVariant.attributeValues;
+                    curAttributes.push(attributeValue);
+                    var itemVariant = <LocalItemVariant>NewItemVariant(this.itemVariantModel)
+                        .set('attributeValues', curAttributes);
+                    return this.saveItemVariant(itemVariant);
+                })
+                .catch((error)=> {
+                    this.errorService.handleRequestError(error);
+                });
+        } else {
+            this.unsavedAttributes = this.unsavedAttributes.push(attributeToAdd);
+        }
+        this.resetNewAttributeValue();
+    }
+
+    doRemoveAttribute(attributeValue:LocalAttributeValue) {
+        var attributeSaved = attributeValue.id !== null;
+        if (attributeSaved) {
+            var newAttributes = Immutable.List(this.itemVariantModel.attributeValues)
+                .filter((existingAttribute:LocalAttributeValue)=> {
+                    return existingAttribute.id !== attributeValue.id;
+                }).toArray();
+            var itemVariant = <LocalItemVariant>NewItemVariant(this.itemVariantModel).set('attributeValues', newAttributes);
+            return this.saveItemVariant(itemVariant)
+                .then((itemVariant)=> {
+                    // TODO: remove?
+                    // return this.attributeValueService.remove(attributeValue);
+                })
+                .catch((error)=> {
+                    this.errorService.handleRequestError(error);
+                });
+        } else {
+            var newUnsavedAttributes = this.unsavedAttributes
+                .filter((attribute)=> {
+                    return !Immutable.is(attribute, attributeValue);
+                }).toList();
+            this.unsavedAttributes = newUnsavedAttributes;
+        }
+    }
+
+    resetNewAttributeValue() {
+        var attributeDefinition = new AttributeDefinition();
+        attributeDefinition.name = LocaleTextsFactory.toLocaleTexts({});
+        this.newAttributeValue = NewAttributeValue({
+            value: LocaleTextsFactory.toLocaleTexts({}),
+            attributeDefinition: attributeDefinition
+        });
     }
 
 
@@ -142,7 +270,7 @@ export class ItemVariantEditComponent implements OnInit {
                         .then((itemVariant)=> {
                             this.itemVariant = itemVariant;
                             this.itemVariantModel = itemVariant.toJS();
-                            if (this.itemVariant.mainPicture != null) {
+                            if (this.itemVariant.mainPicture !== null) {
                                 this.picture = this.itemVariant.mainPicture;
                             }
                             return itemVariant;
@@ -157,7 +285,7 @@ export class ItemVariantEditComponent implements OnInit {
         var attributeDefinitionName = attributevalue.attributeDefinition.name.get(this.editLanguage.locale);
         return this.searchAttributeDefinitionForName(attributeDefinitionName)
             .then((attributeDefinition)=> {
-                if (attributeDefinition == null) {
+                if (attributeDefinition === null) {
                     var toSaveDefinition = attributevalue.attributeDefinition;
                     toSaveDefinition.companyRef = this.authService.getEmployeeCompanyRef();
                     return this.saveAttributeDefinition(toSaveDefinition);
@@ -175,7 +303,7 @@ export class ItemVariantEditComponent implements OnInit {
             });
     }
 
-    private saveAttributeDefinition(attributeDefinition:AttributeDefinition) : Promise<AttributeDefinition>{
+    private saveAttributeDefinition(attributeDefinition:AttributeDefinition):Promise<AttributeDefinition> {
         return this.attributeDefinitionService.save(attributeDefinition)
             .then((ref)=> {
                 return this.attributeDefinitionService.get(ref.id);
@@ -191,140 +319,11 @@ export class ItemVariantEditComponent implements OnInit {
 
         return this.attributeDefinitionService.search(attributeDefRequest)
             .then((result:SearchResult<AttributeDefinition>) => {
-                if (result.list.size == 0) {
+                if (result.list.size === 0) {
                     return null;
                 }
                 return result.list.first();
             });
     }
 
-    public onFormSubmit() {
-        var itemVariant = NewItemVariant(this.itemVariantModel);
-        this.saveItemVariant(itemVariant)
-            .then((itemVariant)=> {
-                this.saved.next(itemVariant);
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
-        ;
-    }
-
-    // TODO: add warning for pending changes
-    public onCancelClicked() {
-        this.cancelled.next(null);
-    }
-
-    onPictureFileSelected(event) {
-        var files = event.target.files;
-        if (files.length != 1) {
-            return;
-        }
-        var file = files[0];
-        var thisView = this;
-
-        new Promise<string>((resolve, reject)=> {
-            var reader = new FileReader();
-            reader.onload = function () {
-                var data = reader.result;
-                resolve(data);
-            };
-            reader.readAsDataURL(file);
-        }).then((data:string)=> {
-                var mainPicture:LocalPicture;
-                var currentPicture = this.itemVariant.mainPicture;
-                if (currentPicture == null) {
-                    var picDesc = {
-                        dataURI: data,
-                        company: this.authService.getEmployeeCompany()
-                    };
-                    mainPicture = NewPicture(picDesc);
-                } else {
-                    mainPicture = <LocalPicture>currentPicture.set('dataURI', data);
-                }
-                this.itemVariantModel.mainPicture = mainPicture.toJS();
-                this.picture = mainPicture;
-                this.pictureTouched = true;
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
-    }
-
-
-    onPricingChanged(event) {
-        var pricing:Pricing = parseInt(event.target.value);
-        this.itemVariantModel.pricing = pricing;
-        this.checkPricingAmountRequired();
-    }
-
-    setPricingAmount(event) {
-        var valueString = event.target.value;
-        var valueNumber:number = parseFloat(valueString);
-        if (isNaN(valueNumber)) {
-            return;
-        }
-        valueNumber = NumberUtils.toFixedDecimals(valueNumber, 2);
-        this.itemVariantModel.pricingAmount = valueNumber;
-    }
-
-    checkPricingAmountRequired() {
-        var required = true;
-        if (this.itemVariantModel.pricing == Pricing.PARENT_ITEM) {
-            required = false;
-        }
-        this.pricingAmountRequired = required;
-    }
-
-    doAddAttribute() {
-        var attributeToAdd = this.newAttributeValue;
-        if (this.itemVariantModel.id != null) {
-            this.saveAttributeValue(attributeToAdd)
-                .then((attributeValue)=> {
-                    var curAttributes = this.itemVariant.attributeValues;
-                    curAttributes.push(attributeValue);
-                    var itemVariant = <LocalItemVariant>NewItemVariant(this.itemVariantModel)
-                        .set('attributeValues', curAttributes);
-                    return this.saveItemVariant(itemVariant);
-                })
-                .catch((error)=> {
-                    this.errorService.handleRequestError(error);
-                });
-        } else {
-            this.unsavedAttributes = this.unsavedAttributes.push(attributeToAdd);
-        }
-        this.resetNewAttributeValue();
-    }
-
-    doRemoveAttribute(attributeValue:LocalAttributeValue) {
-        var attributeSaved = attributeValue.id != null;
-        if (attributeSaved) {
-            var newAttributes = Immutable.List(this.itemVariantModel.attributeValues)
-                .filter((existingAttribute: LocalAttributeValue)=> {
-                    return existingAttribute.id != attributeValue.id;
-                }).toArray();
-            var itemVariant = <LocalItemVariant>NewItemVariant(this.itemVariantModel).set('attributeValues', newAttributes);
-            return this.saveItemVariant(itemVariant)
-                .then((itemVariant)=> {
-                    // TODO: remove?
-                    // return this.attributeValueService.remove(attributeValue);
-                })
-                .catch((error)=> {
-                    this.errorService.handleRequestError(error);
-                });
-        } else {
-            var newUnsavedAttributes = this.unsavedAttributes
-                .filter((attribute)=> {
-                    return !Immutable.is(attribute, attributeValue);
-                }).toList();
-            this.unsavedAttributes = newUnsavedAttributes;
-        }
-    }
-
-    resetNewAttributeValue() {
-        var attributeDefinition = new AttributeDefinition();
-        attributeDefinition.name = LocaleTextsFactory.toLocaleTexts({});
-        this.newAttributeValue = NewAttributeValue({
-            value: LocaleTextsFactory.toLocaleTexts({}),
-            attributeDefinition: attributeDefinition
-        });
-    }
 }

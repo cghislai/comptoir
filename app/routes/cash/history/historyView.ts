@@ -7,7 +7,7 @@ import {Component, View, NgIf} from 'angular2/angular2';
 import {CompanyRef} from '../../../client/domain/company';
 import {LocalBalance} from '../../../client/localDomain/balance';
 import {BalanceSearch} from '../../../client/domain/balance';
-import {Pagination, PaginationFactory, PageChangeEvent, ApplyPageChangeEvent} from '../../../client/utils/pagination';
+import {PaginationFactory, PageChangeEvent, ApplyPageChangeEvent} from '../../../client/utils/pagination';
 import {SearchResult, SearchRequest} from '../../../client/utils/search';
 
 import {AuthService} from '../../../services/auth';

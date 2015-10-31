@@ -61,7 +61,7 @@ export class BalanceSearch {
 export class BalanceFactory {
     static cacheHandler = new BasicCacheHandler<Balance>();
     static fromJSONBalanceReviver=(key,value)=>{
-        if (key == 'dateTime') {
+        if (key ==='dateTime') {
             var date = new Date(value);
             return date;
         }

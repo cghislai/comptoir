@@ -8,7 +8,7 @@ import {Component, View, NgFor, NgIf, NgSwitch, NgSwitchWhen,
 
 import {LocalBalance} from '../../../client/localDomain/balance';
 
-import {Language, LanguageFactory, LocaleTexts, LocaleTextsFactory} from '../../../client/utils/lang';
+import {Language, LocaleTextsFactory} from '../../../client/utils/lang';
 
 import {AuthService} from '../../../services/auth';
 
@@ -20,7 +20,7 @@ import * as Immutable from 'immutable';
  * Column component
  */
 @Component({
-    selector: "balanceColumn",
+    selector: 'balanceColumn',
     inputs: ['balance', 'column', 'lang'],
     outputs: ['action'],
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -117,41 +117,41 @@ export class BalanceColumn extends Column {
         BalanceColumn.ID = new BalanceColumn(
             'id', 1,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Id"
+                'fr': 'Id'
             })
         );
         BalanceColumn.ACCOUNT = new BalanceColumn(
             'account', 2,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Compte"
+                'fr': 'Compte'
             })
         );
 
         BalanceColumn.DATETIME = new BalanceColumn(
             'dateTime', 2,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Date"
+                'fr': 'Date'
             })
         );
 
         BalanceColumn.BALANCE = new BalanceColumn(
             'balance', 2,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Solde"
+                'fr': 'Solde'
             }), true
         );
 
         BalanceColumn.COMMENT = new BalanceColumn(
             'comment', 4,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Commentaire"
+                'fr': 'Commentaire'
             })
         );
 
         BalanceColumn.CLOSED = new BalanceColumn(
             'closed', 1,
             LocaleTextsFactory.toLocaleTexts({
-                'fr': "Clôturée"
+                'fr': 'Clôturée'
             }), false, true
         );
 

@@ -23,7 +23,7 @@ export class CountryFactory {
     static cache: {[code: string] : Country} = {};
     static putInCache(country: Country) {
         var countryCode = country.code;
-        if (countryCode == null) {
+        if (countryCode ===null) {
             throw 'no id';
         }
         CountryFactory.cache[countryCode] = country;

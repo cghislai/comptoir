@@ -65,7 +65,7 @@ export class LocalItemFactory {
         );
 
         var mainPictureRef = item.mainPictureRef;
-        if (mainPictureRef != null) {
+        if (mainPictureRef !== null) {
             var picId = mainPictureRef.id;
             taskList.push(
                 LocalItemFactory.pictureClient.getFromCacheOrServer(picId, authToken)
@@ -87,7 +87,7 @@ export class LocalItemFactory {
         item.companyRef = new CompanyRef(localItem.company.id);
         item.description = localItem.description;
         item.id = localItem.id;
-        if (localItem.mainPicture != null) {
+        if (localItem.mainPicture !== null) {
             var picId = localItem.mainPicture.id;
             var picRef = new PictureRef(picId)
             item.mainPictureRef = picRef;

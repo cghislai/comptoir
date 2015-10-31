@@ -14,7 +14,7 @@ export class CountryClient {
 
     private getCountryUrl(code?:string) {
         var url = ServiceConfig.URL + CountryClient.RESOURCE_PATH;
-        if (code != undefined) {
+        if (code !== undefined) {
             url += "/" + code;
         }
         return url;
@@ -22,7 +22,7 @@ export class CountryClient {
 
     getFromCacheOrServer(code: string, authToken:string) : Promise<Country> {
         var entityFromCache = CountryFactory.cache[code];
-        if (entityFromCache != null) {
+        if (entityFromCache !== null) {
             return Promise.resolve(entityFromCache);
         } else {
             return this.getCountry(code, authToken);
