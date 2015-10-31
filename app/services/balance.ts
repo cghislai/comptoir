@@ -16,7 +16,7 @@ export class BalanceService extends BasicLocalService<Balance, LocalBalance> {
 
     balanceClient:BalanceClient;
 
-    constructor(@Inject authService:AuthService) {
+    constructor( authService:AuthService) {
         this.balanceClient = new BalanceClient();
         super(<BasicLocalServiceInfo<Balance, LocalBalance>>{
             client: this.balanceClient,

@@ -16,7 +16,7 @@ import {AuthService} from './auth';
 
 export class AccountingEntryService extends BasicLocalService<AccountingEntry, LocalAccountingEntry> {
 
-    constructor(@Inject authService:AuthService) {
+    constructor(authService:AuthService) {
         var client = new AccountingEntryClient();
         super(<BasicLocalServiceInfo<AccountingEntry, LocalAccountingEntry>>{
             client: client,

@@ -1,11 +1,9 @@
 /**
  * Created by cghislai on 31/08/15.
  */
-import {Directive, Control, Binding, NG_VALIDATORS, forwardRef, StringMap} from 'angular2/angular2';
+import {Directive, Control, Provider, NG_VALIDATORS, forwardRef} from 'angular2/angular2';
 
 import {NumberUtils} from '../../client/utils/number';
-
-// FIXME: will be broken with next alpha 37 (and doesn't compile right with alpha 36)
 
 function requiredValidator(c: Control) {
     if(c.value==null || c.value.length <= 0) {
@@ -17,8 +15,9 @@ function requiredValidator(c: Control) {
 }
 @Directive({
     selector: '[validate-required]',
-    bindings: [new Binding(NG_VALIDATORS, {
-        toAlias: forwardRef(()=>requiredValidator)
+    bindings: [new Provider(NG_VALIDATORS, {
+        useValue: requiredValidator,
+        multi: true
     })],
     host: {
         '[class.required]': 'true'
@@ -42,8 +41,9 @@ function passwordValidator(c: Control) {
 
 @Directive({
     selector: '[validate-password]',
-    bindings: [new Binding(NG_VALIDATORS, {
-        toAlias: forwardRef(()=>passwordValidator)
+    bindings: [new Provider(NG_VALIDATORS, {
+        useValue: passwordValidator,
+        multi: true
     })]
 })
 export class PasswordValidator {

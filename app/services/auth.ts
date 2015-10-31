@@ -39,7 +39,7 @@ export class AuthService {
 
     loadingPromise: Promise<any>;
 
-    constructor(@Inject errorService:ErrorService) {
+    constructor( errorService:ErrorService) {
         this.errorService = errorService;
         this.client = new AuthClient();
 

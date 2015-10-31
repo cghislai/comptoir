@@ -15,7 +15,7 @@ import {AuthService} from './auth';
 export class MoneyPileService extends BasicLocalService<MoneyPile, LocalMoneyPile> {
 
 
-    constructor(@Inject authService:AuthService) {
+    constructor( authService:AuthService) {
         var client = new MoneyPileClient();
         super(<BasicLocalServiceInfo<MoneyPile, LocalMoneyPile>>{
             client: client,

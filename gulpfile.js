@@ -49,13 +49,11 @@ var PATH = {
   src: {
     // Order is quite important here for the HTML tag injection.
     lib: [
-      './node_modules/angular2/node_modules/traceur/bin/traceur-runtime.js',
-      './node_modules/es6-module-loader/dist/es6-module-loader-sans-promises.js',
-      './node_modules/es6-module-loader/dist/es6-module-loader-sans-promises.js.map',
+      './node_modules/es6-shim/es6-shim.js',
+      './node_modules/es6-shim/es6-shim.js.map',
       './node_modules/reflect-metadata/Reflect.js',
       './node_modules/reflect-metadata/Reflect.js.map',
       './node_modules/systemjs/dist/system.src.js',
-      './node_modules/angular2/node_modules/zone.js/dist/zone.js',
       './node_modules/immutable/dist/immutable.js'
     ]
   }
@@ -69,9 +67,6 @@ var ng2Builder = new Builder({
     'immutable' : '/node_modules/immutable/dist/immutable.js'
   },
   meta: {
-    rx: {
-      format: 'cjs'
-    }
   }
 });
 
@@ -130,7 +125,7 @@ gulp.task('clean.tmp', function(done) {
 // Build dev.
 
 gulp.task('build.ng2.dev', function () {
-  ng2Builder. bundle('angular2/router', PATH.dest.dev.router, {});
+  ng2Builder.bundle('angular2/router', PATH.dest.dev.router, {});
   return ng2Builder.bundle('angular2/angular2', PATH.dest.dev.ng2, {});
 });
 

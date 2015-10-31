@@ -15,7 +15,7 @@ import {AuthService} from './auth';
 export class CompanyService extends BasicLocalService<Company, LocalCompany> {
 
 
-    constructor(@Inject authService:AuthService) {
+    constructor( authService:AuthService) {
         var client = new CompanyClient();
         super(<BasicLocalServiceInfo<Company, LocalCompany>>{
             client: client,
