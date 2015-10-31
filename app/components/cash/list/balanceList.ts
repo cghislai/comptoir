@@ -20,8 +20,8 @@ import {List} from 'immutable';
  */
 @Component({
     selector: "balanceColumn",
-    properties: ['balance', 'column', 'lang'],
-    events: ['action'],
+    inputs: ['balance', 'column', 'lang'],
+    outputs: ['action'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 @View({
@@ -52,8 +52,8 @@ export class BalanceColumnComponent {
 
 @Component({
     selector: 'balanceList',
-    properties: ['balances', 'columns', 'rowSelectable', 'headersVisible'],
-    events: ['rowClicked', 'columnAction'],
+    inputs: ['balances', 'columns', 'rowSelectable', 'headersVisible'],
+    outputs: ['rowClicked', 'columnAction'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 

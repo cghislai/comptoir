@@ -20,8 +20,8 @@ import {List} from 'immutable';
 
 @Component({
     selector: 'posEditComponent',
-    properties: ['pos'],
-    events: ['saved', 'cancelled']
+    inputs: ['pos'],
+    outputs: ['saved', 'cancelled']
 })
 @View({
     templateUrl: './components/pos/edit/editPos.html',

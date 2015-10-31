@@ -91,8 +91,7 @@ export class ItemsListView {
 
     doEditItem(item:LocalItem) {
         var id = item.id;
-        var url = '/items/edit/' + id;
-        this.router.navigate(url);
+        this.router.navigate(['/Items/Edit/EditItem', {itemId: id}]);
     }
 
     doRemoveItem(item:LocalItem) {

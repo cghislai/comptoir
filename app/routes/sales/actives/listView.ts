@@ -103,8 +103,7 @@ export class ActiveSalesView {
 
     doSwitchToSale(sale:LocalSale) {
         var id = sale.id;
-        var url = '/sales/sale/' + id;
-        this.router.navigate(url);
+        this.router.navigate(['/Sales/Sale', {id: id}]);
     }
 
     doRemoveSale(sale:LocalSale) {

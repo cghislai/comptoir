@@ -96,8 +96,7 @@ export class AccountsListView {
 
     doEditAccount(account:LocalAccount) {
         var id = account.id;
-        var url = '/accounts/edit/' + id;
-        this.router.navigate(url);
+        this.router.navigate(['/Accounts/Edit', {id: id}]);
     }
 
     doRemoveAccount(account:LocalAccount) {

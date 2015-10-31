@@ -139,10 +139,10 @@ export class SaleView {
                 // update url
                 if (saleId == null) {
                     var instruction = this.router.generate(['../Sale', {id: 'new'}]);
-                    this.router.navigateInstruction(instruction, false);
+                    this.router.navigateByInstruction(instruction, false);
                 } else {
                     var instruction = this.router.generate(['../Sale', {id: saleId}]);
-                    this.router.navigateInstruction(instruction, false);
+                    this.router.navigateByInstruction(instruction, false);
                 }
                 return sale;
             });
@@ -158,7 +158,7 @@ export class SaleView {
     onSaleEmptied() {
         this.activeSaleService.doCancelSale()
             .then(()=> {
-                this.router.navigate('/sales/sale/new');
+                this.router.navigate(['/Sales/Sale', {id: 'new'}]);
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -190,7 +190,7 @@ export class SaleView {
 
     onCommandPaid() {
         this.payStep = false;
-        this.router.navigate('/sales/sale/new');
+        this.router.navigate(['/Sales/Sale', {id: 'new'}]);
     }
 
     onValidateChanged(validated){

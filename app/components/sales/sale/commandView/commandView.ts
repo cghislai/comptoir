@@ -32,8 +32,8 @@ import {LocalizedDirective} from '../../../utils/localizedInput'
 
 @Component({
     selector: 'commandViewHeader',
-    properties: ['noInput', 'validated'],
-    events: ['validateChanged'],
+    inputs: ['noInput', 'validated'],
+    outputs: ['validateChanged'],
     changeDetection: ChangeDetectionStrategy.Default
 })
 @View({
@@ -122,8 +122,8 @@ export class CommandViewHeader {
 
 @Component({
     selector: 'commandViewTable',
-    properties: ['noInput', 'validated', 'items', 'sale'],
-    events: ['itemRemoved'],
+    inputs: ['noInput', 'validated', 'items', 'sale'],
+    outputs: ['itemRemoved'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 @View({
@@ -380,8 +380,8 @@ export class CommandViewTable {
 // The component
 @Component({
     selector: 'commandView',
-    events: ['saleEmptied', 'validateChanged'],
-    properties: ['noInput', 'validated'],
+    outputs: ['saleEmptied', 'validateChanged'],
+    inputs: ['noInput', 'validated'],
     changeDetection: ChangeDetectionStrategy.Default
 })
 

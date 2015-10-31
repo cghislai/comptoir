@@ -27,7 +27,7 @@ import {List} from 'immutable';
 
 @Component({
     selector: 'itemListView',
-    events: ['itemClicked', 'variantSelected'],
+    outputs: ['itemClicked', 'variantSelected'],
     changeDetection: ChangeDetectionStrategy.Default
 })
 

@@ -8,8 +8,8 @@ import {SearchResult} from '../../../client/utils/search';
 
 @Component({
     selector: 'paginator',
-    events: ['pageChange'],
-    properties: ['totalCount', 'pageSize',
+    outputs: ['pageChange'],
+    inputs: ['totalCount', 'pageSize',
         "showPrevNextLink", 'showFirstLastLink'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })

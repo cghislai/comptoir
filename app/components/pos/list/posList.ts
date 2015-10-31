@@ -20,8 +20,8 @@ import {List} from 'immutable';
  */
 @Component({
     selector: "posColumn",
-    properties: ['pos', 'column', 'lang'],
-    events: ['action'],
+    inputs: ['pos', 'column', 'lang'],
+    outputs: ['action'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 @View({
@@ -52,8 +52,8 @@ export class PosColumnComponent {
 
 @Component({
     selector: 'posList',
-    properties: ['posList', 'columns', 'rowSelectable', 'headersVisible'],
-    events: ['rowClicked', 'columnAction'],
+    inputs: ['posList', 'columns', 'rowSelectable', 'headersVisible'],
+    outputs: ['rowClicked', 'columnAction'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 

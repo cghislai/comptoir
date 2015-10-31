@@ -15,8 +15,8 @@ import {FastInput} from '../../utils/fastInput'
 
 @Component({
     selector: 'moneyPileCount',
-    properties: ['moneyPile'],
-    events: ['changed'],
+    inputs: ['moneyPile'],
+    outputs: ['changed'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 @View({

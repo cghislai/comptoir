@@ -28,8 +28,8 @@ import {List} from 'immutable';
 
 @Component({
     selector: "payView",
-    events: ['paid'],
-    properties: ['saleTotal', 'paidAmount', 'noInput', 'sale', 'accountingEntries'],
+    outputs: ['paid'],
+    inputs: ['saleTotal', 'paidAmount', 'noInput', 'sale', 'accountingEntries'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 @View({

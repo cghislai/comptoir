@@ -21,8 +21,8 @@ import {List} from 'immutable';
  */
 @Component({
     selector: "itemColumn",
-    properties: ['item', 'column', 'lang'],
-    events: ['action'],
+    inputs: ['item', 'column', 'lang'],
+    outputs: ['action'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 @View({
@@ -53,8 +53,8 @@ export class ItemColumnComponent {
 
 @Component({
     selector: 'itemList',
-    properties: ['items', 'columns', 'rowSelectable', 'headersVisible'],
-    events: ['rowClicked', 'columnAction'],
+    inputs: ['items', 'columns', 'rowSelectable', 'headersVisible'],
+    outputs: ['rowClicked', 'columnAction'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 

@@ -5,7 +5,7 @@ import {Component, View,  bootstrap, NgIf, ViewEncapsulation} from 'angular2/ang
 
 @Component({
     selector: 'appTab',
-    properties: ['active', 'selectable']
+    inputs: ['active', 'selectable']
 })
 @View({
     templateUrl: './components/app/header/tab/appTab.html',

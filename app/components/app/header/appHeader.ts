@@ -5,7 +5,7 @@ import {Component, View,  bootstrap, NgIf} from 'angular2/angular2';
 import {AppMenu} from '../../app/header/menu/appMenu';
 @Component({
     selector: 'appHeader',
-    properties: ['title', 'inactive']
+    inputs: ['title', 'inactive']
 })
 @View({
     templateUrl: './components/app/header/appHeader.html',

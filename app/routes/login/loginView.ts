@@ -50,7 +50,7 @@ export class LoginView {
 
         this.authService.login(this.login, hashedPassword)
             .then(function (employee) {
-                thisView.router.navigate('/sales/sale/active');
+                thisView.router.navigate(['/Sales/Sale', {id: 'active'}]);
             }).catch(function (error) {
                 if(error.code == 401) {
                     thisView.invalidCredentials = true;

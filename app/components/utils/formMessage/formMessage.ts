@@ -5,7 +5,7 @@ import {Component, View, NgForm,  AbstractControl, Control, Host} from 'angular2
 
 @Component({
     selector: 'formMessage',
-    properties: ['controlPath: for', 'checkErrors', 'message', 'error', 'info', 'locale']
+    inputs: ['controlPath: for', 'checkErrors', 'message', 'error', 'info', 'locale']
 })
 @View({
     templateUrl: './components/utils/formMessage/formMessage.html',

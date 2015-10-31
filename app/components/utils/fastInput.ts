@@ -8,8 +8,8 @@ import {Directive, ElementRef, EventEmitter,
 
 @Directive({
     selector: 'input[fast-input]',
-    properties: ['validator', 'initialValue', 'validateOnBlur'],
-    events: ['fastChange', 'cancelled'],
+    inputs: ['validator', 'initialValue', 'validateOnBlur'],
+    outputs: ['fastChange', 'cancelled'],
     host: {
         '(keyup)': 'onKeyUp($event)',
         '(input)': 'onInput($event)',

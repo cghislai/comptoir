@@ -74,7 +74,7 @@ export class RegisterView {
 
         this.authService.register(registration)
             .then((employee)=> {
-                this.router.navigate('/sales/sale/active');
+                this.router.navigate(['/Sales/Sale', {id: 'active'}]);
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });

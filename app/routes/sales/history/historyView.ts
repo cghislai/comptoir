@@ -94,7 +94,7 @@ export class SaleHistoryView {
 
     onSaleClicked(sale:LocalSale) {
         var saleId = sale.id;
-        this.router.navigate('/sales/sale/'+saleId);
+        this.router.navigate(['/Sales/Sale', {id: saleId}]);
     }
 
     onColumnAction(sale:LocalSale, col:SaleColumn) {

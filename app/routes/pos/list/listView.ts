@@ -96,8 +96,7 @@ export class PosListView {
 
     doEditPos(pos:Pos) {
         var id = pos.id;
-        var url = '/pos/edit/' + id;
-        this.router.navigate(url);
+        this.router.navigate(['/Pos/Edit', {id: id}]);
     }
 
     doRemovePos(pos:Pos) {

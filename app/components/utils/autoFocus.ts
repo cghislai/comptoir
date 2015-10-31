@@ -7,7 +7,7 @@ import {Directive, ElementRef} from 'angular2/angular2';
 @Directive({
     selector: '[select-on-focus]',
     host: {
-        '(focus)': "doSelect()"
+        '(focus)': 'doSelect()'
     }
 })
 export class AutoFocusDirective {

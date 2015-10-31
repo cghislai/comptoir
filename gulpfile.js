@@ -66,7 +66,7 @@ var ng2Builder = new Builder({
   paths: {
     'angular2/*': 'node_modules/angular2/es6/dev/*.js',
     rx: 'node_modules/angular2/node_modules/rx/dist/rx.js',
-    'immutable' : '/node_modules/immutable/immutable.js'
+    'immutable' : '/node_modules/immutable/dist/immutable.js'
   },
   meta: {
     rx: {
@@ -130,8 +130,8 @@ gulp.task('clean.tmp', function(done) {
 // Build dev.
 
 gulp.task('build.ng2.dev', function () {
-  ng2Builder.build('angular2/router', PATH.dest.dev.router, {});
-  return ng2Builder.build('angular2/angular2', PATH.dest.dev.ng2, {});
+  ng2Builder. bundle('angular2/router', PATH.dest.dev.router, {});
+  return ng2Builder.bundle('angular2/angular2', PATH.dest.dev.ng2, {});
 });
 
 gulp.task('build.lib.dev', ['build.ng2.dev'], function () {

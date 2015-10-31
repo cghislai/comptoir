@@ -12,8 +12,8 @@ import {List} from 'immutable';
  */
 @Component({
     selector: 'langSelect:not([ng-control])',
-    properties: ['displayLanguage', 'selectedLanguage', 'dropDown', 'id'],
-    events: ['languageChanged'],
+    inputs: ['displayLanguage', 'selectedLanguage', 'dropDown', 'id'],
+    outputs: ['languageChanged'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 @View({
@@ -48,8 +48,8 @@ export class LangSelect  {
 
 @Component({
     selector: 'langSelect[ng-control]',
-    properties: ['displayLanguage', 'selectedLanguage', 'dropDown', 'id'],
-    events: ['languageChanged'],
+    inputs: ['displayLanguage', 'selectedLanguage', 'dropDown', 'id'],
+    outputs: ['languageChanged'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 @View({

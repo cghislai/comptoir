@@ -6,7 +6,7 @@ import {RouterLink, Location} from 'angular2/router';
 
 @Component({
     selector: 'appMenu',
-    properties: ['title', 'inactive']
+    inputs: ['title', 'inactive']
 })
 @View({
     templateUrl: './components/app/header/menu/appMenu.html',

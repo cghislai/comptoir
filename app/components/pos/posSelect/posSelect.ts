@@ -15,8 +15,8 @@ import {List} from 'immutable';
 
 @Component({
     selector: 'posSelect',
-    events: ['posChanged'],
-    properties: ['editable']
+    outputs: ['posChanged'],
+    inputs: ['editable']
 })
 @View({
     templateUrl: './components/pos/posSelect/posSelect.html',

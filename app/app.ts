@@ -1,6 +1,6 @@
 /// <reference path="./typings/_custom.d.ts" />
 import {Component, View,  bootstrap, NgIf} from 'angular2/angular2';
-import {RouteConfig, Router, RouterOutlet, RouterLink, ROUTER_BINDINGS, Location} from 'angular2/router';
+import {RouteConfig, Router, ROUTER_DIRECTIVES, ROUTER_BINDINGS, Location} from 'angular2/router';
 
 import {AccountService} from './services/account';
 import {AccountingEntryService} from './services/accountingEntry';
@@ -39,7 +39,7 @@ import {PosView} from './routes/pos/posView';
 @View({
     templateUrl: './app.html?v=<%= VERSION %>',
     styleUrls: ['./app.css'],
-    directives: [RouterOutlet, NgIf, DialogView]
+    directives: [ROUTER_DIRECTIVES, NgIf, DialogView]
 })
 
 @RouteConfig([
@@ -92,7 +92,7 @@ export class App {
             .then((loggedIn)=> {
                 this.loggedIn = loggedIn;
                 if (!loggedIn) {
-                    this.router.navigate('/login');
+                    this.router.navigate(['/Login']);
                 }
             });
 

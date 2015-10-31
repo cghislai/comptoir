@@ -91,7 +91,7 @@ export class ItemsImportView {
             })
             .then(()=> {
                 thisView.uploadInProgress = false;
-                thisView.router.navigate('/items/list');
+                thisView.router.navigate(['/Items/List']);
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });

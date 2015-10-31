@@ -1,4 +1,5 @@
 {
+    "version": "1.6.0",
     "compilerOptions": {
         "target": "es5",
         "module": "commonjs",
@@ -11,13 +12,10 @@
         "sourceMap": true
     },
     "files": [
-        "./app/app.ts",
-        "./app/init.ts",
-        "./app/typings/_custom.d.ts"
+        "./app/app.ts"
     ],
     "filesGlob": [
-        "./app/**/*.ts",
-        "./tsd_typings/**/*.ts"
+        "./app/**/*.ts"
     ],
     "compileOnSave": false
 }

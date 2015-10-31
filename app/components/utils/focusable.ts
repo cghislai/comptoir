@@ -6,7 +6,7 @@ import {Directive, ElementRef} from 'angular2/angular2';
 @Directive({
     selector: '[focusable]',
     host: {
-        "tabindex": 0,
+        "tabindex": '0',
         "(keyup)": "onFocusKeyUp($event)"
     }
 })

@@ -114,12 +114,12 @@ export class ItemVariantEditView {
 
     onSaved(itemVariant) {
         var instruction = this.router.generate(['../EditItem', {itemId: itemVariant.item.id}]);
-        this.router.navigateInstruction(instruction);
+        this.router.navigateByInstruction(instruction);
     }
 
     onCancelled() {
         var instruction = this.router.generate(['../EditItem', {itemId: this.item.id}]);
-        this.router.navigateInstruction(instruction);
+        this.router.navigateByInstruction(instruction);
     }
 
 }

@@ -30,8 +30,8 @@ import {List, is as ImmutableIs} from 'immutable';
 
 @Component({
     selector: 'editItemVariantComponent',
-    properties: ['itemVariant'],
-    events: ['saved', 'cancelled'],
+    inputs: ['itemVariant'],
+    outputs: ['saved', 'cancelled'],
     changeDetection: ChangeDetectionStrategy.Default
 })
 @View({

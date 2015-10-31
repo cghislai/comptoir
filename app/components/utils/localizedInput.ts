@@ -15,7 +15,7 @@ import {List} from 'immutable';
  */
 @Directive({
     selector: 'input[localized], textarea[localized]',
-    properties: ['languageProp: language', 'localeTextsProp: localeTexts', 'requiredProp: required'],
+    inputs: ['languageProp: language', 'localeTextsProp: localeTexts', 'requiredProp: required'],
     host: {
         '(input)': "onInput($event)"
     }

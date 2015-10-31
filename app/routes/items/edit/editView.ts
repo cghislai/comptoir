@@ -159,7 +159,7 @@ export class ItemEditView {
     public doSaveItem() {
         this.saveItem()
             .then(()=> {
-                this.router.navigate('/items/list');
+                this.router.navigate(['/Items/List']);
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
@@ -246,7 +246,7 @@ export class ItemEditView {
 
     doAddNewVariant() {
         this.saveItem().then((item)=> {
-            this.router.navigate('/items/edit/' + item.id + '/variant/new');
+            this.router.navigate(['/Items/Edit/EditVariant/', {itemId: item.id, variandId: 'new'}]);
         }).catch((error)=> {
             this.errorService.handleRequestError(error);
         });
@@ -262,7 +262,7 @@ export class ItemEditView {
             });
         }
         nextTask.then(()=> {
-            this.router.navigate('/items/edit/' + itemId + '/variant/' + variantId);
+            this.router.navigate(['/Items/Edit/EditVariant', {itemId: itemId, variantId: variantId}]);
         }).catch((error)=> {
             this.errorService.handleRequestError(error);
         });

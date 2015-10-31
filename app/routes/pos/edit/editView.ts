@@ -77,14 +77,14 @@ export class EditPosView {
     onSaved(pos) {
         this.posService.save(pos)
             .then(()=> {
-                this.router.navigate('/pos/list');
+                this.router.navigate(['/Pos/List']);
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }
 
     doCancelEdit() {
-        this.router.navigate('/pos/list');
+        this.router.navigate(['/Pos/List']);
     }
 
 }

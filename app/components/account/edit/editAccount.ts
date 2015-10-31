@@ -23,8 +23,8 @@ import {List} from 'immutable';
 
 @Component({
     selector: 'accountEditComponent',
-    properties: ['account'],
-    events: ['saved', 'cancelled']
+    inputs: ['account'],
+    outputs: ['saved', 'cancelled']
 })
 @View({
     templateUrl: './components/account/edit/editAccount.html',

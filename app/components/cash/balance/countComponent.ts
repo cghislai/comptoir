@@ -22,8 +22,8 @@ import {List} from 'immutable';
 
 @Component({
     selector: 'balanceCountComponent',
-    properties: ['account'],
-    events: ['validated', 'cancelled'],
+    inputs: ['account'],
+    outputs: ['validated', 'cancelled'],
     changeDetection: ChangeDetectionStrategy.Default
 })
 @View({

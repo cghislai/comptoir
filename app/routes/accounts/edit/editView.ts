@@ -65,11 +65,11 @@ export class AccountsEditView implements OnActivate {
 
     onAccountSaved(account) {
         var instruction = this.router.generate(['../List']);
-        this.router.navigateInstruction(instruction);
+        this.router.navigateByInstruction(instruction);
     }
 
     onCancelled() {
         var instruction = this.router.generate(['../List']);
-        this.router.navigateInstruction(instruction);
+        this.router.navigateByInstruction(instruction);
     }
 }

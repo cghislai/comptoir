@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 31/08/15.
  */
-import {Directive, Control, Binding, NgValidator, forwardRef} from 'angular2/angular2';
+import {Directive, Control, Binding, NG_VALIDATORS, forwardRef, StringMap} from 'angular2/angular2';
 
 import {NumberUtils} from '../../client/utils/number';
 
@@ -17,20 +17,15 @@ function requiredValidator(c: Control) {
 }
 @Directive({
     selector: '[validate-required]',
-    bindings: [new Binding(NgValidator, {
-        toAlias: forwardRef(()=>RequiredValidator)
+    bindings: [new Binding(NG_VALIDATORS, {
+        toAlias: forwardRef(()=>requiredValidator)
     })],
     host: {
         '[class.required]': 'true'
     }
 })
 export class RequiredValidator {
-    get validator() {
-        return RequiredValidator.validate;
-    }
-    static validate(c): StringMap<string, boolean> {
-        return requiredValidator(c);
-    }
+
 }
 
 
@@ -47,15 +42,12 @@ function passwordValidator(c: Control) {
 
 @Directive({
     selector: '[validate-password]',
-    //bindings: [new Binding(NgValidator, {
-       // toAlias: forwardRef(()=>PasswordValidator)
-    //})]
+    bindings: [new Binding(NG_VALIDATORS, {
+        toAlias: forwardRef(()=>passwordValidator)
+    })]
 })
 export class PasswordValidator {
-    get validator() { return PasswordValidator.validate; }
-    static validate(c: Control): StringMap<string, boolean> {
-        return passwordValidator(c);
-    }
+
 }
 
 

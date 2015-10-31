@@ -20,8 +20,8 @@ import {List} from 'immutable';
  */
 @Component({
     selector: "accountColumn",
-    properties: ['account', 'column', 'lang'],
-    events: ['action'],
+    inputs: ['account', 'column', 'lang'],
+    outputs: ['action'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 @View({
@@ -52,8 +52,8 @@ export class AccountColumnComponent {
 
 @Component({
     selector: 'accountList',
-    properties: ['accounts', 'columns', 'rowSelectable', 'headersVisible'],
-    events: ['rowClicked', 'columnAction'],
+    inputs: ['accounts', 'columns', 'rowSelectable', 'headersVisible'],
+    outputs: ['rowClicked', 'columnAction'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 

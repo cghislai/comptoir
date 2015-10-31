@@ -22,8 +22,8 @@ import {List} from 'immutable';
  */
 @Component({
     selector: "itemVariantColumn",
-    properties: ['itemVariant', 'column', 'lang'],
-    events: ['action'],
+    inputs: ['itemVariant', 'column', 'lang'],
+    outputs: ['action'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 @View({
@@ -62,8 +62,8 @@ export class ItemVariantColumnComponent {
 
 @Component({
     selector: 'itemVariantList',
-    properties: ['items', 'columns', 'rowSelectable', 'headersVisible'],
-    events: ['rowClicked', 'columnAction'],
+    inputs: ['items', 'columns', 'rowSelectable', 'headersVisible'],
+    outputs: ['rowClicked', 'columnAction'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
