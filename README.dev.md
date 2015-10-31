@@ -1,4 +1,5 @@
 # Developper information
+(note: outdated)
 
 ## Design:
 
