@@ -67,8 +67,7 @@
         </span>
     </template>
     <template [ng-switch-when]=" 'itemDescription'">
-        <span class="desc">
-            {{ itemVariant.item.description.get(lang.locale) }}
+        <span class="desc" [inner-html]="itemVariant.item.description.get(lang.locale)">
         </span>
     </template>
 
