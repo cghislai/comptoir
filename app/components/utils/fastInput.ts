@@ -46,7 +46,7 @@ export class FastInput implements OnInit {
     }
 
     onInit() {
-        if (this.initialValue !== null) {
+        if (this.initialValue != null) {
             this.elementRef.nativeElement.value = this.initialValue;
         }
         this.doFocus();
@@ -104,7 +104,7 @@ export class FastInput implements OnInit {
         if (value === this.elementRef.nativeElement.value) {
             return true;
         }
-        if (this.validator === null) {
+        if (this.validator == null) {
             return true;
         }
         var valid = this.validator(value);

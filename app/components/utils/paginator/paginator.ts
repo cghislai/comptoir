@@ -44,7 +44,7 @@ export class Paginator implements OnInit, OnChanges {
     }
 
     buildPagesLinksArray() {
-        if (this.totalCount === null) {
+        if (this.totalCount == null) {
             return;
         }
         this.pages = [];

@@ -11,7 +11,7 @@ export class FileUploadService {
         this.request = request;
 
         var self = this;
-        if (progressCallback !== null) {
+        if (progressCallback != null) {
             this.request.upload.addEventListener("progress", function (e: ProgressEvent) {
                 if (e.lengthComputable) {
                     var percentage = Math.round((e.loaded * 100) / e.total);

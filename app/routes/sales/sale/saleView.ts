@@ -79,20 +79,20 @@ export class SaleView {
     }
 
     get saleClosed():boolean {
-        if (this.activeSaleService === null) {
+        if (this.activeSaleService == null) {
             return false;
         }
         var sale = this.activeSaleService.sale;
-        var closed:boolean = sale !== null && sale.closed === true;
+        var closed:boolean = sale != null && sale.closed === true;
         return closed;
     }
 
     get newSale():boolean {
-        if (this.activeSaleService === null) {
+        if (this.activeSaleService == null) {
             return false;
         }
         var sale = this.activeSaleService.sale;
-        return sale !== null && sale.id === null;
+        return sale != null && sale.id == null;
     }
 
 
@@ -147,7 +147,7 @@ export class SaleView {
     }
 
     private findSale():Promise<any> {
-        if (this.routeParams !== null && this.routeParams.params !== null) {
+        if (this.routeParams != null && this.routeParams.params != null) {
             var idParam = this.routeParams.get('id');
             var id = parseInt(idParam);
             if (isNaN(id)) {
@@ -169,7 +169,7 @@ export class SaleView {
         var activeSale = this.saleService.activeSale;
 
         var saleTask:Promise<LocalSale>;
-        if (activeSale !== null) {
+        if (activeSale != null) {
             saleTask = Promise.resolve(activeSale);
         } else {
             saleTask = this.activeSaleService.getNewSale();
@@ -178,7 +178,7 @@ export class SaleView {
             .then((sale)=> {
                 var saleId = sale.id;
                 // update url
-                if (saleId === null) {
+                if (saleId == null) {
                     var instruction = this.router.generate(['../Sale', {id: 'new'}]);
                     this.router.navigateByInstruction(instruction, false);
                 } else {

@@ -30,7 +30,7 @@
     ],
     "quotemark": [true, "single"],
     "semicolon": true,
-    "triple-equals": true,
+    "triple-equals": false,
     "variable-name": false
   }
 }

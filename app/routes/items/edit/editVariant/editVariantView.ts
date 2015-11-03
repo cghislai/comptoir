@@ -53,7 +53,7 @@ export class ItemVariantEditView {
     }
 
     findItem(routeParams:RouteParams):Promise<any> {
-        if (routeParams === null || routeParams.params === null) {
+        if (routeParams == null || routeParams.params == null) {
             throw 'no route params';
         }
         var idParam = routeParams.get('itemId');
@@ -74,7 +74,7 @@ export class ItemVariantEditView {
     }
 
     findItemVariant(routeParams:RouteParams) {
-        if (routeParams === null || routeParams.params === null) {
+        if (routeParams == null || routeParams.params == null) {
             this.getNewItemVariant();
             return;
         }

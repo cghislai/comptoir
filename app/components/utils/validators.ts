@@ -4,7 +4,7 @@
 import {Directive, Control, Provider, NG_VALIDATORS} from 'angular2/angular2';
 
 function requiredValidator(c: Control) {
-    if(c.value === null || c.value.length <= 0) {
+    if(c.value == null || c.value.length <= 0) {
         return {
             required: true
         };
@@ -27,7 +27,7 @@ export class RequiredValidator {
 
 
 function passwordValidator(c: Control) {
-    if(c.value === null || c.value.length <= 0) {
+    if(c.value == null || c.value.length <= 0) {
         return null;
     }
     var password = c.value;

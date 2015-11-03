@@ -5,7 +5,7 @@
 export class NumberUtils {
 
     static toFixedDecimals(number: number, decimalsAmount: number) : number{
-        if (number ===null) {
+        if (number == null) {
             return 0;
         }
         var numberString = number.toFixed(decimalsAmount);
@@ -13,7 +13,7 @@ export class NumberUtils {
     }
 
     static toInt(number: number) : number{
-        if (number ===null) {
+        if (number == null) {
             return 0;
         }
         var numberString = number.toFixed(0);

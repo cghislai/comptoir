@@ -42,7 +42,7 @@ export class EditPosView {
     }
 
     findPos(routeParams:RouteParams) {
-        if (routeParams === null || routeParams.params === null) {
+        if (routeParams == null || routeParams.params == null) {
             this.getNewPos();
             return;
         }

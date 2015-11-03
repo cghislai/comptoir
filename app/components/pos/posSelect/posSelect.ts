@@ -55,7 +55,7 @@ export class PosSelect {
             .then((result:SearchResult<Pos>)=> {
                 this.posList = result.list;
                 var lastUsedPos = this.posService.lastUsedPos;
-                if (lastUsedPos !== null) {
+                if (lastUsedPos != null) {
                     this.setPos(lastUsedPos);
                 } else if (result.list.size > 0) {
                     var pos = result.list.first();

@@ -43,28 +43,28 @@ export class LocalizedDirective {
     }
 
     update() {
-        if (this.localeTexts === null || this.language === null) {
+        if (this.localeTexts == null || this.language == null) {
             return;
         }
         var placeHolderValue:string = null;
-        if (this.previousLanguage !== null) {
+        if (this.previousLanguage != null) {
             placeHolderValue = this.localeTexts.get(this.previousLanguage.locale);
         }
-        if (placeHolderValue === null) {
+        if (placeHolderValue == null) {
             var langWithContent = this.findLangWithContent();
-            if (langWithContent !== null) {
+            if (langWithContent != null) {
                 placeHolderValue = this.localeTexts.get(langWithContent.locale);
             }
         }
-        if (placeHolderValue === null) {
+        if (placeHolderValue == null) {
             placeHolderValue = this.placeHolderAttribute;
         }
 
         var text = this.localeTexts.get(this.language.locale);
-        if (text === null || text.length === 0) {
+        if (text == null || text.length === 0) {
             this.elementRef.nativeElement.placeholder = placeHolderValue;
         }
-        if (text === null) {
+        if (text == null) {
             text = '';
         }
         this.elementRef.nativeElement.value = text;
@@ -72,26 +72,26 @@ export class LocalizedDirective {
     }
 
     findLangWithContent():Language {
-        if (this.localeTexts === null) {
+        if (this.localeTexts == null) {
             return null;
         }
         var language = LanguageFactory.ALL_LANGUAGES
             .filter((lang)=> {
                 var text:string = this.localeTexts.get(lang.locale);
-                return text !== null && text.length > 0;
+                return text != null && text.length > 0;
             }).first();
         return language;
     }
 
     updateRequired() {
-        if (this.requiredAttribute === null) {
+        if (this.requiredAttribute == null) {
             this.required = false;
             this.elementRef.nativeElement.required = false;
             return;
         }
         var lang = this.findLangWithContent();
         // Not required if some content in other language
-        this.required = lang === null;
+        this.required = lang == null;
         this.elementRef.nativeElement.required = this.required;
     }
 

@@ -231,7 +231,7 @@ export class MD5 {
     //   example 1: utf8_encode('Kevin van Zonneveld');
     //   returns 1: 'Kevin van Zonneveld'
 
-    if (argString === null || typeof argString === 'undefined') {
+    if (argString == null || typeof argString === 'undefined') {
         return '';
     }
 
@@ -268,7 +268,7 @@ export class MD5 {
                 (c1 >> 18) | 240, ((c1 >> 12) & 63) | 128, ((c1 >> 6) & 63) | 128, (c1 & 63) | 128
             );
         }
-        if (enc !== null) {
+        if (enc != null) {
             if (end > start) {
                 utftext += string.slice(start, end);
             }

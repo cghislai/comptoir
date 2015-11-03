@@ -153,7 +153,7 @@ export class BalanceCountComponent {
     }
 
     private saveBalanceIfRequired():Promise<LocalBalance> {
-        if (this.balance.id !== null) {
+        if (this.balance.id != null) {
             return Promise.resolve(this.balance);
         }
         return this.balanceService.save(this.balance)

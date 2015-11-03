@@ -52,7 +52,7 @@ export class AccountsEditView implements OnActivate {
     }
 
     findAccount():Promise<LocalAccount> {
-        if (this.accountId === null) {
+        if (this.accountId == null) {
             var accountDef = {
                 company: this.authService.getEmployeeCompany(),
                 description: new LocaleTexts()

@@ -50,7 +50,7 @@ export class LocalAttributeValueFactory {
         var attrValue = new AttributeValue();
         attrValue.id = localValue.id;
         attrValue.value = localValue.value;
-        if (localValue.attributeDefinition !== null) {
+        if (localValue.attributeDefinition != null) {
             attrValue.attributeDefinitionRef = new AttributeDefinitionRef(localValue.attributeDefinition.id);
         }
         return attrValue;

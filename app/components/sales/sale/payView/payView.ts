@@ -53,7 +53,7 @@ export class PayView {
     }
 
     hasSale():boolean {
-        return this.sale !== null && this.sale.id !== null;
+        return this.sale != null && this.sale.id != null;
     }
 
     isSearching():boolean {
@@ -61,7 +61,7 @@ export class PayView {
     }
 
     isEditing(entry: LocalAccountingEntry) {
-        return this.editingEntry !== null && this.editingEntry.id === entry.id;
+        return this.editingEntry != null && this.editingEntry.id === entry.id;
     }
 
 
@@ -89,10 +89,10 @@ export class PayView {
     }
 
     startEditEntry(localAccountingEntry:LocalAccountingEntry) {
-        if (this.editingEntry !== null) {
+        if (this.editingEntry != null) {
             this.cancelEditEntry();
         }
-        if (localAccountingEntry.amount === null || localAccountingEntry.amount <= 0) {
+        if (localAccountingEntry.amount == null || localAccountingEntry.amount <= 0) {
             this.editingEntry = <LocalAccountingEntry>localAccountingEntry.set('amount', this.toPayAmount);
         } else {
             this.editingEntry = localAccountingEntry;

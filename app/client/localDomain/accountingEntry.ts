@@ -84,7 +84,7 @@ export class LocalAccountingEntryFactory {
                 })
         );
         var customerRef = accountingEntry.customerRef;
-        if (customerRef !== null) {
+        if (customerRef != null) {
             var customerId = customerRef.id;
             taskList.push(
                 LocalAccountingEntryFactory.customerClient.getFromCacheOrServer(customerId, authToken)
@@ -94,7 +94,7 @@ export class LocalAccountingEntryFactory {
             );
         }
         var vatAccountingEntryRef = accountingEntry.vatAccountingEntryRef;
-        if (vatAccountingEntryRef !== null) {
+        if (vatAccountingEntryRef != null) {
             var vatEntryId = vatAccountingEntryRef.id;
             taskList.push(
                 LocalAccountingEntryFactory.entryClient.getFromCacheOrServer(vatEntryId, authToken)
@@ -118,13 +118,13 @@ export class LocalAccountingEntryFactory {
         accountingEntry.accountRef = new AccountRef(localAccountingEntry.account.id);
         accountingEntry.amount = localAccountingEntry.amount;
         accountingEntry.companyRef = new CompanyRef(localAccountingEntry.company.id);
-        if (localAccountingEntry.customer !== null) {
+        if (localAccountingEntry.customer != null) {
             accountingEntry.customerRef = new CustomerRef(localAccountingEntry.customer.id);
         }
         accountingEntry.dateTime = localAccountingEntry.dateTime;
         accountingEntry.description = localAccountingEntry.description;
         accountingEntry.id = localAccountingEntry.id;
-        if (localAccountingEntry.vatAccountingEntry !== null) {
+        if (localAccountingEntry.vatAccountingEntry != null) {
             accountingEntry.vatAccountingEntryRef = new AccountingEntryRef(localAccountingEntry.vatAccountingEntry.id);
         }
         accountingEntry.vatRate = localAccountingEntry.vatRate;

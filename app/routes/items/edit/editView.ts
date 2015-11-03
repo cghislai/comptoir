@@ -90,7 +90,7 @@ export class ItemEditView {
     }
 
     findItem(routeParams:RouteParams) {
-        if (routeParams === null || routeParams.params === null) {
+        if (routeParams == null || routeParams.params == null) {
             this.getNewItem();
             return;
         }
@@ -135,7 +135,7 @@ export class ItemEditView {
 
     findItemVariants() {
         var itemId = this.item.id;
-        if (itemId === null) {
+        if (itemId == null) {
             return;
         }
         var variantSearch = new ItemVariantSearch();
@@ -186,7 +186,7 @@ export class ItemEditView {
                     dataURI: data,
                     company: this.authService.getEmployeeCompany()
                 });
-                if (thisView.item.mainPicture !== null) {
+                if (thisView.item.mainPicture != null) {
                     mainPicture = <LocalPicture>thisView.item.mainPicture.merge(mainPicture);
                 }
                 thisView.itemJS.mainPicture = mainPicture.toJS();
@@ -229,7 +229,7 @@ export class ItemEditView {
         var variantId = localVariant.id;
         var itemId = this.item.id;
         var nextTask = Promise.resolve();
-        if (itemId === null) {
+        if (itemId == null) {
             nextTask.then(()=> {
                 this.itemService.save(this.item);
             });

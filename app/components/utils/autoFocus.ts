@@ -15,7 +15,7 @@ export class AutoFocusDirective {
 
     constructor(element:ElementRef) {
         this.element = element.nativeElement;
-        if ( this.element === null) {
+        if ( this.element == null) {
             return;
         }
     }

@@ -34,7 +34,7 @@ export class BasicService<T extends WithId> {
     }
 
     save(entity:T):Promise<T> {
-        var newEntity = entity.id === null;
+        var newEntity = entity.id == null;
         var authToken = this.authService.authToken;
 
         var nextTask:Promise<WithId> = Promise.resolve(null);
@@ -87,7 +87,7 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
         var authToken = this.authService.authToken;
         return this.client.get(id, authToken)
             .then((entity:T) => {
-                if (entity === null) {
+                if (entity == null) {
                     return null;
                 }
                 return this.serviceInfo.toLocalConverter(entity, authToken);
@@ -95,7 +95,7 @@ export class BasicLocalService<T extends WithId, U extends WithId> {
     }
 
     save(localEntity:U):Promise<WithId> {
-        var newEntity = localEntity.id === null;
+        var newEntity = localEntity.id == null;
         var authToken = this.authService.authToken;
         var entity = this.serviceInfo.fromLocalConverter(localEntity);
 

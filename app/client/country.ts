@@ -22,7 +22,7 @@ export class CountryClient {
 
     getFromCacheOrServer(code: string, authToken:string) : Promise<Country> {
         var entityFromCache = CountryFactory.cache[code];
-        if (entityFromCache !== null) {
+        if (entityFromCache != null) {
             return Promise.resolve(entityFromCache);
         } else {
             return this.getCountry(code, authToken);

@@ -36,7 +36,7 @@ export class FormMessage {
     }
 
     get errorMessage() {
-        if (this.checkErrors === null) {
+        if (this.checkErrors == null) {
             return this.message;
         }
         var c:AbstractControl = this.formDir.form.find(this.controlPath);
@@ -49,7 +49,7 @@ export class FormMessage {
     }
 
     isPresent(c:AbstractControl) {
-        if (c === null) {
+        if (c == null) {
             return false;
         }
         var value = c.value;
@@ -57,11 +57,11 @@ export class FormMessage {
     }
 
     getMessage(error:string) {
-        if (this.message !== null) {
+        if (this.message != null) {
             return this.message;
         }
         var messages = FormMessage.ERROR_MESSAGES[error];
-        if (messages === null) {
+        if (messages == null) {
             return null;
         }
         return messages[this.locale];

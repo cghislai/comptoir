@@ -45,7 +45,7 @@ export class CommandViewHeader {
 
     get isNewSale():boolean {
         var sale = this.activeSaleService.sale;
-        return sale !== null && sale.id === null;
+        return sale != null && sale.id == null;
     }
 
     get sale():LocalSale {
@@ -54,12 +54,12 @@ export class CommandViewHeader {
 
     get isSearching():boolean {
         var request = this.activeSaleService.saleItemsRequest;
-        return request !== null && request.busy;
+        return request != null && request.busy;
     }
 
     get hasItems():boolean {
         var result = this.activeSaleService.saleItemsResult;
-        return result !== null && result.count > 0;
+        return result != null && result.count > 0;
     }
 
     doEditSaleDiscount() {
@@ -84,7 +84,7 @@ export class CommandViewHeader {
         if (isNaN(discountPercentage)) {
             discountPercentage = null;
         }
-        if (discountPercentage !== null) {
+        if (discountPercentage != null) {
             var discountRatio = NumberUtils.toFixedDecimals(discountPercentage / 100, 2);
             this.activeSaleService.doSetSaleDiscountRatio(discountRatio)
                 .catch((error)=> {
@@ -158,7 +158,7 @@ export class CommandViewTable {
     }
 
     isEditing() {
-        return this.editingItem !== null;
+        return this.editingItem != null;
     }
 
     isEditingItem(item:LocalItemVariantSale) {
@@ -170,22 +170,22 @@ export class CommandViewTable {
     }
 
     hasComment(localItemVariantSale:LocalItemVariantSale) {
-        if (localItemVariantSale.comment === null) {
+        if (localItemVariantSale.comment == null) {
             return false;
         }
         var text = localItemVariantSale.comment.get(this.language.locale);
-        if (text !== null && text.trim().length > 0) {
+        if (text != null && text.trim().length > 0) {
             return true;
         }
         return false;
     }
 
     getComment(localItemVariantSale:LocalItemVariantSale) {
-        if (localItemVariantSale.comment === null) {
+        if (localItemVariantSale.comment == null) {
             return '';
         }
         var text = localItemVariantSale.comment.get(this.language.locale);
-        if (text !== null && text.trim().length > 0) {
+        if (text != null && text.trim().length > 0) {
             return text;
         }
         return '';
@@ -320,7 +320,7 @@ export class CommandViewTable {
 
     doValidateInput(container) {
         var input = this.doFindInput(container);
-        if (input === null) {
+        if (input == null) {
             return;
         }
         input.dispatchEvent(FastInput.VALIDATE_EVENT);
@@ -328,7 +328,7 @@ export class CommandViewTable {
 
     doCancelInput(container) {
         var input = this.doFindInput(container);
-        if (input === null) {
+        if (input == null) {
             return;
         }
         input.dispatchEvent(FastInput.CANCEL_EVENT);

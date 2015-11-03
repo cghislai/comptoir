@@ -29,7 +29,7 @@ export class ErrorService {
             }
         }
         this.errorHeader = "Une erreur est survenue lors de l'envoi d'une requete au server:";
-        if (error.request !== null) {
+        if (error.request != null) {
             this.errorContent = "Request: " + error.request.getDebugString();
         }
         this.errorContent = "Response code:" + error.code + "\n";

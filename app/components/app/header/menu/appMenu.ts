@@ -38,7 +38,7 @@ export class AppMenu {
         } else {
             this.openMenu();
         }
-        if (event !== null) {
+        if (event != null) {
             event.preventDefault();
             event.stopPropagation();
         }

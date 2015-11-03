@@ -107,7 +107,7 @@ export class ActiveSaleService {
     public getSale(id:number):Promise<LocalSale> {
         return this.saleService.get(id)
             .then((sale)=> {
-                if (sale === null) {
+                if (sale == null) {
                     return this.getNewSale();
                 }
                 return sale;
@@ -159,10 +159,10 @@ export class ActiveSaleService {
 
 
     public doCloseSale() {
-        if (this.sale === null) {
+        if (this.sale == null) {
             throw 'no sale';
         }
-        if (this.sale.id === null) {
+        if (this.sale.id == null) {
             throw 'Sale not saved';
         }
         var authToken = this.authService.authToken;
@@ -187,10 +187,10 @@ export class ActiveSaleService {
     }
 
     public doAddItem(itemVariant:LocalItemVariant):Promise<any> {
-        if (this.sale === null) {
+        if (this.sale == null) {
             throw 'no sale';
         }
-        if (this.sale.id === null) {
+        if (this.sale.id == null) {
             throw 'Sale not saved';
         }
 
@@ -199,7 +199,7 @@ export class ActiveSaleService {
             return itemSale.itemVariant.id === itemVariant.id;
         });
 
-        if (itemSale === null) {
+        if (itemSale == null) {
             var itemSaleDesc:any = {
                 comment: LocaleTextsFactory.toLocaleTexts({}),
                 discountRatio: 0,
@@ -211,7 +211,7 @@ export class ActiveSaleService {
             };
             itemSale = NewItemVariantSale(itemSaleDesc);
 
-            if (this.saleItemsResult !== null) {
+            if (this.saleItemsResult != null) {
                 this.saleItemsResult.list = this.saleItemsResult.list.push(itemSale);
                 this.saleItemsResult.count++;
             }
@@ -262,10 +262,10 @@ export class ActiveSaleService {
 
 
     public doSearchSaleItems():Promise<any> {
-        if (this.sale === null) {
+        if (this.sale == null) {
             throw 'no sale';
         }
-        if (this.sale.id === null) {
+        if (this.sale.id == null) {
             throw 'Sale not saved';
         }
         var search = this.saleItemsRequest.search;
@@ -279,7 +279,7 @@ export class ActiveSaleService {
     }
 
     public searchPaidAmount():Promise<any> {
-        if (this.sale === null || this.sale.id === null) {
+        if (this.sale == null || this.sale.id == null) {
             throw 'No saved sale';
         }
         return this.saleClient.getTotalPayed(this.sale.id, this.authService.authToken)
@@ -342,7 +342,7 @@ export class ActiveSaleService {
 
 
     public getSaleTotalAmount() {
-        if (this.sale === null) {
+        if (this.sale == null) {
             return 0;
         }
         var total = this.sale.vatExclusiveAmount + this.sale.vatAmount;

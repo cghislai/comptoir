@@ -98,7 +98,7 @@ export class LocalItemVariantFactory {
         );
 
         var mainPictureRef = itemVariant.mainPictureRef;
-        if (mainPictureRef !== null) {
+        if (mainPictureRef != null) {
             var picId = mainPictureRef.id;
             taskList.push(
                 LocalItemVariantFactory.pictureClient.getFromCacheOrServer(picId, authToken)
@@ -124,10 +124,10 @@ export class LocalItemVariantFactory {
             itemVariant.attributeValueRefs.push(attributeValueRef);
         }
         itemVariant.id = localVariant.id;
-        if (localVariant.item !== null) {
+        if (localVariant.item != null) {
             itemVariant.itemRef = new ItemRef(localVariant.item.id);
         }
-        if (localVariant.mainPicture !== null) {
+        if (localVariant.mainPicture != null) {
             itemVariant.mainPictureRef = new PictureRef(localVariant.mainPicture.id);
         }
         itemVariant.pricing = Pricing[localVariant.pricing];
@@ -146,7 +146,7 @@ export class LocalItemVariantFactory {
             }
             case Pricing.ADD_TO_BASE:
             {
-                if (localVariant.item ===null) {
+                if (localVariant.item == null) {
                     return null;
                 }
                 var itemVatExclusive = localVariant.item.vatExclusive;
@@ -155,7 +155,7 @@ export class LocalItemVariantFactory {
             }
             case Pricing.PARENT_ITEM:
             {
-                if (localVariant.item ===null) {
+                if (localVariant.item == null) {
                     return null;
                 }
                 vatExclusive = localVariant.item.vatExclusive;

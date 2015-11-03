@@ -59,7 +59,7 @@ export class LocalPictureFactory {
         picture.companyRef = new CompanyRef(localPicture.company.id);
         picture.data = localPicture.data;
         picture.contentType = localPicture.contentType;
-        if (localPicture.dataURI !== null) {
+        if (localPicture.dataURI != null) {
             LocalPictureFactory.fromDataURI(localPicture.dataURI, picture);
         }
         return picture;

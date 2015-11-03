@@ -134,7 +134,7 @@ export class ItemVariantEditComponent implements OnInit {
         }).then((data:string)=> {
                 var mainPicture:LocalPicture;
                 var currentPicture = this.itemVariant.mainPicture;
-                if (currentPicture === null) {
+                if (currentPicture == null) {
                     var picDesc = {
                         dataURI: data,
                         company: this.authService.getEmployeeCompany()
@@ -178,7 +178,7 @@ export class ItemVariantEditComponent implements OnInit {
 
     doAddAttribute() {
         var attributeToAdd = this.newAttributeValue;
-        if (this.itemVariantModel.id !== null) {
+        if (this.itemVariantModel.id != null) {
             this.saveAttributeValue(attributeToAdd)
                 .then((attributeValue)=> {
                     var curAttributes = this.itemVariant.attributeValues;
@@ -197,7 +197,7 @@ export class ItemVariantEditComponent implements OnInit {
     }
 
     doRemoveAttribute(attributeValue:LocalAttributeValue) {
-        var attributeSaved = attributeValue.id !== null;
+        var attributeSaved = attributeValue.id != null;
         if (attributeSaved) {
             var newAttributes = Immutable.List(this.itemVariantModel.attributeValues)
                 .filter((existingAttribute:LocalAttributeValue)=> {
@@ -270,7 +270,7 @@ export class ItemVariantEditComponent implements OnInit {
                         .then((itemVariant)=> {
                             this.itemVariant = itemVariant;
                             this.itemVariantModel = itemVariant.toJS();
-                            if (this.itemVariant.mainPicture !== null) {
+                            if (this.itemVariant.mainPicture != null) {
                                 this.picture = this.itemVariant.mainPicture;
                             }
                             return itemVariant;
@@ -285,7 +285,7 @@ export class ItemVariantEditComponent implements OnInit {
         var attributeDefinitionName = attributevalue.attributeDefinition.name.get(this.editLanguage.locale);
         return this.searchAttributeDefinitionForName(attributeDefinitionName)
             .then((attributeDefinition)=> {
-                if (attributeDefinition === null) {
+                if (attributeDefinition == null) {
                     var toSaveDefinition = attributevalue.attributeDefinition;
                     toSaveDefinition.companyRef = this.authService.getEmployeeCompanyRef();
                     return this.saveAttributeDefinition(toSaveDefinition);

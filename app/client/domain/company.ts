@@ -24,7 +24,7 @@ export class CompanyClient extends BasicClient<Company> {
 
 
         var self = this;
-        if (progressCallback !== null) {
+        if (progressCallback != null) {
             request.upload.addEventListener("progress", function (e: ProgressEvent) {
                 if (e.lengthComputable) {
                     var percentage = Math.round((e.loaded * 100) / e.total);
@@ -54,7 +54,7 @@ export class CompanyClient extends BasicClient<Company> {
             };
 
             request.setRequestHeader('Content-Type', 'multipart/form-data; charset=UTF-8');
-            if (authToken !== null) {
+            if (authToken != null) {
                 request.setRequestHeader(ComptoirRequest.HEADER_OAUTH_TOKEN, 'Bearer '+authToken);
             }
             request.send(data);

@@ -96,7 +96,7 @@ export class LangSelectControl  implements ControlValueAccessor {
     }
 
     writeValue(obj:any):void {
-        if (obj !== null) {
+        if (obj != null) {
             this.onLanguageSelected(obj);
         }
     }

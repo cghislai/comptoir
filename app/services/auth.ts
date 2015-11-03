@@ -61,7 +61,7 @@ export class AuthService {
 
     // Register then log in
     register(registration:Registration):Promise<LocalEmployee> {
-        if (this.registrationRequest !== null) {
+        if (this.registrationRequest != null) {
             console.log("Registration already running");
             return;
         }
@@ -81,11 +81,11 @@ export class AuthService {
     }
 
     public getEmployeeLanguage():Language {
-        if (this.auth === null) {
+        if (this.auth == null) {
             return null;
         }
         var employee = this.auth.employee;
-        if (employee === null) {
+        if (employee == null) {
             return LanguageFactory.DEFAULT_LANGUAGE;
         }
         var locale = employee.locale;
@@ -97,11 +97,11 @@ export class AuthService {
     }
 
     public getEmployeeCompany():LocalCompany {
-        if (this.auth === null) {
+        if (this.auth == null) {
             return null;
         }
         var employee = this.auth.employee;
-        if (employee === null) {
+        if (employee == null) {
             return null;
         }
         return employee.company;
@@ -109,7 +109,7 @@ export class AuthService {
 
     public getEmployeeCompanyRef():CompanyRef{
         var company = this.getEmployeeCompany();
-        if (company === null) {
+        if (company == null) {
             return null;
         }
         return new CompanyRef(company.id);
@@ -118,7 +118,7 @@ export class AuthService {
 
     private saveAuth(auth:LocalAuth) {
         this.auth = auth;
-        if (auth !== null) {
+        if (auth != null) {
             this.authToken = auth.token;
             var wsAuth = LocalAuthFactory.fromLocalAuth(auth);
             var jsonString = JSON.stringify(wsAuth, JSONFactory.toJSONReplacer);
@@ -135,13 +135,13 @@ export class AuthService {
         this.authToken = null;
 
         var authJSON = localStorage.getItem(AuthService.STORAGE_AUTH_KEY);
-        if (authJSON === null) {
+        if (authJSON == null) {
             this.saveAuth(null);
             return;
         }
 
         var auth:Auth = JSON.parse(authJSON, AuthFactory.fromJSONAuthReviver);
-        if (auth === null) {
+        if (auth == null) {
             this.saveAuth(null);
             return;
         }
@@ -171,7 +171,7 @@ export class AuthService {
     }
 
     isExpireDateGettingClose(date:Date) {
-        if (date === null) {
+        if (date == null) {
             return false;
         }
         var nowTime = Date.now();
@@ -182,10 +182,10 @@ export class AuthService {
     }
 
     checkRefreshToken() : Promise<any>{
-        if (this.loadingPromise !== null) {
+        if (this.loadingPromise != null) {
             return this.loadingPromise;
         }
-        if (this.auth === null) {
+        if (this.auth == null) {
             return Promise.resolve();
         }
         var expireDate = this.auth.expirationDateTime;
@@ -204,12 +204,12 @@ export class AuthService {
     }
 
     checkLoggedIn():Promise<boolean> {
-        if (this.loadingPromise !== null) {
+        if (this.loadingPromise != null) {
             return this.loadingPromise.then(()=>{
                 return this.checkLoggedIn();
             });
         }
-        if (this.auth === null) {
+        if (this.auth == null) {
             this.loginRequired = true;
             this.loginRequiredReason = LoginRequiredReason.NO_SESSION;
             return Promise.resolve(false);
