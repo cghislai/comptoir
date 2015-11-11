@@ -1,7 +1,7 @@
 /// <reference path="typings/_custom.d.ts" />
 
 
-System.import('app')
+System.import('components/app/app')
     .then((appRef)=>{
         //enableDebugTools(appRef);
     })

@@ -1,5 +1,9 @@
 <div class="app">
 
+    <div *ng-if="loginRequired && !loggedIn">
+        <p>Votre session a expiré</p>
+        <a [router-link]="['/Login']">Cliquez ici</a> pour vous reconnecter.
+    </div>
     <div *ng-if="loggedIn || loginRequired == false">
         <router-outlet></router-outlet>
     </div>

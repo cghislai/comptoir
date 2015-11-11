@@ -2,7 +2,7 @@
  * Created by cghislai on 28/08/15.
  */
 import {Component, View} from 'angular2/angular2';
-import {AppMenu} from '../../app/header/menu/appMenu';
+import {AppMenu} from './menu/appMenu';
 @Component({
     selector: 'appHeader',
     inputs: ['title', 'inactive']

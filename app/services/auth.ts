@@ -37,7 +37,7 @@ export class AuthService {
     loginRequired:boolean;
     loginRequiredReason:LoginRequiredReason;
 
-    loadingPromise: Promise<any>;
+    loadingPromise:Promise<any>;
 
     constructor(@Inject(ErrorService) errorService:ErrorService) {
         this.errorService = errorService;
@@ -46,7 +46,7 @@ export class AuthService {
         this.loadFromStorage();
     }
 
-    login(login:string, hashedPassword:string):Promise<LocalEmployee> {
+    public login(login:string, hashedPassword:string):Promise<LocalEmployee> {
         return this.client.login(login, hashedPassword)
             .then((response:Auth) => {
                 return LocalAuthFactory.toLocalAuth(response, response.token);
@@ -60,7 +60,7 @@ export class AuthService {
     }
 
     // Register then log in
-    register(registration:Registration):Promise<LocalEmployee> {
+    public register(registration:Registration):Promise<LocalEmployee> {
         if (this.registrationRequest != null) {
             console.log("Registration already running");
             return;
@@ -107,7 +107,7 @@ export class AuthService {
         return employee.company;
     }
 
-    public getEmployeeCompanyRef():CompanyRef{
+    public getEmployeeCompanyRef():CompanyRef {
         var company = this.getEmployeeCompany();
         if (company == null) {
             return null;
@@ -115,51 +115,6 @@ export class AuthService {
         return new CompanyRef(company.id);
     }
 
-
-    private saveAuth(auth:LocalAuth) {
-        this.auth = auth;
-        if (auth != null) {
-            this.authToken = auth.token;
-            var wsAuth = LocalAuthFactory.fromLocalAuth(auth);
-            var jsonString = JSON.stringify(wsAuth, JSONFactory.toJSONReplacer);
-            localStorage.setItem(AuthService.STORAGE_AUTH_KEY, jsonString);
-        } else {
-            this.authToken = null;
-            localStorage.setItem(AuthService.STORAGE_AUTH_KEY, null);
-        }
-    }
-
-
-    private loadFromStorage() {
-        this.auth = null;
-        this.authToken = null;
-
-        var authJSON = localStorage.getItem(AuthService.STORAGE_AUTH_KEY);
-        if (authJSON == null) {
-            this.saveAuth(null);
-            return;
-        }
-
-        var auth:Auth = JSON.parse(authJSON, AuthFactory.fromJSONAuthReviver);
-        if (auth == null) {
-            this.saveAuth(null);
-            return;
-        }
-        var expireDate = auth.expirationDateTime;
-        if (!this.isExpireDateValid(expireDate)) {
-            this.saveAuth(null);
-            return;
-        }
-
-        this.loadingPromise = LocalAuthFactory.toLocalAuth(auth, auth.token)
-            .then((localAuth:LocalAuth)=> {
-                this.auth = localAuth;
-                this.loadingPromise = null;
-                return this.checkRefreshToken();
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
-    }
 
     isExpireDateValid(date:Date) {
         // Handle null case
@@ -177,11 +132,12 @@ export class AuthService {
         var nowTime = Date.now();
         var expireTime = date.getTime();
         var remainingMs = expireTime - nowTime;
-        var tenMinutesMs = 10 * 60 * 1000;
-        return remainingMs < tenMinutesMs;
+        var fiveMinutesMs = 5 * 60 * 1000;
+        return remainingMs < fiveMinutesMs;
     }
 
-    checkRefreshToken() : Promise<any>{
+    checkRefreshToken():Promise<any> {
+        console.log(this.auth);
         if (this.loadingPromise != null) {
             return this.loadingPromise;
         }
@@ -205,7 +161,7 @@ export class AuthService {
 
     checkLoggedIn():Promise<boolean> {
         if (this.loadingPromise != null) {
-            return this.loadingPromise.then(()=>{
+            return this.loadingPromise.then(()=> {
                 return this.checkLoggedIn();
             });
         }
@@ -226,6 +182,71 @@ export class AuthService {
 
         this.checkRefreshToken();
         return Promise.resolve(true);
+    }
+
+    private loadFromStorage() {
+        this.auth = null;
+        this.authToken = null;
+
+        var authJSON = localStorage.getItem(AuthService.STORAGE_AUTH_KEY);
+        if (authJSON == null) {
+            this.clearAuth();
+            return;
+        }
+
+        var auth:Auth = JSON.parse(authJSON, AuthFactory.fromJSONAuthReviver);
+        if (auth == null) {
+            this.clearAuth();
+            return;
+        }
+        var expireDate = auth.expirationDateTime;
+        if (!this.isExpireDateValid(expireDate)) {
+            this.clearAuth();
+            return;
+        }
+
+        this.loadingPromise = LocalAuthFactory.toLocalAuth(auth, auth.token)
+            .then((localAuth:LocalAuth)=> {
+                this.auth = localAuth;
+                this.loadingPromise = null;
+                return this.checkRefreshToken();
+            }).catch((error)=> {
+                this.errorService.handleRequestError(error);
+            });
+    }
+
+    private clearAuth() {
+        this.auth = null;
+        this.authToken = null;
+        localStorage.setItem(AuthService.STORAGE_AUTH_KEY, null);
+    }
+
+    private saveAuth(auth:LocalAuth) {
+        if (Immutable.is(this.auth, auth)) {
+            return;
+        }
+        if (auth == null) {
+            this.clearAuth();
+            return;
+        }
+
+        this.auth = auth;
+        this.authToken = auth.token;
+        var wsAuth = LocalAuthFactory.fromLocalAuth(auth);
+        var jsonString = JSON.stringify(wsAuth, JSONFactory.toJSONReplacer);
+        localStorage.setItem(AuthService.STORAGE_AUTH_KEY, jsonString);
+
+        var self = this;
+        var expireDate = auth.expirationDateTime;
+        var expireTime = expireDate.getTime();
+        var nowDate = new Date();
+        var nowTime = nowDate.getTime();
+        var expireTimeDiff = expireTime - nowTime;
+        // Recheck 1 min before expiration
+        var checkExpireTimeDiff = expireTimeDiff - 60000;
+        setTimeout(function () {
+            self.checkRefreshToken();
+        }, checkExpireTimeDiff)
     }
 
 }
