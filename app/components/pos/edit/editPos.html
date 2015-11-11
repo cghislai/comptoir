@@ -20,8 +20,7 @@
             <div>
                 <label for="description">Description</label>
              <textarea type="text" id="description" rows="3"
-                       validate-required
-                       ng-control="description"
+                       required
                        localized [language]="editLanguage"
                        [locale-texts]="pos.description"></textarea>
                 <formMessage for="description" check-errors="['required']"></formMessage>

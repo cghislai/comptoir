@@ -137,7 +137,6 @@ export class AuthService {
     }
 
     checkRefreshToken():Promise<any> {
-        console.log(this.auth);
         if (this.loadingPromise != null) {
             return this.loadingPromise;
         }

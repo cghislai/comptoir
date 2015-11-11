@@ -21,7 +21,7 @@ import {AppTab} from '../../components/app/header/tab/appTab';
     directives: [AppHeader, AppMenu, AppTab, RouterOutlet, RouterLink]
 })
 @RouteConfig([
-    {path: '', redirectTo: 'Actives'},
+    {path: '/', redirectTo: 'Actives'},
     {path: '/sale/:id', component: SaleView, as: 'Sale'},
     {path: '/actives', component: ActiveSalesView, as: 'Actives'},
     {path: '/history', component: SaleHistoryView, as: 'History'}

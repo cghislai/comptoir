@@ -2,7 +2,7 @@
  * Created by cghislai on 05/08/15.
  */
 import {Component, View, NgIf} from 'angular2/angular2';
-import {RouteParams, Router, RouterLink} from 'angular2/router';
+import {RouteParams, Router, RouterLink, OnActivate} from 'angular2/router';
 
 import {LocalItemVariant, NewItemVariant} from '../../../../client/localDomain/itemVariant';
 import {LocalItem} from '../../../../client/localDomain/item';
@@ -23,7 +23,7 @@ import {ItemVariantEditComponent} from '../../../../components/itemVariant/edit/
     styleUrls: ['./routes/items/edit/editVariant/editVariantView.css'],
     directives: [NgIf, RouterLink, ItemVariantEditComponent]
 })
-export class ItemVariantEditView {
+export class ItemVariantEditView implements OnActivate {
     itemService:ItemService;
     itemVariantService:ItemVariantService;
     authService:AuthService;

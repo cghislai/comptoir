@@ -21,9 +21,7 @@
                     <input type="text" id="companyName"
                            localized [language]="editLanguage"
                            [locale-texts]="editingCompany.name"
-                           ng-control="companyName"
-                           validate-required>
-                    <formMessage for="companyName" check-errors="['required']"></formMessage>
+                           required>
                 </span>
             </div>
             <div>
@@ -32,9 +30,7 @@
                     <input type="text" id="companyDescription"
                            localized [language]="editLanguage"
                            [locale-texts]="editingCompany.description"
-                           ng-control="companyDescription"
-                           validate-required>
-                    <formMessage for="companyDescription" check-errors="['required']"></formMessage>
+                           required>
                 </span>
             </div>
         </div>

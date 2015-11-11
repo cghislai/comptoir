@@ -1,0 +1,40 @@
+@import '../../../styles/_forms';
+
+div.pageContent {
+  .itemPicturePreview {
+    display: block;
+    max-width: 10em;
+    max-height: 10em;
+  }
+
+  .totalPreview {
+    font-size: .9em;
+    font-weight: normal;
+    margin-top: .2em;
+
+    > span {
+      border: .1em solid lightgray;
+      padding: .1em;
+    }
+  }
+
+  >.column {
+    display: inline-block;
+    padding: 0 .5em;
+    text-align: center;
+    vertical-align: top;
+
+    &.left {
+
+    }
+    &.right {
+      min-width: 10em;
+      max-width: 30em;
+    }
+
+    .newVariantLink {
+      display: block;
+      margin-top: 1em;
+    }
+  }
+}

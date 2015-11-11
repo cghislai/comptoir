@@ -117,25 +117,21 @@
                             (language-changed)="editLanguage = $event"></langSelect>
             </div>
             <div class="attribute">
-                <input class="definition"  validate-required
-                       ng-control="definition"
+                <input class="definition"
+                       required
                        placeholder="Clef"
                        localized [language]="editLanguage"
-                       [locale-texts]="newAttributeValue.attributeDefinition.name"
-                       #definition="form">
-                <input class="value"  validate-required
-                       ng-control="value"
+                       [locale-texts]="newAttributeValue.attributeDefinition.name">
+                <input class="value"
+                       required
                        placeholder="Valeur"
                        localized [language]="editLanguage"
-                       [locale-texts]="newAttributeValue.value"
-                       #value="form">
+                       [locale-texts]="newAttributeValue.value">
                 <button type="submit" [disabled]="!attributeForm.form.valid"
                         class="boxedLink">
                     <i class="fa fa-plus"></i>
                 </button>
             </div>
-            <formMessage for="definition" check-errors="['required']"></formMessage>
-            <formMessage for="value" check-errors="['required']"></formMessage>
 
         </div>
     </form>

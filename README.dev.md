@@ -174,5 +174,30 @@ This will create a link to the route with the 'saleEditSale' alias, passing para
 The route is defined as `{path: '/sale/edit/:id', component: '...', alias: 'saleEditSale'}`
 
 #### Validation
-Validation is (will) be possible using angular2, they will probably still work on that. I haven't implemented any yet.
-Just using HTML5 input validation for now (required, min, max, step, ...)
+Some validators are implemented in components/utils/validators
+They require ng-controls. For instance
+```
+<input id='myInput' ([value])='myValue'
+        ng-control='myInputControl'
+        validate-required>
+<formMessage for="myInputControl" check-errors="['required']"></formMessage>
+```
+
+##### Localized inputs
+Localized inputs allow changing a LocaleText's different messages.
+The required validator is differnt as it checks for a value in any language.
+The ng-control diretive conflicts with this behaviour, so none should be 
+added to the element.
+
+Usage example:
+```
+<input id='myLocalizedInput'
+       placeholder="Please enter a value"
+       localized [language]="editLanguage"
+       [locale-texts]="myEditingLocaleTexts"
+      required>
+```
+For now, this does not allow for custom validation messages for now.
+This does not allow for ([ng-model]) two-way bindings. The LocaleText instance
+is modified in place though, and replaceing it in the controller will
+update the view.

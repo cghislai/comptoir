@@ -63,7 +63,7 @@ import {PosView} from '../../routes/pos/posView';
 })
 
 @RouteConfig([
-    {path: '/', redirectTo: '/Sales/Sale/New'},
+    {path: '/', redirectTo: '/Sales/Actives'},
     {path: '/login', component: LoginView, as: 'Login'},
     {path: '/register', component: RegisterView, as: 'Register'},
 
@@ -114,6 +114,10 @@ export class App {
                 this.loggedIn = loggedIn;
                 if (!loggedIn) {
                     this.router.navigate(['/Login']);
+                } else {
+                    if (path == null || path.length === 0) {
+                        this.router.navigate(['/Sales/Actives']);
+                    }
                 }
             });
 

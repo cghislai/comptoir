@@ -1,12 +1,10 @@
 /**
  * Created by cghislai on 05/08/15.
  */
-import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
-import {RouteParams, Router, RouterLink} from 'angular2/router';
+import {Component, View, NgIf, ChangeDetectionStrategy} from 'angular2/angular2';
+import {RouteParams, Router, RouterLink, OnActivate} from 'angular2/router';
 
-import {LocalPicture, NewPicture} from '../../../client/localDomain/picture';
 import {LocalItem, NewItem} from '../../../client/localDomain/item';
-import {LocalItemVariant} from '../../../client/localDomain/itemVariant';
 
 import {CompanyRef} from '../../../client/domain/company';
 import {ItemRef, ItemSearch} from '../../../client/domain/item';
@@ -16,77 +14,45 @@ import {NumberUtils} from '../../../client/utils/number';
 import {SearchRequest, SearchResult} from '../../../client/utils/search';
 
 import {ItemService} from '../../../services/item';
-import {ItemVariantService} from '../../../services/itemVariant';
 import {ErrorService} from '../../../services/error';
 import {AuthService} from '../../../services/auth';
-import {PictureService} from '../../../services/picture';
 
-import {LangSelect} from '../../../components/lang/langSelect/langSelect';
-import {FormMessage} from '../../../components/utils/formMessage/formMessage';
-import {RequiredValidator} from '../../../components/utils/validators';
-import {LocalizedDirective} from '../../../components/utils/localizedInput';
-import {ItemVariantList, ItemVariantColumn} from '../../../components/itemVariant/list/itemVariantList';
+import {ItemEditComponent} from '../../../components/item/edit/editView';
 
 import * as Immutable from 'immutable';
 
 
 @Component({
-    selector: 'editItem'
+    selector: 'editItem',
+    changeDetection: ChangeDetectionStrategy.Default
 })
 @View({
     templateUrl: './routes/items/edit/editView.html',
     styleUrls: ['./routes/items/edit/editView.css'],
-    directives: [NgFor, NgIf, FORM_DIRECTIVES,
-        RouterLink, LangSelect, LocalizedDirective, FormMessage,
-        ItemVariantList, RequiredValidator]
+    directives: [ItemEditComponent, NgIf, RouterLink]
 })
-export class ItemEditView {
+export class ItemEditView implements OnActivate {
     itemService:ItemService;
-    itemVariantService:ItemVariantService;
     errorService:ErrorService;
     authService:AuthService;
-    pictureService:PictureService;
     router:Router;
+    routeParams:RouteParams;
 
     item:LocalItem;
-    itemJS:any;
-    itemTotalPrice:number;
-    itemVatPercentage:number;
-    itemVatPercentageString:string;
-    itemPictureTouched:boolean;
-    appLanguage:Language;
-    editLanguage:Language;
 
-    itemVariantSearchRequest:SearchRequest<LocalItemVariant>;
-    itemVariantSearchResult:SearchResult<LocalItemVariant>;
-    itemVariantListColumns:Immutable.List<ItemVariantColumn>;
 
-    constructor(itemService:ItemService, errorService:ErrorService, pictureService:PictureService,
-                authService:AuthService, itemVariantService:ItemVariantService,
+    constructor(itemService:ItemService, errorService:ErrorService,
+                authService:AuthService,
                 routeParams:RouteParams, router:Router) {
         this.router = router;
         this.itemService = itemService;
-        this.itemVariantService = itemVariantService;
         this.errorService = errorService;
         this.authService = authService;
-        this.pictureService = pictureService;
+        this.routeParams = routeParams;
+    }
 
-        this.appLanguage = authService.getEmployeeLanguage();
-        this.editLanguage = authService.getEmployeeLanguage();
-
-        this.itemVariantListColumns = Immutable.List.of(
-            ItemVariantColumn.VARIANT_REFERENCE,
-            ItemVariantColumn.PICTURE_NO_ITEM_FALLBACK,
-            ItemVariantColumn.ATTRIBUTES,
-            ItemVariantColumn.TOTAL_PRICE,
-            ItemVariantColumn.ACTION_REMOVE
-        );
-        this.itemVariantSearchRequest = new SearchRequest<LocalItemVariant>();
-
-        this.itemVariantSearchResult = new SearchResult<LocalItemVariant>();
-        this.itemVariantSearchResult.list = Immutable.List([]);
-
-        this.findItem(routeParams);
+    onActivate() {
+        this.findItem(this.routeParams);
     }
 
     findItem(routeParams:RouteParams) {
@@ -113,174 +79,23 @@ export class ItemEditView {
         itemDesc.name = LocaleTextsFactory.toLocaleTexts({});
         itemDesc.company = this.authService.getEmployeeCompany();
         this.item = NewItem(itemDesc);
-        this.itemJS = this.item.toJS();
-
-        this.findItemVariants();
-        this.calcTotalPrice();
-        this.calcVatPercentage();
     }
 
     getItem(id:number) {
         this.itemService.get(id)
             .then((item:LocalItem)=> {
                 this.item = item;
-                this.itemJS = this.item.toJS();
-                this.findItemVariants();
-                this.calcTotalPrice();
-                this.calcVatPercentage();
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
             });
     }
 
-    findItemVariants() {
-        var itemId = this.item.id;
-        if (itemId == null) {
-            return;
-        }
-        var variantSearch = new ItemVariantSearch();
-        var itemRef = new ItemRef(itemId);
-        variantSearch.itemRef = itemRef;
-        variantSearch.itemSearch = new ItemSearch();
-        variantSearch.itemSearch.companyRef = new CompanyRef(this.authService.auth.employee.company.id);
-        this.itemVariantSearchRequest.search = variantSearch;
-
-        this.itemVariantService.search(this.itemVariantSearchRequest)
-            .then((result)=> {
-                this.itemVariantSearchResult = result;
-            })
-            .catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
+    onSaved(item) {
+        this.router.navigate(['/Items/List']);
     }
 
-
-    public doSaveItem() {
-        this.saveItem()
-            .then(()=> {
-                this.router.navigate(['/Items/List']);
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
-            });
-        ;
-    }
-
-
-    onPictureFileSelected(event) {
-        var files = event.target.files;
-        if (files.length !== 1) {
-            return;
-        }
-        var file = files[0];
-        var thisView = this;
-
-        new Promise<string>((resolve, reject)=> {
-            var reader = new FileReader();
-            reader.onload = function () {
-                var data = reader.result;
-                resolve(data);
-            };
-            reader.readAsDataURL(file);
-        }).then((data:string)=> {
-                var mainPicture:LocalPicture = NewPicture({
-                    dataURI: data,
-                    company: this.authService.getEmployeeCompany()
-                });
-                if (thisView.item.mainPicture != null) {
-                    mainPicture = <LocalPicture>thisView.item.mainPicture.merge(mainPicture);
-                }
-                thisView.itemJS.mainPicture = mainPicture.toJS();
-                thisView.itemPictureTouched = true;
-            });
-    }
-
-    setItemVatRate(event) {
-        var valueString = event.target.value;
-        var valueNumber:number = parseInt(valueString);
-        if (isNaN(valueNumber)) {
-            return;
-        }
-        var vatRate = NumberUtils.toFixedDecimals(valueNumber / 100, 2);
-        this.itemJS.vatRate = vatRate;
-        this.calcTotalPrice();
-        this.calcVatPercentage();
-    }
-
-    setItemTotalPrice(event) {
-        var valueString = event.target.value;
-        var valueNumber:number = parseFloat(valueString);
-        if (isNaN(valueNumber)) {
-            return;
-        }
-        var vatExclusive = NumberUtils.toFixedDecimals(valueNumber / (1 + this.item.vatRate), 2);
-        this.itemJS.vatExclusive = vatExclusive;
-        this.calcTotalPrice();
-    }
-
-    doAddNewVariant() {
-        this.saveItem().then((item)=> {
-            this.router.navigate(['/Items/Edit/EditVariant/', {itemId: item.id, variandId: 'new'}]);
-        }).catch((error)=> {
-            this.errorService.handleRequestError(error);
-        });
-    }
-
-    onVariantRowSelected(localVariant:LocalItemVariant) {
-        var variantId = localVariant.id;
-        var itemId = this.item.id;
-        var nextTask = Promise.resolve();
-        if (itemId == null) {
-            nextTask.then(()=> {
-                this.itemService.save(this.item);
-            });
-        }
-        nextTask.then(()=> {
-            this.router.navigate(['/Items/Edit/EditVariant', {itemId: itemId, variantId: variantId}]);
-        }).catch((error)=> {
-            this.errorService.handleRequestError(error);
-        });
-    }
-
-    onVariantColumnAction(event) {
-        var column = event.column;
-        var itemVariant:LocalItemVariant = event.itemVariant;
-        ;
-        if (column === ItemVariantColumn.ACTION_REMOVE) {
-            this.itemVariantService.remove(itemVariant)
-                .then(()=> {
-                    this.findItemVariants();
-                })
-                .catch((error)=> {
-                    this.errorService.handleRequestError(error);
-                });
-        }
-    }
-
-    private saveItem():Promise<LocalItem> {
-        if (this.itemPictureTouched) {
-            var picture = NewPicture(this.itemJS.mainPicture);
-            return this.pictureService.save(picture)
-                .then((localPic:LocalPicture)=> {
-                    this.itemJS.mainPicture = localPic;
-                    var item = NewItem(this.itemJS);
-                    return this.itemService.save(item);
-                });
-        } else {
-            var item = NewItem(this.itemJS);
-            return this.itemService.save(item);
-        }
-    }
-
-    private calcTotalPrice() {
-        var totalPrice = this.itemJS.vatExclusive * (1 + this.itemJS.vatRate);
-        totalPrice = NumberUtils.toFixedDecimals(totalPrice, 2);
-        this.itemTotalPrice = totalPrice;
-    }
-
-    private calcVatPercentage() {
-        var vatPercentage = NumberUtils.toInt(this.itemJS.vatRate * 100);
-        this.itemVatPercentage = vatPercentage;
-        this.itemVatPercentageString = vatPercentage + '';
+    onCancelled() {
+        this.router.navigate(['/Items/List']);
     }
 
 }

@@ -36,7 +36,9 @@ import * as Immutable from 'immutable';
 @View({
     templateUrl: './components/itemVariant/edit/editVariant.html',
     styleUrls: ['./components/itemVariant/edit/editVariant.css'],
-    directives: [NgFor, NgIf, FORM_DIRECTIVES, RouterLink, LangSelect, LocalizedDirective, FormMessage, RequiredValidator]
+    directives: [NgFor, NgIf, FORM_DIRECTIVES,
+        RouterLink, LangSelect, LocalizedDirective, FormMessage,
+        RequiredValidator]
 })
 export class ItemVariantEditComponent implements OnInit {
     itemVariantService:ItemVariantService;

@@ -15,9 +15,12 @@ import * as Immutable from 'immutable';
  */
 @Directive({
     selector: 'input[localized], textarea[localized]',
-    inputs: ['languageProp: language', 'localeTextsProp: localeTexts', 'requiredProp: required'],
+    inputs: ['languageProp: language',
+        'localeTextsProp: localeTexts',
+        'requiredProp: required'],
     host: {
-        '(input)': "onInput($event)"
+        '(input)': "onInput($event)",
+        '[class.comptoir-invalid]': "required"
     }
 })
 export class LocalizedDirective {
@@ -50,13 +53,13 @@ export class LocalizedDirective {
         if (this.previousLanguage != null) {
             placeHolderValue = this.localeTexts.get(this.previousLanguage.locale);
         }
-        if (placeHolderValue == null) {
+        if (placeHolderValue == null || placeHolderValue.length === 0) {
             var langWithContent = this.findLangWithContent();
             if (langWithContent != null) {
                 placeHolderValue = this.localeTexts.get(langWithContent.locale);
             }
         }
-        if (placeHolderValue == null) {
+        if (placeHolderValue == null || placeHolderValue.length === 0) {
             placeHolderValue = this.placeHolderAttribute;
         }
 
@@ -68,6 +71,7 @@ export class LocalizedDirective {
             text = '';
         }
         this.elementRef.nativeElement.value = text;
+
         this.updateRequired();
     }
 

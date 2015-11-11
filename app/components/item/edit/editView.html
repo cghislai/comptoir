@@ -1,0 +1,112 @@
+<div class="pageContent" >
+    <div class="column left">
+        <form #f="form"
+              (ng-submit)="doSaveItem()"
+              enctype="multipart/form-data">
+
+            <div class="table">
+                <div>
+                    <label for="picture">Image</label>
+
+                    <div>
+                        <img [src]="itemJS.mainPicture.dataURI"
+                             class="itemPicturePreview"
+                             *ng-if="itemJS.mainPicture?.dataURI != null">
+                        <input type="file" id="picture" accept="image/*"
+                               (change)="onPictureFileSelected($event)">
+                    </div>
+                </div>
+                <div>
+                    <label>Langue</label>
+                    <langSelect [display-language]="appLanguage"
+                                [selected-language]="editLanguage"
+                                (language-changed)="editLanguage = $event"></langSelect>
+                </div>
+                <div>
+                    <label for="reference">Référence</label>
+                <span>
+                    <input type="text" id="reference"
+                           [(ng-model)]="itemJS.reference"
+                           ng-control="reference"
+                           validate-required required>
+                    <formMessage for="reference" check-errors="['required']"></formMessage>
+                </span>
+                </div>
+                <div>
+                    <label for="name">Nom</label>
+                <span>
+                    <input type="text" id="name"
+                           localized [language]="editLanguage"
+                           [locale-texts]="itemJS.name"
+                           required>
+                    <formMessage for="name" check-errors="['required']"></formMessage>
+                </span>
+                </div>
+                <div>
+                    <label for="description">Description</label>
+                <span>
+                    <textarea type="text" id="description" rows="3"
+                              localized [language]="editLanguage"
+                              [locale-texts]="itemJS.description"></textarea>
+                </span>
+                </div>
+                <div>
+                    <label for="price">Prix (TVAC)</label>
+                <span>
+                    <input class="number" type="number"
+                           min="0" step="0.01" id="price" size="5"
+                           [ng-model]="itemTotalPrice"
+                           (input)="setItemTotalPrice($event)"
+                           ng-control="vatExclusive"
+                           validate-required>
+                    €
+                    <formMessage for="vatExclusive" check-errors="['required']"></formMessage>
+                </span>
+                </div>
+                <div>
+                    <label for="vat">TVA</label>
+
+                    <div>
+                        <input class="number" type="number"
+                               min="0" max="100" step="1" id="vat" size="5"
+                               [ng-model]="itemVatPercentage"
+                               (input)="setItemVatRate($event)"
+                               ng-control="vatPercentage"
+                               validate-required>
+                        %
+                        <formMessage for="vatPercentage" check-errors="['required']"></formMessage>
+                    </div>
+                </div>
+                <div>
+                    <label for="vatInclusive">Prix HTVA</label>
+
+                    <div class="totalPreview" id="vatInclusive">
+                        <span>
+                            {{ itemJS.vatExclusive | currency:'EUR':true:'.2-2' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button type="submit" [disabled]="!f.form.valid">Enregistrer</button>
+                <a (click)="onCancelClicked()" class="blueLink">Retour</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="column right" *ng-if="itemVariantSearchResult != null">
+        <h3>Variantes</h3>
+
+        <itemVariantList [items]="itemVariantSearchResult.list"
+                         [columns]="itemVariantListColumns"
+                         [row-selectable]="true"
+                         [headers-visible]="true"
+                         (row-clicked)="onVariantRowSelected($event)"
+                         (column-action)="onVariantColumnAction($event)">
+        </itemVariantList>
+
+        <a (click)="doAddNewVariant()" [class.disabled]="item.id == null"
+           class="newVariantLink blueLink">Ajouter une variante</a>
+    </div>
+</div>
