@@ -29,7 +29,7 @@ export class ComptoirRequest {
     static REQUEST_TIMEOUT:number = 60000;
     static JSON_MIME:string = "application/json";
     static UTF8_CHARSET:string = "UTF-8";
-    static HEADER_OAUTH_TOKEN = "Authorisation";
+    static HEADER_OAUTH_TOKEN = "Authorization";
     static HEADER_TOTAL_COUNT = 'X-Comptoir-ListTotalCount';
 
     private request:XMLHttpRequest;
