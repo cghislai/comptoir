@@ -82,7 +82,7 @@ export class AuthService {
 
     public getEmployeeLanguage():Language {
         if (this.auth == null) {
-            return null;
+            return LanguageFactory.DEFAULT_LANGUAGE;
         }
         var employee = this.auth.employee;
         if (employee == null) {
@@ -188,7 +188,7 @@ export class AuthService {
         this.authToken = null;
 
         var authJSON = localStorage.getItem(AuthService.STORAGE_AUTH_KEY);
-        if (authJSON == null) {
+        if (authJSON == null || typeof authJSON != 'object') {
             this.clearAuth();
             return;
         }
