@@ -51,6 +51,9 @@ export class AuthService {
             .then((response:Auth) => {
                 return LocalAuthFactory.toLocalAuth(response, response.token);
             }).then((localAuth:LocalAuth)=> {
+                if (localAuth.employee == null || localAuth.token == null) {
+                    throw 'Invalid auth retrieved';
+                }
                 this.saveAuth(localAuth);
                 return localAuth.employee;
             }).catch((error)=> {
