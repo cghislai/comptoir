@@ -10,7 +10,7 @@ export const DEBUG = argv['debug'] || false;
 
 export const PORT = argv['port'] || 5555;
 export const LIVE_RELOAD_PORT = argv['reload-port'] || 4002;
-export const APP_BASE = argv['base'] || '/';
+export const APP_BASE = argv['base'] || '';
 
 export const APP_SRC = 'app';
 export const APP_DEST = 'dist';
@@ -23,13 +23,13 @@ export const PATH = {
     dest: {
         all: APP_DEST,
         dev: {
-            all: `${APP_DEST}/${ENV}`,
+            all: `${APP_DEST}/${ENV}/`,
             lib: `${APP_DEST}/${ENV}/lib`,
             css: `${APP_DEST}/${ENV}/css`,
             fonts: `${APP_DEST}/${ENV}/fonts`
         },
         prod: {
-            all: `${APP_DEST}/${ENV}`,
+            all: `${APP_DEST}/${ENV}/`,
             lib: `${APP_DEST}/${ENV}/lib`,
             css: `${APP_DEST}/${ENV}/css`,
             fonts: `${APP_DEST}/${ENV}/fonts`
@@ -45,9 +45,11 @@ export const PATH = {
                 resolve('es6-shim/es6-shim.min.js'),
                 resolve('es6-shim/es6-shim.map'),
                 resolve('reflect-metadata/Reflect.js'),
-                resolve('reflect-metadata/Reflect.js.map'),
                 resolve('systemjs/dist/system.src.js'),
                 `${APP_SRC}/system.config.js`,
+                `${ANGULAR_BUNDLES}/angular2-polyfills.min.js`,
+                //
+                resolve('rxjs/bundles/Rx.min.js'),
                 `${ANGULAR_BUNDLES}/angular2.dev.js`,
                 `${ANGULAR_BUNDLES}/router.dev.js`,
                 `${ANGULAR_BUNDLES}/http.dev.js`,
@@ -64,14 +66,18 @@ export const PATH = {
         },
         prod: {
             jslib_inject: [
-                // Order is quite important here for the HTML tag injection.
+                // Order is quite important here for the HTML tag injection. resolve('es6-shim/es6-shim.min.js'),
                 resolve('es6-shim/es6-shim.min.js'),
                 resolve('reflect-metadata/Reflect.js'),
                 resolve('systemjs/dist/system.js'),
                 `${APP_SRC}/system.config.js`,
+                `${ANGULAR_BUNDLES}/angular2-polyfills.min.js`,
+                //
+                resolve('rxjs/bundles/Rx.min.js'),
                 `${ANGULAR_BUNDLES}/angular2.min.js`,
-                `${ANGULAR_BUNDLES}/router.dev.min.js`,
+                `${ANGULAR_BUNDLES}/router.min.js`,
                 `${ANGULAR_BUNDLES}/http.min.js`,
+                //
                 resolve('immutable/dist/immutable.min.js')
             ],
             jslib_copy_only: [

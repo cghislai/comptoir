@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 06/08/15.
  */
-import {Inject} from 'angular2/angular2';
+import {Inject} from 'angular2/core';
 
 import {LocalEmployee, LocalEmployeeFactory} from '../client/localDomain/employee';
 import {EmployeeClient, Employee, EmployeeRef, EmployeeSearch} from '../client/domain/employee';

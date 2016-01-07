@@ -15,25 +15,25 @@
         </div>
         <div class="actions" [hidden]="!variantSelection">
             <div class="action back"
-                    (click)="variantSelection = false">
+                 (click)="variantSelection = false">
                 Retour
             </div>
         </div>
     </header>
 
     <div class="scrollPane">
-        <itemList [hidden]="variantSelection"
-                [columns]="columns"
-                [items]="searchResult.list"
-                [row-selectable]="true"
-                [headers-visible]="false"
-                (row-clicked)="onItemClicked($event)"></itemList>
+        <item-list [hidden]="variantSelection"
+                   [columns]="columns"
+                   [items]="searchResult.list"
+                   [rowSelectable]="true"
+                   [headersVisible]="false"
+                   (rowClicked)="onItemClicked($event)"></item-list>
 
-        <itemVariantList [hidden]="!variantSelection"
-                  [columns]="variantColumns"
-                  [items]="variantResult.list"
-                  [row-selectable]="true"
-                  [headers-visible]="false"
-                  (row-clicked)="onVariantSelected($event)"></itemVariantList>
+        <item-variant-list [hidden]="!variantSelection"
+                           [columns]="variantColumns"
+                           [items]="variantResult.list"
+                           [rowSelectable]="true"
+                           [headersVisible]="false"
+                           (rowClicked)="onVariantSelected($event)"></item-variant-list>
     </div>
 </div>

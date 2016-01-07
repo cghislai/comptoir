@@ -1,5 +1,5 @@
-<appHeader title="Connection" inactive="true">
-</appHeader>
+<app-header title="Connection" inactive="true">
+</app-header>
 <div class="loginView pageContent">
     <h1 class="pageTitle">Connection</h1>
 
@@ -7,33 +7,33 @@
         {{ introText }}
     </p>
 
-    <form (submit)="doLogin($event)" #f="form">
+    <form (submit)="doLogin($event)">
             <div>
                 <span>
-                    <input ng-control="login" id="login"
-                           [(ng-model)]="login"
+                    <input ngControl="login" id="login"
+                           [(ngModel)]="login"
                            type="text" placeholder="Login" autofocus
                             validate-required>
-                    <formMessage for="login" check-errors="['required']"></formMessage>
+                    <form-message for="login" check-errors="['required']"></form-message>
                 </span>
             </div>
             <div>
                 <span>
-                    <input ng-control="password" id="password"
-                           [(ng-model)]="password"
+                    <input ngControl="password" id="password"
+                           [(ngModel)]="password"
                            type="password" placeholder="Mot de passe"
                             validate-required>
-                    <formMessage for="password" check-errors="['required']"></formMessage>
+                    <form-message for="password" check-errors="['required']"></form-message>
                 </span>
             </div>
         <div class="actions">
             <button type="submit">Se connecter</button>
-            <formMessage [error]="true" [hidden]="!invalidCredentials"
-                         message="Login/mot de passe invalide."></formMessage>
+            <form-message [error]="true" [hidden]="!invalidCredentials"
+                         message="Login/mot de passe invalide."></form-message>
         </div>
     </form>
     <div>
-        <a [router-link]="['/Register']"
+        <a [routerLink]="['/Register']"
            class="blueLink">Créer un compte</a>
     </div>
 </div>

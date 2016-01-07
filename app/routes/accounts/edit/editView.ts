@@ -1,7 +1,8 @@
 /**
  * Created by cghislai on 05/08/15.
  */
-import {Component, View, NgIf, ChangeDetectionStrategy} from 'angular2/angular2';
+import {Component, ChangeDetectionStrategy} from 'angular2/core';
+import {NgIf} from 'angular2/common';
 import {RouteParams, Router, RouterLink, OnActivate} from 'angular2/router';
 
 import {LocalAccount, NewAccount} from '../../../client/localDomain/account';
@@ -14,10 +15,8 @@ import {ErrorService} from '../../../services/error';
 import {AccountsEditComponent} from '../../../components/account/edit/editAccount';
 
 @Component({
-    selector: 'editAccount',
-    changeDetection: ChangeDetectionStrategy.Default
-})
-@View({
+    selector: 'edit-account',
+    changeDetection: ChangeDetectionStrategy.Default,
     templateUrl: './routes/accounts/edit/editView.html',
     styleUrls: ['./routes/accounts/edit/editView.css'],
     directives: [NgIf, RouterLink, AccountsEditComponent]
@@ -44,7 +43,7 @@ export class AccountsEditView implements OnActivate {
         this.findAccount();
     }
 
-    onActivate() {
+    routerOnActivate() {
         return this.findAccount()
             .then((account:LocalAccount)=> {
                 this.account = account;

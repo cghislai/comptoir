@@ -2,7 +2,7 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Inject} from 'angular2/angular2';
+import {Inject} from 'angular2/core';
 
 import {AccountingEntry, AccountingEntryRef, AccountingEntryClient, AccountingEntryFactory} from '../client/domain/accountingEntry';
 import {LocalAccountingEntry, LocalAccountingEntryFactory} from '../client/localDomain/accountingEntry';

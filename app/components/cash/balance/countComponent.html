@@ -1,8 +1,8 @@
 <div class="balanceCount">
-    <div *ng-for="#moneyPile of moneyPiles">
-        <moneyPileCount [money-pile]="moneyPile"
+    <div *ngFor="#moneyPile of moneyPiles">
+        <money-pile-count [moneyPile]="moneyPile"
                         (changed)="onMoneyPileChanged($event)">
-        </moneyPileCount>
+        </money-pile-count>
     </div>
     <div class="totalRow">
             <span class="total" [hidden]="balance.balance == null || balance.balance <= 0">
@@ -17,10 +17,10 @@
                 </div>
                 <div class="editAmount">
                     <input type="number" min="0.01" step="0.01"
-                           #totalInput *ng-if="editingTotal"
-                           [initial-value]="balance.balance"
+                           #totalInput *ngIf="editingTotal"
+                           [initialValue]="balance.balance"
                            [validator]="validatePrice"
-                           (fast-change)="onTotalChanged($event)"
+                           (fastChange)="onTotalChanged($event)"
                            (cancelled)="onTotalCancelled()"
                            class="number"
                            fast-input>

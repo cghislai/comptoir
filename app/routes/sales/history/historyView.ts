@@ -1,7 +1,8 @@
 /**
  * Created by cghislai on 31/07/15.
  */
-import {Component, View, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
+import {Component} from 'angular2/core';
+import {NgIf, FORM_DIRECTIVES} from 'angular2/common';
 import {Router} from 'angular2/router';
 
 import {LocalSale} from '../../../client/localDomain/sale';
@@ -21,10 +22,7 @@ import {SaleListComponent, SaleColumn} from '../../../components/sales/list/sale
 import * as Immutable from 'immutable';
 
 @Component({
-    selector: 'salesHistoryView'
-})
-
-@View({
+    selector: 'sales-history-view',
     templateUrl: './routes/sales/history/historyView.html',
     styleUrls: ['./routes/sales/history/historyView.css'],
     directives: [SaleListComponent, NgIf, Paginator, FORM_DIRECTIVES]

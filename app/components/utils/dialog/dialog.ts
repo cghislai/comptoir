@@ -1,14 +1,13 @@
 /**
  * Created by cghislai on 07/08/15.
  */
-import {Component, View, EventEmitter, NgIf, Attribute} from 'angular2/angular2';
+import {Component, EventEmitter, Attribute} from 'angular2/core';
+import {NgIf} from 'angular2/common';
 
 @Component({
     selector: 'dialogview',
     inputs: ['modal', 'closable', 'title'],
-    outputs: ['close']
-})
-@View({
+    outputs: ['close'],
     templateUrl: './components/utils/dialog/dialog.html',
     styleUrls: ['./components/utils/dialog/dialog.css'],
     directives: [NgIf]
@@ -18,7 +17,7 @@ export class DialogView {
     isClosable:boolean;
     visible:boolean;
     title:string;
-    close:EventEmitter = new EventEmitter();
+    close = new EventEmitter();
 
     constructor(@Attribute('modal') modal:string,
                 @Attribute('closable') closable:string) {

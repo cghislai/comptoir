@@ -1,7 +1,7 @@
 <div class="pageContent">
 
-    <form #item-form="form" class="left"
-          (ng-submit)="onFormSubmit()"
+    <form #itemForm="form" class="left"
+          (ngSubmit)="onFormSubmit()"
           enctype="multipart/form-data">
 
         <div class="table">
@@ -11,7 +11,7 @@
                 <div>
                     <img [src]="picture.dataURI"
                          class="itemPicturePreview"
-                         *ng-if="picture != null">
+                         *ngIf="picture != null">
                     <input type="file" id="picture" accept="image/*"
                            (change)="onPictureFileSelected($event)">
                 </div>
@@ -21,26 +21,26 @@
                 <span>
                     <input type="text" id="reference"
                            [placeholder]="itemVariantModel.item.reference"
-                           [(ng-model)]="itemVariantModel.variantReference"
-                           ng-control="reference" validate-required>
-                    <formMessage for="reference"
-                                 check-errors=" ['required']"></formMessage>
+                           [(ngModel)]="itemVariantModel.variantReference"
+                           ngControl="reference" validate-required>
+                    <form-message for="reference"
+                                 check-errors=" ['required']"></form-message>
                 </span>
             </div>
             <div>
                 <label for="pricing">Type de tarification</label>
                 <span>
                     <select id="pricing" required
-                            [ng-model]="itemVariantModel.pricing"
+                            [ngModel]="itemVariantModel.pricing"
                             (change)="onPricingChanged($event)"
-                            ng-control="pricing" validate-required>
-                        <option *ng-for="#pricing of allPricings"
+                            ngControl="pricing" validate-required>
+                        <option *ngFor="#pricing of allPricings"
                                 [value]="pricing">
                             {{ getPricingLabel(pricing) }}
                         </option>
                     </select>
-                    <formMessage for="pricing"
-                                 check-errors="['required']"></formMessage>
+                    <form-message for="pricing"
+                                 check-errors="['required']"></form-message>
                 </span>
             </div>
             <div>
@@ -52,7 +52,7 @@
                                (input)="setPricingAmount($event)"
                                [attr.validate-required]="pricingAmountRequired"
                                min="0" step="0.01" id="pricingAmount" size="5"
-                               ng-control="pricingAmount">
+                               ngControl="pricingAmount">
                         €
                     </span>
                     <div class="totalPreview">
@@ -60,8 +60,8 @@
                             Total (TVAC): {{ getItemVariantTotalPrice() | currency:'EUR':true:'.2-2' }}
                         </span>
                     </div>
-                    <formMessage for="pricingAmount"
-                                 check-errors="['required']"></formMessage>
+                    <form-message for="pricingAmount"
+                                 check-errors="['required']"></form-message>
                 </span>
             </div>
         </div>
@@ -72,14 +72,14 @@
         </div>
     </form>
 
-    <form #attribute-form="form" class="right"
-          (ng-submit)="doAddAttribute()">
+    <form #attributeForm="form" class="right"
+          (ngSubmit)="doAddAttribute()">
         <h3>Attributs</h3>
 
         <table class="dataTable">
             <tbody>
             <tr class="attribute"
-                *ng-for="#attribute of itemVariant.attributeValues">
+                *ngFor="#attribute of itemVariant.attributeValues">
                 <td class="definition">
                     {{ attribute.attributeDefinition?.name.get(editLanguage.locale) }}
                 </td>
@@ -94,7 +94,7 @@
                 </td>
             </tr>
             <tr class="attribute unsaved"
-                *ng-for="#attribute of unsavedAttributes">
+                *ngFor="#attribute of unsavedAttributes">
                 <td class="definition">
                     {{ attribute.attributeDefinition?.name.get(editLanguage.locale) }}
                 </td>
@@ -112,21 +112,21 @@
         </table>
         <div class="form">
             <div class="language">
-                <langSelect [display-language]="appLanguage"
-                            [selected-language]="editLanguage"
-                            (language-changed)="editLanguage = $event"></langSelect>
+                <lang-select [displayLanguage]="appLanguage"
+                            [selectedLanguage]="editLanguage"
+                            (languageChanged)="editLanguage = $event"></lang-select>
             </div>
             <div class="attribute">
                 <input class="definition"
                        required
                        placeholder="Clef"
                        localized [language]="editLanguage"
-                       [locale-texts]="newAttributeValue.attributeDefinition.name">
+                       [localeTexts]="newAttributeValue.attributeDefinition.name">
                 <input class="value"
                        required
                        placeholder="Valeur"
                        localized [language]="editLanguage"
-                       [locale-texts]="newAttributeValue.value">
+                       [localeTexts]="newAttributeValue.value">
                 <button type="submit" [disabled]="!attributeForm.form.valid"
                         class="boxedLink">
                     <i class="fa fa-plus"></i>

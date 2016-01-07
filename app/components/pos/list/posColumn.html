@@ -1,26 +1,26 @@
-<div [ng-switch]="column.name">
-    <template [ng-switch-when]="'id'">
+<div [ngSwitch]="column.name">
+    <template [ngSwitchWhen]="'id'">
         <span class="id">
             {{ pos.id }}
         </span>
     </template>
-    <template [ng-switch-when]="'name' ">
+    <template [ngSwitchWhen]="'name' ">
         <span class="name">
                {{ pos.name }}
         </span>
     </template>
-    <template [ng-switch-when]="'description' ">
+    <template [ngSwitchWhen]="'description' ">
         <span class="description">
             {{ pos.description[lang.locale] }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'defaultCustomer' ">
+    <template [ngSwitchWhen]=" 'defaultCustomer' ">
         <span class="defaultCustomer">
            {{ pos.defaultCustomerRef.id }}
         </span>
     </template>
 
-    <template [ng-switch-when]=" 'action_remove' ">
+    <template [ngSwitchWhen]=" 'action_remove' ">
         <span class="action remove">
             <a class="actionIcon "
                (click)="onColumnAction(pos, column, $event)">

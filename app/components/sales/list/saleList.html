@@ -2,10 +2,10 @@
     <table class="dataTable">
         <thead [hidden]="!headersVisible">
         <tr>
-            <th *ng-for="#col of columns"
+            <th *ngFor="#col of columns"
                 [class.right]="col.alignRight"
                 [class.center]="col.alignCenter">
-                    <span *ng-if="col.title !== null">
+                    <span *ngIf="col.title !== null">
                         {{ col.title.get(language.locale) }}
                     </span>
             </th>
@@ -13,20 +13,20 @@
         </thead>
 
         <tbody>
-            <tr *ng-for="#sale of sales"
+            <tr *ngFor="#sale of sales"
                  [class.selectable]="rowSelectable"
                 (click)="onSaleClick(sale, $event)"
                  [attr.focusable]="rowSelectable">
-                <td *ng-for="#col of columns"
+                <td *ngFor="#col of columns"
                     [class.right]="col.alignRight"
                     [class.center]="col.alignCenter">
-                    <saleColumn class="column"
+                    <sale-column class="column"
                                 (action)="onColumnAction($event)"
                                 [sale]="sale"
                                 [column]="col"
                                 [lang]="language">
 
-                    </saleColumn>
+                    </sale-column>
                 </td>
             </tr>
         </div>

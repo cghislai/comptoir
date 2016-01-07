@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 06/08/15.
  */
-import {Inject} from 'angular2/angular2';
+import {Inject} from 'angular2/core';
 
 import {LocalPicture, LocalPictureFactory} from '../client/localDomain/picture';
 import {PictureClient, Picture, PictureRef, PictureSearch} from '../client/domain/picture';

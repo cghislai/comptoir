@@ -4,10 +4,10 @@
     </span>
     <span class="amount">
         <input type="number" min="0" step="1"
-               [initial-value]="moneyPile.unitCount"
+               [initialValue]="moneyPile.unitCount"
                [validator]="validateAmount"
-               validate-on-blur="true"
-               (fast-change)="onMoneyPileChanged($event)"
+               [validateOnBlur]="true"
+               (fastChange)="onMoneyPileChanged($event)"
                size="5" fast-input>
     </span>
     <span class="total">

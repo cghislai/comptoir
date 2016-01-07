@@ -1,7 +1,8 @@
 /**
  * Created by cghislai on 05/08/15.
  */
-import {Component, View, NgFor, NgIf, FORM_DIRECTIVES, EventEmitter, OnInit} from 'angular2/angular2';
+import {Component, EventEmitter, OnInit} from 'angular2/core';
+import {NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/common';
 
 import {LocalAccount, LocalAccountFactory, NewAccount} from '../../../client/localDomain/account';
 
@@ -23,9 +24,7 @@ import * as Immutable from 'immutable';
 @Component({
     selector: 'accountEditComponent',
     inputs: ['account'],
-    outputs: ['saved', 'cancelled']
-})
-@View({
+    outputs: ['saved', 'cancelled'],
     templateUrl: './components/account/edit/editAccount.html',
     styleUrls: ['./components/account/edit/editAccount.css'],
     directives: [NgFor, NgIf, FORM_DIRECTIVES, LangSelect, LocalizedDirective,
@@ -57,7 +56,7 @@ export class AccountsEditComponent implements OnInit {
         this.allAccountTypes = Immutable.List(ALL_ACCOUNT_TYPES);
     }
 
-    onInit() {
+    ngOnInit() {
         this.accountModel = this.account.toJS();
     }
 

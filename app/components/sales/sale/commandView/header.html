@@ -28,11 +28,11 @@
                 <span [hidden]="editingSaleDiscount || sale.discountRatio == null || sale.discountRatio <= 0">
                     -{{ (sale.discountRatio * 100) | number:'.0' }} %
                 </span>
-                <span *ng-if="editingSaleDiscount" class="editDiscount">
+                <span *ngIf="editingSaleDiscount" class="editDiscount">
                     <input #discount
-                           [initial-value]="sale.discountRatio * 100"
+                           [initialValue]="sale.discountRatio * 100"
                            [validator]="validateDiscount"
-                           (fast-change)="onSaleDiscountChange($event)"
+                           (fastChange)="onSaleDiscountChange($event)"
                            (cancelled)="editingSaleDiscount = false"
                            type="number" min="0" max="100" step="1"
                            size="2" fast-input>

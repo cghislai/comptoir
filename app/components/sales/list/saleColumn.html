@@ -1,41 +1,41 @@
-<div [ng-switch]="column.name">
-    <template [ng-switch-when]=" 'id' ">
+<div [ngSwitch]="column.name">
+    <template [ngSwitchWhen]=" 'id' ">
         <span class="id">
             {{ sale.id }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'dateTime' ">
+    <template [ngSwitchWhen]=" 'dateTime' ">
         <span class="dateTime">
             {{ sale.dateTime | date:'dd/MM/yyyy HH:mm'  }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'vatExclusive' ">
+    <template [ngSwitchWhen]=" 'vatExclusive' ">
         <span class="vatExclusive price">
             {{ sale.vatExclusiveAmount | currency:'EUR':true:'.2-2' }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'vatInclusive' ">
+    <template [ngSwitchWhen]=" 'vatInclusive' ">
         <span class="vatInclusive price">
              {{ (sale.vatExclusiveAmount + sale.vatAmount ) | currency:'EUR':true:'.2-2' }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'vat' ">
+    <template [ngSwitchWhen]=" 'vat' ">
         <span class="vat price">
              {{ sale.vatAmount | currency:'EUR':true:'.2-2' }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'closed' ">
+    <template [ngSwitchWhen]=" 'closed' ">
         <span class="closed">
              <i class="fa fa-times" [hidden]="sale.closed"></i>
              <i class="fa fa-check" [hidden]="!sale.closed"></i>
         </span>
     </template>
-    <template [ng-switch-when]=" 'ref' ">
+    <template [ngSwitchWhen]=" 'ref' ">
         <span class="ref">
              {{ sale.reference }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'action_remove' ">
+    <template [ngSwitchWhen]=" 'action_remove' ">
         <a class="actionIcon "
            (click)="onColumnAction(sale, column, $event)">
             <i class="fa fa-minus red"></i>

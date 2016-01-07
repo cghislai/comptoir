@@ -2,7 +2,8 @@
  * Created by cghislai on 02/08/15.
  */
 
-import {Component, View, NgIf} from 'angular2/angular2';
+import {Component} from 'angular2/core';
+import {NgIf} from 'angular2/common';
 
 import {CompanyRef} from '../../../client/domain/company';
 import {LocalBalance} from '../../../client/localDomain/balance';
@@ -20,9 +21,7 @@ import {BalanceList, BalanceColumn} from '../../../components/cash/list/balanceL
 import * as Immutable from 'immutable';
 
 @Component({
-    selector: 'historyCashView'
-})
-@View({
+    selector: 'historyCashView',
     templateUrl: './routes/cash/history/historyView.html',
     styleUrls: ['./routes/cash/history/historyView.css'],
     directives: [Paginator, NgIf, BalanceList]

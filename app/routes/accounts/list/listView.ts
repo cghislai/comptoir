@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 06/08/15.
  */
-import {Component, View} from 'angular2/angular2';
+import {Component} from 'angular2/core';
 import {Router} from 'angular2/router';
 
 import {CompanyRef} from '../../../client/domain/company';
@@ -22,10 +22,7 @@ import {AccountList, AccountColumn} from '../../../components/account/list/accou
 import * as Immutable from 'immutable';
 
 @Component({
-    selector: 'accountListView'
-})
-
-@View({
+    selector: 'account-list-view',
     templateUrl: './routes/accounts/list/listView.html',
     styleUrls: ['./routes/accounts/list/listView.css'],
     directives: [AccountList, Paginator]

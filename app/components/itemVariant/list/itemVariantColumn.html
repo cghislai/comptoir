@@ -1,51 +1,51 @@
-<div [ng-switch]="column.name">
-    <template [ng-switch-when]="'id'">
+<div [ngSwitch]="column.name">
+    <template [ngSwitchWhen]="'id'">
         <span class="id">
             {{ itemVariant.id }}
         </span>
     </template>
-    <template [ng-switch-when]="'variantReference' ">
+    <template [ngSwitchWhen]="'variantReference' ">
         <span class="ref">
                {{ itemVariant.variantReference }}
         </span>
     </template>
-    <template [ng-switch-when]="'picture' ">
+    <template [ngSwitchWhen]="'picture' ">
         <span class="picture">
-            <img [src]="itemVariant.mainPicture.dataURI" *ng-if="itemVariant.mainPicture?.dataURI != undefined">
+            <img [src]="itemVariant.mainPicture.dataURI" *ngIf="itemVariant.mainPicture?.dataURI != undefined">
 
-            <div *ng-if="itemVariant.mainPicture?.dataURI == null">
+            <div *ngIf="itemVariant.mainPicture?.dataURI == null">
                 <img [src]="itemVariant.item.mainPicture.dataURI"
-                     *ng-if="itemVariant.item?.mainPicture?.dataURI != undefined">
+                     *ngIf="itemVariant.item?.mainPicture?.dataURI != undefined">
 
-                <div class="imagePlaceover" *ng-if="itemVariant.item?.mainPicture?.dataURI == undefined">
+                <div class="imagePlaceover" *ngIf="itemVariant.item?.mainPicture?.dataURI == undefined">
                     <i class="fa fa-book"></i>
                 </div>
             </div>
         </span>
     </template>
-    <template [ng-switch-when]=" 'pictureNoItemFallback' ">
+    <template [ngSwitchWhen]=" 'pictureNoItemFallback' ">
         <span class="picture">
-            <img [src]="itemVariant.mainPicture.dataURI" *ng-if="itemVariant.mainPicture?.dataURI != undefined">
+            <img [src]="itemVariant.mainPicture.dataURI" *ngIf="itemVariant.mainPicture?.dataURI != undefined">
 
-            <div class="imagePlaceover" *ng-if="itemVariant.mainPicture?.dataURI == undefined">
+            <div class="imagePlaceover" *ngIf="itemVariant.mainPicture?.dataURI == undefined">
                 <i class="fa fa-book"></i>
             </div>
         </span>
     </template>
-    <template [ng-switch-when]=" 'pricing' ">
+    <template [ngSwitchWhen]=" 'pricing' ">
         <span class="pricing">
               {{ getPricingLabel(itemVariant.pricing) }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'pricingAmount' ">
+    <template [ngSwitchWhen]=" 'pricingAmount' ">
         <span class="pricingAmount">
               {{ itemVariant.pricingAmount | currency:'EUR':true:'.2-2' }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'attributes' ">
+    <template [ngSwitchWhen]=" 'attributes' ">
         <span class="attributes">
             <span class="attributeValue"
-                  *ng-for="#attr of itemVariant.attributeValues">
+                  *ngFor="#attr of itemVariant.attributeValues">
                 <span class="def">
                     {{ attr.attributeDefinition.name.get(lang.locale) }}
                 </span>
@@ -56,29 +56,29 @@
         </span>
     </template>
 
-    <template [ng-switch-when]=" 'itemReference'">
+    <template [ngSwitchWhen]=" 'itemReference'">
         <span class="ref">
               {{ itemVariant.item.reference }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'itemName'">
+    <template [ngSwitchWhen]=" 'itemName'">
         <span class="name">
               {{ itemVariant.item.name.get(lang.locale) }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'itemDescription'">
-        <span class="desc" [inner-html]="itemVariant.item.description.get(lang.locale)">
+    <template [ngSwitchWhen]=" 'itemDescription'">
+        <span class="desc" [innerHtml]="itemVariant.item.description.get(lang.locale)">
         </span>
     </template>
 
-    <template [ng-switch-when]=" 'itemNameVariantAttributes'">
+    <template [ngSwitchWhen]=" 'itemNameVariantAttributes'">
         <span class="name_attributes">
             <div class="name">
                 {{ itemVariant.item.name.get(lang.locale) }}
             </div>
             <div>
                 <span class="attributeValue"
-                      *ng-for="#attr of itemVariant.attributeValues">
+                      *ngFor="#attr of itemVariant.attributeValues">
                     <span class="def">
                         {{ attr.attributeDefinition.name.get(lang.locale) }}
                     </span>
@@ -89,29 +89,29 @@
             </div>
         </span>
     </template>
-    <template [ng-switch-when]=" 'itemVatExclusive'">
+    <template [ngSwitchWhen]=" 'itemVatExclusive'">
         <span  class="vatExclusive">
                {{ itemVariant.item.vatExclusive | currency:'EUR':true:'.2-2' }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'itemVatRate'">
+    <template [ngSwitchWhen]=" 'itemVatRate'">
         <span class="vatRate">
         {{ ( itemVariant.item.vatRate * 100 )| number:'.0' }} %
         </span>
     </template>
-    <template [ng-switch-when]=" 'itemVatInclusive'">
+    <template [ngSwitchWhen]=" 'itemVatInclusive'">
         <span class="vatInclusive">
               {{ ( itemVariant.item.vatExclusive * (1 + itemVariant.item.vatRate)) | currency:'EUR':true:'.2-2' }}
         </span>
     </template>
 
-    <template [ng-switch-when]=" 'totalPrice' ">
+    <template [ngSwitchWhen]=" 'totalPrice' ">
         <span class="totalPrice">
               {{ getVariantPrice(itemVariant) | currency:'EUR':true:'.2-2' }}
         </span>
     </template>
 
-    <template [ng-switch-when]=" 'action_remove' ">
+    <template [ngSwitchWhen]=" 'action_remove' ">
         <span class="action remove">
             <a class="actionIcon "
                (click)="onColumnAction(itemVariant, column, $event)">

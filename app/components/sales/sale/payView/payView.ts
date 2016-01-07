@@ -2,7 +2,8 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, EventEmitter, NgFor, NgIf, ChangeDetectionStrategy} from 'angular2/angular2';
+import {Component, EventEmitter, ChangeDetectionStrategy} from 'angular2/core';
+import {NgFor, NgIf} from 'angular2/common';
 
 import {LocalSale} from '../../../../client/localDomain/sale';
 import {LocalAccount} from '../../../../client/localDomain/account';
@@ -22,9 +23,7 @@ import * as Immutable from 'immutable';
     selector: 'payView',
     outputs: ['paid'],
     inputs: ['saleTotal', 'paidAmount', 'noInput', 'sale', 'accountingEntries'],
-    changeDetection: ChangeDetectionStrategy.OnPush
-})
-@View({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './components/sales/sale/payView/payView.html',
     styleUrls: ['./components/sales/sale/payView/payView.css'],
     directives: [NgFor, NgIf, FastInput]

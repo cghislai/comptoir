@@ -2,7 +2,7 @@
  * Created by cghislai on 28/08/15.
  */
 
-import {Component, View} from 'angular2/angular2';
+import {Component} from 'angular2/core';
 import {RouteConfig,RouterOutlet,RouterLink, Location} from 'angular2/router';
 
 import {AppHeader} from '../../components/app/header/appHeader';
@@ -13,16 +13,13 @@ import {PosListView} from './list/listView';
 import {EditPosView} from './edit/editView';
 
 @Component({
-    selector: 'posView'
-})
-@View({
+    selector: 'pos-view',
     templateUrl: './routes/pos/posView.html',
     directives: [AppHeader, AppTab, RouterOutlet, RouterLink]
 })
 @RouteConfig([
-    {path: '/', redirectTo: '/list'},
     {path: '/edit/:id', component: EditPosView, as: 'Edit'},
-    {path: '/list', component: PosListView, as: 'List'}
+    {path: '/list', component: PosListView, as: 'List', useAsDefault: true}
 ])
 export class PosView {
     location:Location;

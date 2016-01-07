@@ -15,8 +15,7 @@
   "author": "Charly Ghislain <cghislai>",
   "license": "custom",
   "devDependencies": {
-    "@reactivex/rxjs": "^5.0.0-alpha.6",
-    "async": "^1.4.2",
+      "async": "^1.4.2",
     "connect-livereload": "^0.5.3",
     "del": "^1.1.1",
     "express": "~4.13.1",
@@ -56,9 +55,11 @@
     "zone.js": "^0.5.8"
   },
   "dependencies": {
-    "angular2": "=2.0.0-alpha.45",
-    "es6-module-loader": "^0.17.8",
+    "angular2": "2.0.0-beta.0",
+    "rxjs": "^5.0.0-beta.0",
+    "zone.js": "^0.5.10",
     "es6-shim": "^0.33.6",
+    "es6-promise": "^3.0.2",
     "systemjs": "^0.19.4",
     "immutable": "^3.7.5",
     "font-awesome": "^4.4.0"

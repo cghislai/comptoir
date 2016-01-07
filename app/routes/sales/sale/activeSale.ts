@@ -2,7 +2,7 @@
  * Created by cghislai on 22/09/15.
  */
 
-import {Inject} from 'angular2/angular2';
+import {Inject} from 'angular2/core';
 
 import {Sale, SaleRef, SaleClient} from '../../../client/domain/sale';
 import {AccountClient, Account, AccountSearch} from '../../../client/domain/account';

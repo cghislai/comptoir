@@ -1,20 +1,20 @@
 <div class="editPos">
 
-    <form #pos-form="form" (ng-submit)="onFormSubmit()">
+    <form #pos-form="form" (ngSubmit)="onFormSubmit()">
         <div class="table">
             <div>
                 <label>Langue</label>
-                <langSelect [display-language]="appLanguage"
-                            [selected-language]="editLanguage"
-                            (language-changed)="editLanguage = $event"></langSelect>
+                <lang-select [displayLanguage]="appLanguage"
+                            [selectedLanguage]="editLanguage"
+                            (languageChanged)="editLanguage = $event"></lang-select>
             </div>
 
             <div>
                 <label for="name">Nom</label>
                 <span>
                     <input id="name" type="text"
-                           [(ng-model)]="pos.name"
-                           ng-control="name">
+                           [(ngModel)]="pos.name"
+                           ngControl="name">
                 </span>
             </div>
             <div>
@@ -22,8 +22,8 @@
              <textarea type="text" id="description" rows="3"
                        required
                        localized [language]="editLanguage"
-                       [locale-texts]="pos.description"></textarea>
-                <formMessage for="description" check-errors="['required']"></formMessage>
+                       [localeTexts]="pos.description"></textarea>
+                <form-message for="description" check-errors="['required']"></form-message>
             </div>
         </div>
         <div class="actions">

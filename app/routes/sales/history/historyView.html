@@ -10,16 +10,16 @@
 
     </div>
 
-    <paginator *ng-if="searchResult != null"
-               [total-count]="searchResult.count"
-               [page-size]="salesPerPage"
-               [show-prev-next-link]="true" [show-first-last-link]="true"
-               (page-change)="onPageChanged($event)"></paginator>
-    <saleList [sales]="searchResult.list"
+    <paginator *ngIf="searchResult != null"
+               [totalCount]="searchResult.count"
+               [pageSize]="salesPerPage"
+               [showPrevNextLink]="true" [showFirstLastLink]="true"
+               (pageChange)="onPageChanged($event)"></paginator>
+    <sale-list [sales]="searchResult.list"
               [columns]="columns"
-              [row-selectable]="true"
-              [headers-visible]="true"
-              (sale-clicked)="onSaleClicked($event)"
-              (column-action)="onColumnAction($event)">
-    </saleList>
+              [rowSelectable]="true"
+              [headersVisible]="true"
+              (saleClicked)="onSaleClicked($event)"
+              (columnAction)="onColumnAction($event)">
+    </sale-list>
 </div>

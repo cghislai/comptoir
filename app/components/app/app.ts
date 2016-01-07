@@ -1,6 +1,7 @@
 /// <reference path="./../../typings/_custom.d.ts" />
-import {Component, View,  bootstrap, NgIf} from 'angular2/angular2';
-import {RouteConfig, Router, ROUTER_DIRECTIVES, ROUTER_BINDINGS, Location} from 'angular2/router';
+import {Component} from 'angular2/core';
+import {NgIf} from 'angular2/common';
+import {RouteConfig, Router, ROUTER_DIRECTIVES} from 'angular2/router';
 
 import {AccountService} from '../../services/account';
 import {AccountingEntryService} from '../../services/accountingEntry';
@@ -34,7 +35,10 @@ import {PosView} from '../../routes/pos/posView';
 
 @Component({
     selector: 'app',
-    viewBindings: [
+    templateUrl: './components/app/app.html',
+    styleUrls: ['./components/app/app.css'],
+    directives: [ROUTER_DIRECTIVES, NgIf, DialogView],
+    viewProviders: [
         AuthService,
 
         AccountService,
@@ -56,77 +60,54 @@ import {PosView} from '../../routes/pos/posView';
         SaleService
     ]
 })
-@View({
-    templateUrl: './components/app/app.html',
-    styleUrls: ['./components/app/app.css'],
-    directives: [ROUTER_DIRECTIVES, NgIf, DialogView]
-})
-
 @RouteConfig([
-    {path: '/', redirectTo: '/Sales/Actives'},
-    {path: '/login', component: LoginView, as: 'Login'},
-    {path: '/register', component: RegisterView, as: 'Register'},
+    {path: '/login', component: LoginView, name: 'Login', useAsDefault: true},
+    {path: '/register', component: RegisterView, name: 'Register'},
 
-    {path: '/sales/...', component: SalesView, as: 'Sales'},
-    {path: '/items/...', component: ItemsView, as: 'Items'},
-    {path: '/accounts/...', component: AccountsView, as: 'Accounts'},
-    {path: '/cash/...', component: CashView, as: 'Cash'},
-    {path: '/pos/...', component: PosView, as: 'Pos'}
+    {path: '/sales/...', component: SalesView, name: 'Sales'},
+    {path: '/items/...', component: ItemsView, name: 'Items'},
+    {path: '/accounts/...', component: AccountsView, name: 'Accounts'},
+    {path: '/cash/...', component: CashView, name: 'Cash'},
+    {path: '/pos/...', component: PosView, name: 'Pos'}
 ])
 export class App {
     appService:ApplicationService;
     authService:AuthService;
     errorService:ErrorService;
-
     loginRequired:boolean;
-    loggedIn:boolean;
+
     router:Router;
 
     constructor(appService:ApplicationService, authService:AuthService,
                 errorService:ErrorService,
-                router:Router, location:Location) {
+                router:Router) {
         this.appService = appService;
         this.appService.appName = "Comptoir";
         this.appService.appVersion = "0.1";
         this.authService = authService;
         this.errorService = errorService;
         this.router = router;
-        router.subscribe((path)=> {
-            this.checkLoginRequired(path);
+        router.subscribe(()=> {
+            this.checkLoginRequired();
         });
-        this.checkLoginRequired(location.path());
+        this.checkLoginRequired();
     }
 
 
-    checkLoginRequired(path:string) {
-        if (path.indexOf('login') >= 0) {
-            this.loginRequired = false;
-            return;
-        }
-        if (path.indexOf('register') >= 0) {
-            this.loginRequired = false;
-            return;
-        }
-        this.loginRequired = true;
-        // Check if logged-in
-        this.authService.checkLoggedIn()
-            .then((loggedIn)=> {
-                this.loggedIn = loggedIn;
-                if (!loggedIn) {
-                    this.router.navigate(['/Login']);
-                } else {
-                    if (path == null || path.length === 0) {
-                        this.router.navigate(['/Sales/Actives']);
+    private checkLoginRequired() {
+        var loginInstruction = this.router.generate(['/Login']);
+        var registerInstruction = this.router.generate(['/Register']);
+        if (!this.router.isRouteActive(loginInstruction) && !this.router.isRouteActive(registerInstruction)) {
+            this.authService.checkLoggedIn()
+                .then((loggedIn)=> {
+                    this.loginRequired = !loggedIn;
+                    if (!loggedIn) {
+                        this.router.navigate(['/Login']);
                     }
-                }
-            });
-
+                });
+        } else {
+            this.loginRequired = false;
+        }
     }
-
-
 }
 
-
-bootstrap(App, [
-    ROUTER_BINDINGS
-]);

@@ -1,7 +1,8 @@
 /**
  * Created by cghislai on 05/08/15.
  */
-import {Component, View, NgFor, NgIf, FORM_DIRECTIVES, EventEmitter, OnInit, ChangeDetectionStrategy} from 'angular2/angular2';
+import {Component, EventEmitter, OnInit, ChangeDetectionStrategy} from 'angular2/core';
+import {NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/common';
 import {RouterLink} from 'angular2/router';
 
 import {LocalPicture,  NewPicture} from '../../../client/localDomain/picture';
@@ -28,12 +29,10 @@ import {LocalizedDirective} from '../../utils/localizedInput';
 import * as Immutable from 'immutable';
 
 @Component({
-    selector: 'editItemVariantComponent',
+    selector: 'edit-item-variant-component',
     inputs: ['itemVariant'],
     outputs: ['saved', 'cancelled'],
-    changeDetection: ChangeDetectionStrategy.Default
-})
-@View({
+    changeDetection: ChangeDetectionStrategy.Default,
     templateUrl: './components/itemVariant/edit/editVariant.html',
     styleUrls: ['./components/itemVariant/edit/editVariant.css'],
     directives: [NgFor, NgIf, FORM_DIRECTIVES,
@@ -87,7 +86,7 @@ export class ItemVariantEditComponent implements OnInit {
         this.resetNewAttributeValue();
     }
 
-    onInit() {
+    ngOnInit() {
         this.itemVariantModel = this.itemVariant.toJS();
         this.picture = this.itemVariant.mainPicture;
         this.checkPricingAmountRequired();

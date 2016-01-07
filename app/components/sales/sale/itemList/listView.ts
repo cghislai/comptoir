@@ -2,7 +2,8 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, NgIf, EventEmitter, ChangeDetectionStrategy} from 'angular2/angular2';
+import {Component,EventEmitter, ChangeDetectionStrategy} from 'angular2/core';
+import {NgFor, NgIf} from 'angular2/common';
 
 import {LocalItem} from '../../../../client/localDomain/item';
 import {LocalItemVariant} from '../../../../client/localDomain/itemVariant';
@@ -24,12 +25,9 @@ import {FocusableDirective} from '../../../utils/focusable';
 import * as Immutable from 'immutable';
 
 @Component({
-    selector: 'itemListView',
+    selector: 'item-list-view',
     outputs: ['itemClicked', 'variantSelected'],
-    changeDetection: ChangeDetectionStrategy.Default
-})
-
-@View({
+    changeDetection: ChangeDetectionStrategy.Default,
     templateUrl: './components/sales/sale/itemList/listView.html',
     styleUrls: ['./components/sales/sale/itemList/listView.css'],
     directives: [NgFor, NgIf, AutoFocusDirective, FocusableDirective, ItemList, ItemVariantList]

@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 06/08/15.
  */
-import {Inject} from 'angular2/angular2';
+import {Inject} from 'angular2/core';
 
 import {LocalItem, LocalItemFactory} from '../client/localDomain/item';
 import {ItemClient, Item, ItemRef, ItemSearch} from '../client/domain/item';

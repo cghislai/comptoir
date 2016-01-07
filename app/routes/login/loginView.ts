@@ -2,7 +2,8 @@
  * Created by cghislai on 28/08/15.
  */
 
-import {Component, View, FORM_DIRECTIVES} from 'angular2/angular2';
+import {Component} from 'angular2/core';
+import {FORM_DIRECTIVES} from 'angular2/common';
 import {Router, RouterLink} from 'angular2/router';
 
 import {AppHeader} from '../../components/app/header/appHeader';
@@ -16,9 +17,7 @@ import {MD5} from '../../components/utils/md5';
 
 
 @Component({
-    selector: "loginView"
-})
-@View({
+    selector: "login-view",
     templateUrl: './routes/login/loginView.html',
     styleUrls: ['./routes/login/loginView.css'],
     directives: [FORM_DIRECTIVES, RouterLink, AppHeader, FormMessage, RequiredValidator]

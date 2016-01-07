@@ -1,8 +1,8 @@
 <div class="formPage pageContent">
     <h1 class="pageTitle">Édition du point de vente</h1>
 
-    <posEditComponent *ng-if="pos != null"
+    <pos-edit-component *ngIf="pos != null"
              [pos]="pos"
              (saved)="onSaved($event)"
-             (cancelled)="onCancelled()"></posEditComponent>
+             (cancelled)="onCancelled()"></pos-edit-component>
 </div>

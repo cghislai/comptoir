@@ -1,37 +1,37 @@
-<div [ng-switch]="column.name">
-    <template [ng-switch-when]=" 'id'">
+<div [ngSwitch]="column.name">
+    <template [ngSwitchWhen]=" 'id'">
         <span class="id">
             {{ balance.id }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'account'">
+    <template [ngSwitchWhen]=" 'account'">
         <span class="account">
             {{ balance.account.name }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'dateTime'">
+    <template [ngSwitchWhen]=" 'dateTime'">
         <span class="dateTime">
             {{ balance.dateTime | date:'ddMMyyyy HHmm' }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'balance'">
+    <template [ngSwitchWhen]=" 'balance'">
         <span class="balance">
             {{ balance.balance | currency:'EUR':true:'.2-2' }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'comment'">
+    <template [ngSwitchWhen]=" 'comment'">
         <span class="comment">
            {{ balance.comment }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'closed'">
+    <template [ngSwitchWhen]=" 'closed'">
         <span class="closed">
-              <i class="fa fa-check" *ng-if="!balance.closed"></i>
-              <i class="fa fa-times" *ng-if="balance.closed"></i>
+              <i class="fa fa-check" *ngIf="!balance.closed"></i>
+              <i class="fa fa-times" *ngIf="balance.closed"></i>
         </span>
     </template>
-    <template [ng-switch-when]=" 'type'">
-        <template [ng-switch-when]=" 'action_remove'">
+    <template [ngSwitchWhen]=" 'type'">
+        <template [ngSwitchWhen]=" 'action_remove'">
         <span class="action remove">
             <a class="actionIcon"
                (click)="onColumnAction(balance, column, $event)">

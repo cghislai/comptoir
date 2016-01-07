@@ -1,7 +1,8 @@
 /**
  * Created by cghislai on 31/07/15.
  */
-import {Component, View, NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
+import {Component} from 'angular2/core';
+import {NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/common';
 import {Router} from 'angular2/router';
 
 import {LocalItem} from '../../../client/localDomain/item';
@@ -18,10 +19,7 @@ import {Paginator} from '../../../components/utils/paginator/paginator';
 import * as Immutable from 'immutable';
 
 @Component({
-    selector: 'productList'
-})
-
-@View({
+    selector: 'product-list',
     templateUrl: './routes/items/list/listView.html',
     styleUrls: ['./routes/items/list/listView.css'],
     directives: [NgFor, NgIf, Paginator, FORM_DIRECTIVES, ItemList]

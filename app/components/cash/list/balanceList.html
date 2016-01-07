@@ -2,30 +2,30 @@
     <table class="dataTable">
         <thead [hidden]="!headersVisible">
         <tr>
-            <th *ng-for="#col of columns"
+            <th *ngFor="#col of columns"
                 [class.right]="col.alignRight"
                 [class.center]="col.alignCenter">
-                    <span *ng-if="col.title !== null">
+                    <span *ngIf="col.title !== null">
                         {{ col.title.get(language.locale) }}
                     </span>
             </th>
         </tr>
         </thead>
         <tbody>
-        <tr *ng-for="#balance of balances"
+        <tr *ngFor="#balance of balances"
             [class.selectable]="rowSelectable"
             (click)="onBalanceClick(account, $event)"
             [attr.focusable]="rowSelectable">
-            <td *ng-for="#col of columns"
+            <td *ngFor="#col of columns"
                 width="{{ col.weight * columnWeightToPercentage}}%"
                 [class.right]="col.alignRight"
                 [class.center]="col.alignCenter">
-                <balanceColumn class="column"
+                <balance-column class="column"
                         (action)="onColumnAction($event)"
                         [balance]="balance"
                         [column]="col"
                         [lang]="language">
-                </balanceColumn>
+                </balance-column>
             </td>
         </tr>
         </tbody>

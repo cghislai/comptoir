@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 07/08/15.
  */
-import {Inject} from 'angular2/angular2';
+import {Inject} from 'angular2/core';
 
 import {Auth, Registration, AuthFactory} from '../client/domain/auth';
 import {LocalAuth, LocalAuthFactory, NewAuth} from '../client/localDomain/auth';

@@ -1,7 +1,8 @@
 /**
  * Created by cghislai on 05/08/15.
  */
-import {Component, View, NgFor, NgIf, FORM_DIRECTIVES, EventEmitter, OnInit} from 'angular2/angular2';
+import {Component, EventEmitter, OnInit} from 'angular2/core';
+import {NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/common';
 
 import {Pos} from '../../../client/domain/pos';
 
@@ -18,11 +19,9 @@ import {FormMessage} from '../../utils/formMessage/formMessage';
 
 
 @Component({
-    selector: 'posEditComponent',
+    selector: 'pos-edit-component',
     inputs: ['pos'],
-    outputs: ['saved', 'cancelled']
-})
-@View({
+    outputs: ['saved', 'cancelled'],
     templateUrl: './components/pos/edit/editPos.html',
     styleUrls: ['./components/pos/edit/editPos.css'],
     directives: [NgFor, NgIf, FORM_DIRECTIVES, LangSelect, LocalizedDirective,
@@ -51,7 +50,7 @@ export class PossEditComponent implements OnInit {
         this.appLanguage = language;
     }
 
-    onInit() {
+    ngOnInit() {
         this.posModel = this.pos;
     }
 

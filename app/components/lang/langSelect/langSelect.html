@@ -1,6 +1,6 @@
-<div class="langSelect">
-    <span *ng-if="!dropDown">
-        <span *ng-for="#lang of allLanguages">
+<div class="lang-select">
+    <span *ngIf="!dropDown">
+        <span *ngFor="#lang of allLanguages">
             <input type="radio" [name]="getId('lang')"
                    [checked]="lang.locale == selectedLanguage.locale"
                    (change)="onLanguageSelected(lang)"
@@ -11,8 +11,8 @@
         </span>
     </span>
 
-    <select (change)="onLanguageSelected($event)" *ng-if="dropDown">
-        <option *ng-for="#lang of allLanguages"
+    <select (change)="onLanguageSelected($event)" *ngIf="dropDown">
+        <option *ngFor="#lang of allLanguages"
                 [value]="lang.locale"
                 [attr.id]="getId(lang.locale)"
                 [selected]="lang.locale == selectedLanguage.locale">

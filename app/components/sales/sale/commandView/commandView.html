@@ -1,12 +1,12 @@
 <div class="commandView">
-    <commandViewHeader [no-input]="noInput"
-                       [validated]="validated || noInput "
-                       (validate-changed)="onValidateChanged($event)"></commandViewHeader>
+    <command-view-header [noInput]="noInput"
+                         [validated]="validated || noInput "
+                         (validateChanged)="onValidateChanged($event)"></command-view-header>
 
-    <commandViewTable [no-input]="noInput"
-                      [validated]="validated || noInput"
-                      [items]="activeSaleService.saleItemsResult.list"
-                      [sale]="activeSaleService.sale"
-                      (item-removed)="onItemRemoved($event)"></commandViewTable>
+    <command-view-table [noInput]="noInput"
+                        [validated]="validated || noInput"
+                        [items]="activeSaleService.saleItemsResult.list"
+                        [sale]="activeSaleService.sale"
+                        (itemRemoved)="onItemRemoved($event)"></command-view-table>
 
 </div>

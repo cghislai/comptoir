@@ -2,7 +2,8 @@
  * Created by cghislai on 28/08/15.
  */
 
-import {Component, View, NgIf} from 'angular2/angular2';
+import {Component} from 'angular2/core';
+import {NgIf} from 'angular2/common';
 import {Router, RouteParams, Location} from 'angular2/router';
 
 import {LocalSale} from '../../../client/localDomain/sale';
@@ -19,10 +20,8 @@ import {PayView} from '../../../components/sales/sale/payView/payView';
 import {PosSelect} from '../../../components/pos/posSelect/posSelect';
 
 @Component({
-    selector: 'saleView',
-    bindings: [ActiveSaleService]
-})
-@View({
+    selector: 'sale-view',
+    bindings: [ActiveSaleService],
     templateUrl: './routes/sales/sale/saleView.html',
     styleUrls: ['./routes/sales/sale/saleView.css'],
     directives: [ItemListView, CommandView, PayView, NgIf, PosSelect]
@@ -58,7 +57,7 @@ export class SaleView {
         this.navigatingWithinSale = false;
     }
 
-    onActivate() {
+    routerOnActivate() {
         return this.findSale()
             .then((sale)=> {
                 if (sale.closed) {

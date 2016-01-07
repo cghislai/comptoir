@@ -1,26 +1,26 @@
-<appHeader title="Nouveau compte" inactive="true">
-</appHeader>
+<app-header title="Nouveau compte" inactive="true">
+</app-header>
 <div class="registerView pageContent">
     <h1 class="pageTitle">Création d'un nouveau compte</h1>
 
-    <form (submit)="doRegister($event)" #register-form="form">
+    <form (submit)="doRegister($event)" #registerForm="form">
         <h2>Compagnie</h2>
 
         <div class="table">
             <div>
                 <label for="editLanguageInput">Langue</label>
-                <langSelect id="editLanguageInput"
-                            [display-language]="appLanguage"
-                            [selected-language]="editLanguage"
-                            (language-changed)="editLanguage = $event"
-                            ng-control="editLanguage"></langSelect>
+                <lang-select id="editLanguageInput"
+                            [displayLanguage]="appLanguage"
+                            [selectedLanguage]="editLanguage"
+                            (languageChanged)="editLanguage = $event"
+                            ngControl="editLanguage"></lang-select>
             </div>
             <div>
                 <label for="companyName">Nom</label>
                 <span>
                     <input type="text" id="companyName"
                            localized [language]="editLanguage"
-                           [locale-texts]="editingCompany.name"
+                           [localeTexts]="editingCompany.name"
                            required>
                 </span>
             </div>
@@ -29,7 +29,7 @@
                 <span>
                     <input type="text" id="companyDescription"
                            localized [language]="editLanguage"
-                           [locale-texts]="editingCompany.description"
+                           [localeTexts]="editingCompany.description"
                            required>
                 </span>
             </div>
@@ -43,28 +43,28 @@
             <div>
                 <label for="employeeLanguage">Langue</label>
                 <span>
-                    <langSelect id="employeeLanguage"
-                                [display-language]="appLanguage"
-                                [selected-language]="editingEmployee.language"
-                                (language-changed)="editingEmployee.language = $event"></langSelect>
+                    <lang-select id="employeeLanguage"
+                                [displayLanguage]="appLanguage"
+                                [selectedLanguage]="editingEmployee.language"
+                                (languageChanged)="editingEmployee.language = $event"></lang-select>
                 </span>
             </div>
             <div>
                 <label for="firstName">Prénom</label>
                 <span>
                     <input type="text" id="firstName"
-                           [(ng-model)]="editingEmployee.firstName"
-                           ng-contorl="firstName" validate-required>
-                    <formMessage for="firstName" check-errors="['required']"></formMessage>
+                           [(ngModel)]="editingEmployee.firstName"
+                           ngControl="firstName" validate-required>
+                    <form-message for="firstName" check-errors="['required']"></form-message>
                 </span>
             </div>
             <div>
                 <label for="lastName">Nom</label>
                 <span>
                     <input type="text" id="lastName"
-                           [(ng-model)]="editingEmployee.lastName"
-                           ng-contorl="lastName" validate-required>
-                    <formMessage for="lastName" check-errors="['required']"></formMessage>
+                           [(ngModel)]="editingEmployee.lastName"
+                           ngControl="lastName" validate-required>
+                    <form-message for="lastName" check-errors="['required']"></form-message>
                 </span>
             </div>
         </div>
@@ -75,9 +75,9 @@
                 <label for="login">Login</label>
                 <span>
                     <input type="text" id="login"
-                           [(ng-model)]="editingEmployee.login"
-                           ng-contorl="login" validate-required>
-                    <formMessage for="login" check-errors="['required']"></formMessage>
+                           [(ngModel)]="editingEmployee.login"
+                           ngControl="login" validate-required>
+                    <form-message for="login" check-errors="['required']"></form-message>
                 </span>
             </div>
 
@@ -85,9 +85,9 @@
                 <label for="password">Mot de passe</label>
                 <span>
                     <input type="text" id="password"
-                           [(ng-model)]="password"
-                           ng-contorl="password" validate-required>
-                    <formMessage for="password" check-errors="['required', 'passwordTooShort']"></formMessage>
+                           [(ngModel)]="password"
+                           ngControl="password" validate-required>
+                    <form-message for="password" check-errors="['required', 'passwordTooShort']"></form-message>
                 </span>
             </div>
         </div>

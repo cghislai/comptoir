@@ -2,7 +2,7 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Inject} from 'angular2/angular2';
+import {Inject} from 'angular2/core';
 
 import {AttributeDefinition, AttributeDefinitionRef, AttributeDefinitionClient, AttributeDefinitionFactory} from '../client/domain/attributeDefinition';
 

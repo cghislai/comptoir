@@ -1,15 +1,15 @@
-<appHeader title="Produits">
-    <appTab [selectable]="true" [active]="isActive('./list')">
-        <a [router-link]="['./List']">Liste</a>
-    </appTab>
-    <appTab [selectable]="true" [active]="isActive('./import')">
-        <a [router-link]="['./Import']">Importer</a>
-    </appTab>
-    <appTab [selectable]="true">
-        <a [router-link]="['./Edit/EditItem', {itemId: 'new'}]">Nouveau</a>
-    </appTab>
-    <appTab [selectable]="false" [active]="isActive('./edit')">
+<app-header title="Produits">
+    <app-tab [selectable]="true" [active]="isActive('./list')">
+        <a [routerLink]="['./List']">Liste</a>
+    </app-tab>
+    <app-tab [selectable]="true" [active]="isActive('./import')">
+        <a [routerLink]="['./Import']">Importer</a>
+    </app-tab>
+    <app-tab [selectable]="true">
+        <a [routerLink]="['./Edit/EditItem', {itemId: 'new'}]">Nouveau</a>
+    </app-tab>
+    <app-tab [selectable]="false" [active]="isActive('./edit')">
         <a>Édition</a>
-    </appTab>
-</appHeader>
+    </app-tab>
+</app-header>
 <router-outlet></router-outlet>

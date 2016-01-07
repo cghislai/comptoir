@@ -2,8 +2,8 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, NgIf, EventEmitter,
-    FORM_DIRECTIVES, ChangeDetectionStrategy} from 'angular2/angular2';
+import {Component, EventEmitter,ChangeDetectionStrategy} from 'angular2/core';
+import {NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/common';
 import * as Immutable from 'immutable';
 
 import {LocalSale} from '../../../../client/localDomain/sale';
@@ -19,12 +19,10 @@ import {AuthService} from '../../../../services/auth';
 import {FastInput} from '../../../utils/fastInput';
 
 @Component({
-    selector: 'commandViewHeader',
+    selector: 'command-view-header',
     inputs: ['noInput', 'validated'],
     outputs: ['validateChanged'],
-    changeDetection: ChangeDetectionStrategy.Default
-})
-@View({
+    changeDetection: ChangeDetectionStrategy.Default,
     templateUrl: './components/sales/sale/commandView/header.html',
     styleUrls: ['./components/sales/sale/commandView/commandView.css'],
     directives: [FastInput, NgIf, FORM_DIRECTIVES]
@@ -109,12 +107,10 @@ export class CommandViewHeader {
 
 
 @Component({
-    selector: 'commandViewTable',
+    selector: 'command-view-table',
     inputs: ['noInput', 'validated', 'items', 'sale'],
     outputs: ['itemRemoved'],
-    changeDetection: ChangeDetectionStrategy.OnPush
-})
-@View({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './components/sales/sale/commandView/table.html',
     styleUrls: ['./components/sales/sale/commandView/commandView.css'],
     directives: [FastInput, NgIf, NgFor, FORM_DIRECTIVES]
@@ -367,12 +363,10 @@ export class CommandViewTable {
 
 // The component
 @Component({
-    selector: 'commandView',
+    selector: 'command-view',
     outputs: ['saleEmptied', 'validateChanged'],
     inputs: ['noInput', 'validated'],
-    changeDetection: ChangeDetectionStrategy.Default
-})
-@View({
+    changeDetection: ChangeDetectionStrategy.Default,
     templateUrl: './components/sales/sale/commandView/commandView.html',
     styleUrls: ['./components/sales/sale/commandView/commandView.css'],
     directives: [CommandViewHeader, CommandViewTable]

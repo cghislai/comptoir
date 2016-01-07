@@ -1,13 +1,12 @@
 /**
  * Created by cghislai on 28/08/15.
  */
-import {Component, View, NgForm,  AbstractControl,  Host} from 'angular2/angular2';
+import {Component, Host} from 'angular2/core';
+import {NgForm,  AbstractControl} from 'angular2/common';
 
 @Component({
-    selector: 'formMessage',
-    inputs: ['controlPath: for', 'checkErrors', 'message', 'error', 'info', 'locale']
-})
-@View({
+    selector: 'form-message',
+    inputs: ['controlPath: for', 'checkErrors', 'message', 'error', 'info', 'locale'],
     templateUrl: './components/utils/formMessage/formMessage.html',
     styleUrls: ['./components/utils/formMessage/formMessage.css']
 })

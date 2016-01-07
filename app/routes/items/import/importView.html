@@ -1,10 +1,7 @@
 <div class="pageContent">
     <h1 class="pageTitle">Importer des produits</h1>
 
-
-
-
-    <form #f="form" (ng-submit)="onSubmit()"
+    <form #f="form" (ngSubmit)="onSubmit()"
           enctype="multipart/form-data" >
 
         <input type="file" id="file" accept="*/*" #file-input
@@ -19,7 +16,7 @@
                 Choisir un fichier
             </span>
         </div>
-        <div class="fileInfo"*ng-if="toUploadFile != null">
+        <div class="fileInfo"*ngIf="toUploadFile != null">
             <h2 >Fichier à importer</h2>
             <table><tr>
                 <td><label>Nom:</label></td>

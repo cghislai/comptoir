@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 06/08/15.
  */
-import {Inject} from 'angular2/angular2';
+import {Inject} from 'angular2/core';
 
 import {LocalMoneyPile, LocalMoneyPileFactory} from '../client/localDomain/moneyPile';
 import {MoneyPileClient, MoneyPile, MoneyPileRef, MoneyPileSearch} from '../client/domain/moneyPile';

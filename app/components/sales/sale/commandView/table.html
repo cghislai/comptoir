@@ -12,7 +12,7 @@
 
 
     <tbody>
-        <tr *ng-for="#saleItem of items"
+        <tr *ngFor="#saleItem of items"
             #row
             class="saleItem">
 
@@ -28,7 +28,7 @@
                 </div>
                 <div class="description">
                     <span class="attributeValue"
-                          *ng-for="#attr of saleItem.itemVariant.attributeValues">
+                          *ngFor="#attr of saleItem.itemVariant.attributeValues">
                           <span class="def">
                             {{ attr.attributeDefinition.name.get(language.locale) }}
                         </span>
@@ -46,9 +46,9 @@
                        [class.nolink]="validated">
                        {{ saleItem.comment.get(language.locale) }}
                 </a>
-                <span *ng-if="editingItem == saleItem && editingComment">
-                    <input [initial-value]="getComment(saleItem)"
-                        (fast-change)="onItemCommentChange($event)"
+                <span *ngIf="editingItem == saleItem && editingComment">
+                    <input [initialValue]="getComment(saleItem)"
+                        (fastChange)="onItemCommentChange($event)"
                         (cancelled)="cancelEdits()"
                         type="text"
                         size="14" fast-input/>
@@ -77,19 +77,19 @@
                 </a>
             </span>
             <span class="editQuantity"
-                  *ng-if="editingQuantity && editingItem == saleItem">
-                  <input [initial-value]="editingItem.quantity"
+                  *ngIf="editingQuantity && editingItem == saleItem">
+                  <input [initialValue]="editingItem.quantity"
                     [validator]="validateQuantity"
-                    (fast-change)="onItemQuantityChange($event)"
+                    (fastChange)="onItemQuantityChange($event)"
                     (cancelled)="cancelEdits()"
                     type="number" min="1" step="1"
                     size="4" fast-input>
             </span>
             <span class="editPrice"
-                  *ng-if="editingPrice && editingItem == saleItem">
-                  <input [initial-value]="(editingItem.vatExclusive * (1 + editingItem.vatRate)) | number:'.2-2'"
+                  *ngIf="editingPrice && editingItem == saleItem">
+                  <input [initialValue]="(editingItem.vatExclusive * (1 + editingItem.vatRate)) | number:'.2-2'"
                     [validator]="validatePrice"
-                    (fast-change)="onItemPriceChange($event)"
+                    (fastChange)="onItemPriceChange($event)"
                     (cancelled)="cancelEdits()"
                     type="number" min="0.01" step="0.01"
                     size="6" fast-input> €
@@ -105,10 +105,10 @@
                -{{ ( saleItem.discountRatio * 100) | number:'.0' }}%
         </a>
         <span class="editDiscount"
-              *ng-if="isEditingDiscount(saleItem)">
-            <input [initial-value]="saleItem.discountRatio * 100"
+              *ngIf="isEditingDiscount(saleItem)">
+            <input [initialValue]="saleItem.discountRatio * 100"
                 [validator]="validateDiscount"
-                (fast-change)="onItemDiscountChange($event)"
+                (fastChange)="onItemDiscountChange($event)"
                 (cancelled)="cancelEdits()"
                 type="number" min="1" max="100" step="1"
                 size="2" fast-input/>

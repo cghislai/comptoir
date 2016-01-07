@@ -2,9 +2,8 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, NgIf, NgSwitch, NgSwitchWhen,
-    ChangeDetectionStrategy, OnInit,
-    EventEmitter, ViewEncapsulation} from 'angular2/angular2';
+import {Component, ChangeDetectionStrategy, OnInit, EventEmitter, ViewEncapsulation} from 'angular2/core';
+import {NgFor, NgIf, NgSwitch, NgSwitchWhen} from 'angular2/common';
 
 import {LocalAccount} from '../../../client/localDomain/account';
 
@@ -20,12 +19,10 @@ import * as Immutable from 'immutable';
  * Column component
  */
 @Component({
-    selector: 'accountColumn',
+    selector: 'account-column',
     inputs: ['account', 'column', 'lang'],
     outputs: ['action'],
-    changeDetection: ChangeDetectionStrategy.OnPush
-})
-@View({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './components/account/list/accountColumn.html',
     styleUrls: ['./components/account/list/accountList.css'],
     directives: [NgIf, NgSwitch, NgSwitchWhen, FocusableDirective],
@@ -54,11 +51,8 @@ export class AccountColumnComponent {
 @Component({
     selector: 'accountList',
     inputs: ['accounts', 'columns', 'rowSelectable', 'headersVisible'],
-    outputs: ['rowClicked', 'columnAction'],
-    changeDetection: ChangeDetectionStrategy.OnPush
-})
-
-@View({
+    outputs: ['rowClicked', 'onActivate() {'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './components/account/list/accountList.html',
     styleUrls: ['./components/account/list/accountList.css'],
     directives: [NgFor, NgIf, FocusableDirective, AccountColumnComponent]
@@ -68,7 +62,7 @@ export class AccountList implements OnInit {
     // properties
     accounts:Immutable.List<LocalAccount>;
     columns:Immutable.List<AccountColumn>;
-    accountSelectable:boolean;
+    rowSelectable:boolean;
     headersVisible:boolean;
     language:Language;
     columnWeightToPercentage:number;
@@ -80,7 +74,7 @@ export class AccountList implements OnInit {
         this.language = authService.getEmployeeLanguage();
     }
 
-    onInit() {
+    ngOnInit() {
         this.calcColumnWeightFactor();
     }
     calcColumnWeightFactor() {

@@ -2,9 +2,8 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, NgIf, NgSwitch, NgSwitchWhen,
-    ChangeDetectionStrategy, OnInit,
-    EventEmitter, ViewEncapsulation} from 'angular2/angular2';
+import {Component,    ChangeDetectionStrategy, OnInit,    EventEmitter, ViewEncapsulation} from 'angular2/core';
+import {NgFor, NgIf, NgSwitch, NgSwitchWhen} from 'angular2/common';
 
 import {LocalItemVariant, LocalItemVariantFactory} from '../../../client/localDomain/itemVariant';
 import {Pricing} from '../../../client/domain/itemVariant';
@@ -22,12 +21,10 @@ import * as Immutable from 'immutable';
  * Column component
  */
 @Component({
-    selector: 'itemVariantColumn',
+    selector: 'item-variant-column',
     inputs: ['itemVariant', 'column', 'lang'],
     outputs: ['action'],
-    changeDetection: ChangeDetectionStrategy.OnPush
-})
-@View({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './components/itemVariant/list/itemVariantColumn.html',
     styleUrls: ['./components/itemVariant/list/itemVariantList.css'],
     directives: [NgIf, NgFor, NgSwitch, NgSwitchWhen, FocusableDirective],
@@ -50,7 +47,7 @@ export class ItemVariantColumnComponent {
         return LocalItemVariantFactory.getPricingLabel(pricing).get(this.lang.locale);
     }
 
-    getVariantPrice(itemVariant: LocalItemVariant) {
+    getVariantPrice(itemVariant:LocalItemVariant) {
         return LocalItemVariantFactory.calcPrice(itemVariant, true);
     }
 }
@@ -61,13 +58,10 @@ export class ItemVariantColumnComponent {
  */
 
 @Component({
-    selector: 'itemVariantList',
+    selector: 'item-variant-list',
     inputs: ['items', 'columns', 'rowSelectable', 'headersVisible'],
     outputs: ['rowClicked', 'columnAction'],
-    changeDetection: ChangeDetectionStrategy.OnPush
-})
-
-@View({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './components/itemVariant/list/itemVariantList.html',
     styleUrls: ['./components/itemVariant/list/itemVariantList.css'],
     directives: [NgFor, NgIf, FocusableDirective, ItemVariantColumnComponent]
@@ -89,7 +83,7 @@ export class ItemVariantList implements OnInit {
         this.language = authService.getEmployeeLanguage();
     }
 
-    onInit() {
+    ngOnInit() {
         this.calcColumnWeightFactor();
     }
 

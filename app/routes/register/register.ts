@@ -1,7 +1,8 @@
 /**
  * Created by cghislai on 07/08/15.
  */
-import {Component, View, FORM_DIRECTIVES, NgFor} from 'angular2/angular2';
+import {Component} from 'angular2/core';
+import {FORM_DIRECTIVES, NgFor} from 'angular2/common';
 import {Router, RouterLink} from 'angular2/router';
 
 import {AppHeader} from '../../components/app/header/appHeader';
@@ -20,9 +21,7 @@ import {AuthService} from '../../services/auth';
 import {ErrorService} from '../../services/error';
 
 @Component({
-    selector: 'registerView'
-})
-@View({
+    selector: 'register-view',
     templateUrl: './routes/register/register.html',
     styleUrls: ['./routes/register/register.css'],
     directives: [FORM_DIRECTIVES, NgFor,  RouterLink, AppHeader, FormMessage,

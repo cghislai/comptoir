@@ -1,10 +1,10 @@
 <div class="pageContent">
     <h1 class="pageTitle">Édition de la variante</h1>
 
-    <editItemVariantComponent
-            *ng-if="itemVariant != null"
-            [item-variant]="itemVariant"
+    <edit-item-variant-component
+            *ngIf="itemVariant != null"
+            [itemVariant]="itemVariant"
             (saved)="onSaved($event)"
             (cancelled)="onCancelled()">
-    </editItemVariantComponent>
+    </edit-item-variant-component>
 </div>

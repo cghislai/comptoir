@@ -2,9 +2,9 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, NgIf, NgSwitch, NgSwitchWhen,
-    ChangeDetectionStrategy, OnInit,
-    EventEmitter, ViewEncapsulation} from 'angular2/angular2';
+import {Component, ChangeDetectionStrategy, OnInit,
+    EventEmitter, ViewEncapsulation} from 'angular2/core';
+import {NgFor, NgIf, NgSwitch, NgSwitchWhen} from 'angular2/common';
 
 import {LocalItem} from '../../../client/localDomain/item';
 
@@ -20,12 +20,10 @@ import * as Immutable from 'immutable';
  * Column component
  */
 @Component({
-    selector: 'itemColumn',
+    selector: 'item-column',
     inputs: ['item', 'column', 'lang'],
     outputs: ['action'],
-    changeDetection: ChangeDetectionStrategy.OnPush
-})
-@View({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './components/item/list/itemColumn.html',
     styleUrls: ['./components/item/list/itemList.css'],
     directives: [NgIf, NgSwitch, NgSwitchWhen, FocusableDirective],
@@ -52,13 +50,10 @@ export class ItemColumnComponent {
  */
 
 @Component({
-    selector: 'itemList',
+    selector: 'item-list',
     inputs: ['items', 'columns', 'rowSelectable', 'headersVisible'],
     outputs: ['rowClicked', 'columnAction'],
-    changeDetection: ChangeDetectionStrategy.OnPush
-})
-
-@View({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './components/item/list/itemList.html',
     styleUrls: ['./components/item/list/itemList.css'],
     directives: [NgFor, NgIf, FocusableDirective, ItemColumnComponent]
@@ -80,7 +75,7 @@ export class ItemList implements OnInit {
         this.language = authService.getEmployeeLanguage();
     }
 
-    onInit() {
+    ngOnInit() {
         this.calcColumnWeightFactor();
     }
 

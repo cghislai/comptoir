@@ -1,21 +1,21 @@
 <div class="app">
 
-    <div *ng-if="loginRequired && !loggedIn">
+    <div *ngIf="loginRequired">
         <p>Votre session a expiré</p>
-        <a [router-link]="['/Login']">Cliquez ici</a> pour vous reconnecter.
+        <a [routerLink]="['/Login']">Cliquez ici</a> pour vous reconnecter.
     </div>
-    <div *ng-if="loggedIn || loginRequired == false">
+    <div *ngIf="loginRequired == false">
         <router-outlet></router-outlet>
     </div>
 
-    <dialogview modal="true" closable="true" title="Erreur" *ng-if="errorService.hasError"
+    <dialogview modal="true" closable="true" title="Erreur" *ngIf="errorService.hasError"
                 (close)="errorService.dismissError()">
-        <p [inner-html]="errorService.errorHeader">
+        <p [innerHtml]="errorService.errorHeader">
         </p>
         <p class="errorMessage"
-           [inner-html]="errorService.errorContent">
+           [innerHtml]="errorService.errorContent">
         </p>
-        <p [inner-html]="errorService.errorFooter">
+        <p [innerHtml]="errorService.errorFooter">
         </p>
     </dialogview>
 </div>

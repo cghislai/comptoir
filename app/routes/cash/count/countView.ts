@@ -1,7 +1,8 @@
 /**
  * Created by cghislai on 02/08/15.
  */
-import {Component, View, NgIf, NgFor} from 'angular2/angular2';
+import {Component} from 'angular2/core';
+import {NgIf, NgFor} from 'angular2/common';
 
 import {LocalAccount} from '../../../client/localDomain/account';
 import {LocalBalance} from '../../../client/localDomain/balance';
@@ -24,9 +25,7 @@ import {PosSelect} from '../../../components/pos/posSelect/posSelect';
 import {BalanceCountComponent} from '../../../components/cash/balance/countComponent';
 
 @Component({
-    selector: 'countCashView'
-})
-@View({
+    selector: 'count-cash-view',
     templateUrl: './routes/cash/count/countView.html',
     styleUrls: ['./routes/cash/count/countView.css'],
     directives: [NgIf, NgFor, PosSelect, BalanceCountComponent]

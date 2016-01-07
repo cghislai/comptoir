@@ -7,26 +7,26 @@
 
     <div class="topActions">
         <span class="input">
-            <input [(ng-model)]="searchRequest.search.multiSearch" autofocus
+            <input [(ngModel)]="searchRequest.search.multiSearch" autofocus
                    placeholder="Filtrer les produits"
                    (input)="handleFilterKeyUp($event)">
         </span>
     </div>
 
-    <paginator *ng-if="searchResult != undefined"
-               [total-count]="searchResult.count"
-               [page-size]="itemsPerPage"
-               show-prev-next-link="true" show-first-last-link="true"
-               (page-change)="onPageChanged($event)"></paginator>
+    <paginator *ngIf="searchResult != undefined"
+               [totalCount]="searchResult.count"
+               [pageSize]="itemsPerPage"
+               [showPrevNextLink]="true" [showFirstLastLink]="true"
+               (pageChange)="onPageChanged($event)"></paginator>
 
     <itemList
-            *ng-if="searchResult != undefined"
+            *ngIf="searchResult != undefined"
             [items]="searchResult.list"
             [columns]="columns"
-            [row-selectable]="true"
-            [headers-visible]="true"
-            (column-action)="onColumnAction($event)"
-            (row-clicked)="doEditItem($event)">
+            [rowSelectable]="true"
+            [headersVisible]="true"
+            (columnAction)="onColumnAction($event)"
+            (rowClicked)="doEditItem($event)">
 
     </itemList>
 </div>

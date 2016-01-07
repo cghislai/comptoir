@@ -1,7 +1,8 @@
 /**
  * Created by cghislai on 05/08/15.
  */
-import {Component, View, NgIf, ChangeDetectionStrategy} from 'angular2/angular2';
+import {Component, ChangeDetectionStrategy} from 'angular2/core';
+import {NgIf} from 'angular2/common';
 import {RouteParams, Router, RouterLink, OnActivate} from 'angular2/router';
 
 import {LocalItem, NewItem} from '../../../client/localDomain/item';
@@ -23,10 +24,8 @@ import * as Immutable from 'immutable';
 
 
 @Component({
-    selector: 'editItem',
-    changeDetection: ChangeDetectionStrategy.Default
-})
-@View({
+    selector: 'edit-item',
+    changeDetection: ChangeDetectionStrategy.Default,
     templateUrl: './routes/items/edit/editView.html',
     styleUrls: ['./routes/items/edit/editView.css'],
     directives: [ItemEditComponent, NgIf, RouterLink]
@@ -51,7 +50,7 @@ export class ItemEditView implements OnActivate {
         this.routeParams = routeParams;
     }
 
-    onActivate() {
+    routerOnActivate() {
         this.findItem(this.routeParams);
     }
 

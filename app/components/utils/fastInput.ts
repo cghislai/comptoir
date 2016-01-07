@@ -2,7 +2,7 @@
  * Created by cghislai on 23/08/15.
  */
 
-import {Directive, ElementRef, EventEmitter, OnInit} from 'angular2/angular2';
+import {Directive, ElementRef, EventEmitter, OnInit} from 'angular2/core';
 
 
 @Directive({
@@ -22,8 +22,8 @@ export class FastInput implements OnInit {
     static CANCEL_EVENT = new Event('cancel');
 
     validator:(any)=>boolean;
-    fastChange:EventEmitter;
-    cancelled:EventEmitter;
+    fastChange;
+    cancelled;
     initialValue:any;
     elementRef:ElementRef;
     validateOnBlur:boolean = false;
@@ -45,7 +45,7 @@ export class FastInput implements OnInit {
         };
     }
 
-    onInit() {
+    ngOnInit() {
         if (this.initialValue != null) {
             this.elementRef.nativeElement.value = this.initialValue;
         }

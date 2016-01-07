@@ -2,7 +2,7 @@
  * Created by cghislai on 28/08/15.
  */
 
-import {Component, View} from 'angular2/angular2';
+import {Component} from 'angular2/core';
 import {RouteConfig,RouterOutlet,RouterLink, Location} from 'angular2/router';
 
 import {AppHeader} from '../../components/app/header/appHeader';
@@ -13,16 +13,13 @@ import {AccountsListView} from './list/listView';
 import {AccountsEditView} from './edit/editView';
 
 @Component({
-    selector: 'accountsView'
-})
-@View({
+    selector: 'accounts-view',
     templateUrl: './routes/accounts/accountsView.html',
     directives: [AppHeader, AppMenu, AppTab, RouterOutlet, RouterLink]
 })
 @RouteConfig([
-    {path: '/', redirectTo: '/List'},
     {path: '/edit/:id', component: AccountsEditView, as: 'Edit'},
-    {path: '/list', component: AccountsListView, as: 'List'}
+    {path: '/list', component: AccountsListView, as: 'List', useAsDefault: true}
 ])
 export class AccountsView {
     location:Location;

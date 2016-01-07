@@ -1,7 +1,8 @@
 /**
  * Created by cghislai on 31/07/15.
  */
-import {Component, View, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
+import {Component} from 'angular2/core';
+import {NgIf, FORM_DIRECTIVES} from 'angular2/common';
 import {Router} from 'angular2/router';
 
 import {LocalSale} from '../../../client/localDomain/sale';
@@ -19,10 +20,7 @@ import {Paginator} from '../../../components/utils/paginator/paginator';
 import {SaleListComponent, SaleColumn} from '../../../components/sales/list/saleList';
 
 @Component({
-    selector: 'salesActiveView'
-})
-
-@View({
+    selector: 'sales-active-view',
     templateUrl: './routes/sales/actives/listView.html',
     styleUrls: ['./routes/sales/actives/listView.css'],
     directives: [SaleListComponent, NgIf, Paginator, FORM_DIRECTIVES]

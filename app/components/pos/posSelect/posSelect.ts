@@ -2,7 +2,8 @@
  * Created by cghislai on 31/08/15.
  */
 
-import {Component, View, NgIf, NgFor, EventEmitter} from 'angular2/angular2';
+import {Component,EventEmitter} from 'angular2/core';
+import {NgIf, NgFor} from 'angular2/common';
 
 import {Pos, PosSearch} from '../../../client/domain/pos';
 import {SearchResult, SearchRequest} from '../../../client/utils/search';
@@ -14,11 +15,9 @@ import {ErrorService} from '../../../services/error';
 import * as Immutable from 'immutable';
 
 @Component({
-    selector: 'posSelect',
+    selector: 'pos-select',
     outputs: ['posChanged'],
-    inputs: ['editable']
-})
-@View({
+    inputs: ['editable'],
     templateUrl: './components/pos/posSelect/posSelect.html',
     directives: [NgFor, NgIf]
 })

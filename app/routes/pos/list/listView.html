@@ -8,17 +8,17 @@
     <div class="topActions">
     </div>
 
-    <paginator [total-count]="searchResult.count"
-               [page-size]="posPerPage"
+    <paginator [totalCount]="searchResult.count"
+               [pageSize]="posPerPage"
                show-prev-next="true" show-first-last="true"
-               (page-change)="onPageChanged($event)"></paginator>
+               (pageChange)="onPageChanged($event)"></paginator>
 
-    <posList [pos-list]="searchResult.list"
-            [columns]="columns"
-            [row-selectable]="true"
-            [headers-visible]="true"
-            (column-action)="onColumnAction($event)"
-            (row-clicked)="doEditPos($event)"></posList>
+    <pos-list [posList]="searchResult.list"
+              [columns]="columns"
+              [rowSelectable]="true"
+              [headersVisible]="true"
+              (columnAction)="onColumnAction($event)"
+              (rowClicked)="doEditPos($event)"></pos-list>
 
 
 </div>

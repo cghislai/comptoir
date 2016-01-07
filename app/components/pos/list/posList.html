@@ -2,29 +2,29 @@
     <table class="dataTable">
         <thead [hidden]="!headersVisible">
         <tr>
-            <th *ng-for="#col of columns"
+            <th *ngFor="#col of columns"
                 [class.right]="col.alignRight"
                 [class.center]="col.alignCenter">
-                    <span *ng-if="col.title !== null">
+                    <span *ngIf="col.title !== null">
                         {{ col.title.get(language.locale) }}
                     </span>
             </th>
         </tr>
         </thead>
         <tbody>
-        <tr *ng-for="#pos of posList"
+        <tr *ngFor="#pos of posList"
             [class.selectable]="rowSelectable"
             (click)="onPosClick(pos, $event)"
             [attr.focusable]="rowSelectable">
-            <td *ng-for="#col of columns"
+            <td *ngFor="#col of columns"
                 [class.right]="col.alignRight"
                 [class.center]="col.alignCenter">
-                <posColumn class="column"
+                <pos-column class="column"
                         (action)="onColumnAction($event)"
                         [pos]="pos"
                         [column]="col"
                         [lang]="language">
-                </posColumn>
+                </pos-column>
             </td>
         </tr>
         </tbody>

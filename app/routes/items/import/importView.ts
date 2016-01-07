@@ -1,7 +1,8 @@
 /**
  * Created by cghislai on 14/08/15.
  */
-import {Component, View, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
+import {Component} from 'angular2/core';
+import {NgIf, FORM_DIRECTIVES} from 'angular2/common';
 import {Router, RouterLink} from 'angular2/router';
 
 import {CompanyRef, CompanyClient} from '../../../client/domain/company';
@@ -12,9 +13,7 @@ import {AuthService} from '../../../services/auth';
 
 
 @Component({
-    selector: 'importItems'
-})
-@View({
+    selector: 'import-items',
     templateUrl: './routes/items/import/importView.html',
     styleUrls: ['./routes/items/import/importView.css'],
     directives: [NgIf, FORM_DIRECTIVES, RouterLink]

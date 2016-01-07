@@ -1,13 +1,12 @@
 /**
  * Created by cghislai on 28/08/15.
  */
-import {Component, View} from 'angular2/angular2';
+import {Component} from 'angular2/core';
 import {AppMenu} from './menu/appMenu';
+
 @Component({
-    selector: 'appHeader',
-    inputs: ['title', 'inactive']
-})
-@View({
+    selector: 'app-header',
+    inputs: ['title', 'inactive'],
     templateUrl: './components/app/header/appHeader.html',
     styleUrls: ['./components/app/header/appHeader.css'],
     directives: [AppMenu]

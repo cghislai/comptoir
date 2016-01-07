@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 06/08/15.
  */
-import {Inject} from 'angular2/angular2';
+import {Inject} from 'angular2/core';
 
 import {LocalItemVariantSale, LocalItemVariantSaleFactory} from '../client/localDomain/itemVariantSale';
 import {ItemVariantSaleClient, ItemVariantSale, ItemVariantSaleRef, ItemVariantSaleSearch} from '../client/domain/itemVariantSale';

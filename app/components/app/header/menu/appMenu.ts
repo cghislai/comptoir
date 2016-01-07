@@ -1,28 +1,24 @@
 /**
  * Created by cghislai on 28/08/15.
  */
-import {Component, View} from 'angular2/angular2';
-import {RouterLink, Location} from 'angular2/router';
+import {Component} from 'angular2/core';
+import {RouterLink} from 'angular2/router';
 
 @Component({
-    selector: 'appMenu',
-    inputs: ['title', 'inactive']
-})
-@View({
+    selector: 'app-menu',
+    inputs: ['title', 'inactive'],
     templateUrl: './components/app/header/menu/appMenu.html',
     styleUrls: ['./components/app/header/menu/appMenu.css'],
     directives: [RouterLink]
 })
 export class AppMenu {
-    location:Location;
     title:string;
     inactive:boolean;
     menuVisible:boolean;
 
     closeMenuListener;
 
-    constructor(location:Location) {
-        this.location = location;
+    constructor() {
         this.closeMenuListener = (event) => {
             if (this.menuVisible) {
                 this.closeMenu();
@@ -55,7 +51,8 @@ export class AppMenu {
     }
 
     isActive(path:string) {
-        var locationPath = this.location.path();
-        return locationPath.indexOf(path) === 0;
+        //var locationPath = this.location.path();
+        //return locationPath.indexOf(path) === 0;
+        return false; // FIXME
     }
 }

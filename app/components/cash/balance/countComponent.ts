@@ -1,7 +1,8 @@
 /**
  * Created by cghislai on 29/09/15.
  */
-import {Component, View, NgFor, NgIf, EventEmitter, ChangeDetectionStrategy} from 'angular2/angular2';
+import {Component, EventEmitter, ChangeDetectionStrategy} from 'angular2/core';
+import {NgFor, NgIf} from 'angular2/common';
 
 import {LocalAccount} from '../../../client/localDomain/account';
 import {LocalBalance, NewBalance} from '../../../client/localDomain/balance';
@@ -24,9 +25,7 @@ import * as Immutable from 'immutable';
     selector: 'balanceCountComponent',
     inputs: ['account'],
     outputs: ['validated', 'cancelled'],
-    changeDetection: ChangeDetectionStrategy.Default
-})
-@View({
+    changeDetection: ChangeDetectionStrategy.Default,
     templateUrl: './components/cash/balance/countComponent.html',
     styleUrls: ['./components/cash/balance/countComponent.css'],
     directives: [NgFor, NgIf, MoneyPileCountComponent, FastInput]
@@ -57,7 +56,7 @@ export class BalanceCountComponent {
 
     }
 
-    onInit() {
+    ngOnInit() {
         this.moneyPiles = Immutable.List(ALL_CASH_TYPES)
             .map((cashType)=> {
                 return NewMoneyPile({

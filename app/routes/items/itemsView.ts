@@ -2,7 +2,7 @@
  * Created by cghislai on 28/08/15.
  */
 
-import {Component, View} from 'angular2/angular2';
+import {Component} from 'angular2/core';
 import {RouteConfig,RouterOutlet,RouterLink, Location} from 'angular2/router';
 
 import {AppHeader} from '../../components/app/header/appHeader';
@@ -13,16 +13,13 @@ import {ItemsListView} from './list/listView';
 import {ItemsImportView} from './import/importView';
 
 @Component({
-    selector: 'itemsView'
-})
-@View({
+    selector: 'items-view',
     templateUrl: './routes/items/itemsView.html',
     directives: [AppHeader, AppTab, RouterOutlet, RouterLink]
 })
 @RouteConfig([
-    {path: '/', redirectTo: '/list'},
     {path: '/edit/...', component: EditItemRedirect, as: 'Edit'},
-    {path: '/list', component: ItemsListView, as: 'List'},
+    {path: '/list', component: ItemsListView, as: 'List', useAsDefault: true},
     {path: '/import', component: ItemsImportView, as: 'Import'}
 ])
 export class ItemsView {

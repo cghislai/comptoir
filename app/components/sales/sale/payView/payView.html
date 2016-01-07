@@ -54,7 +54,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ng-for="#entry of accountingEntries" class="payItem"
+        <tr *ngFor="#entry of accountingEntries" class="payItem"
                 [hidden]="isEditing(entry)">
             <td>
                 <span>
@@ -90,21 +90,21 @@
         </tfoot>
     </table>
 
-    <div class="editMethod" *ng-if="editingEntry != null"  [hidden]="noInput">
+    <div class="editMethod" *ngIf="editingEntry != null"  [hidden]="noInput">
         <span class="method">{{ editingEntry.account.description.get(language.locale) }}</span>
         <span class="amount">
             Montant: <input #amount
-                            [initial-value]="editingEntry.amount"
+                            [initialValue]="editingEntry.amount"
                             type="number" min="0.01" step="0.01"
                             [validator]="validateEntryAmount"
-                            (fast-change)="applyEditingEntry($event)"
+                            (fastChange)="applyEditingEntry($event)"
                             (cancelled)="cancelEditEntry()"
                             fast-input> €
         </span>
     </div>
 
     <div class="addMethod" [hidden]="noInput">
-        <div *ng-for="#account of accountsResult.list"
+        <div *ngFor="#account of accountsResult.list"
              class="boxedHoverableLink"
              (click)="addAccountingEntry(account)">
             {{ account.description.get(language.locale) }}

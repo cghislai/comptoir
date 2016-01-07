@@ -2,7 +2,7 @@
  * Created by cghislai on 08/09/15.
  */
 
-import {Directive,ElementRef} from 'angular2/angular2';
+import {Directive,ElementRef} from 'angular2/core';
 
 import {Language, LanguageFactory, LocaleTexts} from '../../client/utils/lang';
 import * as Immutable from 'immutable';
@@ -10,7 +10,7 @@ import * as Immutable from 'immutable';
 /**
  * A localized input directive. Add the 'localized' attribute on a input/textarea field to use.
  * Bind the 'language' property to a Language instance.
- * Bind the 'locale-texts' property to a LcoaleTexts instance.
+ * Bind the 'localeTexts' property to a LcoaleTexts instance.
  * If the 'required' attribute is set, a value in at least 1 language is required.
  */
 @Directive({

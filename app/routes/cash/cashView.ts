@@ -2,7 +2,7 @@
  * Created by cghislai on 28/08/15.
  */
 
-import {Component, View} from 'angular2/angular2';
+import {Component} from 'angular2/core';
 import {RouteConfig,RouterOutlet,RouterLink, Location} from 'angular2/router';
 
 import {AppHeader} from '../../components/app/header/appHeader';
@@ -13,15 +13,12 @@ import {CountCashView} from './count/countView';
 import {CashHistoryView} from './history/historyView';
 
 @Component({
-    selector: 'cashView'
-})
-@View({
+    selector: 'cash-view',
     templateUrl: './routes/cash/cashView.html',
     directives: [AppHeader, AppTab, RouterOutlet, RouterLink]
 })
 @RouteConfig([
-    {path: '/', redirectTo: '/Count'},
-    {path: '/count', component: CountCashView, as: 'Count'},
+    {path: '/count', component: CountCashView, as: 'Count', useAsDefault: true},
     {path: '/history', component: CashHistoryView, as: 'History'}
 ])
 export class CashView {

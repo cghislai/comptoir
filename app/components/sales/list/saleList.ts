@@ -2,9 +2,8 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, NgIf, NgSwitch, NgSwitchWhen,
-    ChangeDetectionStrategy,
-    EventEmitter, ViewEncapsulation} from 'angular2/angular2';
+import {Component, View,ChangeDetectionStrategy,EventEmitter, ViewEncapsulation} from 'angular2/core';
+import { NgFor, NgIf, NgSwitch, NgSwitchWhen} from 'angular2/common';
 
 import {LocalSale} from '../../../client/localDomain/sale';
 import {Language, LocaleTexts, LocaleTextsFactory} from '../../../client/utils/lang';
@@ -20,12 +19,10 @@ import * as Immutable from 'immutable';
  * Column component
  */
 @Component({
-    selector: 'saleColumn',
+    selector: 'sale-column',
     inputs: ['sale', 'column', 'lang'],
     outputs: ['action'],
-    changeDetection: ChangeDetectionStrategy.OnPush
-})
-@View({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './components/sales/list/saleColumn.html',
     styleUrls: ['./components/sales/list/saleList.css'],
     directives: [NgIf, NgSwitch, NgSwitchWhen],
@@ -52,13 +49,10 @@ export class SaleColumnComponent {
  */
 
 @Component({
-    selector: 'saleList',
+    selector: 'sale-list',
     inputs: ['sales', 'columns', 'rowSelectable', 'headersVisible'],
     outputs: ['saleClicked', 'columnAction'],
-    changeDetection: ChangeDetectionStrategy.OnPush
-})
-
-@View({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './components/sales/list/saleList.html',
     styleUrls: ['./components/sales/list/saleList.css'],
     directives: [NgFor, NgIf, FocusableDirective, SaleColumnComponent]

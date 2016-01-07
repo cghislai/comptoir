@@ -1,12 +1,12 @@
-<appHeader title="Points de vente">
-    <appTab [selectable]="true" [active]="isActive('./list')">
-        <a [router-link]="['./List']">Liste</a>
-    </appTab>
-    <appTab [selectable]="true">
-        <a [router-link]="['./Edit', {id: 'new'}]">Nouveau</a>
-    </appTab>
-    <appTab [selectable]="false" [active]="isActive('./edit')">
+<app-header title="Points de vente">
+    <app-tab [selectable]="true" [active]="isActive('./list')">
+        <a [routerLink]="['./List']">Liste</a>
+    </app-tab>
+    <app-tab [selectable]="true">
+        <a [routerLink]="['./Edit', {id: 'new'}]">Nouveau</a>
+    </app-tab>
+    <app-tab [selectable]="false" [active]="isActive('./edit')">
         <a>Édition</a>
-    </appTab>
-</appHeader>
+    </app-tab>
+</app-header>
 <router-outlet></router-outlet>

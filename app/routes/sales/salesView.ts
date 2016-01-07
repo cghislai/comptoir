@@ -2,7 +2,7 @@
  * Created by cghislai on 28/08/15.
  */
 
-import {Component, View} from 'angular2/angular2';
+import {Component} from 'angular2/core';
 import {RouteConfig,RouterOutlet,RouterLink, Location} from 'angular2/router';
 
 import {SaleView} from './sale/saleView';
@@ -14,16 +14,13 @@ import {AppMenu} from '../../components/app/header/menu/appMenu';
 import {AppTab} from '../../components/app/header/tab/appTab';
 
 @Component({
-    selector: 'salesView'
-})
-@View({
+    selector: 'sales-view',
     templateUrl: './routes/sales/salesView.html',
     directives: [AppHeader, AppMenu, AppTab, RouterOutlet, RouterLink]
 })
 @RouteConfig([
-    {path: '/', redirectTo: 'Actives'},
     {path: '/sale/:id', component: SaleView, as: 'Sale'},
-    {path: '/actives', component: ActiveSalesView, as: 'Actives'},
+    {path: '/actives', component: ActiveSalesView, as: 'Actives', useAsDefault: true},
     {path: '/history', component: SaleHistoryView, as: 'History'}
 ])
 export class SalesView {
@@ -39,7 +36,4 @@ export class SalesView {
         return locationPath.indexOf(fullPath) >= 0;
     }
 
-    canReuse() {
-       return false;
-    }
 }

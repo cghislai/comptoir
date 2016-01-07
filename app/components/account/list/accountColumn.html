@@ -1,40 +1,40 @@
-<div [ng-switch]="column.name">
-    <template [ng-switch-when]=" 'id'">
+<div [ngSwitch]="column.name">
+    <template [ngSwitchWhen]=" 'id'">
         <span class="id">
             {{ account.id }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'accountingNumber'">
+    <template [ngSwitchWhen]=" 'accountingNumber'">
         <span class="accountingNumber">
             {{ account.accountingNumber }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'iban'">
+    <template [ngSwitchWhen]=" 'iban'">
         <span class="iban">
             {{ account.iban }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'bic'">
+    <template [ngSwitchWhen]=" 'bic'">
         <span class="bic">
             {{ account.bic }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'name'">
+    <template [ngSwitchWhen]=" 'name'">
         <span class="name">
            {{ account.name }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'description'">
+    <template [ngSwitchWhen]=" 'description'">
         <span class="description">
            {{ account.description[lang.locale] }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'type'">
+    <template [ngSwitchWhen]=" 'type'">
         <span class="type">
             {{ account.accountTypeLabel[lang.locale] }}
         </span>
     </template>
-     <template [ng-switch-when]=" 'action_remove'">
+     <template [ngSwitchWhen]=" 'action_remove'">
         <span class="action remove">
             <a class="actionIcon"
                (click)="onColumnAction(account, column, $event)">

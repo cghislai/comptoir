@@ -1,56 +1,56 @@
-<div [ng-switch]="column.name">
-    <template [ng-switch-when]=" 'id'">
+<div [ngSwitch]="column.name">
+    <template [ngSwitchWhen]=" 'id'">
         <span class="id">
             {{ item.id }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'ref'">
+    <template [ngSwitchWhen]=" 'ref'">
         <span class="ref">
             {{ item.reference }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'name'">
+    <template [ngSwitchWhen]=" 'name'">
         <span class="name">
             {{ item.name.get(lang.locale) }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'desc'">
+    <template [ngSwitchWhen]=" 'desc'">
         <span class="desc"
-                [inner-html]="item.description.get(lang.locale)">
+                [innerHtml]="item.description.get(lang.locale)">
         </span>
     </template>
-    <template [ng-switch-when]=" 'name_and_description'">
+    <template [ngSwitchWhen]=" 'name_and_description'">
         <div class="name">
             {{ item.name.get(lang.locale) }}
         </div>
-        <div class="desc" [inner-html]="item.description.get(lang.locale)">
+        <div class="desc" [innerHtml]="item.description.get(lang.locale)">
         </div>
     </template>
-    <template [ng-switch-when]=" 'picture'">
+    <template [ngSwitchWhen]=" 'picture'">
         <span class="picture">
-           <img [src]="item.mainPicture.dataURI" *ng-if="item.mainPicture?.dataURI !== null">
+           <img [src]="item.mainPicture.dataURI" *ngIf="item.mainPicture?.dataURI !== null">
 
-            <div class="imagePlaceover" *ng-if="item.mainPicture?.dataURI === null">
+            <div class="imagePlaceover" *ngIf="item.mainPicture?.dataURI === null">
                 <i class="fa fa-book"></i>
             </div>
         </span>
     </template>
-    <template [ng-switch-when]=" 'vat_exclusive'">
+    <template [ngSwitchWhen]=" 'vat_exclusive'">
         <span class="vat_exclusive price">
            {{ item.vatExclusive | currency:'EUR':true:'.2-2' }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'vat_rate'">
+    <template [ngSwitchWhen]=" 'vat_rate'">
         <span class="vat_rate price">
             {{ ( item.vatRate * 100 )| number:'.0' }} %
         </span>
     </template>
-    <template [ng-switch-when]=" 'vat_inclusive'">
+    <template [ngSwitchWhen]=" 'vat_inclusive'">
         <span class="vat_inclusive price">
             {{ ( item.vatExclusive * ( 1 + item.vatRate) ) | currency:'EUR':true:'.2-2' }}
         </span>
     </template>
-    <template [ng-switch-when]=" 'action_remove'">
+    <template [ngSwitchWhen]=" 'action_remove'">
         <span class="action remove">
             <a class="actionIcon"
                (click)="onColumnAction(item, column, $event)">

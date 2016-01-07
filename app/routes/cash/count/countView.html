@@ -7,8 +7,8 @@
                 Point de vente
             </div>
             <div class="value pos">
-                <posSelect [editable]="true"
-                        (pos-changed)="onPosChanged($event)"></posSelect>
+                <pos-select [editable]="true"
+                            (posChanged)="onPosChanged($event)"></pos-select>
             </div>
 
             <div class="title">
@@ -18,14 +18,15 @@
                 <div [hidden]="accountSearchResult.count < 2">
                     <select (input)="onAccountChanged($event)" [value]="accountId">
                         <option [value]="null" [hidden]="account != null"
-                                [selected]="accountId == null">Choisissez un compte</option>
-                        <option *ng-for="#accountOption of accountSearchResult.list" [value]="accountOption.id"
+                                [selected]="accountId == null">Choisissez un compte
+                        </option>
+                        <option *ngFor="#accountOption of accountSearchResult.list" [value]="accountOption.id"
                                 [selected]="accountId == accountOption.id">
                             {{ accountOption.description[appLanguage.locale] }}
                         </option>
                     </select>
                 </div>
-                <div *ng-if="account != null" [hidden]="accountSearchResult.count > 1">
+                <div *ngIf="account != null" [hidden]="accountSearchResult.count > 1">
                     {{ account.description[appLanguage.locale] }}
                 </div>
             </div>
@@ -33,7 +34,7 @@
             <div class="title" [hidden]="lastBalance == null">
                 Dernière validation
             </div>
-            <div class="value" *ng-if="lastBalance != null">
+            <div class="value" *ngIf="lastBalance != null">
                 <span class="title light">
                     {{ lastBalance.dateTime | date:'dd/MM/yyyy HH:mm' }}
                 </span>
@@ -45,11 +46,11 @@
     </div>
 
     <div class="mainPane rightPane">
-        <balanceCountComponent *ng-if="account != null"
-                       [account]="account"
-                       (validated)="onBalanceValidated($event)"
-                       (cancelled)="onBalanceCancelled()">
+        <balance-count-component *ngIf="account != null"
+                                 [account]="account"
+                                 (validated)="onBalanceValidated($event)"
+                                 (cancelled)="onBalanceCancelled()">
 
-        </balanceCountComponent>
+        </balance-count-component>
     </div>
 </div>

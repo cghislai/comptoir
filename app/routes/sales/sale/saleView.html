@@ -1,35 +1,35 @@
 <div class="saleView">
     <div class="header">
         <span>Point de vente :</span>
-        <span><posSelect (pos-changed)="onPosChanged($event)"
-                [attr.editable]="!saleClosed"></posSelect></span>
+        <span><pos-select (posChanged)="onPosChanged($event)"
+                [attr.editable]="!saleClosed"></pos-select></span>
     </div>
     <div class="wrapper">
         <div class="saleViewContainer" [class.slide-left]="payStep"  [class.no-anim]="saleClosed || newSale">
             <div class="itemList" >
                 <div>
-                    <itemListView id="saleItemList"
-                                  (variant-selected)="onItemClicked($event)"></itemListView>
+                    <item-list-view id="saleItemList"
+                                  (variantSelected)="onItemClicked($event)"></item-list-view>
                 </div>
             </div>
             <div class="commandView" >
                 <div>
-                    <commandView id="saleCommandView"  *ng-if="activeSaleService.sale != null"
-                                 (sale-emptied)="onSaleEmptied()"
-                                 (validate-changed)="onValidateChanged($event)"
+                    <command-view id="saleCommandView"  *ngIf="activeSaleService.sale != null"
+                                 (saleEmptied)="onSaleEmptied()"
+                                 (validateChanged)="onValidateChanged($event)"
                                  [validated]="payStep"
-                                 [no-input]="saleClosed"></commandView>
+                                 [noInput]="saleClosed"></command-view>
                 </div>
             </div>
             <div class="payView">
                 <div>
-                    <payView id="salePayView"  *ng-if="activeSaleService.sale != null"
-                             [sale-total]="activeSaleService.getSaleTotalAmount()"
-                             [paid-amount]="activeSaleService.paidAmount"
+                    <pay-view id="salePayView"  *ngIf="activeSaleService.sale != null"
+                             [saleTotal]="activeSaleService.getSaleTotalAmount()"
+                             [paidAmount]="activeSaleService.paidAmount"
                              [sale]="activeSaleService.sale"
-                             [accounting-entries]="activeSaleService.accountingEntriesResult.list"
+                             [accountingEntries]="activeSaleService.accountingEntriesResult.list"
                              (paid)="onCommandPaid()"
-                             [no-input]="saleClosed"></payView>
+                             [noInput]="saleClosed"></pay-view>
                 </div>
             </div>
         </div>

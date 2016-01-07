@@ -1,7 +1,8 @@
 /**
  * Created by cghislai on 06/08/15.
  */
-import {Component, View, NgIf, FORM_DIRECTIVES} from 'angular2/angular2';
+import {Component} from 'angular2/core';
+import {NgIf, FORM_DIRECTIVES} from 'angular2/common';
 import {Router} from 'angular2/router';
 
 
@@ -21,10 +22,7 @@ import {PosList, PosColumn} from '../../../components/pos/list/posList';
 import * as Immutable from 'immutable';
 
 @Component({
-    selector: 'posListView'
-})
-
-@View({
+    selector: 'pos-list-view',
     templateUrl: './routes/pos/list/listView.html',
     styleUrls: ['./routes/pos/list/listView.css'],
     directives: [NgIf, Paginator, FORM_DIRECTIVES, PosList]

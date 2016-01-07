@@ -2,8 +2,8 @@
  * Created by cghislai on 29/07/15.
  */
 
-import {Component, View, NgFor, NgIf, NgSwitch, NgSwitchWhen, ChangeDetectionStrategy,
-    EventEmitter, ViewEncapsulation} from 'angular2/angular2';
+import {Component, ChangeDetectionStrategy, ViewEncapsulation, EventEmitter} from 'angular2/core';
+import {NgFor, NgIf, NgSwitch, NgSwitchWhen} from 'angular2/common';
 
 import {Pos} from '../../../client/domain/pos';
 
@@ -19,12 +19,10 @@ import * as Immutable from 'immutable';
  * Column component
  */
 @Component({
-    selector: 'posColumn',
+    selector: 'pos-column',
     inputs: ['pos', 'column', 'lang'],
     outputs: ['action'],
-    changeDetection: ChangeDetectionStrategy.OnPush
-})
-@View({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './components/pos/list/posColumn.html',
     styleUrls: ['./components/pos/list/posList.css'],
     directives: [NgIf, NgFor, NgSwitch, NgSwitchWhen],
@@ -50,13 +48,10 @@ export class PosColumnComponent {
  */
 
 @Component({
-    selector: 'posList',
+    selector: 'pos-list',
     inputs: ['posList', 'columns', 'rowSelectable', 'headersVisible'],
     outputs: ['rowClicked', 'columnAction'],
-    changeDetection: ChangeDetectionStrategy.OnPush
-})
-
-@View({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './components/pos/list/posList.html',
     styleUrls: ['./components/pos/list/posList.css'],
     directives: [NgFor, NgIf, FocusableDirective, PosColumnComponent]

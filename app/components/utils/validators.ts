@@ -1,7 +1,8 @@
 /**
  * Created by cghislai on 31/08/15.
  */
-import {Directive, Control, Provider, NG_VALIDATORS} from 'angular2/angular2';
+import {Directive, Provider} from 'angular2/core';
+import {Control, NG_VALIDATORS} from 'angular2/common';
 
 function requiredValidator(c: Control) {
     if(c.value == null || c.value.length <= 0) {

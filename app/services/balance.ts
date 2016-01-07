@@ -1,7 +1,7 @@
 /**
  * Created by cghislai on 06/08/15.
  */
-import {Inject} from 'angular2/angular2';
+import {Inject} from 'angular2/core';
 
 import {LocalBalance, LocalBalanceFactory} from '../client/localDomain/balance';
 import {BalanceClient, Balance, BalanceRef, BalanceSearch} from '../client/domain/balance';

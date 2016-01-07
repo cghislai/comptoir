@@ -1,8 +1,8 @@
 /**
  * Created by cghislai on 05/08/15.
  */
-import {Component, View, NgFor, NgIf, FORM_DIRECTIVES, EventEmitter,
-    OnInit, ChangeDetectionStrategy} from 'angular2/angular2';
+import {Component, EventEmitter,OnInit, ChangeDetectionStrategy} from 'angular2/core';
+import {NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/common';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
 import {LocalPicture, NewPicture} from '../../../client/localDomain/picture';
@@ -32,12 +32,10 @@ import * as Immutable from 'immutable';
 
 
 @Component({
-    selector: 'editItemComponent',
+    selector: 'edit-item-component',
     inputs: ['item'],
     outputs: ['saved', 'cancelled'],
-    changeDetection: ChangeDetectionStrategy.Default
-})
-@View({
+    changeDetection: ChangeDetectionStrategy.Default,
     templateUrl: './components/item/edit/editView.html',
     styleUrls: ['./components/item/edit/editView.css'],
     directives: [NgFor, NgIf, FORM_DIRECTIVES,
@@ -69,11 +67,11 @@ export class ItemEditComponent implements OnInit {
     saved = new EventEmitter();
     cancelled = new EventEmitter();
 
-    router: Router;
+    router:Router;
 
     constructor(itemService:ItemService, errorService:ErrorService, pictureService:PictureService,
                 authService:AuthService, itemVariantService:ItemVariantService,
-                router: Router) {
+                router:Router) {
         this.router = router;
         this.itemService = itemService;
         this.itemVariantService = itemVariantService;
@@ -95,7 +93,7 @@ export class ItemEditComponent implements OnInit {
 
     }
 
-    onInit() {
+    ngOnInit() {
         this.itemJS = this.item.toJS();
         // FIXME: causes Lifecycle tick loops
         // Should probably be handled in the background in a editItemService

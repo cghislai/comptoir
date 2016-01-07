@@ -1,28 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Comptoir</title>
-  <base href="<%= APP_BASE %>">
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body {
-      margin: 0;
-      border: 0;
-      font-family: Helvetica, Arial, sans-serif;
-      font-size: 20px;
-    }
-  </style>
-  <!-- inject:css -->
-  <!-- endinject -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Comptoir</title>
+    <base href="<%= APP_BASE %>">
+    <meta name="description" content="">
+    <style>
+        body {
+            margin: 0;
+            border: 0;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 20px;
+        }
+    </style>
+    <!-- inject:css -->
+    <!-- endinject -->
 </head>
 <body>
 
-  <app>Loading...</app>
-  <!-- inject:js -->
-  <!-- endinject -->
-  <script src="<%= APP_BASE %>init.js?v=<%= VERSION %>"></script>
+<app>
+    <div class="loading" style="height: 100vh; width: 100vw; text-align: center;">
+        <span style="display: inline-block; vertical-align: middle; height: 100%;"></span>
+
+        <div style="display: inline-block; text-align: center; vertical-align: middle; font-size: 3em;">
+            <div style="text-align: center;"><img src="res/img/spinner-2-black.gif" style="width: .5em; margin: .5em;"></div>
+            Loading
+        </div>
+    </div>
+</app>
+<!-- inject:js -->
+<!-- endinject -->
+<script>
+    System.import('bootstrap')
+            .then(function () {
+                console.log('ye');
+            })
+            .catch(function (e) {
+                console.error(e,
+                        'Report this error at  https://github.com/cghislai/comptoir/issues');
+            });
+</script>
 </body>
 </html>

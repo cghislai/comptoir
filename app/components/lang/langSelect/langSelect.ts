@@ -2,8 +2,8 @@
  * Created by cghislai on 20/08/15.
  */
 
-import {Component, View, ChangeDetectionStrategy, NgControl,
-    EventEmitter, NgFor,  NgIf, Attribute, ControlValueAccessor} from 'angular2/angular2';
+import {Component, View, ChangeDetectionStrategy, EventEmitter, Attribute} from 'angular2/core'
+import {NgFor,  NgIf, NgControl,  ControlValueAccessor} from 'angular2/common';
 import {Language, LanguageFactory} from '../../../client/utils/lang';
 import {AuthService} from '../../../services/auth';
 import * as Immutable from 'immutable';
@@ -11,22 +11,20 @@ import * as Immutable from 'immutable';
  * A language selection component.
  */
 @Component({
-    selector: 'langSelect:not([ng-control])',
+    selector: 'lang-select:not([ngControl])',
     inputs: ['displayLanguage', 'selectedLanguage', 'dropDown', 'id'],
     outputs: ['languageChanged'],
-    changeDetection: ChangeDetectionStrategy.OnPush
-})
-@View({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './components/lang/langSelect/langSelect.html',
     styleUrls: ['./components/lang/langSelect/langSelect.html'],
     directives: [NgFor, NgIf]
 })
-export class LangSelect  {
+export class LangSelect {
 
     displayLanguage:Language;
     selectedLanguage:Language;
-    allLanguages: Immutable.List<Language>;
-    languageChanged:EventEmitter = new EventEmitter();
+    allLanguages:Immutable.List<Language>;
+    languageChanged = new EventEmitter();
 
     dropDown:boolean;
     id:string;
@@ -41,39 +39,39 @@ export class LangSelect  {
         this.languageChanged.next(language);
     }
 
-    getId(locale: string) {
-        return this.id+'_'+locale;
+    getId(locale:string) {
+        return this.id + '_' + locale;
     }
 }
 
 @Component({
-    selector: 'langSelect[ng-control]',
+    selector: 'lang-select[ngControl]',
     inputs: ['displayLanguage', 'selectedLanguage', 'dropDown', 'id'],
     outputs: ['languageChanged'],
-    changeDetection: ChangeDetectionStrategy.OnPush
-})
-@View({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './components/lang/langSelect/langSelect.html',
     styleUrls: ['./components/lang/langSelect/langSelect.html'],
     directives: [NgFor, NgIf]
 })
-export class LangSelectControl  implements ControlValueAccessor {
-    onChange: Function;
-    onTouched: Function;
+export class LangSelectControl implements ControlValueAccessor {
+    onChange:Function;
+    onTouched:Function;
 
     displayLanguage:Language;
     selectedLanguage:Language;
-    allLanguages: Immutable.List<Language>;
-    languageChanged:EventEmitter = new EventEmitter();
+    allLanguages:Immutable.List<Language>;
+    languageChanged = new EventEmitter();
 
     dropDown:boolean;
     id:string;
 
-    constructor(authService:AuthService, @Attribute('id') id:string, cd: NgControl) {
+    constructor(authService:AuthService, @Attribute('id') id:string, cd:NgControl) {
         this.id = id;
         this.allLanguages = LanguageFactory.ALL_LANGUAGES;
-        this.onChange = (_) => {};
-        this.onTouched = (_) => {};
+        this.onChange = (_) => {
+        };
+        this.onTouched = (_) => {
+        };
         cd.valueAccessor = this;
     }
 
@@ -83,8 +81,8 @@ export class LangSelectControl  implements ControlValueAccessor {
         this.onChange(language);
     }
 
-    getId(locale: string) {
-        return this.id+'_'+locale;
+    getId(locale:string) {
+        return this.id + '_' + locale;
     }
 
     registerOnChange(fn:any):void {

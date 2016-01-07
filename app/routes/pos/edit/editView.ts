@@ -1,7 +1,8 @@
 /**
  * Created by cghislai on 05/08/15.
  */
-import {Component, View, NgIf} from 'angular2/angular2';
+import {Component} from 'angular2/core';
+import {NgIf} from 'angular2/common';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
 import {Pos} from '../../../client/domain/pos';
@@ -14,9 +15,7 @@ import {LocaleTexts} from '../../../client/utils/lang';
 import {PossEditComponent} from '../../../components/pos/edit/editPos';
 
 @Component({
-    selector: 'editPos'
-})
-@View({
+    selector: 'edit-pos',
     templateUrl: './routes/pos/edit/editView.html',
     styleUrls: ['./routes/pos/edit/editView.css'],
     directives: [NgIf, RouterLink, PossEditComponent]
