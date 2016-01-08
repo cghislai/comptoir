@@ -87,7 +87,7 @@ export class ItemListView {
         this.columns = Immutable.List.of(
             ItemColumn.REFERENCE,
             ItemColumn.PICTURE,
-            ItemColumn.NAME_AND_DESCRIPTION,
+            ItemColumn.NAME,
             ItemColumn.VAT_INCLUSIVE
         );
         this.variantColumns = Immutable.List.of(
