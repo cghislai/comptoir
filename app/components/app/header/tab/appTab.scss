@@ -32,6 +32,9 @@ span.appTab {
       box-shadow: none;
       pointer-events: none;
       tab-index: -1;
+      border-top: solid black 1px;
+      border-left: solid black 1px;
+      border-right: solid black 1px;
 
       &:hover {
         cursor: default;
