@@ -38,36 +38,36 @@ div.appMenu {
       margin: .2em .2em .2em 0;
     }
   }
-}
 
-div#appMenu {
-  &:not([hidden]) {
-    display: inline-block;
-  }
-  position: absolute;
-  left: .5em;
-  top: 2em;
-  margin: .5em;
-  border: .1em solid white;
-  padding:  .5em 1em ;
-  font-size: 1.3em;
-  font-weight: bold;
-  z-index: 3;
-
-  background-color: $blueColor;
-
-  > a {
-    display: block;
-    text-decoration: none;
-    color: white;
-
-    &.active {
-      pointer-events: none;
-      color: $onBlueFocusColor;
-      text-decoration: none;
+  div.app-open-menu {
+    &:not([hidden]) {
+      display: inline-block;
     }
-    &:not(.active):hover {
-      color: $onBlueHoverColor;
+    position: absolute;
+    left: .5em;
+    top: 2em;
+    margin: .5em;
+    border: .1em solid white;
+    padding:  .5em 1em ;
+    font-size: 1.3em;
+    font-weight: bold;
+    z-index: 3;
+
+    background-color: $blueColor;
+
+    > a {
+      display: block;
+      text-decoration: none;
+      color: white;
+
+      &.router-link-active {
+        pointer-events: none;
+        color: $onBlueFocusColor;
+        text-decoration: none;
+      }
+      &:not(.router-link-active):hover {
+        color: $onBlueHoverColor;
+      }
     }
   }
 }

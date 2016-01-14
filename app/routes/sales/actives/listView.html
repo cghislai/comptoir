@@ -13,13 +13,13 @@
     <paginator *ngIf="searchResult != null"
                [totalCount]="searchResult.count"
                [pageSize]="salesPerPage"
-               [showPrevNextLink]="true" [show-first-last-link]="true"
+               [showPrevNextLink]="true" [showFirstLastLink]="true"
                (pageChange)="onPageChanged($event)"></paginator>
-    <saleList [sales]="searchResult.list"
+    <sale-list [sales]="searchResult.list"
               [columns]="columns"
               [rowSelectable]="true"
               [headersVisible]="true"
               (saleClicked)="onSaleClicked($event)"
               (columnAction)="onColumnAction($event)">
-    </saleList>
+    </sale-list>
 </div>

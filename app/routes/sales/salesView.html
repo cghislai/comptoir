@@ -6,10 +6,10 @@
         <a [routerLink]="['./Sale', {id: 'new'}]">Nouvelle</a>
     </app-tab>
     <app-tab  [selectable]="true" [active]="isActive('./actives')">
-        <a [routerLink]=["./Actives"]>En cours</a>
+        <a [routerLink]="['./Actives']">En cours</a>
     </app-tab>
     <app-tab  [selectable]="true" [active]="isActive('./history')">
-        <a [routerLink]=["./History"]>Historique</a>
+        <a [routerLink]="['./History']">Historique</a>
     </app-tab>
 </app-header>
 <router-outlet></router-outlet>

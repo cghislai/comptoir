@@ -49,9 +49,9 @@ export class AccountColumnComponent {
  */
 
 @Component({
-    selector: 'accountList',
+    selector: 'account-list',
     inputs: ['accounts', 'columns', 'rowSelectable', 'headersVisible'],
-    outputs: ['rowClicked', 'onActivate() {'],
+    outputs: ['rowClicked', 'columnAction'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './components/account/list/accountList.html',
     styleUrls: ['./components/account/list/accountList.css'],

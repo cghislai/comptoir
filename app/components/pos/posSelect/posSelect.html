@@ -1,4 +1,3 @@
-
 <form id="posSelectForm" style="display: inline-block;" [hidden]="posList.size == 0">
     <select [value]="pos?.id" [hidden]="posList.size <= 1 || !editable"
             (change)="onPosChanged($event)">
@@ -7,7 +6,7 @@
             {{ posOption.description?.get(language.locale) }}
         </option>
     </select>
-    <span [hidden]="posList.size > 1 || pos === null">
+    <span [hidden]="posList.size > 1 || pos == null">
         <strong>{{ pos?.description?.get(language.locale) }}</strong>
     </span>
 </form>

@@ -67,8 +67,8 @@ export class PosSelect {
 
 
     onPosChanged(event) {
-        var posId:number = event.target.value;
-        var pos = this.posList.valueSeq()
+        var posId:number = parseInt(event.target.value);
+        var pos = this.posList.toSeq()
             .filter((pos)=> {
                 return pos.id === posId;
             })

@@ -1,8 +1,8 @@
 <div class="pageContent">
     <h1 class="pageTitle">Édition du compte</h1>
 
-    <account-edit-component *ngIf="account != null"
-                          [account]="account"
-                          (saved)="onAccountSaved($event)"
-                          (cancelled)="onCancelled()"></account-edit-component>
+    <account-edit *ngIf="account != null"
+                  [account]="account"
+                  (saved)="onAccountSaved($event)"
+                  (cancelled)="onCancelled()"></account-edit>
 </div>

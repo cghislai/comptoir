@@ -1,10 +1,10 @@
 <div class="pageContent">
     <h1 class="pageTitle">Importer des produits</h1>
 
-    <form #f="form" (ngSubmit)="onSubmit()"
+    <form #f="ngForm" (ngSubmit)="onSubmit()"
           enctype="multipart/form-data" >
 
-        <input type="file" id="file" accept="*/*" #file-input
+        <input type="file" id="file" accept="*/*" #fileInput
                name="fileInput"
                (change)="onFileSelected(f, $event)"
                required hidden>

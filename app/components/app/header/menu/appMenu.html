@@ -6,17 +6,12 @@
             {{ title }}
         </h1>
     </a>
-    <div id="appMenu"
+    <div id="appMenu" class="app-open-menu"
          [hidden]="!menuVisible" (click)="closeMenu()">
-        <a [routerLink]="['/Sales/Actives']"
-           [class.active]="isActive('/sales')">Ventes</a>
-        <a [routerLink]="['/Items/List']"
-           [class.active]="isActive('/items')">Produits</a>
-        <a [routerLink]="['/Accounts/List']"
-           [class.active]="isActive('/accounts')">Comptes</a>
-        <a [routerLink]="['/Cash/Count']"
-           [class.active]="isActive('/cash')">Caisse</a>
-        <a [routerLink]="['/Pos/List']"
-           [class.active]="isActive('/pos')">Points de vente</a>
+        <a [routerLink]="['/Sales/Actives']">Ventes</a>
+        <a [routerLink]="['/Items/List']">Produits</a>
+        <a [routerLink]="['/Accounts/List']">Comptes</a>
+        <a [routerLink]="['/Cash/Count']">Caisse</a>
+        <a [routerLink]="['/Pos/List']">Points de vente</a>
     </div>
 </div>

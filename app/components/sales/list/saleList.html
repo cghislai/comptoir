@@ -13,22 +13,22 @@
         </thead>
 
         <tbody>
-            <tr *ngFor="#sale of sales"
-                 [class.selectable]="rowSelectable"
-                (click)="onSaleClick(sale, $event)"
-                 [attr.focusable]="rowSelectable">
-                <td *ngFor="#col of columns"
-                    [class.right]="col.alignRight"
-                    [class.center]="col.alignCenter">
-                    <sale-column class="column"
-                                (action)="onColumnAction($event)"
-                                [sale]="sale"
-                                [column]="col"
-                                [lang]="language">
+        <tr *ngFor="#sale of sales"
+            [class.selectable]="rowSelectable"
+            (click)="onSaleClick(sale, $event)"
+            [attr.focusable]="rowSelectable">
+            <td *ngFor="#col of columns"
+                [class.right]="col.alignRight"
+                [class.center]="col.alignCenter">
+                <sale-column class="column"
+                             (action)="onColumnAction($event)"
+                             [sale]="sale"
+                             [column]="col"
+                             [lang]="language">
 
-                    </sale-column>
-                </td>
-            </tr>
-        </div>
-</div>
+                </sale-column>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>

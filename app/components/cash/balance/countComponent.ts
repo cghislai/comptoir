@@ -22,7 +22,7 @@ import {FastInput} from '../../utils/fastInput';
 import * as Immutable from 'immutable';
 
 @Component({
-    selector: 'balanceCountComponent',
+    selector: 'balance-count-component',
     inputs: ['account'],
     outputs: ['validated', 'cancelled'],
     changeDetection: ChangeDetectionStrategy.Default,

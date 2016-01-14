@@ -43,6 +43,7 @@ export class CountCashView {
 
     accountSearchRequest:SearchRequest<LocalAccount>;
     accountSearchResult:SearchResult<LocalAccount>;
+    paymentAccountList:Immutable.List<LocalAccount>;
     account:LocalAccount;
     accountId:number;
 
@@ -50,7 +51,7 @@ export class CountCashView {
     balanceSearchResult:SearchResult<LocalBalance>;
     lastBalance:LocalBalance;
 
-    appLanguage: Language;
+    appLanguage:Language;
 
     constructor(errorService:ErrorService, balanceService:BalanceService,
                 posService:PosService, accountService:AccountService, authService:AuthService) {
@@ -63,16 +64,15 @@ export class CountCashView {
         this.accountSearchRequest = new SearchRequest<LocalAccount>();
         this.accountSearchResult = new SearchResult<LocalAccount>();
         this.balanceSearchRequest = new SearchRequest<LocalBalance>();
-        this.balanceSearchResult= new SearchResult<LocalBalance>();
+        this.balanceSearchResult = new SearchResult<LocalBalance>();
 
         this.appLanguage = authService.getEmployeeLanguage();
         this.accountId = null;
         this.searchPaymentAccounts();
-        this.searchLastBalance();
     }
 
 
-    searchPaymentAccounts() {
+    searchPaymentAccounts():Promise<any> {
         var accountSearch = new AccountSearch();
         accountSearch.type = AccountType[AccountType.PAYMENT];
         if (this.pos != null) {
@@ -81,11 +81,20 @@ export class CountCashView {
         accountSearch.companyRef = this.authService.getEmployeeCompanyRef();
         this.accountSearchRequest.search = accountSearch;
 
-        this.accountService.search(this.accountSearchRequest)
+        this.accountSearchResult = null;
+        this.paymentAccountList = null;
+        this.accountId = null;
+        this.account = null;
+        this.lastBalance =  null;
+
+        return this.accountService.search(this.accountSearchRequest)
             .then((result:SearchResult<LocalAccount>)=> {
                 this.accountSearchResult = result;
-                if (this.account == null && result.list.size === 1) {
-                    this.setAccount(result.list.get(0));
+                this.paymentAccountList = result.list;
+                if (this.account == null && this.paymentAccountList.size === 1) {
+                    this.setAccount(this.paymentAccountList.get(0));
+                } else if (this.account != null) {
+                    this.searchLastBalance();
                 }
             }).catch((error)=> {
                 this.errorService.handleRequestError(error);
@@ -93,6 +102,9 @@ export class CountCashView {
     }
 
     onPosChanged(pos:Pos) {
+        if (this.pos == pos)  {
+            return;
+        }
         this.pos = pos;
         this.searchPaymentAccounts();
     }

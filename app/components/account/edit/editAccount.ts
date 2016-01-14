@@ -22,7 +22,7 @@ import {FormMessage} from '../../utils/formMessage/formMessage';
 import * as Immutable from 'immutable';
 
 @Component({
-    selector: 'accountEditComponent',
+    selector: 'account-edit',
     inputs: ['account'],
     outputs: ['saved', 'cancelled'],
     templateUrl: './components/account/edit/editAccount.html',

@@ -11,23 +11,26 @@
                             (posChanged)="onPosChanged($event)"></pos-select>
             </div>
 
-            <div class="title">
+            <div class="title" *ngIf="pos != null && paymentAccountList != null">
                 Compte
             </div>
-            <div class="value">
-                <div [hidden]="accountSearchResult.count < 2">
+            <div class="value" *ngIf="pos != null && paymentAccountList != null">
+                <form [hidden]="paymentAccountList.size < 2" >
                     <select (input)="onAccountChanged($event)" [value]="accountId">
                         <option [value]="null" [hidden]="account != null"
                                 [selected]="accountId == null">Choisissez un compte
                         </option>
-                        <option *ngFor="#accountOption of accountSearchResult.list" [value]="accountOption.id"
+                        <option *ngFor="#accountOption of paymentAccountList" [value]="accountOption.id"
                                 [selected]="accountId == accountOption.id">
                             {{ accountOption.description[appLanguage.locale] }}
                         </option>
                     </select>
-                </div>
-                <div *ngIf="account != null" [hidden]="accountSearchResult.count > 1">
+                </form>
+                <div *ngIf="account != null" [hidden]="paymentAccountList.size > 1">
                     {{ account.description[appLanguage.locale] }}
+                </div>
+                <div *ngIf="account == null" [hidden]="paymentAccountList.size > 0">
+                    Aucun compte pour ce point de vente
                 </div>
             </div>
 

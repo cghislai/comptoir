@@ -38,7 +38,7 @@ runSequence(`build.${ENV}`, done)
 
 gulp.task('build', done =>
 runSequence('clean.dist',
-    'tslint',
+    //'tslint',
     'build.jslib',
     'build.sass',
     'build.res',

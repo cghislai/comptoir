@@ -2,7 +2,7 @@
  * Created by cghislai on 28/08/15.
  */
 
-import {Component} from 'angular2/core';
+import {Component, ViewChild} from 'angular2/core';
 import {NgIf} from 'angular2/common';
 import {Router, RouteParams, Location} from 'angular2/router';
 
@@ -41,6 +41,9 @@ export class SaleView {
     payStep:boolean;
 
     language:string;
+
+    @ViewChild(PayView)
+    payView: PayView;
 
     constructor(activeSaleService:ActiveSaleService, errorService:ErrorService,
                 authService:AuthService, saleService:SaleService,
@@ -98,6 +101,11 @@ export class SaleView {
 
     onPosChanged(pos) {
         this.activeSaleService.setPos(pos)
+            .then(()=>{
+                if (this.payView) {
+                    this.payView.fetchAccountList();
+                }
+            })
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
             });

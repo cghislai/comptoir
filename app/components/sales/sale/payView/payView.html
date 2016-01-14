@@ -86,7 +86,6 @@
                 {{ (activeSaleService.paidAmount) | currency:'EUR':true:'.2-2' }}
             </th>
         </tr>
-
         </tfoot>
     </table>
 
@@ -104,7 +103,7 @@
     </div>
 
     <div class="addMethod" [hidden]="noInput">
-        <div *ngFor="#account of accountsResult.list"
+        <div *ngFor="#account of accountList"
              class="boxedHoverableLink"
              (click)="addAccountingEntry(account)">
             {{ account.description.get(language.locale) }}

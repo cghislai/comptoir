@@ -1,6 +1,6 @@
 <div class="pageContent">
 
-    <form #itemForm="form" class="left"
+    <form #itemForm="ngForm" class="left"
           (ngSubmit)="onFormSubmit()"
           enctype="multipart/form-data">
 
@@ -72,7 +72,7 @@
         </div>
     </form>
 
-    <form #attributeForm="form" class="right"
+    <form #attributeForm="ngForm" class="right"
           (ngSubmit)="doAddAttribute()">
         <h3>Attributs</h3>
 

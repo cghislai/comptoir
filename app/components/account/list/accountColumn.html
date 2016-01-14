@@ -34,7 +34,7 @@
             {{ account.accountTypeLabel[lang.locale] }}
         </span>
     </template>
-     <template [ngSwitchWhen]=" 'action_remove'">
+    <template [ngSwitchWhen]=" 'action_remove'">
         <span class="action remove">
             <a class="actionIcon"
                (click)="onColumnAction(account, column, $event)">

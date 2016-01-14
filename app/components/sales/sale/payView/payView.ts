@@ -20,10 +20,10 @@ import {FastInput} from '../../../utils/fastInput';
 import * as Immutable from 'immutable';
 
 @Component({
-    selector: 'payView',
+    selector: 'pay-view',
     outputs: ['paid'],
     inputs: ['saleTotal', 'paidAmount', 'noInput', 'sale', 'accountingEntries'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    changeDetection: ChangeDetectionStrategy.Default,
     templateUrl: './components/sales/sale/payView/payView.html',
     styleUrls: ['./components/sales/sale/payView/payView.css'],
     directives: [NgFor, NgIf, FastInput]
@@ -37,10 +37,10 @@ export class PayView {
     language:Language;
     noInput:boolean;
     saleTotal:number;
-    paidAmount: number;
-    sale: LocalSale;
-    accountingEntries: Immutable.List<LocalAccountingEntry>;
-
+    paidAmount:number;
+    sale:LocalSale;
+    accountingEntries:Immutable.List<LocalAccountingEntry>;
+    accountList:Immutable.List<LocalAccount>;
     paid = new EventEmitter();
 
     constructor(activeSaleService:ActiveSaleService,
@@ -49,6 +49,7 @@ export class PayView {
         this.errorService = errorService;
 
         this.language = authService.getEmployeeLanguage();
+        this.fetchAccountList();
     }
 
     hasSale():boolean {
@@ -59,14 +60,14 @@ export class PayView {
         return this.activeSaleService.accountingEntriesRequest.busy;
     }
 
-    isEditing(entry: LocalAccountingEntry) {
+    isEditing(entry:LocalAccountingEntry) {
         return this.editingEntry != null && this.editingEntry.id === entry.id;
     }
 
-
-    get accountsResult() {
-        return this.activeSaleService.accountsResult;
+    fetchAccountList() {
+        this.accountList = this.activeSaleService.accountsResult.list;
     }
+
 
     get toPayAmount() {
         var total = this.saleTotal - this.activeSaleService.paidAmount;
@@ -75,7 +76,7 @@ export class PayView {
 
 
     addAccountingEntry(account:LocalAccount) {
-        var localAccountingEntryDesc: any = {};
+        var localAccountingEntryDesc:any = {};
         localAccountingEntryDesc.account = account;
         localAccountingEntryDesc.amount = this.toPayAmount;
         localAccountingEntryDesc.company = account.company;

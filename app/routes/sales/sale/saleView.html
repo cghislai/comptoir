@@ -2,7 +2,7 @@
     <div class="header">
         <span>Point de vente :</span>
         <span><pos-select (posChanged)="onPosChanged($event)"
-                [attr.editable]="!saleClosed"></pos-select></span>
+                [editable]="!saleClosed"></pos-select></span>
     </div>
     <div class="wrapper">
         <div class="saleViewContainer" [class.slide-left]="payStep"  [class.no-anim]="saleClosed || newSale">
