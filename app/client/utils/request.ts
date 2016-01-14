@@ -50,7 +50,7 @@ export class ComptoirRequest {
         this.contentType = ComptoirRequest.JSON_MIME;
     }
 
-    get(url:string, authToken:string):Promise<any> {
+    get(url:string, authToken?:string):Promise<any> {
         this.setup('GET', url, authToken);
         return this.run();
     }

@@ -7,6 +7,7 @@ import {Pagination} from './pagination';
 import {ComptoirRequest} from './request';
 import {SearchResult} from './search';
 
+
 export interface WithId {
     id: number;
 }
@@ -36,23 +37,26 @@ export class BasicCacheHandler<T extends WithId> {
         this.cache = {};
     }
 
-    cancelRequest(id: number) {
+    cancelRequest(id:number) {
         var request = this.requestCache[id];
         if (request != null) {
             request.discardRequest();
         }
     }
-    setRequest(id: number, request: ComptoirRequest) {
+
+    setRequest(id:number, request:ComptoirRequest) {
         this.requestCache[id] = request;
     }
-    unsetRequest(id: number) {
+
+    unsetRequest(id:number) {
         delete this.requestCache[id];
     }
 
-    setGetPromise(id: number, promise: Promise<T>) {
+    setGetPromise(id:number, promise:Promise<T>) {
         this.getPromises[id] = promise;
     }
-    unsetGetPromise(id: number) {
+
+    unsetGetPromise(id:number) {
         delete this.getPromises[id];
     }
 }
@@ -63,6 +67,7 @@ export interface BasicClientResourceInfo<T extends WithId> {
     cacheHandler: BasicCacheHandler<T>;
 }
 export class BasicClient<T extends WithId> {
+    static CONFIG_PATH = 'config/services.json';
     resourceInfo:BasicClientResourceInfo<T>;
 
     constructor(resourceInfo:BasicClientResourceInfo<T>) {
@@ -143,7 +148,7 @@ export class BasicClient<T extends WithId> {
         var getPromise = request
             .run()
             .then((response) => {
-                if (response.text == null || response.text.length ===0) {
+                if (response.text == null || response.text.length === 0) {
                     return null;
                 }
                 var entity:T = JSON.parse(response.text, reviver);
@@ -221,7 +226,7 @@ export class BasicClient<T extends WithId> {
         this.resourceInfo.cacheHandler.cancelRequest(id);
         var request = this.getRemoveRequest(id, authToken);
         this.resourceInfo.cacheHandler.setRequest(id, request);
-        return request.run().then(()=>{
+        return request.run().then(()=> {
             this.resourceInfo.cacheHandler.unsetRequest(id);
         });
     }
