@@ -3,9 +3,9 @@
  */
 
 import {Employee} from '../domain/employee';
-import {Company, CompanyRef, CompanyClient, CompanyFactory} from '../domain/company';
+import {Company, CompanyRef} from '../domain/company';
 
-import {LocalCompany, LocalCompanyFactory} from './company';
+import {LocalCompany} from './company';
 
 import * as Immutable from 'immutable';
 
@@ -27,50 +27,9 @@ var EmployeeRecord = Immutable.Record({
     lastName: null,
     locale: null
 });
-export function NewEmployee(desc: any) : LocalEmployee {
-    return <any>EmployeeRecord(desc);
-}
-
 export class LocalEmployeeFactory {
-    static companyClient = new CompanyClient();
 
-    static toLocalEmployee(employee:Employee, authToken:string):Promise<LocalEmployee> {
-        var localEmployeeDesc:any = {};
-        localEmployeeDesc.active = employee.active;
-        localEmployeeDesc.firstName = employee.firstName;
-        localEmployeeDesc.id = employee.id;
-        localEmployeeDesc.lastName = employee.lastName;
-        localEmployeeDesc.locale = employee.locale;
-        localEmployeeDesc.login = employee.login;
-
-        var taskList = [];
-        var companyRef = employee.companyRef;
-        taskList.push(
-            LocalEmployeeFactory.companyClient.getFromCacheOrServer(companyRef.id, authToken)
-                .then((company)=> {
-                    return LocalCompanyFactory.toLocalCompany(company, authToken);
-                }).then((localCompany:LocalCompany)=> {
-                    localEmployeeDesc.company = localCompany;
-                })
-        );
-        return Promise.all(taskList)
-            .then(()=> {
-               return NewEmployee(localEmployeeDesc);
-            });
+    static createNewEmployee(desc:any):LocalEmployee {
+        return <any>EmployeeRecord(desc);
     }
-
-    static fromLocalEmployee(localEmployee:LocalEmployee):Employee {
-        var employee = new Employee();
-        employee.active = localEmployee.active;
-        if (localEmployee.company != null) {
-            employee.companyRef = new CompanyRef(localEmployee.company.id);
-        }
-        employee.firstName = localEmployee.firstName;
-        employee.id = localEmployee.id;
-        employee.lastName = localEmployee.lastName;
-        employee.locale = localEmployee.locale;
-        employee.login = localEmployee.login;
-        return employee;
-    }
-
 }

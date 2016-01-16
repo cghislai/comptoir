@@ -6,20 +6,6 @@
 import {CompanyRef} from './company';
 import {PictureRef} from './picture';
 import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
-import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
-
-
-export class ItemClient extends BasicClient<Item> {
-
-    private static RESOURCE_PATH:string = "/item";
-    constructor() {
-        super(<BasicClientResourceInfo<Item>>{
-            resourcePath: ItemClient.RESOURCE_PATH,
-            jsonReviver: ItemFactory.fromJSONItemReviver,
-            cacheHandler: ItemFactory.cacheHandler
-        });
-    }
-}
 
 export class ItemRef {
     id: number;
@@ -54,8 +40,7 @@ export class ItemSearch {
 }
 
 export class ItemFactory {
-    static cacheHandler = new BasicCacheHandler<Item>();
-    static fromJSONItemReviver = (key, value)=> {
+    static fromJSONReviver = (key, value)=> {
         if (key ==='name' || key ==="description") {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }

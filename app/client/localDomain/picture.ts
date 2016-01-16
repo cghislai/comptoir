@@ -2,10 +2,9 @@
  * Created by cghislai on 01/09/15.
  */
 
-import {Picture, PictureRef} from '../domain/picture';
-import {Company, CompanyRef, CompanyClient, CompanyFactory} from '../domain/company';
 
-import {LocalCompany, LocalCompanyFactory} from './company';
+import {Picture} from '../domain/picture';
+import {LocalCompany} from './company';
 
 import * as Immutable from 'immutable';
 
@@ -23,50 +22,15 @@ var PictureRecord = Immutable.Record({
     contentType: null,
     dataURI: null
 });
-export function NewPicture(desc:any):LocalPicture {
-    return <any>PictureRecord(desc);
-}
 
 export class LocalPictureFactory {
-    static companyClient = new CompanyClient();
 
-    static toLocalPicture(picture:Picture, authToken:string):Promise<LocalPicture> {
-        var localPictureDesc:any = {};
-        localPictureDesc.id = picture.id;
-        localPictureDesc.data = picture.data;
-        localPictureDesc.contentType = picture.contentType;
-        localPictureDesc.dataURI = LocalPictureFactory.toDataURI(picture);
-
-        var taskList = [];
-        var companyRef = picture.companyRef;
-        taskList.push(
-            LocalPictureFactory.companyClient.getFromCacheOrServer(companyRef.id, authToken)
-                .then((company)=> {
-                    return LocalCompanyFactory.toLocalCompany(company, authToken);
-                }).then((localCompany:LocalCompany)=> {
-                    localPictureDesc.company = localCompany;
-                })
-        );
-        return Promise.all(taskList)
-            .then(()=> {
-                return NewPicture(localPictureDesc);
-            });
-    }
-
-    static fromLocalPicture(localPicture:LocalPicture):Picture {
-        var picture = new Picture();
-        picture.id = localPicture.id;
-        picture.companyRef = new CompanyRef(localPicture.company.id);
-        picture.data = localPicture.data;
-        picture.contentType = localPicture.contentType;
-        if (localPicture.dataURI != null) {
-            LocalPictureFactory.fromDataURI(localPicture.dataURI, picture);
-        }
-        return picture;
+    static createNewPicture(desc:any):LocalPicture {
+        return <any>PictureRecord(desc);
     }
 
     static toDataURI(picture:Picture):string {
-        if (picture ===undefined) {
+        if (picture === undefined) {
             return undefined;
         }
         if (picture.contentType !== undefined && picture.data !== undefined
@@ -79,7 +43,7 @@ export class LocalPictureFactory {
     }
 
     static fromDataURI(dataURI:string, picture:Picture) {
-        if (picture ===undefined) {
+        if (picture === undefined) {
             return;
         }
         var contentTypeStartIndex = 5; // 'data:' ...

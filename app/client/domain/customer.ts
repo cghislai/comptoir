@@ -3,20 +3,7 @@
  */
 
 import {CompanyRef} from './company';
-import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
 
-export class CustomerClient extends BasicClient<Customer> {
-
-    private static RESOURCE_PATH:string = "/customer";
-
-    constructor() {
-        super(<BasicClientResourceInfo<Customer>>{
-            resourcePath: CustomerClient.RESOURCE_PATH,
-            jsonReviver: CustomerFactory.fromJSONCustomerReviver,
-            cacheHandler: CustomerFactory.cacheHandler
-        });
-    }
-}
 export class Customer {
     id: number;
     companyRef:CompanyRef;
@@ -46,8 +33,7 @@ export class CustomerSearch {
 }
 
 export class CustomerFactory {
-    static cacheHandler = new BasicCacheHandler<Customer>();
-    static fromJSONCustomerReviver = (key, value)=> {
+    static fromJSONReviver = (key, value)=> {
         return value;
     }
 

@@ -5,7 +5,7 @@ import {Component, ChangeDetectionStrategy} from 'angular2/core';
 import {NgIf} from 'angular2/common';
 import {RouteParams, Router, RouterLink, OnActivate} from 'angular2/router';
 
-import {LocalItem, NewItem} from '../../../client/localDomain/item';
+import {LocalItem, LocalItemFactory} from '../../../client/localDomain/item';
 
 import {CompanyRef} from '../../../client/domain/company';
 import {ItemRef, ItemSearch} from '../../../client/domain/item';
@@ -77,7 +77,7 @@ export class ItemEditView implements OnActivate {
         itemDesc.description = LocaleTextsFactory.toLocaleTexts({});
         itemDesc.name = LocaleTextsFactory.toLocaleTexts({});
         itemDesc.company = this.authService.getEmployeeCompany();
-        this.item = NewItem(itemDesc);
+        this.item = LocalItemFactory.createNewItem(itemDesc);
     }
 
     getItem(id:number) {

@@ -16,7 +16,7 @@ import * as Immutable from 'immutable';
     outputs: ['languageChanged'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './components/lang/langSelect/langSelect.html',
-    styleUrls: ['./components/lang/langSelect/langSelect.html'],
+    styleUrls: ['./components/lang/langSelect/langSelect.css'],
     directives: [NgFor, NgIf]
 })
 export class LangSelect {
@@ -50,7 +50,7 @@ export class LangSelect {
     outputs: ['languageChanged'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './components/lang/langSelect/langSelect.html',
-    styleUrls: ['./components/lang/langSelect/langSelect.html'],
+    styleUrls: ['./components/lang/langSelect/langSelect.css'],
     directives: [NgFor, NgIf]
 })
 export class LangSelectControl implements ControlValueAccessor {

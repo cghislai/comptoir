@@ -4,20 +4,7 @@
 
 import {CompanyRef} from './company';
 import {SaleRef} from './sale';
-import {BasicClient,BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
 
-
-export class InvoiceClient extends BasicClient<Invoice> {
-
-    private static RESOURCE_PATH:string = "/invoice";
-    constructor() {
-        super(<BasicClientResourceInfo<Invoice>>{
-            resourcePath: InvoiceClient.RESOURCE_PATH,
-            jsonReviver: InvoiceFactory.fromJSONInvoiceReviver,
-            cacheHandler: InvoiceFactory.cacheHandler
-        });
-    }
-}
 export class Invoice {
     id: number;
     companyRef: CompanyRef;
@@ -39,8 +26,7 @@ export class InvoiceSearch {
 }
 
 export class InvoiceFactory {
-    static cacheHandler = new BasicCacheHandler<Invoice>();
-    static fromJSONInvoiceReviver = (key, value)=>{
+    static fromJSONReviver = (key, value)=>{
         return value;
     }
 

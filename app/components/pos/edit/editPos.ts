@@ -4,7 +4,7 @@
 import {Component, EventEmitter, OnInit} from 'angular2/core';
 import {NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/common';
 
-import {Pos} from '../../../client/domain/pos';
+import {LocalPos, LocalPosFactory} from '../../../client/localDomain/pos';
 
 import {Language} from '../../../client/utils/lang';
 
@@ -32,7 +32,7 @@ export class PossEditComponent implements OnInit {
     errorService:ErrorService;
     authService:AuthService;
 
-    pos:Pos;
+    pos:LocalPos;
     posModel:any;
 
     editLanguage:Language;
@@ -70,11 +70,11 @@ export class PossEditComponent implements OnInit {
     }
 
 
-    private savePos(pos:Pos):Promise<Pos> {
+    private savePos(pos:LocalPos):Promise<LocalPos> {
         return this.posService.save(pos)
-            .then((pos:Pos)=> {
+            .then((pos:LocalPos)=> {
                 this.pos = pos;
-                this.posModel = pos;
+                this.posModel = pos.toJS();
                 return pos;
             });
     }

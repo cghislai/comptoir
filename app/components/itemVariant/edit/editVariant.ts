@@ -5,11 +5,12 @@ import {Component, EventEmitter, OnInit, ChangeDetectionStrategy} from 'angular2
 import {NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/common';
 import {RouterLink} from 'angular2/router';
 
-import {LocalPicture,  NewPicture} from '../../../client/localDomain/picture';
-import {LocalAttributeValue, NewAttributeValue} from '../../../client/localDomain/attributeValue';
-import {LocalItemVariant, LocalItemVariantFactory, NewItemVariant} from '../../../client/localDomain/itemVariant';
-import {AttributeDefinition, AttributeDefinitionSearch} from '../../../client/domain/attributeDefinition';
+import {LocalPicture,  LocalPictureFactory} from '../../../client/localDomain/picture';
+import {LocalAttributeValue, LocalAttributeValueFactory} from '../../../client/localDomain/attributeValue';
+import {LocalItemVariant, LocalItemVariantFactory} from '../../../client/localDomain/itemVariant';
+import {LocalAttributeDefinition, LocalAttributeDefinitionFactory} from '../../../client/localDomain/attributeDefinition';
 import {Pricing} from '../../../client/domain/itemVariant';
+import {AttributeDefinitionSearch} from '../../../client/domain/attributeDefinition';
 import {Language, LocaleTextsFactory} from '../../../client/utils/lang';
 import {NumberUtils} from '../../../client/utils/number';
 import {SearchRequest, SearchResult} from '../../../client/utils/search';
@@ -93,7 +94,7 @@ export class ItemVariantEditComponent implements OnInit {
     }
 
     getItemVariantTotalPrice() {
-        var itemVariant = NewItemVariant(this.itemVariantModel);
+        var itemVariant = LocalItemVariantFactory.createNewItemVariant(this.itemVariantModel);
         return LocalItemVariantFactory.calcPrice(itemVariant, true);
     }
 
@@ -104,7 +105,7 @@ export class ItemVariantEditComponent implements OnInit {
 
 
     public onFormSubmit() {
-        var itemVariant = NewItemVariant(this.itemVariantModel);
+        var itemVariant = LocalItemVariantFactory.createNewItemVariant(this.itemVariantModel);
         this.saveItemVariant(itemVariant)
             .then((itemVariant)=> {
                 this.saved.next(itemVariant);
@@ -140,7 +141,7 @@ export class ItemVariantEditComponent implements OnInit {
                         dataURI: data,
                         company: this.authService.getEmployeeCompany()
                     };
-                    mainPicture = NewPicture(picDesc);
+                    mainPicture = LocalPictureFactory.createNewPicture(picDesc);
                 } else {
                     mainPicture = <LocalPicture>currentPicture.set('dataURI', data);
                 }
@@ -184,7 +185,7 @@ export class ItemVariantEditComponent implements OnInit {
                 .then((attributeValue)=> {
                     var curAttributes = this.itemVariant.attributeValues;
                     curAttributes.push(attributeValue);
-                    var itemVariant = <LocalItemVariant>NewItemVariant(this.itemVariantModel)
+                    var itemVariant = <LocalItemVariant>LocalItemVariantFactory.createNewItemVariant(this.itemVariantModel)
                         .set('attributeValues', curAttributes);
                     return this.saveItemVariant(itemVariant);
                 })
@@ -204,7 +205,7 @@ export class ItemVariantEditComponent implements OnInit {
                 .filter((existingAttribute:LocalAttributeValue)=> {
                     return existingAttribute.id !== attributeValue.id;
                 }).toArray();
-            var itemVariant = <LocalItemVariant>NewItemVariant(this.itemVariantModel).set('attributeValues', newAttributes);
+            var itemVariant = <LocalItemVariant>LocalItemVariantFactory.createNewItemVariant(this.itemVariantModel).set('attributeValues', newAttributes);
             return this.saveItemVariant(itemVariant)
                 .then((itemVariant)=> {
                     // TODO: remove?
@@ -223,18 +224,19 @@ export class ItemVariantEditComponent implements OnInit {
     }
 
     resetNewAttributeValue() {
-        var attributeDefinition = new AttributeDefinition();
+        var attributeDefinition:any = {};
         attributeDefinition.name = LocaleTextsFactory.toLocaleTexts({});
-        this.newAttributeValue = NewAttributeValue({
+        var localAttributedefinition = LocalAttributeDefinitionFactory.createAttributeDefinition(attributeDefinition);
+        this.newAttributeValue = LocalAttributeValueFactory.createAttributeValue({
             value: LocaleTextsFactory.toLocaleTexts({}),
-            attributeDefinition: attributeDefinition
+            attributeDefinition: localAttributedefinition
         });
     }
 
 
     private saveItemVariant(itemVariant:LocalItemVariant):Promise<LocalItemVariant> {
         if (this.pictureTouched) {
-            var picture = NewPicture(this.itemVariantModel.mainPicture);
+            var picture = LocalPictureFactory.createNewPicture(this.itemVariantModel.mainPicture);
             return this.pictureService.save(picture)
                 .then((localPic:LocalPicture)=> {
                     this.pictureTouched = false;
@@ -287,8 +289,9 @@ export class ItemVariantEditComponent implements OnInit {
         return this.searchAttributeDefinitionForName(attributeDefinitionName)
             .then((attributeDefinition)=> {
                 if (attributeDefinition == null) {
-                    var toSaveDefinition = attributevalue.attributeDefinition;
-                    toSaveDefinition.companyRef = this.authService.getEmployeeCompanyRef();
+                    var toSaveDefinitionJs:any = attributevalue.attributeDefinition.toJS();
+                    toSaveDefinitionJs.company = this.authService.getEmployeeCompany();
+                    var toSaveDefinition:LocalAttributeDefinition = LocalAttributeDefinitionFactory.createAttributeDefinition(toSaveDefinitionJs);
                     return this.saveAttributeDefinition(toSaveDefinition);
                 } else {
                     return attributeDefinition;
@@ -304,22 +307,22 @@ export class ItemVariantEditComponent implements OnInit {
             });
     }
 
-    private saveAttributeDefinition(attributeDefinition:AttributeDefinition):Promise<AttributeDefinition> {
+    private saveAttributeDefinition(attributeDefinition:LocalAttributeDefinition):Promise<LocalAttributeDefinition> {
         return this.attributeDefinitionService.save(attributeDefinition)
             .then((ref)=> {
                 return this.attributeDefinitionService.get(ref.id);
             });
     }
 
-    private searchAttributeDefinitionForName(name:string):Promise<AttributeDefinition> {
-        var attributeDefRequest = new SearchRequest<AttributeDefinition>();
+    private searchAttributeDefinitionForName(name:string):Promise<LocalAttributeDefinition> {
+        var attributeDefRequest = new SearchRequest<LocalAttributeDefinition>();
         var search = new AttributeDefinitionSearch();
         search.companyRef = this.authService.getEmployeeCompanyRef();
         search.nameContains = name;
         attributeDefRequest.search = search;
 
         return this.attributeDefinitionService.search(attributeDefRequest)
-            .then((result:SearchResult<AttributeDefinition>) => {
+            .then((result:SearchResult<LocalAttributeDefinition>) => {
                 if (result.list.size === 0) {
                     return null;
                 }

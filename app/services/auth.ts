@@ -1,13 +1,14 @@
 /**
  * Created by cghislai on 07/08/15.
  */
-import {Inject} from 'angular2/core';
+import {Injectable} from 'angular2/core';
 
 import {Auth, Registration, AuthFactory} from '../client/domain/auth';
-import {LocalAuth, LocalAuthFactory, NewAuth} from '../client/localDomain/auth';
+import {LocalAuth, LocalAuthFactory} from '../client/localDomain/auth';
 import {LocalEmployee} from '../client/localDomain/employee';
 import {LocalCompany} from '../client/localDomain/company';
 import {CompanyRef} from '../client/domain/company';
+import {EmployeeRef} from '../client/domain/employee';
 
 import {Language, LanguageFactory} from '../client/utils/lang';
 import {JSONFactory} from '../client/utils/factory';
@@ -15,7 +16,7 @@ import {ComptoirRequest,ComptoirResponse} from '../client/utils/request';
 
 import {AuthClient} from '../client/auth';
 
-import {ErrorService} from './error';
+import {EmployeeService} from './employee';
 
 import {MD5} from '../components/utils/md5';
 
@@ -24,11 +25,12 @@ export enum LoginRequiredReason {
     SESSION_EXPIRED
 }
 
+@Injectable()
 export class AuthService {
     static STORAGE_AUTH_KEY = "Auth";
 
     client:AuthClient;
-    errorService:ErrorService;
+    employeeService:EmployeeService;
 
     authToken:string;
     auth:LocalAuth;
@@ -39,26 +41,23 @@ export class AuthService {
 
     loadingPromise:Promise<any>;
 
-    constructor(@Inject(ErrorService) errorService:ErrorService) {
-        this.errorService = errorService;
-        this.client = new AuthClient();
-
+    constructor(authClient:AuthClient,
+                employeeService:EmployeeService) {
+        this.client = authClient;
+        this.employeeService = employeeService;
         this.loadFromStorage();
     }
 
     public login(login:string, hashedPassword:string):Promise<LocalEmployee> {
         return this.client.login(login, hashedPassword)
             .then((response:Auth) => {
-                return LocalAuthFactory.toLocalAuth(response, response.token);
+                return this.toLocalAuth(response, response.token);
             }).then((localAuth:LocalAuth)=> {
                 if (localAuth.employee == null || localAuth.token == null) {
                     throw 'Invalid auth retrieved';
                 }
                 this.saveAuth(localAuth);
                 return localAuth.employee;
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
-                return null;
             });
     }
 
@@ -77,9 +76,6 @@ export class AuthService {
                 var password = registration.employeePassword;
                 var hashedPassword = MD5.encode(password);
                 return this.login(login, hashedPassword);
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
-                return null;
             });
     }
 
@@ -153,11 +149,9 @@ export class AuthService {
         var refreshToken = this.auth.refreshToken;
         return this.client.refreshToken(refreshToken)
             .then((auth)=> {
-                return LocalAuthFactory.toLocalAuth(auth, auth.token)
+                return this.toLocalAuth(auth, auth.token)
             }).then((localAuth:LocalAuth)=> {
                 this.saveAuth(localAuth);
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
             });
     }
 
@@ -196,7 +190,7 @@ export class AuthService {
             return;
         }
 
-        var auth:Auth = JSON.parse(authJSON, AuthFactory.fromJSONAuthReviver);
+        var auth:Auth = JSON.parse(authJSON, AuthFactory.fromJSONReviver);
         if (auth == null) {
             this.clearAuth();
             return;
@@ -207,13 +201,11 @@ export class AuthService {
             return;
         }
 
-        this.loadingPromise = LocalAuthFactory.toLocalAuth(auth, auth.token)
+        this.loadingPromise = this.toLocalAuth(auth, auth.token)
             .then((localAuth:LocalAuth)=> {
                 this.auth = localAuth;
                 this.loadingPromise = null;
                 return this.checkRefreshToken();
-            }).catch((error)=> {
-                this.errorService.handleRequestError(error);
             });
     }
 
@@ -234,7 +226,7 @@ export class AuthService {
 
         this.auth = auth;
         this.authToken = auth.token;
-        var wsAuth = LocalAuthFactory.fromLocalAuth(auth);
+        var wsAuth = this.fromLocalAuth(auth);
         var jsonString = JSON.stringify(wsAuth, JSONFactory.toJSONReplacer);
         localStorage.setItem(AuthService.STORAGE_AUTH_KEY, jsonString);
 
@@ -251,4 +243,35 @@ export class AuthService {
         }, checkExpireTimeDiff)
     }
 
+    toLocalAuth(auth:Auth, authToken:string):Promise<LocalAuth> {
+        var localAuthDesc:any = {};
+        localAuthDesc.id = auth.id;
+        localAuthDesc.token = auth.token;
+        localAuthDesc.refreshToken = auth.refreshToken;
+        localAuthDesc.expirationDateTime = auth.expirationDateTime;
+
+        var taskList = [];
+        var employeeRef = auth.employeeRef;
+
+        taskList.push(
+            this.employeeService.get(employeeRef.id, authToken)
+                .then((localEmployee:LocalEmployee)=> {
+                    localAuthDesc.employee = localEmployee;
+                })
+        );
+        return Promise.all(taskList)
+            .then(()=> {
+                return LocalAuthFactory.createNewAuth(localAuthDesc);
+            });
+    }
+
+    fromLocalAuth(localAuth:LocalAuth):Auth {
+        var auth = new Auth();
+        auth.id = localAuth.id;
+        auth.token = localAuth.token;
+        auth.refreshToken = localAuth.refreshToken;
+        auth.expirationDateTime = localAuth.expirationDateTime;
+        auth.employeeRef = new EmployeeRef(localAuth.employee.id);
+        return auth;
+    }
 }

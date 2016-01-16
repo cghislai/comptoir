@@ -8,20 +8,7 @@ import {ItemRef,ItemSearch } from './item';
 import {CompanyRef} from './company';
 import {PictureRef} from './picture';
 import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
-import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
 
-
-export class ItemVariantClient extends BasicClient<ItemVariant> {
-
-    private static RESOURCE_PATH:string = "/itemVariant";
-    constructor() {
-        super(<BasicClientResourceInfo<ItemVariant>>{
-            resourcePath: ItemVariantClient.RESOURCE_PATH,
-            jsonReviver: ItemVariantFactory.fromJSONItemVariantReviver,
-            cacheHandler: ItemVariantFactory.cacheHandler
-        });
-    }
-}
 
 export enum Pricing{
     ABSOLUTE,
@@ -59,15 +46,14 @@ export class ItemVariantSearch {
 }
 
 export class ItemVariantFactory {
-    static cacheHandler = new BasicCacheHandler<ItemVariant>();
 
-    static fromJSONItemVariantReviver = (key, value)=> {
-        if (key ==='name' || key ==="description") {
+    static fromJSONReviver = (key, value)=> {
+        if (key === 'name' || key === "description") {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
         return value;
     };
-
+    //FIXME
     static fromJSONPricingReviver = (value) => {
         return Pricing[Pricing[value]];
     }

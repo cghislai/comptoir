@@ -7,21 +7,7 @@ import {ItemVariantRef} from './itemVariant';
 import {SaleRef} from './sale';
 import {Price} from './price';
 import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
-import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
 
-
-export class ItemVariantSaleClient extends BasicClient<ItemVariantSale> {
-
-    private static RESOURCE_PATH:string = "/itemVariantSale";
-
-    constructor() {
-        super(<BasicClientResourceInfo<ItemVariantSale>>{
-            resourcePath: ItemVariantSaleClient.RESOURCE_PATH,
-            jsonReviver: ItemVariantSaleFactory.fromJSONItemVariantSaleReviver,
-            cacheHandler: ItemVariantSaleFactory.cacheHandler
-        });
-    }
-}
 
 export class ItemVariantSale {
     id: number;
@@ -48,8 +34,7 @@ export class ItemVariantSaleSearch {
 }
 
 export class ItemVariantSaleFactory {
-    static cacheHandler = new BasicCacheHandler<ItemVariantSale>();
-    static fromJSONItemVariantSaleReviver = (key, value)=>{
+    static fromJSONReviver = (key, value)=>{
         if (key ==='comment') {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }

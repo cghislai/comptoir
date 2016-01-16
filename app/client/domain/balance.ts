@@ -4,33 +4,8 @@
 
 import {AccountRef, AccountSearch} from './account';
 import {CompanyRef} from './company';
-import {BasicClient,BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
 import {ComptoirRequest} from '../utils/request';
 
-
-export class BalanceClient extends BasicClient<Balance> {
-
-    private static RESOURCE_PATH:string = "/balance";
-    constructor() {
-        super(<BasicClientResourceInfo<Balance>>{
-            resourcePath: BalanceClient.RESOURCE_PATH,
-            jsonReviver: BalanceFactory.fromJSONBalanceReviver,
-            cacheHandler: BalanceFactory.cacheHandler
-        });
-    }
-    closeBalance(id: number, authToken: string) : Promise<BalanceRef> {
-        var request = new ComptoirRequest();
-        var url = this.getResourceUrl(id);
-        url += "/state/CLOSED";
-
-        return request
-            .put(null, url, authToken)
-            .then(function (response) {
-                var balanceRef = JSON.parse(response.text);
-                return balanceRef;
-            });
-    }
-}
 export class Balance {
     id:number;
     accountRef:AccountRef;
@@ -59,8 +34,7 @@ export class BalanceSearch {
 }
 
 export class BalanceFactory {
-    static cacheHandler = new BasicCacheHandler<Balance>();
-    static fromJSONBalanceReviver=(key,value)=>{
+    static fromJSONReviver=(key,value)=>{
         if (key ==='dateTime') {
             var date = new Date(value);
             return date;

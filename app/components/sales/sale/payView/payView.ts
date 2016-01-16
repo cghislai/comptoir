@@ -7,12 +7,12 @@ import {NgFor, NgIf} from 'angular2/common';
 
 import {LocalSale} from '../../../../client/localDomain/sale';
 import {LocalAccount} from '../../../../client/localDomain/account';
-import {LocalAccountingEntry, NewAccountingEntry } from '../../../../client/localDomain/accountingEntry';
+import {LocalAccountingEntry, LocalAccountingEntryFactory} from '../../../../client/localDomain/accountingEntry';
 
 import {NumberUtils} from '../../../../client/utils/number';
 import {LocaleTextsFactory, Language} from '../../../../client/utils/lang';
 
-import {ActiveSaleService} from '../../../../routes/sales/sale/activeSale';
+import {ActiveSaleService} from '../../../../services/activeSale';
 import {ErrorService} from '../../../../services/error';
 import {AuthService} from '../../../../services/auth';
 
@@ -84,7 +84,7 @@ export class PayView {
         localAccountingEntryDesc.customer = this.sale.customer;
         localAccountingEntryDesc.description = LocaleTextsFactory.toLocaleTexts({});
         localAccountingEntryDesc.dateTime = new Date();
-        var localAccountingEntry = NewAccountingEntry(localAccountingEntryDesc);
+        var localAccountingEntry = LocalAccountingEntryFactory.createAccountingEntry(localAccountingEntryDesc);
         this.startEditEntry(localAccountingEntry);
     }
 

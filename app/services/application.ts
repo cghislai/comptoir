@@ -1,10 +1,11 @@
 /**
  * Created by cghislai on 29/07/15.
  */
-import {CompanyRef} from '../client/domain/company'
-import {Language} from '../client/utils/lang'
+import {Inject, Injectable} from 'angular2/core';
 
 
+
+@Injectable()
 export class ApplicationService {
     appName:string;
     appVersion:string;

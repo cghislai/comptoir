@@ -13,7 +13,7 @@ import {ErrorService} from '../../../services/error';
 import {SaleService} from '../../../services/sale';
 import {AuthService} from '../../../services/auth';
 
-import {ActiveSaleService} from './activeSale';
+import {ActiveSaleService} from '../../../services/activeSale';
 import {ItemListView} from '../../../components/sales/sale/itemList/listView';
 import {CommandView} from '../../../components/sales/sale/commandView/commandView';
 import {PayView} from '../../../components/sales/sale/payView/payView';
@@ -68,7 +68,7 @@ export class SaleView {
                 } else {
                     this.payStep = false;
                 }
-                this.saleService.activeSale = sale;
+                this.activeSaleService.sale = sale;
             })
             .catch((error)=> {
                 this.errorService.handleRequestError(error);
@@ -127,7 +127,7 @@ export class SaleView {
         if (this.newSale) {
             return this.activeSaleService.doSaveSale()
                 .then((sale)=> {
-                    this.saleService.activeSale = sale;
+                    this.activeSaleService.sale = sale;
                     return this.activeSaleService.doAddItem(item);
                 }).then(()=> {
                     // this.navigatingWithinSale = true;
@@ -173,7 +173,7 @@ export class SaleView {
     }
 
     private getActiveSale():Promise<LocalSale> {
-        var activeSale = this.saleService.activeSale;
+        var activeSale = this.activeSaleService.sale;
 
         var saleTask:Promise<LocalSale>;
         if (activeSale != null) {

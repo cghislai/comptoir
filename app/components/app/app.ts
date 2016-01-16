@@ -3,24 +3,10 @@ import {Component} from 'angular2/core';
 import {NgIf} from 'angular2/common';
 import {RouteConfig, Router, ROUTER_DIRECTIVES} from 'angular2/router';
 
-import {AccountService} from '../../services/account';
-import {AccountingEntryService} from '../../services/accountingEntry';
-import {ApplicationService} from '../../services/application';
-import {AttributeDefinitionService} from '../../services/attributeDefinition';
-import {AttributeValueService} from '../../services/attributeValue';
+import {SERVICES_PROVIDERS} from '../../services/ServicesProviders';
 import {AuthService} from '../../services/auth';
-import {BalanceService} from '../../services/balance';
-import {CompanyService} from '../../services/company';
-import {EmployeeService} from '../../services/employee';
+import {ApplicationService} from '../../services/application';
 import {ErrorService} from '../../services/error';
-import {FileUploadService} from '../../services/fileUpload';
-import {ItemService} from '../../services/item';
-import {ItemVariantService} from '../../services/itemVariant';
-import {ItemVariantSaleService} from '../../services/itemVariantSale';
-import {MoneyPileService} from '../../services/moneyPile';
-import {PictureService} from '../../services/picture';
-import {PosService} from '../../services/pos';
-import {SaleService} from '../../services/sale';
 
 import {DialogView} from '../../components/utils/dialog/dialog';
 
@@ -39,25 +25,7 @@ import {PosView} from '../../routes/pos/posView';
     styleUrls: ['./components/app/app.css'],
     directives: [ROUTER_DIRECTIVES, NgIf, DialogView],
     viewProviders: [
-        AuthService,
-
-        AccountService,
-        AccountingEntryService,
-        ApplicationService,
-        AttributeDefinitionService,
-        AttributeValueService,
-        BalanceService,
-        CompanyService,
-        EmployeeService,
-        ErrorService,
-        FileUploadService,
-        ItemService,
-        ItemVariantService,
-        ItemVariantSaleService,
-        MoneyPileService,
-        PictureService,
-        PosService,
-        SaleService
+        SERVICES_PROVIDERS
     ]
 })
 @RouteConfig([

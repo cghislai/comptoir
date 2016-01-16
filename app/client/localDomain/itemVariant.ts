@@ -2,14 +2,10 @@
  * Created by cghislai on 01/09/15.
  */
 
-import {AttributeValue, AttributeValueRef, AttributeValueClient, AttributeValueFactory} from '../domain/attributeValue';
-import {ItemVariant, Pricing} from '../domain/itemVariant';
-import {Item, ItemRef, ItemClient, ItemFactory} from '../domain/item';
-import {Picture, PictureRef, PictureClient, PictureFactory} from '../domain/picture';
-
-import {LocalItem, LocalItemFactory} from './item';
-import {LocalAttributeValue, LocalAttributeValueFactory} from './attributeValue';
-import {LocalPicture, LocalPictureFactory} from './picture';
+import {Pricing} from '../domain/itemVariant';
+import {LocalAttributeValue} from './attributeValue';
+import {LocalItem} from './item';
+import {LocalPicture} from './picture';
 import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
 
 import * as Immutable from 'immutable';
@@ -34,14 +30,11 @@ var ItemVariantRecord = Immutable.Record({
     mainPicture: null,
     item: null
 });
-export function NewItemVariant(desc:any):LocalItemVariant {
-    return <any>ItemVariantRecord(desc);
-}
 
 export class LocalItemVariantFactory {
-    static attributeValueClient = new AttributeValueClient();
-    static itemClient = new ItemClient();
-    static pictureClient = new PictureClient();
+    static createNewItemVariant(desc:any):LocalItemVariant {
+        return <any>ItemVariantRecord(desc);
+    }
 
     static PRICING_ADD_TO_BASE_LABEL = LocaleTextsFactory.toLocaleTexts({
         'fr': 'À ajouter'
@@ -63,77 +56,6 @@ export class LocalItemVariantFactory {
                 return LocalItemVariantFactory.PRICING_PARENT_ITEM_LABEL;
         }
         return null;
-    }
-
-    static toLocalItemVariant(itemVariant:ItemVariant, authToken):Promise<LocalItemVariant> {
-        var localVariantDesc:any = {};
-        localVariantDesc.id = itemVariant.id;
-        localVariantDesc.variantReference = itemVariant.variantReference;
-        localVariantDesc.pricing = Pricing[itemVariant.pricing];
-        localVariantDesc.pricingAmount = itemVariant.pricingAmount;
-
-        localVariantDesc.attributeValues = [];
-        var taskList = [];
-        var attributeValueRefList = itemVariant.attributeValueRefs;
-        for (var attributeValueRef of attributeValueRefList) {
-            var attributeid = attributeValueRef.id;
-            taskList.push(
-                LocalItemVariantFactory.attributeValueClient.getFromCacheOrServer(attributeid, authToken)
-                    .then((attrValue)=> {
-                        return LocalAttributeValueFactory.toLocalAttributeValue(attrValue, authToken);
-                    }).then((localValue:LocalAttributeValue)=> {
-                        localVariantDesc.attributeValues.push(localValue);
-                    })
-            );
-        }
-
-        var itemRef = itemVariant.itemRef;
-        taskList.push(
-            LocalItemVariantFactory.itemClient.getFromCacheOrServer(itemRef.id, authToken)
-                .then((item)=> {
-                    return LocalItemFactory.toLocalItem(item, authToken);
-                }).then((localItem:LocalItem)=> {
-                    localVariantDesc.item = localItem;
-                })
-        );
-
-        var mainPictureRef = itemVariant.mainPictureRef;
-        if (mainPictureRef != null) {
-            var picId = mainPictureRef.id;
-            taskList.push(
-                LocalItemVariantFactory.pictureClient.getFromCacheOrServer(picId, authToken)
-                    .then((picture)=> {
-                        return LocalPictureFactory.toLocalPicture(picture, authToken);
-                    }).then((localPicture:LocalPicture)=> {
-                        localVariantDesc.mainPicture = localPicture;
-                    })
-            );
-        }
-
-        return Promise.all(taskList)
-            .then(()=> {
-                return NewItemVariant(localVariantDesc);
-            });
-    }
-
-    static fromLocalItemVariant(localVariant:LocalItemVariant) {
-        var itemVariant:ItemVariant = new ItemVariant();
-        itemVariant.attributeValueRefs = [];
-        for (var localAttribute of localVariant.attributeValues) {
-            var attributeValueRef:AttributeValueRef = new AttributeValueRef(localAttribute.id);
-            itemVariant.attributeValueRefs.push(attributeValueRef);
-        }
-        itemVariant.id = localVariant.id;
-        if (localVariant.item != null) {
-            itemVariant.itemRef = new ItemRef(localVariant.item.id);
-        }
-        if (localVariant.mainPicture != null) {
-            itemVariant.mainPictureRef = new PictureRef(localVariant.mainPicture.id);
-        }
-        itemVariant.pricing = Pricing[localVariant.pricing];
-        itemVariant.pricingAmount = localVariant.pricingAmount;
-        itemVariant.variantReference = localVariant.variantReference;
-        return itemVariant;
     }
 
     static calcPrice(localVariant:LocalItemVariant, includeTaxes:boolean):number {

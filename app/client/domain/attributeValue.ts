@@ -5,21 +5,6 @@
 import {AttributeDefinitionRef} from './attributeDefinition';
 import {CompanyRef} from './company';
 import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
-import {BasicClient,BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
-
-
-export class AttributeValueClient extends BasicClient<AttributeValue> {
-
-    private static RESOURCE_PATH:string = "/attribute/value";
-
-    constructor() {
-        super(<BasicClientResourceInfo<AttributeValue>>{
-            resourcePath: AttributeValueClient.RESOURCE_PATH,
-            jsonReviver: AttributeValueFactory.fromJSONAttributeValueReviver,
-            cacheHandler: AttributeValueFactory.cacheHandler
-        });
-    }
-}
 
 export class AttributeValue {
     id:number;
@@ -39,12 +24,10 @@ export class AttributeValueRef {
 
 export class AttributeValueFactory {
 
-    static fromJSONAttributeValueReviver = (key, value)=> {
+    static fromJSONReviver = (key, value)=> {
         if (key ==='value') {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }
         return value;
-    }
-
-    static cacheHandler = new BasicCacheHandler<AttributeValue>();
+    };
 }

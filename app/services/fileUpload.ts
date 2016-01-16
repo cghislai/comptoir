@@ -1,7 +1,9 @@
 /**
  * Created by cghislai on 14/08/15.
  */
+import {Inject, Injectable,Injector} from 'angular2/core';
 
+@Injectable()
 export class FileUploadService {
 
     request:XMLHttpRequest;

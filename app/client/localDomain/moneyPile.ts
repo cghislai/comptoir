@@ -2,12 +2,9 @@
  * Created by cghislai on 08/09/15.
  */
 
-import {MoneyPile} from '../domain/moneyPile';
-import {Account, AccountRef, AccountClient, AccountFactory} from '../domain/account';
-import {Balance, BalanceRef, BalanceClient, BalanceFactory} from '../domain/balance';
 
-import {LocalAccount, LocalAccountFactory} from './account';
-import {LocalBalance, LocalBalanceFactory} from './balance';
+import {LocalAccount} from './account';
+import {LocalBalance} from './balance';
 
 import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
 
@@ -34,58 +31,11 @@ var MoneyPileRecord = Immutable.Record({
     balance: null,
     label: null
 });
-export function NewMoneyPile(desc:any):LocalMoneyPile {
-    return <any>MoneyPileRecord(desc);
-}
 
 export class LocalMoneyPileFactory {
-    static  accountClient = new AccountClient();
-    static balanceClient = new BalanceClient();
 
-    static toLocalMoneyPile(moneyPile:MoneyPile, authToken:string):Promise<LocalMoneyPile> {
-        var localMoneyPileDesc:any = {};
-        localMoneyPileDesc.unitCount = moneyPile.count;
-        localMoneyPileDesc.dateTime = moneyPile.dateTime;
-        localMoneyPileDesc.id = moneyPile.id;
-        localMoneyPileDesc.total = moneyPile.total;
-        localMoneyPileDesc.unitAmount = moneyPile.unitAmount;
-
-        var taskList = [];
-        var accountRef = moneyPile.accountRef;
-        taskList.push(
-            LocalMoneyPileFactory.accountClient.getFromCacheOrServer(accountRef.id, authToken)
-                .then((account)=> {
-                    return LocalAccountFactory.toLocalAccount(account, authToken);
-                }).then((localAccount:LocalAccount)=> {
-                    localMoneyPileDesc.account = localAccount;
-                })
-        );
-        var balanceRef = moneyPile.balanceRef;
-        taskList.push(
-            LocalMoneyPileFactory.balanceClient.getFromCacheOrServer(balanceRef.id, authToken)
-                .then((balance)=> {
-                    return LocalBalanceFactory.toLocalBalance(balance, authToken);
-                }).then((localBalance:LocalBalance)=> {
-                    localMoneyPileDesc.balance = localBalance;
-                })
-        );
-
-        return Promise.all(taskList)
-            .then(()=> {
-               return NewMoneyPile(localMoneyPileDesc);
-            });
-    }
-
-    static fromLocalMoneyPile(localMoneyPile:LocalMoneyPile):MoneyPile {
-        var moneyPile = new MoneyPile();
-        moneyPile.accountRef = new AccountRef(localMoneyPile.account.id);
-        moneyPile.balanceRef = new BalanceRef(localMoneyPile.balance.id);
-        moneyPile.count = localMoneyPile.unitCount;
-        moneyPile.dateTime = localMoneyPile.dateTime;
-        moneyPile.id = localMoneyPile.id;
-        moneyPile.total = localMoneyPile.total;
-        moneyPile.unitAmount = localMoneyPile.unitAmount;
-        return moneyPile;
+    static createNewMoneyPile(desc:any):LocalMoneyPile {
+        return <any>MoneyPileRecord(desc);
     }
 
     static getCashTypeUnitValue(type:CashType):number {

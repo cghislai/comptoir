@@ -43,6 +43,9 @@ export class ComptoirRequest {
     private failed:boolean;
     private discarded:boolean;
 
+    running:boolean;
+    promiseTask:Promise<ComptoirResponse>;
+
     constructor() {
         this.request = new XMLHttpRequest();
         this.acceptContentType = ComptoirRequest.JSON_MIME + ',' + 'text/*';
@@ -95,8 +98,8 @@ export class ComptoirRequest {
     }
 
     run():Promise<ComptoirResponse> {
-
         var promiseTask = (resolve, reject)=> {
+            this.running = true;
             this.request.onreadystatechange = ()=> {
                 if (this.discarded) {
                     reject(ComptoirError.DISCARDED_ERROR);
@@ -152,7 +155,16 @@ export class ComptoirRequest {
                 this.request.send();
             }
         };
-        return new Promise(promiseTask);
+        this.promiseTask = new Promise(promiseTask);
+        return this.promiseTask
+            .then((response)=> {
+                this.running = false;
+                return response;
+            })
+            .catch((error)=> {
+                this.running = false;
+                throw error;
+            });
     }
 
 

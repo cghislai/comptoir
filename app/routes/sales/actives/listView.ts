@@ -105,7 +105,7 @@ export class ActiveSalesView {
     }
 
     doRemoveSale(sale:LocalSale) {
-        this.saleService.remove(sale)
+        this.saleService.remove(sale.id)
             .then((result)=> {
                 this.searchSales();
             }).catch((error)=> {

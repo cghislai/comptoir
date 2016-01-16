@@ -3,23 +3,9 @@
  */
 
 import {CompanyRef} from './company';
-import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
 
 
-
-export class AccountingTransactionClient extends BasicClient<AccountingTransaction> {
-
-    private static RESOURCE_PATH:string = "/accountingTransaction";
-    constructor() {
-        super(<BasicClientResourceInfo<AccountingTransaction>>{
-            resourcePath: AccountingTransactionClient.RESOURCE_PATH,
-            jsonReviver: AccountingTransactionFactory.fromJSONAccountTransactionReviver,
-            cacheHandler: AccountingTransactionFactory.cacheHandler
-        });
-    }
-}
-
-export enum AccountTransactionType {
+export enum AccountingTransactionType {
     SALE,
     PURCHASE,
     TRANSFER
@@ -29,7 +15,7 @@ export class AccountingTransaction {
     id:number;
     companyRef:CompanyRef;
     dateTime:Date;
-    accountingTransactionType:AccountTransactionType;
+    accountingTransactionType:AccountingTransactionType;
 }
 
 export class AccountingTransactionRef {
@@ -41,8 +27,7 @@ export class AccountingTransactionRef {
 }
 
 export class AccountingTransactionFactory {
-    static cacheHandler = new BasicCacheHandler<AccountingTransaction>();
-    static fromJSONAccountTransactionReviver = (key, value)=>{
+    static fromJSONReviver = (key, value)=>{
         return value;
     }
 }

@@ -7,20 +7,6 @@ import {AccountRef, AccountSearch} from './account';
 import {AccountingTransactionRef} from './accountingTransaction';
 import {CustomerRef} from './customer';
 import {LocaleTexts, LocaleTextsFactory} from '../utils/lang';
-import {BasicClient,BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
-
-
-export class AccountingEntryClient extends BasicClient<AccountingEntry> {
-
-    private static RESOURCE_PATH:string = "/accountingEntry";
-    constructor() {
-        super(<BasicClientResourceInfo<AccountingEntry>>{
-            resourcePath: AccountingEntryClient.RESOURCE_PATH,
-            jsonReviver: AccountingEntryFactory.fromJSONAccountingEntryReviver,
-            cacheHandler: AccountingEntryFactory.cacheHandler
-        });
-    }
-}
 
 export class AccountingEntry {
     id: number;
@@ -53,8 +39,7 @@ export class AccountingEntrySearch {
 }
 
 export class AccountingEntryFactory {
-    static cacheHandler = new BasicCacheHandler<AccountingEntry>();
-    static fromJSONAccountingEntryReviver = (key, value)=>{
+    static fromJSONReviver = (key, value)=>{
         if (key ==='description') {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }

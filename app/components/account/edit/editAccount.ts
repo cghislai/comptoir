@@ -4,7 +4,7 @@
 import {Component, EventEmitter, OnInit} from 'angular2/core';
 import {NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/common';
 
-import {LocalAccount, LocalAccountFactory, NewAccount} from '../../../client/localDomain/account';
+import {LocalAccount, LocalAccountFactory} from '../../../client/localDomain/account';
 
 import {AccountType, ALL_ACCOUNT_TYPES} from '../../../client/domain/account';
 
@@ -66,7 +66,7 @@ export class AccountsEditComponent implements OnInit {
 
 
     onFormSubmit() {
-        var account = NewAccount(this.accountModel);
+        var account = LocalAccountFactory.createNewAccount(this.accountModel);
         this.saveAccount(account)
             .then((account)=> {
                 this.saved.next(account);

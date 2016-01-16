@@ -93,7 +93,7 @@ export class ItemsListView {
     }
 
     doRemoveItem(item:LocalItem) {
-        this.itemService.remove(item)
+        this.itemService.remove(item.id)
             .then(()=> {
                 this.searchItems();
             }).catch((error)=> {

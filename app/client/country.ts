@@ -2,26 +2,34 @@
  * Created by cghislai on 06/08/15.
  */
 
+import {Inject, Injectable} from 'angular2/core';
 
 import {Country, CountryRef, CountryFactory} from './domain/country';
 import {ComptoirRequest} from './utils/request';
-import {ServiceConfig} from '../config/service';
+import {COMPTOIR_SERVICE_URL} from '../config/service';
 
-
+@Injectable()
 export class CountryClient {
 
     private static RESOURCE_PATH:string = "/country";
+    serviceConfigUrl:string;
+    resourceCache:{[code: string]: Country};
+
+    constructor(@Inject(COMPTOIR_SERVICE_URL) serviceConfigUrl:string) {
+        this.serviceConfigUrl = serviceConfigUrl;
+        this.resourceCache = {};
+    }
 
     private getCountryUrl(code?:string) {
-        var url = ServiceConfig.URL + CountryClient.RESOURCE_PATH;
+        var url = this.serviceConfigUrl + CountryClient.RESOURCE_PATH;
         if (code !== undefined) {
             url += "/" + code;
         }
         return url;
     }
 
-    getFromCacheOrServer(code: string, authToken:string) : Promise<Country> {
-        var entityFromCache = CountryFactory.cache[code];
+    getFromCacheOrServer(code:string, authToken:string):Promise<Country> {
+        var entityFromCache = this.resourceCache[code];
         if (entityFromCache != null) {
             return Promise.resolve(entityFromCache);
         } else {
@@ -35,14 +43,14 @@ export class CountryClient {
 
         return request
             .get(url, authToken)
-            .then(function (response) {
-                var country = JSON.parse(response.text, CountryFactory.fromJSONCountryReviver);
-                CountryFactory.cache[country.code] = country;
+            .then((response)=> {
+                var country = JSON.parse(response.text, CountryFactory.fromJSONReviver);
+                this.resourceCache[country.code] = country;
                 return country;
             });
     }
 
-    getGetCountryrequest(code:string, authToken:string):ComptoirRequest {
+    getGetCountryRequest(code:string, authToken:string):ComptoirRequest {
         var request = new ComptoirRequest();
         var url = this.getCountryUrl(code);
         request.setup('GET', url, authToken);

@@ -20,7 +20,7 @@ export class Auth {
 }
 
 export class AuthFactory {
-    static fromJSONAuthReviver = (key, value)=> {
+    static fromJSONReviver = (key, value)=> {
         if (key ==='expirationDateTime') {
             return new Date(value);
         }

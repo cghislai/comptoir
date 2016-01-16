@@ -6,6 +6,7 @@ import {Component,EventEmitter} from 'angular2/core';
 import {NgIf, NgFor} from 'angular2/common';
 
 import {Pos, PosSearch} from '../../../client/domain/pos';
+import {LocalPos} from '../../../client/localDomain/pos';
 import {SearchResult, SearchRequest} from '../../../client/utils/search';
 import {Language} from '../../../client/utils/lang';
 
@@ -26,9 +27,9 @@ export class PosSelect {
     authService:AuthService;
     errorService:ErrorService;
 
-    searchRequest:SearchRequest<Pos>;
-    posList:Immutable.List<Pos>;
-    pos:Pos;
+    searchRequest:SearchRequest<LocalPos>;
+    posList:Immutable.List<LocalPos>;
+    pos:LocalPos;
     language:Language;
 
     editable:boolean;
@@ -51,7 +52,7 @@ export class PosSelect {
 
     searchPos() {
         this.posService.search(this.searchRequest)
-            .then((result:SearchResult<Pos>)=> {
+            .then((result:SearchResult<LocalPos>)=> {
                 this.posList = result.list;
                 var lastUsedPos = this.posService.lastUsedPos;
                 if (lastUsedPos != null) {
@@ -76,7 +77,7 @@ export class PosSelect {
         this.setPos(pos);
     }
 
-    setPos(pos:Pos) {
+    setPos(pos:LocalPos) {
         this.pos = pos;
         this.posService.lastUsedPos = this.pos;
         this.posChanged.next(pos);

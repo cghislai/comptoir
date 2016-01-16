@@ -12,7 +12,7 @@ import {LocalItemVariantSale} from '../../../../client/localDomain/itemVariantSa
 import {LocaleTexts, Language} from '../../../../client/utils/lang';
 import {NumberUtils} from '../../../../client/utils/number';
 
-import {ActiveSaleService} from '../../../../routes/sales/sale/activeSale';
+import {ActiveSaleService} from '../../../../services/activeSale';
 import {ErrorService} from '../../../../services/error';
 import {AuthService} from '../../../../services/auth';
 

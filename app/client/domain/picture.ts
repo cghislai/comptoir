@@ -5,21 +5,7 @@
 import {CompanyRef} from './company';
 import {ItemRef} from './item';
 import {ItemVariantRef} from './itemVariant';
-import {BasicClient, BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
 
-
-export class PictureClient extends BasicClient<Picture> {
-
-    private static RESOURCE_PATH:string = "/picture";
-
-    constructor() {
-        super(<BasicClientResourceInfo<Picture>>{
-            resourcePath: PictureClient.RESOURCE_PATH,
-            jsonReviver: PictureFactory.fromJSONPictureReviver,
-            cacheHandler: PictureFactory.cacheHandler
-        });
-    }
-}
 
 export class PictureRef {
     id:number;
@@ -44,8 +30,7 @@ export class PictureSearch {
 }
 
 export class PictureFactory {
-    static cacheHandler = new BasicCacheHandler<Picture>();
-    static fromJSONPictureReviver = (key, value)=> {
+    static fromJSONReviver = (key, value)=> {
         return value;
     }
 

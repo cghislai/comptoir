@@ -2,26 +2,31 @@
  * Created by cghislai on 22/09/15.
  */
 
-import {Inject} from 'angular2/core';
+import {Injectable} from 'angular2/core';
 
-import {Sale, SaleRef, SaleClient} from '../../../client/domain/sale';
-import {AccountClient, Account, AccountSearch} from '../../../client/domain/account';
-import {AccountingEntryClient, AccountingEntry, AccountingEntrySearch} from '../../../client/domain/accountingEntry';
-import {ItemVariantSale, ItemVariantSaleClient, ItemVariantSaleSearch} from '../../../client/domain/itemVariantSale';
-import {Pos, PosRef} from '../../../client/domain/pos';
+import {Sale, SaleRef} from '../client/domain/sale';
+import {Account, AccountSearch} from '../client/domain/account';
+import {AccountingEntry, AccountingEntrySearch} from '../client/domain/accountingEntry';
+import {AccountingTransactionRef} from '../client/domain/accountingTransaction';
+import {ItemVariantSale, ItemVariantSaleSearch} from '../client/domain/itemVariantSale';
+import {Pos, PosRef} from '../client/domain/pos';
 
-import {LocalAccount, LocalAccountFactory} from '../../../client/localDomain/account';
-import {LocalAccountingEntry, LocalAccountingEntryFactory} from '../../../client/localDomain/accountingEntry';
-import {LocalSale, LocalSaleFactory, NewSale} from '../../../client/localDomain/sale';
-import {LocalItemVariant, LocalItemVariantFactory} from '../../../client/localDomain/itemVariant';
-import {LocalItemVariantSale, LocalItemVariantSaleFactory, NewItemVariantSale} from '../../../client/localDomain/itemVariantSale';
+import {LocalAccount, LocalAccountFactory} from '../client/localDomain/account';
+import {LocalAccountingEntry, LocalAccountingEntryFactory} from '../client/localDomain/accountingEntry';
+import {LocalSale, LocalSaleFactory} from '../client/localDomain/sale';
+import {LocalItemVariant, LocalItemVariantFactory} from '../client/localDomain/itemVariant';
+import {LocalItemVariantSale, LocalItemVariantSaleFactory} from '../client/localDomain/itemVariantSale';
 
-import {SearchRequest, SearchResult} from '../../../client/utils/search';
-import {LocaleTextsFactory} from '../../../client/utils/lang';
+import {SearchRequest, SearchResult} from '../client/utils/search';
+import {LocaleTextsFactory} from '../client/utils/lang';
 
-import {AuthService} from '../../../services/auth';
-import {BasicLocalService, BasicLocalServiceInfo} from '../../../services/basicService';
+import {AuthService} from './auth';
+import {AccountService} from './account';
+import {AccountingEntryService} from './accountingEntry';
+import {SaleService} from './sale';
+import {ItemVariantSaleService} from './itemVariantSale';
 
+@Injectable()
 export class ActiveSaleService {
     sale:LocalSale;
     saleItemsRequest:SearchRequest<LocalItemVariantSale>;
@@ -35,15 +40,16 @@ export class ActiveSaleService {
 
 
     authService:AuthService;
-    accountClient:AccountClient;
-    accoutService:BasicLocalService<Account, LocalAccount>;
-    accountingEntryClient:AccountingEntryClient;
-    accountingEntryService:BasicLocalService<AccountingEntry, LocalAccountingEntry>;
-    saleClient:SaleClient;
-    saleService:BasicLocalService<Sale, LocalSale>;
-    itemVariantSaleService:BasicLocalService<ItemVariantSale, LocalItemVariantSale>;
+    accountService:AccountService;
+    accountingEntryService:AccountingEntryService;
+    saleService:SaleService;
+    itemVariantSaleService:ItemVariantSaleService;
 
-    constructor(@Inject(AuthService) authService:AuthService) {
+    constructor(authService:AuthService,
+                accountService:AccountService,
+                accountingEntryService:AccountingEntryService,
+                saleService:SaleService,
+                itemVariantSaleService:ItemVariantSaleService) {
         this.sale = null;
         this.pos = null;
 
@@ -66,42 +72,10 @@ export class ActiveSaleService {
         this.accountsResult = new SearchResult<LocalAccount>();
 
         this.authService = authService;
-        this.accountClient = new AccountClient();
-        var accountServiceInfo:BasicLocalServiceInfo<Account, LocalAccount> = <BasicLocalServiceInfo<Account, LocalAccount>>{
-            client: this.accountClient,
-            authService: authService,
-            fromLocalConverter: LocalAccountFactory.fromLocalAccount,
-            toLocalConverter: LocalAccountFactory.toLocalAccount
-        };
-        this.accoutService = new BasicLocalService<Account, LocalAccount>(accountServiceInfo);
-
-        this.accountingEntryClient = new AccountingEntryClient();
-        var accountingEntryServiceInfo:BasicLocalServiceInfo<AccountingEntry, LocalAccountingEntry> =
-            <BasicLocalServiceInfo<AccountingEntry, LocalAccountingEntry>>{
-                client: this.accountingEntryClient,
-                authService: authService,
-                fromLocalConverter: LocalAccountingEntryFactory.fromLocalAccountingEntry,
-                toLocalConverter: LocalAccountingEntryFactory.toLocalAccountingEntry
-            };
-        this.accountingEntryService = new BasicLocalService<AccountingEntry, LocalAccountingEntry>(accountingEntryServiceInfo);
-
-        this.saleClient = new SaleClient();
-        var saleServiceInfo:BasicLocalServiceInfo<Sale, LocalSale> = <BasicLocalServiceInfo<Sale, LocalSale>>{
-            client: this.saleClient,
-            authService: authService,
-            fromLocalConverter: LocalSaleFactory.fromLocalSale,
-            toLocalConverter: LocalSaleFactory.toLocalSale
-        };
-        this.saleService = new BasicLocalService<Sale, LocalSale>(saleServiceInfo);
-
-        var itemVariantSaleServiceInfo:BasicLocalServiceInfo<ItemVariantSale, LocalItemVariantSale> =
-            <BasicLocalServiceInfo<ItemVariantSale, LocalItemVariantSale>>{
-                client: new ItemVariantSaleClient(),
-                authService: authService,
-                fromLocalConverter: LocalItemVariantSaleFactory.fromLocalItemVariantSale,
-                toLocalConverter: LocalItemVariantSaleFactory.toLocalItemVariantSale
-            };
-        this.itemVariantSaleService = new BasicLocalService<ItemVariantSale, LocalItemVariantSale>(itemVariantSaleServiceInfo);
+        this.accountService = accountService;
+        this.accountingEntryService = accountingEntryService;
+        this.saleService = saleService;
+        this.itemVariantSaleService = itemVariantSaleService;
     }
 
     public getSale(id:number):Promise<LocalSale> {
@@ -127,7 +101,7 @@ export class ActiveSaleService {
     }
 
     public getNewSale():Promise<LocalSale> {
-        var newSale = NewSale({
+        var newSale = LocalSaleFactory.createNewSale({
             company: this.authService.getEmployeeCompany(),
             discountRatio: 0
         });
@@ -142,7 +116,7 @@ export class ActiveSaleService {
     }
 
     public doCancelSale():Promise<any> {
-        return this.saleService.remove(this.sale).then(()=> {
+        return this.saleService.remove(this.sale.id).then(()=> {
             this.sale = null;
         });
     }
@@ -166,7 +140,7 @@ export class ActiveSaleService {
             throw 'Sale not saved';
         }
         var authToken = this.authService.authToken;
-        return this.saleClient.closeSale(this.sale.id, authToken)
+        return this.saleService.closeSale(this.sale.id, authToken)
             .then(()=> {
                 this.getNewSale();
             });
@@ -175,10 +149,10 @@ export class ActiveSaleService {
 
     public fetchSaleAndItem(item:LocalItemVariantSale):Promise<any[]> {
         var taskList:Promise<any>[] = <Promise<any>[]>[
-            this.saleService.get(this.sale.id).then((sale)=> {
+            this.saleService.fetch(this.sale.id).then((sale)=> {
                 this.sale = sale;
             }),
-            this.itemVariantSaleService.get(item.id)
+            this.itemVariantSaleService.fetch(item.id)
                 .then((fetchedItem)=> {
                     this.updateSaleItem(fetchedItem);
                 })
@@ -209,7 +183,7 @@ export class ActiveSaleService {
                 vatExclusive: LocalItemVariantFactory.calcPrice(itemVariant, false),
                 vatRate: itemVariant.item.vatRate
             };
-            itemSale = NewItemVariantSale(itemSaleDesc);
+            itemSale = LocalItemVariantSaleFactory.createNewItemVariantSale(itemSaleDesc);
 
             if (this.saleItemsResult != null) {
                 this.saleItemsResult.list = this.saleItemsResult.list.push(itemSale);
@@ -234,7 +208,7 @@ export class ActiveSaleService {
         }).toList();
         this.saleItemsResult.list = newItems;
 
-        return this.itemVariantSaleService.remove(saleItem)
+        return this.itemVariantSaleService.remove(saleItem.id)
             .then(()=> {
                 var taskList:Promise<any>[] = [
                     this.saleService.get(this.sale.id).then((sale)=> {
@@ -282,7 +256,7 @@ export class ActiveSaleService {
         if (this.sale == null || this.sale.id == null) {
             throw 'No saved sale';
         }
-        return this.saleClient.getTotalPayed(this.sale.id, this.authService.authToken)
+        return this.saleService.getTotalPayed(this.sale.id, this.authService.authToken)
             .then((paid:number)=> {
                 this.paidAmount = paid;
                 return paid;
@@ -298,7 +272,7 @@ export class ActiveSaleService {
         var search = this.accountsRequest.search;
         var posRef = new PosRef(this.pos.id);
         search.posRef = posRef;
-        return this.accoutService.search(this.accountsRequest)
+        return this.accountService.search(this.accountsRequest)
             .then((result)=> {
                 this.accountsResult = result;
             });
@@ -329,7 +303,7 @@ export class ActiveSaleService {
     }
 
     public doRemoveAccountingEntry(entry:LocalAccountingEntry):Promise<any> {
-        return this.accountingEntryService.remove(entry)
+        return this.accountingEntryService.remove(entry.id)
             .then(()=> {
                 var taskLlist:Promise<any> [] = <Promise<any>[]>[
                     this.searchPaidAmount(),
@@ -362,11 +336,14 @@ export class ActiveSaleService {
     private doUpdateSale():Promise<any> {
         return this.saleService.save(this.sale)
             .then((ref)=> {
-                return this.saleService.get(ref.id);
+                return this.saleService.fetch(ref.id);
             })
             .then((sale:LocalSale)=> {
                 this.sale = sale;
             });
     }
 
+    private getAuthToken():string {
+        return this.authService.authToken;
+    }
 }

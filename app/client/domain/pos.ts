@@ -5,21 +5,8 @@
 import {CompanyRef} from './company';
 import {CustomerRef} from './customer';
 import {LocaleTexts,LocaleTextsFactory} from '../utils/lang';
-import {BasicClient,BasicCacheHandler, BasicClientResourceInfo} from '../utils/basicClient';
 
 
-export class PosClient extends BasicClient<Pos> {
-
-    private static RESOURCE_PATH:string = "/pos";
-
-    constructor() {
-        super(<BasicClientResourceInfo<Pos>>{
-            resourcePath: PosClient.RESOURCE_PATH,
-            jsonReviver: PosFactory.fromJSONPosReviver,
-            cacheHandler: PosFactory.cacheHandler
-        });
-    }
-}
 export class Pos {
     id:number;
     companyRef:CompanyRef;
@@ -42,8 +29,7 @@ export class PosSearch {
 }
 
 export class PosFactory {
-    static cacheHandler = new BasicCacheHandler<Pos>();
-    static fromJSONPosReviver = (key, value)=> {
+    static fromJSONReviver = (key, value)=> {
         if (key ==='description') {
             return LocaleTextsFactory.fromLocaleTextArrayReviver(value);
         }

@@ -3,7 +3,7 @@
  */
 import {Component, EventEmitter, ChangeDetectionStrategy} from 'angular2/core';
 
-import {LocalMoneyPile,  NewMoneyPile} from '../../../client/localDomain/moneyPile';
+import {LocalMoneyPile,  LocalMoneyPileFactory} from '../../../client/localDomain/moneyPile';
 
 import {Language} from '../../../client/utils/lang';
 
@@ -37,7 +37,7 @@ export class MoneyPileCountComponent {
         }
         var moneyPileJS = this.moneyPile.toJS();
         moneyPileJS.unitCount = newCount;
-        var newMoneyPile = NewMoneyPile(moneyPileJS);
+        var newMoneyPile = LocalMoneyPileFactory.createNewMoneyPile(moneyPileJS);
         this.changed.next(newMoneyPile);
     }
 }

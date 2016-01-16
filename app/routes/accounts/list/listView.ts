@@ -99,7 +99,7 @@ export class AccountsListView {
     doRemoveAccount(account:LocalAccount) {
         var thisView = this;
         this.accountService
-            .remove(account)
+            .remove(account.id)
             .then(()=> {
                 thisView.searchAccounts();
             }).catch((error)=> {

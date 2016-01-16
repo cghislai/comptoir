@@ -1,7 +1,6 @@
 /**
  * Created by cghislai on 14/08/15.
  */
-import {BasicCacheHandler} from '../utils/basicClient';
 
 export class Price {
     id: number;
@@ -17,7 +16,6 @@ export class PriceRef {
 }
 
 export class PriceFactory {
-    static cacheHandler = new BasicCacheHandler<Price>();
     static fromJSONPriceReviver = (key, value)=>{
         return value;
     }

@@ -5,7 +5,7 @@ import {Component, ChangeDetectionStrategy} from 'angular2/core';
 import {NgIf} from 'angular2/common';
 import {RouteParams, Router, RouterLink, OnActivate} from 'angular2/router';
 
-import {LocalAccount, NewAccount} from '../../../client/localDomain/account';
+import {LocalAccount, LocalAccountFactory} from '../../../client/localDomain/account';
 import {LocaleTexts} from '../../../client/utils/lang';
 
 import {AuthService} from '../../../services/auth';
@@ -56,7 +56,7 @@ export class AccountsEditView implements OnActivate {
                 company: this.authService.getEmployeeCompany(),
                 description: new LocaleTexts()
             };
-            var account = NewAccount(accountDef);
+            var account = LocalAccountFactory.createNewAccount(accountDef);
             return Promise.resolve(account);
         }
         return this.accountService.get(this.accountId);

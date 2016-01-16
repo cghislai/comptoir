@@ -3,8 +3,8 @@
  */
 
 import {Auth} from '../domain/auth';
-import {Employee, EmployeeRef, EmployeeClient, EmployeeFactory} from '../domain/employee';
-import {LocalEmployee, LocalEmployeeFactory} from './employee';
+import {Employee, EmployeeRef} from '../domain/employee';
+import {LocalEmployee} from './employee';
 
 import * as Immutable from 'immutable';
 
@@ -22,43 +22,10 @@ var AuthRecord = Immutable.Record({
     refreshToken: null,
     expirationDateTime: null
 });
-export function NewAuth(desc: any) : LocalAuth {
-    return <any>AuthRecord(desc);
-}
 
 export class LocalAuthFactory {
-    static employeeClient = new EmployeeClient();
 
-    static toLocalAuth(auth:Auth, authToken:string):Promise<LocalAuth> {
-        var localAuthDesc: any = {};
-        localAuthDesc.id = auth.id;
-        localAuthDesc.token = auth.token;
-        localAuthDesc.refreshToken= auth.refreshToken;
-        localAuthDesc.expirationDateTime = auth.expirationDateTime;
-
-        var taskList = [];
-        var employeeRef = auth.employeeRef;
-        taskList.push(
-            LocalAuthFactory.employeeClient.getFromCacheOrServer(employeeRef.id, authToken)
-                .then((emploiyee)=> {
-                    return LocalEmployeeFactory.toLocalEmployee(emploiyee, authToken);
-                }).then((localEmployee: LocalEmployee)=>{
-                    localAuthDesc.employee = localEmployee;
-                })
-        );
-        return Promise.all(taskList)
-            .then(()=> {
-                return NewAuth(localAuthDesc);
-            });
-    }
-
-    static fromLocalAuth(localAuth:LocalAuth):Auth {
-        var auth = new Auth();
-        auth.id = localAuth.id;
-        auth.token = localAuth.token;
-        auth.refreshToken = localAuth.refreshToken;
-        auth.expirationDateTime = localAuth.expirationDateTime;
-        auth.employeeRef = new EmployeeRef(localAuth.employee.id);
-        return auth;
+    static createNewAuth(desc:any):LocalAuth {
+        return <any>AuthRecord(desc);
     }
 }

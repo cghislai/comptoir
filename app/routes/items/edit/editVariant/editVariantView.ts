@@ -5,7 +5,7 @@ import {Component} from 'angular2/core';
 import {NgIf} from 'angular2/common';
 import {RouteParams, Router, RouterLink, OnActivate} from 'angular2/router';
 
-import {LocalItemVariant, NewItemVariant} from '../../../../client/localDomain/itemVariant';
+import {LocalItemVariant, LocalItemVariantFactory} from '../../../../client/localDomain/itemVariant';
 import {LocalItem} from '../../../../client/localDomain/item';
 import {Pricing} from '../../../../client/domain/itemVariant';
 
@@ -97,7 +97,7 @@ export class ItemVariantEditView implements OnActivate {
         itemVariantDesc.item = this.item;
         itemVariantDesc.pricingAmount = 0;
         itemVariantDesc.company = this.authService.getEmployeeCompany();
-        this.itemVariant = NewItemVariant(itemVariantDesc);
+        this.itemVariant = LocalItemVariantFactory.createNewItemVariant(itemVariantDesc);
     }
 
     getItemVariant(id:number) {

@@ -5,8 +5,8 @@ import {Component, EventEmitter,OnInit, ChangeDetectionStrategy} from 'angular2/
 import {NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/common';
 import {RouteParams, Router, RouterLink} from 'angular2/router';
 
-import {LocalPicture, NewPicture} from '../../../client/localDomain/picture';
-import {LocalItem, NewItem} from '../../../client/localDomain/item';
+import {LocalPicture, LocalPictureFactory} from '../../../client/localDomain/picture';
+import {LocalItem, LocalItemFactory} from '../../../client/localDomain/item';
 import {LocalItemVariant} from '../../../client/localDomain/itemVariant';
 
 import {CompanyRef} from '../../../client/domain/company';
@@ -153,7 +153,7 @@ export class ItemEditComponent implements OnInit {
             };
             reader.readAsDataURL(file);
         }).then((data:string)=> {
-                var mainPicture:LocalPicture = NewPicture({
+                var mainPicture:LocalPicture = LocalPictureFactory.createNewPicture({
                     dataURI: data,
                     company: this.authService.getEmployeeCompany()
                 });
@@ -216,7 +216,7 @@ export class ItemEditComponent implements OnInit {
         var column = event.column;
         var itemVariant:LocalItemVariant = event.itemVariant;
         if (column === ItemVariantColumn.ACTION_REMOVE) {
-            this.itemVariantService.remove(itemVariant)
+            this.itemVariantService.remove(itemVariant.id)
                 .then(()=> {
                     this.findItemVariants();
                 })
@@ -228,15 +228,15 @@ export class ItemEditComponent implements OnInit {
 
     private saveItem():Promise<LocalItem> {
         if (this.itemPictureTouched) {
-            var picture = NewPicture(this.itemJS.mainPicture);
+            var picture = LocalPictureFactory.createNewPicture(this.itemJS.mainPicture);
             return this.pictureService.save(picture)
                 .then((localPic:LocalPicture)=> {
                     this.itemJS.mainPicture = localPic;
-                    var item = NewItem(this.itemJS);
+                    var item = LocalItemFactory.createNewItem(this.itemJS);
                     return this.itemService.save(item);
                 });
         } else {
-            var item = NewItem(this.itemJS);
+            var item = LocalItemFactory.createNewItem(this.itemJS);
             return this.itemService.save(item);
         }
     }
