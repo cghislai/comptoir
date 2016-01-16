@@ -6,7 +6,7 @@ import {Control, NG_VALIDATORS} from 'angular2/common';
 
 @Directive({
     selector: '[validate-required]',
-    provider: [provide(NG_VALIDATORS, {
+    providers: [provide(NG_VALIDATORS, {
         useExisting: RequiredValidator,
         multi: true
     })],
@@ -28,7 +28,7 @@ export class RequiredValidator {
 
 @Directive({
     selector: '[validate-password]',
-    bindings: [provide(NG_VALIDATORS, {
+    providers: [provide(NG_VALIDATORS, {
         useExisting: PasswordValidator,
         multi: true
     })]

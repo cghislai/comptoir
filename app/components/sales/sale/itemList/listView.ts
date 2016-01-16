@@ -134,19 +134,18 @@ export class ItemListView {
     }
 
     applyFilter(filterValue:string) {
-        if (this.variantSelection) {
-            var itemSearch = this.variantRequest.search.itemSearch;
-            if (itemSearch.multiSearch === filterValue) {
-                return;
-            }
+        var variantSearch = this.variantRequest.search.itemSearch;
+        if (variantSearch.multiSearch !== filterValue) {
+            variantSearch.multiSearch = filterValue;
+        }
+        var itemSearch = this.searchRequest.search;
+        if (itemSearch.multiSearch !== filterValue) {
             itemSearch.multiSearch = filterValue;
+        }
+
+        if (this.variantSelection) {
             this.searchItemVariants();
         } else {
-            var itemSearch = this.searchRequest.search;
-            if (itemSearch.multiSearch === filterValue) {
-                return;
-            }
-            itemSearch.multiSearch = filterValue;
             this.searchItems();
         }
     }
