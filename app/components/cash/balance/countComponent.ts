@@ -137,13 +137,16 @@ export class BalanceCountComponent {
     }
 
     onValidateBalanceClicked() {
-        this.balanceService.closeBalance(this.balance)
+        this.saveBalanceIfRequired()
+            .then(()=> {
+                return this.balanceService.closeBalance(this.balance);
+            })
             .then((ref)=> {
                 return this.balanceService.get(ref.id);
             })
             .then((balance:LocalBalance)=> {
                 this.balance = balance;
-                this.validated.next(balance);
+                this.validated.emit(balance);
             })
             .catch((error)=> {
                 this.errorService.handleRequestError(error);

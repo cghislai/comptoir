@@ -23,6 +23,6 @@ export class CountryService {
     }
 
     get(code:string, authToken:string):Promise<Country> {
-        return this.countryClient.getCountry(code, authToken);
+        return this.countryClient.getFromCacheOrServer(code, authToken);
     }
 }

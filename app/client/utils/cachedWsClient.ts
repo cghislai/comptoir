@@ -149,7 +149,7 @@ export class CachedWSClient<T extends WithId> implements WSClient<T> {
         options.search = this.createSearchParams(searchRequest.pagination);
         options.body = JSON.stringify(searchRequest.search, JSONFactory.toJSONReplacer);
         var request = this.http.request(new Request(options));
-
+        searchRequest.busy = true;
         return request
             .map((response:Response)=> {
                 var list:T[] = JSON.parse(response.text(), this.jsonReviver);
@@ -157,6 +157,7 @@ export class CachedWSClient<T extends WithId> implements WSClient<T> {
                 var result:SearchResult<T> = new SearchResult<T>();
                 result.count = isNaN(count) ? 0 : count;
                 result.list = Immutable.List<T>(list);
+                searchRequest.busy = false;
                 return result;
             });
     }

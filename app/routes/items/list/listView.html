@@ -2,8 +2,8 @@
     <h1 class="pageTitle">Liste des produits</h1>
 
     <img class="busy"
-         src="../../../res/img/spinner-2-black.gif"
-         [hidden]="searchRequest.request == null">
+         src="res/img/spinner-2-black.gif"
+         [hidden]="!searchRequest.busy">
 
     <div class="topActions">
         <span class="input">

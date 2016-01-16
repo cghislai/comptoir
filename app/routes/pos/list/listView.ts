@@ -59,8 +59,8 @@ export class PosListView {
         this.appLanguage= authService.getEmployeeLanguage();
         this.columns = Immutable.List.of(
             PosColumn.NAME,
-            PosColumn.DESCRIPTION,
-            PosColumn.ACTION_REMOVE
+            PosColumn.DESCRIPTION
+            //PosColumn.ACTION_REMOVE // FIXME: implement in backend
         );
         this.searchPosList();
     }

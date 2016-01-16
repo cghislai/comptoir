@@ -26,18 +26,19 @@
     </template>
     <template [ngSwitchWhen]=" 'closed'">
         <span class="closed">
-              <i class="fa fa-check" *ngIf="!balance.closed"></i>
-              <i class="fa fa-times" *ngIf="balance.closed"></i>
+              <i class="fa fa-check" *ngIf="balance.closed"></i>
+              <i class="fa fa-times" *ngIf="!balance.closed"></i>
         </span>
     </template>
     <template [ngSwitchWhen]=" 'type'">
-        <template [ngSwitchWhen]=" 'action_remove'">
+    </template>
+    <template [ngSwitchWhen]=" 'action_remove'">
         <span class="action remove">
             <a class="actionIcon"
                (click)="onColumnAction(balance, column, $event)">
                 <i class="fa fa-minus red"></i>
             </a>
         </span>
-        </template>
+    </template>
 </div>
 
