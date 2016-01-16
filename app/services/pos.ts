@@ -117,7 +117,7 @@ export class PosService {
         if (localPos.defaultCustomer != null) {
             pos.defaultCustomerRef = new CustomerRef(localPos.defaultCustomer.id);
         }
-        pos.description = localPos.defaultCustomer;
+        pos.description = localPos.description;
         pos.name = localPos.name;
         return pos;
     }

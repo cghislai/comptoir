@@ -5,6 +5,7 @@ import {Component, EventEmitter, OnInit} from 'angular2/core';
 import {NgFor, NgIf, FORM_DIRECTIVES} from 'angular2/common';
 
 import {LocalPos, LocalPosFactory} from '../../../client/localDomain/pos';
+import {PosRef} from '../../../client/domain/pos';
 
 import {Language} from '../../../client/utils/lang';
 
@@ -72,6 +73,9 @@ export class PossEditComponent implements OnInit {
 
     private savePos(pos:LocalPos):Promise<LocalPos> {
         return this.posService.save(pos)
+            .then((ref:PosRef)=> {
+                return this.posService.get(ref.id);
+            })
             .then((pos:LocalPos)=> {
                 this.pos = pos;
                 this.posModel = pos.toJS();
