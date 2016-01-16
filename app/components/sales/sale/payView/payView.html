@@ -55,7 +55,7 @@
         </thead>
         <tbody>
         <tr *ngFor="#entry of accountingEntries" class="payItem"
-                [hidden]="isEditing(entry)">
+            [hidden]="isEditing(entry)">
             <td>
                 <span>
                     {{ entry.account.description.get(language.locale)}}
@@ -72,7 +72,7 @@
                 </span>
             </td>
 
-            <td class="actions"  [hidden]="noInput">
+            <td class="actions" [hidden]="noInput">
                 <a class="actionIcon remove" (click)="removeEntry(entry)">
                     <i class="fa fa-minus red"></i>
                 </a>
@@ -89,7 +89,7 @@
         </tfoot>
     </table>
 
-    <div class="editMethod" *ngIf="editingEntry != null"  [hidden]="noInput">
+    <div class="editMethod" *ngIf="editingEntry != null" [hidden]="noInput">
         <span class="method">{{ editingEntry.account.description.get(language.locale) }}</span>
         <span class="amount">
             Montant: <input #amount
@@ -99,6 +99,10 @@
                             (fastChange)="applyEditingEntry($event)"
                             (cancelled)="cancelEditEntry()"
                             fast-input> €
+        </span>
+         <span class="editActions">
+                <i class="fa fa-check green" (click)="amount.doValidate()"></i>
+                <i class="fa fa-times red" (click)="amount.doCancel()"></i>
         </span>
     </div>
 

@@ -66,19 +66,37 @@ table.payItems {
   border: 1px solid lightsteelblue;
   width: 100%;
   display: table;
-}
 
-.editMethod > * {
-  display: table-cell;
-  vertical-align: middle;
-  padding: .5em;
-}
+  > * {
+    display: table-cell;
+    vertical-align: middle;
+    padding: .5em;
+  }
+  .amount {
+    text-align: right;
+  }
 
-.editMethod .amount {
-  text-align: right;
-}
+  input {
+    font-size: 1em;
+  }
 
-.editMethod input {
-  font-size: 1em;
+  .editActions {
+    > i {
+      &:hover {
+        cursor: pointer;
+      }
+      &.green {
+        color: green;
+        &:hover {
+          color: lighten(green, 30%);
+        }
+      }
+      &.red {
+        color: red;
+        &:hover {
+          color: lighten(red, 30%);
+        }
+      }
+    }
+  }
 }
-
