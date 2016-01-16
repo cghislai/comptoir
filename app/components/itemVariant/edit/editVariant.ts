@@ -155,7 +155,7 @@ export class ItemVariantEditComponent implements OnInit {
 
 
     onPricingChanged(event) {
-        var pricing:Pricing = parseInt(event.target.value);
+        var pricing:Pricing = <Pricing>parseInt(event.target.value);
         this.itemVariantModel.pricing = pricing;
         this.checkPricingAmountRequired();
     }
@@ -264,7 +264,7 @@ export class ItemVariantEditComponent implements OnInit {
                             for (var savedValue of results) {
                                 allAttributes.push(savedValue);
                             }
-                            var newItemVariant = <LocalItemVariant>this.itemVariant.set('attributesValues', allAttributes);
+                            var newItemVariant = <LocalItemVariant>this.itemVariant.set('attributeValues', allAttributes);
                             return this.itemVariantService.save(newItemVariant);
                         })
                         .then((ref)=> {

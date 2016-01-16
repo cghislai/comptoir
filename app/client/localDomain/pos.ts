@@ -20,9 +20,9 @@ export interface LocalPos extends Immutable.Map<string, any> {
 var PosRecord = Immutable.Record({
     id: null,
     company: null,
-    data: null,
-    contentType: null,
-    dataURI: null
+    name: null,
+    description: null,
+    defaultCustomer: null
 });
 
 export class LocalPosFactory {

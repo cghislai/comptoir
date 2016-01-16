@@ -1,21 +1,13 @@
 /**
  * Created by cghislai on 31/08/15.
  */
-import {Directive, Provider} from 'angular2/core';
+import {Directive, provide} from 'angular2/core';
 import {Control, NG_VALIDATORS} from 'angular2/common';
 
-function requiredValidator(c: Control) {
-    if(c.value == null || c.value.length <= 0) {
-        return {
-            required: true
-        };
-    }
-    return null;
-}
 @Directive({
     selector: '[validate-required]',
-    bindings: [new Provider(NG_VALIDATORS, {
-        useValue: requiredValidator,
+    provider: [provide(NG_VALIDATORS, {
+        useExisting: RequiredValidator,
         multi: true
     })],
     host: {
@@ -23,30 +15,35 @@ function requiredValidator(c: Control) {
     }
 })
 export class RequiredValidator {
-
-}
-
-
-function passwordValidator(c: Control) {
-    if(c.value == null || c.value.length <= 0) {
+    validate(c: Control) {
+        if(c.value == null || c.value.length <= 0) {
+            return {
+                'required': true
+            };
+        }
         return null;
     }
-    var password = c.value;
-    if (password.length < 6) {
-        return {passwordTooShort: true};
-    }
-    return null;
 }
+
 
 @Directive({
     selector: '[validate-password]',
-    bindings: [new Provider(NG_VALIDATORS, {
-        useValue: passwordValidator,
+    bindings: [provide(NG_VALIDATORS, {
+        useExisting: PasswordValidator,
         multi: true
     })]
 })
 export class PasswordValidator {
-
+    validate(c: Control) {
+        if(c.value == null || c.value.length <= 0) {
+            return null;
+        }
+        var password = c.value;
+        if (password.length < 6) {
+            return {'passwordTooShort': true};
+        }
+        return null;
+    }
 }
 
 

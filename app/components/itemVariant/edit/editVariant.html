@@ -22,7 +22,7 @@
                     <input type="text" id="reference"
                            [placeholder]="itemVariantModel.item.reference"
                            [(ngModel)]="itemVariantModel.variantReference"
-                           ngControl="reference" validate-required>
+                           ngControl="reference" required>
                     <form-message for="reference"
                                  check-errors=" ['required']"></form-message>
                 </span>
@@ -30,10 +30,10 @@
             <div>
                 <label for="pricing">Type de tarification</label>
                 <span>
-                    <select id="pricing" required
-                            [ngModel]="itemVariantModel.pricing"
+                    <select id="pricing"
+                            [(ngModel)]="itemVariantModel.pricing"
                             (change)="onPricingChanged($event)"
-                            ngControl="pricing" validate-required>
+                            ngControl="pricing" required>
                         <option *ngFor="#pricing of allPricings"
                                 [value]="pricing">
                             {{ getPricingLabel(pricing) }}
